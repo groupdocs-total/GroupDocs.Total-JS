@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<title>GroupDocs.Viewer</title>
+		<link type="text/css" rel="stylesheet" href="resources/css/font-awesome.min.css"/>
+		<link type="text/css" rel="stylesheet" href="resources/css/viewer.css"/>
+		<link type="text/css" rel="stylesheet" href="resources/css/viewer-circle-progress.css"/>
+		<link type="text/css" rel="stylesheet" href="resources/css/viewer.mobile.css"/>
+		<link type="text/css" rel="stylesheet" href="resources/css/viewer-dark.css"/>
+		<link type="text/css" rel="stylesheet" href="resources/css/swiper.min.css">
+		<script type="text/javascript" src="resources/js/jquery.min.js"></script>
+		<script type="text/javascript" src="resources/js/swiper.min.js"></script>
+		<script type="text/javascript" src="resources/js/viewer.js"></script>
+	</head>
+	<body>
+		<div id="element"></div>
+		<script type="text/javascript">
+			$('#element').viewer({
+				applicationPath: 'http://localhost:8080/viewer/',
+			    defaultDocument: '',
+			    htmlMode: false,
+			    preloadPageCount: 0,
+			    rewrite: true,
+			    zoom: true,
+			    pageSelector: true,
+			    search: true,
+			    thumbnails: true,
+			    rotate: true,
+			    download: true,
+			    upload: true,
+			    print: true,
+			    browse: true
+			});
+		</script>
+	</body>
+</html>

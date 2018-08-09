@@ -11,4 +11,5 @@ Simple and flexible configuration makes integration process quite easy and intui
 
 ## Examples
 - [GroupDocs.Total for Java Dropwizard Example](https://github.com/groupdocs-total/GroupDocs.Total-for-Java-Dropwizard)
-- GroupDocs.Total for .NET MVC Example - Coming Soon
+- [GroupDocs.Total for .NET MVC Example](https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC)
+- [GroupDocs.Total for .NET Web Forms Example](https://github.com/groupdocs-total/GroupDocs.Total-for-NET-WebForms)

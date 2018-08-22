@@ -349,6 +349,7 @@ ANNOTATIONS COMMENTS BAR
     display:inline-block;
 	margin-top: 17px;
 }
+
 .gd-comment-text{
 	background: #fff;
     padding: 20px 8px 10px;
@@ -360,6 +361,11 @@ ANNOTATIONS COMMENTS BAR
     position: relative;
     color: #333;
     font-size: 14px;
+}
+
+.gd-comment-user-name{
+	margin: 11px 0 0 10px;
+    width: 244px;
 }
 
 .gd-comment-box-sidebar{

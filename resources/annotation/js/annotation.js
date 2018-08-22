@@ -426,10 +426,12 @@ function saveComment(){
 			var annotationToAddComments = $.grep(annotationsList, function(obj){return obj.id === annotationId;})[0];			
 			var comment = {
 				time: null,
-				text: ""
+				text: "",
+				userName: ""
 			};		
 			comment.time = $(currentComment).find(".gd-comment-time").html();
 			comment.text = $(currentComment).find(".gd-comment-text").html();
+			comment.userName = $(currentComment).find(".gd-comment-user-name").val() == "" ? "Anonym A." : $(currentComment).find(".gd-comment-user-name").val();
 			annotationToAddComments.comments.push(comment);
 			annotationToAddComments = null;
 			comment = null;					
@@ -529,6 +531,7 @@ function getCommentHtml(){
 					'<div class="gd-comment-text-wrapper mousetrap">'+
 						'<span class="comment-box-pointer"></span>'+
 						'<div class="gd-comment-text mousetrap" contenteditable="true" data-saved="false"></div>'+
+						'<input type="text" placeholder="User name" class="gd-comment-user-name">'+
 					'</div>'+
 				'</div>';
 }

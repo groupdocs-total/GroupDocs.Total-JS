@@ -59,15 +59,13 @@
 			element.style.width = pointSvgSize + "px";
 			element.style.height = pointSvgSize + "px";
 			canvas.prepend(element);	
-			annotation.left = element.style.left.replace("px", "");
-			annotation.top = element.style.top.replace("px", "");	
+			annotation.left = parseInt(element.style.left.replace("px", ""));
+			annotation.top = parseInt(element.style.top.replace("px", ""));	
 			annotationsList.push(annotation);	
 			makeResizable(annotation);				
 			addComment(annotation);
-			annotationsList[annotationsList.length - 1].width = element.style.width.replace("px", "");
-			annotationsList[annotationsList.length - 1].height = element.style.height.replace("px", "");	
-			annotationsList[annotationsList.length - 1].left = annotationsList[annotationsList.length - 1].left.replace("px", "");
-			annotationsList[annotationsList.length - 1].top = annotationsList[annotationsList.length - 1].top.replace("px", "");	
+			annotationsList[annotationsList.length - 1].width = parseInt(element.style.width.replace("px", ""));
+			annotationsList[annotationsList.length - 1].height = parseInt(element.style.height.replace("px", ""));				
 			var draw = SVG(element.id);
 			var circle = draw.circle(svgCircle.r);
 			circle.attr({
@@ -116,10 +114,10 @@
 				if (line) {
 											
 					line.draw('stop', event);				
-					annotation.left = element.style.left.replace("px", "");
-					annotation.top = element.style.top.replace("px", "");	
-					annotation.width = canvas.offsetWidth;
-					annotation.height = canvas.offsetHeight;
+					annotation.left = parseInt(element.style.left.replace("px", ""));
+					annotation.top = parseInt(element.style.top.replace("px", ""));	
+					annotation.width = parseInt(canvas.offsetWidth);
+					annotation.height = parseInt(canvas.offsetHeight);
 					annotation.svgPath = "M";
 					$.each(line.node.points, function(index, point){
 						annotation.svgPath = annotation.svgPath + point.x + "," + point.y + ".";

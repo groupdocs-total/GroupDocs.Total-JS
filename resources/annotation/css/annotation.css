@@ -441,9 +441,9 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 	position: absolute; 
     font-size: 25px;
     color: #af2025;   
-    cursor: pointer;
-	z-index: 1;
+    cursor: pointer;	
 }
+
 .gd-text-annotation {
     background-color: #28f;
     opacity: .3;
@@ -452,6 +452,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     cursor: text;   
     z-index: 1;
 }
+
 .gd-area-annotation {  
 	border-width: 5px;
 	border-color: #30abd4;
@@ -476,35 +477,39 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 
 .gd-text-area-toolbar {      
-    padding-top: 15px;
-    text-align: center;
-    top: -69px;
+    cursor: auto;
+    position: absolute;
+    border: 1px solid #8b8b8b;
+    top: -44px;
     left: 0;
-    height: 50;
-    width: 316px;
+	width: 144px;
+    height: 32px;
     display: inline-block;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 0px;
-    z-index: 1002;
-    background-color: #3e4e5a;
+    background-color: #e0e0e0;
+    padding: 6px 0px 0px 26px;
 }
 
-.gd-text-area-toolbar .fa-arrows {
-    top: 12px;
-    left: 5px;
-    color: #959da5;
+.gd-text-area-toolbar input:first-of-type {
+	width: 77px;
+    position: absolute;
+    top: 7px;
+    font-size: 12px;
+    left: 2px;
 }
 
 .gd-typewriter-font-size {
-	width: 50px;
+	width: 32px;
+    position: absolute;
+    top: 7px;
+    left: 83px;
+    font-size: 12px;
 }
 
 .gd-text-area-toolbar .fa-trash-o { 
-    top: 9px;
-    color: #959da5;
-    right: 11px;
-    font-size: 30px;
+    top: 7px;
+    color: #3e4e5a;
+    right: 4px;
+    font-size: 17px;
 }
 
 .gd-typewriter-text {
@@ -515,6 +520,9 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);    
     border: 1px solid;
+	width: 239px;
+    height: 50px;
+	text-align: left;
 }
 
 .gd-replace-tab {   

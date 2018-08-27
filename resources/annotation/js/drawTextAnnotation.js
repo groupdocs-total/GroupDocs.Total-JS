@@ -67,10 +67,15 @@
 					element.style.height = startCoordinates.height + "px";
 					annotationInnerHtml = getTextStrikeoutAnnotationHtml();
 					break
+				case "textField":
+					element.style.left =  mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - zoomCorrection.x + "px";
+					element.style.top =  mouse.y - canvasTopOffset - zoomCorrection.y + 5 + "px";
+					annotationInnerHtml = getTextFieldAnnotationHtml();
+					break;
 			}
 			
-			annotation.left = element.style.left.replace("px", "");
-			annotation.top = element.style.top.replace("px", "");	
+			annotation.left = parseInt(element.style.left.replace("px", ""));
+			annotation.top = parseInt(element.style.top.replace("px", ""));	
 			
 			element.appendChild(annotationInnerHtml);			
 			canvas.prepend(element);					
@@ -82,10 +87,8 @@
 			canvas.onmousedown = null;				
 			canvas.style.cursor = "default";
 			if($(ev.target).prop("tagName") == "IMG"){					
-				annotationsList[annotationsList.length - 1].width = element.style.width.replace("px", "");
-				annotationsList[annotationsList.length - 1].height = element.style.height.replace("px", "");	
-				annotationsList[annotationsList.length - 1].left = annotationsList[annotationsList.length - 1].left.replace("px", "");
-				annotationsList[annotationsList.length - 1].top = annotationsList[annotationsList.length - 1].top.replace("px", "");		
+				annotationsList[annotationsList.length - 1].width = parseInt(element.style.width.replace("px", ""));
+				annotationsList[annotationsList.length - 1].height = parseInt(element.style.height.replace("px", ""));					
 			}					
 			element = null;				
 			annotationInnerHtml = null;				
@@ -101,10 +104,10 @@
 					element.style.width = Math.abs(mouse.x - startX) + "px";	
 					element.style.height = Math.abs(mouse.y - startY) + "px";						
 				}
-				annotation.width = element.style.width.replace("px", "");
-				annotation.height = element.style.height.replace("px", "");
-				annotationInnerHtml.style.width = element.style.width;
-				annotationInnerHtml.style.height = element.style.height;
+				annotation.width = parseInt(element.style.width.replace("px", ""));
+				annotation.height = parseInt(element.style.height.replace("px", ""));
+				annotationInnerHtml.style.width = parseInt(element.style.width);
+				annotationInnerHtml.style.height = parseInt(element.style.height);
 			}
 		}    
 		
@@ -124,6 +127,16 @@
 			var annotationHtml = document.createElement('div');
 			annotationHtml.className = 'gd-textstrikeout-annotation';
 			annotationHtml.innerHTML = '<div class="gd-textstrikeout-line"></div>';
+			return annotationHtml;
+		}
+		
+		function getTextFieldAnnotationHtml(){
+			var annotationHtml = '<div class="gd-text-area-toolbar">'+									
+									'<input type="text" class="gd-typewriter-font" value="Arial">'+
+									'<input type="number" value="10" class="gd-typewriter-font-size">'+
+									'<i class="fa fa-trash-o"></i>'+
+								'</div>'+
+								'<div class="gd-typewriter-text mousetrap" spellcheck="false" contenteditable="true">text field annotation</div>';
 			return annotationHtml;
 		}
 	}

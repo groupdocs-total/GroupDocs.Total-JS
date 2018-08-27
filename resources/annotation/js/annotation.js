@@ -25,6 +25,9 @@ var annotation = {
 	svgPath: "",
 	documentType: "",
 	svgPath: "",
+	text: "",
+	font: "Arial",
+	fontSize: 10,
 	comments: []
 };
 var currentDocumentGuid = "";
@@ -132,6 +135,13 @@ $(document).ready(function(){
 						$.fn.drawSvgAnnotation.drawPolyline($(e.target).parent().parent()[0], annotationsList, annotation, annotationsCounter, e);							
 						annotation = null;
 						break;
+					case "textField":					
+						annotationsCounter = annotationsCounter + 1;
+						getTextCoordinates(annotation.pageNumber, function(){	
+							$.fn.drawFieldAnnotation.drawTextField($(e.target).parent().parent()[0], annotationsList, annotation, annotationsCounter, e);							
+							annotation = null;							
+						});
+						break;
 				}				
 				// enable save button on the dashboard
 				if($("#gd-nav-save").hasClass("gd-save-disabled")) {
@@ -190,7 +200,7 @@ $(document).ready(function(){
 			}
 			$(e.target).parent().parent().parent().parent().remove();
 		}
-	});
+	});	
 	
 	//////////////////////////////////////////////////
     // annotation click event
@@ -218,6 +228,7 @@ $(document).ready(function(){
 						$(".gd-comment-time").last().html(annotationsList[i].comments[n].time);
 						$(".gd-comment-text").last().html(annotationsList[i].comments[n].text);
 						$(".gd-comment-text").data("saved", true);						 
+						$(".gd-comment-user-name").last().val(annotationsList[i].comments[n].userName);
 					}
 				} else {
 					$(".gd-comment-reply").before(getCommentHtml);
@@ -304,7 +315,7 @@ function getTextCoordinates(pageNumber, callback) {
             var err = eval("(" + xhr.responseText + ")");
             console.log(err.Message);
 			// open error popup
-			printMessage(returnedData.message);
+			printMessage(err.message);
         }
     }).done(function(){
         if(typeof callback == "function") {
@@ -360,9 +371,10 @@ function annotate() {
 	annotationsList[0].documentType = getDocumentFormat(documentGuid).format;	
     // current document guid is taken from the viewer.js globals
     var data = {
-        guid: documentGuid,
+        guid: documentGuid.replace(/\\/g, "//"),
         password: password,
-        annotationsList: annotationsList
+		htmlMode: false,
+        annotationsData: annotationsList
     };
     // sign the document
     $.ajax({
@@ -389,11 +401,11 @@ function annotate() {
 			toggleModalDialog(true, 'Annotation', result);
         },
         error: function(xhr, status, error) {
-            var err = eval("(" + xhr.responseText + ")");
-            console.log(err.Message);
+			var err = eval("(" + xhr.responseText + ")");
+			console.log(err.Message);
 			// open error popup
-			printMessage(returnedData.message);
-        }
+            printMessage(err.message);
+		}
     });
 }
 
@@ -442,26 +454,26 @@ function saveComment(){
 }
 
 /**
- * Add comment into the comments bar
- * @param {Object} currentAnnotation - currently added annotation
- */
- function addComment(currentAnnotation){
+* Add comment into the comments bar
+* @param {Object} currentAnnotation - currently added annotation
+*/
+function addComment(currentAnnotation){
 	 $("#gd-annotation-comments").html("");
 	 $("#gd-annotation-comments").append(getCommentBaseHtml);
 	 $(".gd-comment-box-sidebar").data("annotationId", currentAnnotation.id);
 	 $(".gd-comment-reply").before(getCommentHtml);	
 	 $('#gd-annotations-comments-toggle').attr('checked', true);
- }
+}
  
 /**
  * Make current annotation draggble and resizable
  * @param {Object} currentAnnotation - currently added annotation
  */
 function makeResizable (currentAnnotation){	
-	var annotationType = currentAnnotation.type;
+	var annotationType = currentAnnotation.type;	
 	$(".gd-annotation").each(function(imdex, element){
 		if(parseInt($(element).attr("id").replace ( /[^\d.]/g, '' )) == currentAnnotation.id){
-			// enable rotation, dragging and resizing features for current image
+			// enable dragging and resizing features for current image
 			$(element).draggable({
 				// set restriction for image dragging area to current document page
 				containment: "#gd-page-" + currentAnnotation.pageNumber,	

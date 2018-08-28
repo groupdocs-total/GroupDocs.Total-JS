@@ -67,7 +67,7 @@ $(document).ready(function(){
 		// make annotations list empty for the new document
 		annotationsList = [];
 		$("#gd-annotation-comments").html("");	
-		$('#gd-annotations-comments-toggle').attr('checked', false);
+		$('#gd-annotations-comments-toggle').prop('checked', false);
 	});
 	
 	//////////////////////////////////////////////////
@@ -96,7 +96,13 @@ $(document).ready(function(){
 								top: 0,
 								width: 0,
 								height: 0,
-								pageNumber: 0,															
+								pageNumber: 0,
+								svgPath: "",
+								documentType: "",
+								svgPath: "",
+								text: "",
+								font: "Arial",
+								fontSize: 10,
 								comments: []
 							};
 			}
@@ -136,10 +142,20 @@ $(document).ready(function(){
 						annotation = null;
 						break;
 					case "textField":					
+						annotationsCounter = annotationsCounter + 1;						
+						$.fn.drawFieldAnnotation.drawTextField($(e.target).parent().parent()[0], annotationsList, annotation, annotationsCounter, "textField", e);							
+						annotation = null;	
+						break;
+					case "watermark":					
+						annotationsCounter = annotationsCounter + 1;					
+						$.fn.drawFieldAnnotation.drawTextField($(e.target).parent().parent()[0], annotationsList, annotation, annotationsCounter, "watermark", e);							
+						annotation = null;	
+						break;
+					case "textReplacement":					
 						annotationsCounter = annotationsCounter + 1;
 						getTextCoordinates(annotation.pageNumber, function(){	
-							$.fn.drawFieldAnnotation.drawTextField($(e.target).parent().parent()[0], annotationsList, annotation, annotationsCounter, e);							
-							annotation = null;							
+							$.fn.drawTextAnnotation($(e.target).parent().parent()[0], annotationsList, annotation, annotationsCounter, "textReplacement", e);							
+							annotation = null;
 						});
 						break;
 				}				
@@ -206,37 +222,41 @@ $(document).ready(function(){
     // annotation click event
     //////////////////////////////////////////////////
     $('#gd-panzoom').on('click', '.gd-annotation', function(e){
-		$("#gd-annotation-comments").html("");
-		$('#gd-annotations-comments-toggle').attr('checked', true);
-		var annotationId = null;
-		if($(e.target).parent().prop("tagName") == "svg"){
-			annotationId = parseInt($(e.target).parent().parent().attr("id").replace( /[^\d.]/g, '' ));
-		} else {
-			if(typeof $(e.target).parent().attr("id") != "undefined"){
-				annotationId = parseInt($(e.target).parent().attr("id").replace( /[^\d.]/g, '' ));
-			} else {
+		if(e.target.tagName != "I" && e.target.tagName != "INPUT"){
+			$("#gd-annotation-comments").html("");
+			$('#gd-annotations-comments-toggle').prop('checked', true);
+			var annotationId = null;
+			if($(e.target).parent().prop("tagName") == "svg"){
 				annotationId = parseInt($(e.target).parent().parent().attr("id").replace( /[^\d.]/g, '' ));
-			}
-		}
-		$("#gd-annotation-comments").append(getCommentBaseHtml);
-		$(".gd-comment-box-sidebar").data("annotationId", annotationId);
-		for(var i = 0; i < annotationsList.length; i++){
-			if(annotationsList[i].id == annotationId){
-				if(annotationsList[i].comments.length != 0 ){
-					for(var n = 0; n < annotationsList[i].comments.length; n++){
-						$(".gd-comment-reply").before(getCommentHtml);
-						$(".gd-comment-time").last().html(annotationsList[i].comments[n].time);
-						$(".gd-comment-text").last().html(annotationsList[i].comments[n].text);
-						$(".gd-comment-text").data("saved", true);						 
-						$(".gd-comment-user-name").last().val(annotationsList[i].comments[n].userName);
-					}
-				} else {
-					$(".gd-comment-reply").before(getCommentHtml);
-				}
-				return;
 			} else {
-				continue;
+				if(typeof $(e.target).parent().attr("id") != "undefined"){
+					annotationId = parseInt($(e.target).parent().attr("id").replace( /[^\d.]/g, '' ));
+				} else {
+					annotationId = parseInt($(e.target).parent().parent().attr("id").replace( /[^\d.]/g, '' ));
+				}
 			}
+			$("#gd-annotation-comments").append(getCommentBaseHtml);
+			$(".gd-comment-box-sidebar").data("annotationId", annotationId);
+			for(var i = 0; i < annotationsList.length; i++){
+				if(annotationsList[i].id == annotationId){
+					if(annotationsList[i].comments.length != 0 ){
+						for(var n = 0; n < annotationsList[i].comments.length; n++){
+							$(".gd-comment-reply").before(getCommentHtml);
+							$(".gd-comment-time").last().html(annotationsList[i].comments[n].time);
+							$(".gd-comment-text").last().html(annotationsList[i].comments[n].text);
+							$(".gd-comment-text").data("saved", true);						 
+							$(".gd-comment-user-name").last().val(annotationsList[i].comments[n].userName);
+						}
+					} else {
+						$(".gd-comment-reply").before(getCommentHtml);
+					}
+					return;
+				} else {
+					continue;
+				}
+			}
+		} else {
+			return;
 		}
 	});
     //////////////////////////////////////////////////
@@ -462,7 +482,7 @@ function addComment(currentAnnotation){
 	 $("#gd-annotation-comments").append(getCommentBaseHtml);
 	 $(".gd-comment-box-sidebar").data("annotationId", currentAnnotation.id);
 	 $(".gd-comment-reply").before(getCommentHtml);	
-	 $('#gd-annotations-comments-toggle').attr('checked', true);
+	 $('#gd-annotations-comments-toggle').prop('checked', true);
 }
  
 /**

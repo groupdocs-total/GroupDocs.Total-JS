@@ -285,7 +285,7 @@ ANNOTATIONS COMMENTS BAR
     border-bottom: 30px solid transparent;
     border-right: 5px solid currentColor;
 }
-.gd-comments-sidebar-expanded{
+.gd-comments-sidebar-expanded {
 	width: 33px;
 	overflow: hidden;
 	transition: width .25s ease-in-out;
@@ -429,6 +429,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 
 .gd-annotation {
 	position: absolute;
+	cursor: pointer;
 }
 
 .ui-resizable-handle {
@@ -477,16 +478,14 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 
 .gd-text-area-toolbar {      
-    cursor: auto;
-    position: absolute;
+    cursor: pointer;   
     border: 1px solid #8b8b8b;
-    top: -44px;
     left: 0;
-	width: 144px;
+    width: 144px;
     height: 32px;
-    display: inline-block;
-    background-color: #e0e0e0;
-    padding: 6px 0px 0px 26px;
+    background-color: #e0e0e0;   
+    visibility: hidden;
+	margin-bottom: 5px;
 }
 
 .gd-text-area-toolbar input:first-of-type {
@@ -508,7 +507,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 .gd-text-area-toolbar .fa-trash-o { 
     top: 7px;
     color: #3e4e5a;
-    right: 4px;
+    left: 123px;
     font-size: 17px;
 }
 
@@ -525,16 +524,16 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 	text-align: left;
 }
 
+.gd-annotation:hover > .gd-text-area-toolbar {
+	visibility: visible;
+}
+
 .gd-replace-tab {   
     background: #e9865b;
     font: 700 15px/30px 'PT Sans',sans-serif;
     height: 30px;
     width: 80px;
-    color: #fff;
-    text-align: center;
-    border-radius: 3px 3px 0 0;
-    top: -30px;
-    left: 0;
+    color: #fff;   
 }
 
 .gd-replace-text-area-text {
@@ -548,8 +547,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 
 .gd-replace-text-area {
-    display: block;
-    z-index: 1;      
+    margin-top: 12px;    
 }
 
 .gd-replace-text-area-text{

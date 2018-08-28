@@ -5,7 +5,22 @@
  * @author Aspose Pty Ltd
  * @version 1.0.0
  */
-
+ $(document).ready(function(){
+	 //////////////////////////////////////////////////
+    // enter text event
+    //////////////////////////////////////////////////  
+	$("#gd-panzoom").bind("change", ".gd-replace-text-area-text",  function(event){
+		var id = $(event.target).data("id");
+		$.each(annotationsList, function(index, elem){
+			if(elem.id == id){
+				elem.text = $(event.target).val();					
+			} else {
+				return true;
+			}
+		});			
+	});
+ });
+	 
 (function( $ ) {
 
 	/**
@@ -44,12 +59,13 @@
 			element = document.createElement('div');
 			element.className = 'gd-annotation';      
 			
-			element.innerHTML = getHtmlResizeHandles();
+				element.innerHTML = getHtmlResizeHandles();
+			
 			element.id = 'gd-' + prefix + '-annotation-' + annotationsCounter;  
 			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");
 			switch (prefix){
 				case "text":
-					var startCoordinates = setTextAnnotationCoordinates( mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")), mouse.y - canvasTopOffset + 5);
+					var startCoordinates = setTextAnnotationCoordinates(mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")), mouse.y - canvasTopOffset + 5);
 					element.style.left = startCoordinates.x + "px";
 					element.style.top = startCoordinates.y + "px";
 					element.style.height = startCoordinates.height + "px";
@@ -67,11 +83,13 @@
 					element.style.height = startCoordinates.height + "px";
 					annotationInnerHtml = getTextStrikeoutAnnotationHtml();
 					break
-				case "textField":
-					element.style.left =  mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - zoomCorrection.x + "px";
-					element.style.top =  mouse.y - canvasTopOffset - zoomCorrection.y + 5 + "px";
-					annotationInnerHtml = getTextFieldAnnotationHtml();
-					break;
+				case "textReplacement":
+					var startCoordinates = setTextAnnotationCoordinates( mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")), mouse.y - canvasTopOffset + 5);
+					element.style.left = startCoordinates.x + "px";
+					element.style.top = startCoordinates.y + "px";
+					element.style.height = startCoordinates.height + "px";
+					annotationInnerHtml = getTextAnnotationHtml();
+					break;					
 			}
 			
 			annotation.left = parseInt(element.style.left.replace("px", ""));
@@ -79,7 +97,7 @@
 			
 			element.appendChild(annotationInnerHtml);			
 			canvas.prepend(element);					
-			annotationsList.push(annotation);	
+			annotationsList.push(annotation);				
 			makeResizable(annotation);				
 			addComment(annotation);
 		} else {			
@@ -90,11 +108,14 @@
 				annotationsList[annotationsList.length - 1].width = parseInt(element.style.width.replace("px", ""));
 				annotationsList[annotationsList.length - 1].height = parseInt(element.style.height.replace("px", ""));					
 			}					
+			if(prefix == "textReplacement"){
+				element.appendChild(getTextReplaceAnnotationHtml(annotationsCounter));			
+			}
 			element = null;				
-			annotationInnerHtml = null;				
+			annotationInnerHtml = null;	
+			
 		}		
-		
-		 
+				 
 		canvas.onmousemove = function (e) {      
 			mouse = getMousePosition(e);
 			if (element !== null) {
@@ -130,13 +151,13 @@
 			return annotationHtml;
 		}
 		
-		function getTextFieldAnnotationHtml(){
-			var annotationHtml = '<div class="gd-text-area-toolbar">'+									
-									'<input type="text" class="gd-typewriter-font" value="Arial">'+
-									'<input type="number" value="10" class="gd-typewriter-font-size">'+
-									'<i class="fa fa-trash-o"></i>'+
-								'</div>'+
-								'<div class="gd-typewriter-text mousetrap" spellcheck="false" contenteditable="true">text field annotation</div>';
+		function getTextReplaceAnnotationHtml(id){
+			id = id - 1;
+			var annotationHtml = document.createElement('div');			
+			annotationHtml.className = "gd-replace-text-area";
+			annotationHtml.innerHTML = '<div class="gd-replace-tab">Replace</div>'+
+										'<textarea class="gd-replace-text-area-text mousetrap" data-id="' + id + '">replace text</textarea>';
+										
 			return annotationHtml;
 		}
 	}

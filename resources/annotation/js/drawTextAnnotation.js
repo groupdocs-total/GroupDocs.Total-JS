@@ -63,28 +63,30 @@
 			
 			element.id = 'gd-' + prefix + '-annotation-' + annotationsCounter;  
 			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");
+			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
 			switch (prefix){
-				case "text":
-					var startCoordinates = setTextAnnotationCoordinates(mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")), mouse.y - canvasTopOffset + 5);
+				case "text":					
+					var startCoordinates = setTextAnnotationCoordinates(x, y);
 					element.style.left = startCoordinates.x + "px";
 					element.style.top = startCoordinates.y + "px";
 					element.style.height = startCoordinates.height + "px";
 					annotationInnerHtml = getTextAnnotationHtml();
 					break
 				case "area":
-					element.style.left =  mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - zoomCorrection.x + "px";
-					element.style.top =  mouse.y - canvasTopOffset - zoomCorrection.y + 5 + "px";
+					element.style.left = x + "px";
+					element.style.top = y + "px";
 					annotationInnerHtml = getAreaAnnotationHtml();
 					break;
 				case "textStrikeout":
-					var startCoordinates = setTextAnnotationCoordinates( mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")), mouse.y - canvasTopOffset + 5);
+					var startCoordinates = setTextAnnotationCoordinates(x, y);
 					element.style.left = startCoordinates.x - zoomCorrection.x + "px";
 					element.style.top = startCoordinates.y - zoomCorrection.y + "px";
 					element.style.height = startCoordinates.height + "px";
 					annotationInnerHtml = getTextStrikeoutAnnotationHtml();
 					break
 				case "textReplacement":
-					var startCoordinates = setTextAnnotationCoordinates( mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")), mouse.y - canvasTopOffset + 5);
+					var startCoordinates = setTextAnnotationCoordinates(x, y);
 					element.style.left = startCoordinates.x + "px";
 					element.style.top = startCoordinates.y + "px";
 					element.style.height = startCoordinates.height + "px";
@@ -116,6 +118,19 @@
 			
 		}		
 				 
+		canvas.onmousedown = function(e) {
+			if(element != null){
+				canvas.onmousemove = null;
+				canvas.onmousedown = null;				
+				canvas.style.cursor = "default";
+				if($(ev.target).prop("tagName") == "IMG"){					
+					annotationsList[annotationsList.length - 1].width = parseInt(element.style.width.replace("px", ""));
+					annotationsList[annotationsList.length - 1].height = parseInt(element.style.height.replace("px", ""));					
+				}			
+				annotationInnerHtml = null;						
+			}
+		}
+		
 		canvas.onmousemove = function (e) {      
 			mouse = getMousePosition(e);
 			if (element !== null) {
@@ -127,8 +142,8 @@
 				}
 				annotation.width = parseInt(element.style.width.replace("px", ""));
 				annotation.height = parseInt(element.style.height.replace("px", ""));
-				annotationInnerHtml.style.width = parseInt(element.style.width);
-				annotationInnerHtml.style.height = parseInt(element.style.height);
+				annotationInnerHtml.style.width = parseInt(element.style.width) + "px";
+				annotationInnerHtml.style.height = parseInt(element.style.height) + "px";
 			}
 		}    
 		

@@ -1,5 +1,5 @@
 # GroupDocs.Total.JS UI Example
-###### version 0.2.3
+###### version 0.3.2
 
 
 ## Description

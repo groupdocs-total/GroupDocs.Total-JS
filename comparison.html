@@ -1,0 +1,27 @@
+<html>
+<head>
+    <title>GroupDocs.Comparison for Java Spring</title>
+    <link type="text/css" rel="stylesheet" href="resources/comparison/css/all.css"/>
+    <link type="text/css" rel="stylesheet" href="resources/common/css/swiper.min.css">
+    <link type="text/css" rel="stylesheet" href="resources/common/css/circle-progress.css"/>
+    <link type="text/css" rel="stylesheet" href="resources/viewer/css/viewer.css"/>
+    <link type="text/css" rel="stylesheet" href="resources/viewer/css/viewer.mobile.css"/>
+    <link type="text/css" rel="stylesheet" href="resources/viewer/css/viewer-dark.css"/>
+    <link type="text/css" rel="stylesheet" href="resources/comparison/css/comparison.css"/>
+    <link type="text/css" rel="stylesheet" href="resources/comparison/css/comparison.mobile.css"/>
+    <script type="text/javascript" src="resources/common/js/jquery.min.js"></script>
+    <script type="text/javascript" src="resources/common/js/swiper.min.js"></script>
+    <script type="text/javascript" src="resources/comparison/js/comparison.js"></script>
+</head>
+<body>
+<div id="element"></div>
+<script type="text/javascript">
+    $('#element').comparison({
+        applicationPath: 'http://localhost:8080/comparison/',
+        download: true,
+        upload: true,
+        print: true
+    });
+</script>
+</body>
+</html>

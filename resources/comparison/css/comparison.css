@@ -1,0 +1,168 @@
+#gd-header-logo {
+    background-image: url('../images/logo.png') !important;
+}
+#gd-dropZone-first.hover {
+    background: #ddd;
+    border-color: #aaa;
+}
+#gd-dropZone-second.hover {
+    background: #ddd;
+    border-color: #aaa;
+}
+#gd-url-cancel-first, #gd-url-cancel-second {
+    background: transparent;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+#gd-url-cancel-first i {
+    font-size: 21px;
+    margin-top: 5px;
+    margin-left: 6px;
+}
+#gd-add-url-first, #gd-add-url-second {
+    position: absolute;
+    top: 0;
+    color: #fff;
+    background-color: #3e4d59;
+    padding: 7px 16px 6px;
+    font-size: 12px;
+}
+#gd-url-cancel-second i {
+    font-size: 21px;
+    margin-top: 5px;
+    margin-left: 6px;
+}
+#gd-upload-files-table-first, #gd-upload-files-table-second {
+    width: 100%;
+    margin-bottom: 30px;
+    border-spacing: 0;
+}
+#gd-upload-files-table-first>tbody>tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+#gd-upload-files-table-first div div > i {
+    font-size: 21px;
+    position: absolute;
+    top: 25px;
+    left: 10px;
+}
+#gd-upload-files-table-first .gd-filetree-name {
+    position: absolute;
+    top: 20px;
+    left: 43px;
+    width: calc(100% - 260px);
+}
+#gd-upload-files-table-first .gd-filetree-name > span {
+    font-size: 12px;
+    font-weight: 300;
+    color: #9a9a9a;
+    margin-right: 15px;
+}
+#gd-upload-files-table-second>tbody>tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+#gd-upload-files-table-second div div > i {
+    font-size: 21px;
+    position: absolute;
+    top: 25px;
+    left: 10px;
+}
+#gd-upload-files-table-second .gd-filetree-name {
+    position: absolute;
+    top: 20px;
+    left: 43px;
+    width: calc(100% - 260px);
+}
+#gd-upload-files-table-second .gd-filetree-name > span {
+    font-size: 12px;
+    font-weight: 300;
+    color: #9a9a9a;
+    margin-right: 15px;
+}
+#gd-pages{
+    display: table;
+}
+.gd-drag-n-drop-wrap-compare {
+    margin-top: 0px;
+    width: unset;
+    height: unset;
+    border: 2px dashed #ccc;
+    background-color: #f8f8f8;
+    text-align: center;
+    cursor: default;
+    margin-bottom: 20px;
+    position: inherit;
+    padding-bottom: 7px;
+}
+.gd-drag-n-drop-wrap-compare h2 {
+    color: #cacaca;
+    margin: 5px 0;
+    font-size: 18px;
+    font-weight: 300;
+}
+.gd-drag-n-drop-wrap-compare h4 {
+    color: #cacaca;
+    font-weight: 300;
+    font-size: 14px;
+    margin: 10px 0;
+}
+.gd-drag-n-drop-wrap-compare h5 {
+    color: #afafaf;
+    font-weight: 200;
+    font-size: 12px;
+    margin: 20px 0 0 0;
+}
+#gd-pages section {
+    float: left;
+    padding: 20px 20px 20px;
+    width: 50%;
+}
+#gd-upload-section-first label {
+    background-color: #3e4e5a;
+    border-radius: 0px;
+    color: #ffffff;
+    padding-top: 9px;
+    padding-left: 7px;
+    display: inline-block;
+    text-align: center;
+    font-size: 11px;
+}
+#gd-upload-section-first label i {
+    margin-right: 10px;
+    margin-left: -10px;
+}
+#gd-upload-section-second label {
+    background-color: #3e4e5a;
+    border-radius: 0px;
+    color: #ffffff;
+    padding-top: 9px;
+    padding-left: 7px;
+    display: inline-block;
+    text-align: center;
+    font-size: 11px;
+}
+#gd-upload-section-second label i {
+    margin-right: 10px;
+    margin-left: -10px;
+}
+.gd-drag-n-drop-icon .fa-cloud-download-alt {
+    color: #efefef;
+    font-size: 80px;
+}
+.gd-browse-document i {
+    font-size: 108px;
+    color: #3e4e5a;
+    position: inherit;
+}
+.gd-browse-document{
+    margin-left: calc(50% - 73px);
+}
+.gd-modal-buttons {
+    position: initial;
+    display: inline-grid;
+    font-size: 14px;
+    width: 146px;
+    cursor: pointer;
+    text-align: center;
+}

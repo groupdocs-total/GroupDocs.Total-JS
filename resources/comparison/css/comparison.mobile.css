@@ -1,0 +1,115 @@
+@media (max-width: 1024px) {
+    #gd-dropZone-first, #gd-dropZone-second  {
+        width: 100%;
+        background: transparent;
+        border: 0;
+        height: auto;
+    }
+
+    #gd-url-button-first, #gd-url-button-second {
+        width: 46%;
+        height: 77px;
+        margin: 0 10px;
+        font-size: -webkit-xxx-large;
+    }
+
+    #gd-add-url-first, #gd-add-url-second {
+        right: -7px;
+        height: 89px;
+        border-radius: 0px;
+        width: 152px;
+        font-size: 51px;
+    }
+
+    #gd-url-cancel-first, #gd-url-cancel-second {
+        position: inherit;
+        top: -12px;
+        left: -800px;
+        width: 83px;
+        height: 90px;
+    }
+
+    #gd-upload-files-table-first, #gd-upload-files-table-second {
+        width: calc(100% - 20px);
+        margin: 20px 10px;
+    }
+
+    .swiper-slide-comparison {
+        width: 80%;
+    }
+
+    #gd-pages section {
+        padding: 20px 20px 20px;
+        width: 100%;
+    }
+
+    #gd-upload-section-first label {
+        width: calc(50% - 20px);
+        height: 77px;
+        font-size: 26px;
+        padding-top: 18px;
+    }
+
+    #gd-upload-section-first label > i {
+        font-size: 26px;
+    }
+
+    #gd-upload-section-first div {
+        font-size: 38px;
+    }
+
+    #gd-upload-files-table-first > div {
+        height: 185px !important;
+    }
+
+    #gd-upload-files-table-first div > i {
+        font-size: 40px !important;
+        top: 72px !important;
+    }
+
+    #gd-upload-files-table-first .gd-filetree-name {
+        top: 55px;
+        left: 75px;
+        width: calc(100% - 285px);
+    }
+
+    #gd-upload-files-table-first .gd-filetree-name > span {
+        font-size: 30px;
+        padding-left: 0;
+    }
+
+    #gd-upload-section-second label {
+        width: calc(50% - 20px);
+        height: 77px;
+        font-size: 26px;
+        padding-top: 18px;
+    }
+
+    #gd-upload-section-second label > i {
+        font-size: 26px;
+    }
+
+    #gd-upload-section-second div {
+        font-size: 38px;
+    }
+
+    #gd-upload-files-table-second > div {
+        height: 185px !important;
+    }
+
+    #gd-upload-files-table-second div > i {
+        font-size: 40px !important;
+        top: 72px !important;
+    }
+
+    #gd-upload-files-table-second .gd-filetree-name {
+        top: 55px;
+        left: 75px;
+        width: calc(100% - 285px);
+    }
+
+    #gd-upload-files-table-second .gd-filetree-name > span {
+        font-size: 30px;
+        padding-left: 0;
+    }
+}

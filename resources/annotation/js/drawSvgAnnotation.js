@@ -17,25 +17,28 @@
     };
     var element = null;	
 	var pointSvgSize = 25;
-	var svgCircle = {
-		x: 12,
-		y: 12,
-		r: 22
-	};		
-	var svgPolyline = {
-		width: 150,
-		height: 150		
-	};
+	var svgCircleRadius = 22;
+	
 	var zoomCorrection = {
 		x: 0,
 		y: 0
 	};
 	
+	var canvas = null;
+	var currentAnnotation = null;
+	var canvasTopOffset = null;
+	var currentPrefix = "";
+	
 	/**
 	 * Draw svg annotation	
 	 */
-	$.fn.drawSvgAnnotation = function() {
-		
+	$.fn.drawSvgAnnotation = function(documentPage, prefix) {		
+		canvas = documentPage;
+		currentAnnotation = annotation;
+		zoomCorrection.x = ($(canvas).offset().left * $(canvas).css("zoom")) - $(canvas).offset().left;
+		zoomCorrection.y = ($(canvas).offset().top * $(canvas).css("zoom")) - $(canvas).offset().top;	
+		canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");	
+		currentPrefix = prefix;
 	}
 	
 	/**
@@ -46,151 +49,121 @@
 		/**
 		* Draw point annotation
 		*/
-		drawPoint: function(canvas, annotationsList, annotation, annotationsCounter, event){
-			mouse = getMousePosition(event);				
-			annotation.id = annotationsCounter;	
-			element = document.createElement('div');
-			element.className = 'gd-annotation';
-			element.id = 'gd-point-annotation-' + annotationsCounter;
-			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");
-			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
-			element.style.left = x - 40 + "px";
-			element.style.top = y - 40 + "px";	
-			element.style.width = pointSvgSize + "px";
-			element.style.height = pointSvgSize + "px";
-			canvas.prepend(element);	
-			annotation.left = parseInt(element.style.left.replace("px", ""));
-			annotation.top = parseInt(element.style.top.replace("px", ""));	
-			annotationsList.push(annotation);	
-			makeResizable(annotation);				
-			addComment(annotation);
-			annotationsList[annotationsList.length - 1].width = parseInt(element.style.width.replace("px", ""));
-			annotationsList[annotationsList.length - 1].height = parseInt(element.style.height.replace("px", ""));				
-			var draw = SVG(element.id);
-			var circle = draw.circle(svgCircle.r);
-			circle.attr({
-				fill: 'red',			
-				stroke: 'black',
-				'stroke-width': 2,
-				'cx': svgCircle.x,
-				'cy': svgCircle.y
-			})
+		drawPoint: function(event){
+			if(currentPrefix == "polyline"){
+				mouse = getMousePosition(event);	
+				var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
+				var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);	
+				currentAnnotation.id = annotationsCounter;	
+				currentAnnotation.left = x;
+				currentAnnotation.top = y;	
+				currentAnnotation.width = pointSvgSize;
+				currentAnnotation.height = pointSvgSize;
+				annotationsList.push(currentAnnotation);
+				addComment(currentAnnotation);	
+				var circle = svgList[canvas.id].circle(svgCircleRadius);
+				circle.attr({
+					'fill': 'red',			
+					'stroke': 'black',
+					'stroke-width': 2,
+					'cx': x,
+					'cy': y,
+					'id': 'gd-point-annotation-' + annotationsCounter,
+					'class': 'gd-annotation annotation svg'
+				})
+			}
 		},
 		
 		/**
 		* Draw polyline annotation
 		*/
-		drawPolyline: function(canvas, annotationsList, annotation, annotationsCounter, event){
-			mouse = getMousePosition(event);
-			zoomCorrection.x = ($(canvas).offset().left * $(canvas).css("zoom")) - $(canvas).offset().left;
-			zoomCorrection.y = ($(canvas).offset().top * $(canvas).css("zoom")) - $(canvas).offset().top;			
-			annotation.id = annotationsCounter;	
-			element = document.createElement('div');
-			element.className = 'gd-annotation';
-			element.id = 'gd-polyline-annotation-' + annotationsCounter; 		
-			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");			
+		drawPolyline: function(event){
+			mouse = getMousePosition(event);	
 			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
-			element.style.left = x + "px";
-			element.style.top = y + "px";			
-			element.style.width = svgPolyline.width + "px";
-			element.style.height = svgPolyline.height + "px";			
-			canvas.prepend(element);				
-			var draw = SVG(element.id);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);	
+			currentAnnotation.id = annotationsCounter;		
 			const option = {
-				stroke: 'red',
+				'stroke': 'red',
 				'stroke-width': 2,
 				'fill-opacity': 0,
-				'transform': 'translate(-' + svgPolyline.width + ',-' + svgPolyline.height + ')'			  
+				'id': 'gd-polyline-annotation-' + annotationsCounter,
+				'class': 'gd-annotation annotation svg'						  
 			}
 			let line = null;		
-			line = draw.polyline().attr(option);			
+			line = svgList[canvas.id].polyline().attr(option);			
 			line.draw(event);					
-			draw.on('mousemove', event => {
+			svgList[canvas.id].on('mousemove', event => {
 			  if (line) {
 				line.draw('point', event);
 			  }
 			})
-			draw.on('click', event => {
-				if (line) {
-											
+			svgList[canvas.id].on('mouseup', event => {
+				if (line && currentPrefix == "polyline") {											
 					line.draw('stop', event);				
-					annotation.left = parseInt(element.style.left.replace("px", ""));
-					annotation.top = parseInt(element.style.top.replace("px", ""));	
-					annotation.width = parseInt(canvas.offsetWidth);
-					annotation.height = parseInt(canvas.offsetHeight);
-					annotation.svgPath = "M";
+					currentAnnotation.left = x;
+					currentAnnotation.top = y;	
+					currentAnnotation.width = line.width();
+					currentAnnotation.height = line.height();
+					currentAnnotation.svgPath = "M";
 					$.each(line.node.points, function(index, point){
-						annotation.svgPath = annotation.svgPath + point.x + "," + point.y + ".";
+						currentAnnotation.svgPath = currentAnnotation.svgPath + point.x + "," + point.y + ".";
 					});
-					annotation.svgPath = annotation.svgPath.slice(0,-1);
-					annotationsList.push(annotation);	
-					makeResizable(annotation);				
-					addComment(annotation);					
+					currentAnnotation.svgPath = currentAnnotation.svgPath.slice(0,-1);
+					annotationsList.push(currentAnnotation);							
+					addComment(currentAnnotation);					
+				}
+			});		
+		},
+		
+		/**
+		* Draw arrow annotation
+		*/
+		drawArrow: function(event){
+			mouse = getMousePosition(event);	
+			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);	
+			currentAnnotation.id = annotationsCounter;	
+			const option = {
+				'stroke': 'red',
+				'stroke-width': 2,
+				'fill-opacity': 0,
+				'id': 'gd-arrow-annotation-' + annotationsCounter,
+				'class': 'gd-annotation annotation svg'
+							  
+			}
+			let path = null;		 
+			path = svgList[canvas.id].path("M" + x + "," + y + " L" + x + "," + y).attr(option);			
+						
+			svgList[canvas.id].on('mousemove', event => {
+				if (path) {
+					mouse = getMousePosition(event);
+					var endX = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
+					var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
+					
+					path.plot("M" + x + "," + y + " L" + endX + "," + endY);
+					path.marker('end', 20, 20, function(add) {
+						var arrow = "M2,5 L2,14 L10,9 L2,5";
+						add.path(arrow);
+						
+						this.fill('red');
+					});	
+				}
+			})
+			svgList[canvas.id].on('mouseup', event => {
+				if (path && currentPrefix == "arrow") {						
+					currentAnnotation.left = x;
+					currentAnnotation.top = y;	
+					currentAnnotation.width = path.width();
+					currentAnnotation.height = path.height();
+					
+					currentAnnotation.svgPath = path.attr("d");				
+					annotationsList.push(currentAnnotation);
+					addComment(currentAnnotation);		
+					path = null;
 				}
 			});		
 		}
 	});
-	
-	/**
-		* Draw arrow annotation
-		*/
-		drawArrow: function(canvas, annotationsList, annotation, annotationsCounter, event){
-			mouse = getMousePosition(event);
-			zoomCorrection.x = ($(canvas).offset().left * $(canvas).css("zoom")) - $(canvas).offset().left;
-			zoomCorrection.y = ($(canvas).offset().top * $(canvas).css("zoom")) - $(canvas).offset().top;			
-			annotation.id = annotationsCounter;	
-			element = document.createElement('div');
-			element.className = 'gd-annotation';
-			element.id = 'gd-polyline-annotation-' + annotationsCounter; 		
-			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");			
-			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
-			element.style.left = x + "px";
-			element.style.top = y + "px";			
-				
-			canvas.prepend(element);				
-			var draw = SVG(element.id);
-			const option = {
-				stroke: 'red',
-				'stroke-width': 2,
-				'fill-opacity': 0
-							  
-			}
-			let line = null;		
-			line = draw.line(x, y, 0, 0).attr(option);			
-			line.draw(event);					
-			draw.on('mousemove', event => {
-			  if (line) {
-				line.plot(x, y, event.x, event.y);
-				line.marker('end', 10, 10, function(add) {
-				  add.circle(6).center(4, 5)
-				  add.circle(6).center(4, 15)
-				  add.circle(6).center(12, 10)
-
-				  this.fill('#0f9');
-			  }
-			})
-			draw.on('click', event => {
-				if (line) {
-											
-					line.draw('stop', event);				
-					annotation.left = parseInt(element.style.left.replace("px", ""));
-					annotation.top = parseInt(element.style.top.replace("px", ""));	
-					annotation.width = parseInt(canvas.offsetWidth);
-					annotation.height = parseInt(canvas.offsetHeight);
-					annotation.svgPath = "M";
-					$.each(line.node.points, function(index, point){
-						annotation.svgPath = annotation.svgPath + point.x + "," + point.y + ".";
-					});
-					annotation.svgPath = annotation.svgPath.slice(0,-1);
-					annotationsList.push(annotation);	
-					makeResizable(annotation);				
-					addComment(annotation);					
-				}
-			});		
-		},
 	
 	// This is custom extension of polyline, which doesn't draw the circle
 	SVG.Element.prototype.draw.extend('polyline', {
@@ -203,8 +176,8 @@
 
 			var p = this.startPoint,			
 			arr = [
-				[p.x, p.y],
-				[p.x, p.y]
+				[p.x - zoomCorrection.x, p.y - zoomCorrection.y],
+				[p.x - zoomCorrection.x, p.y - zoomCorrection.y]
 			];
 
 			this.el.plot(arr);

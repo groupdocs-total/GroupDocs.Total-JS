@@ -12,11 +12,11 @@
     // delete text field click event
     //////////////////////////////////////////////////  
 	$('#gd-panzoom').on('click', '.gd-text-field-delete', function(e){
-		var id = parseInt($(this.parentElement.parentElement).attr("id").replace ( /[^\d.]/g, '' ));
+		var id = parseInt($(this.parentElement.parentElement).find(".annotation").attr("id").replace ( /[^\d.]/g, '' ));
 		var annotationToRemove = $.grep(annotationsList, function(obj){return obj.id === id;})[0];	
 		annotationsList.splice($.inArray(annotationToRemove, annotationsList),1);
 		$(".gd-annotation").each(function(index, element){
-			if(parseInt($(element).attr("id").replace( /[^\d.]/g, '' )) == id){
+			if(parseInt($(element).find(".annotation").attr("id").replace( /[^\d.]/g, '' )) == id){
 				$(element).remove();
 			} else {
 				return true;
@@ -29,7 +29,7 @@
     //////////////////////////////////////////////////  
 	$("#gd-panzoom").on("input", ".gd-typewriter-font, .gd-typewriter-font-size", function(e){
 		var textArea = $(this.parentElement.parentElement).find("textarea")[0];
-		var id = parseInt($(this.parentElement.parentElement).attr("id").replace ( /[^\d.]/g, '' ));
+		var id = parseInt($(this.parentElement.parentElement).find(".annotation").attr("id").replace ( /[^\d.]/g, '' ));
 		var font = "Arial";
 		var fontSize = 10;
 		var currentAnnotation = $.grep(annotationsList, function(e){ return e.id == id; });
@@ -90,6 +90,8 @@
 	var startY = 0;
     var element = null;
 	var annotationInnerHtml = null;
+	var currentPrefix = "";
+	var idNumber = null;
 	
 	/**
 	 * Draw field annotation	
@@ -113,6 +115,8 @@
 		drawTextField: function(canvas, annotationsList, annotation, annotationsCounter, prefix, ev) {		
 			$('#gd-annotations-comments-toggle').prop('checked', false);
 			mouse = getMousePosition(ev);
+			currentPrefix = prefix;
+			idNumber = annotationsCounter;
 			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");
 			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
 			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
@@ -122,10 +126,8 @@
 			startX = mouse.x;
 			startY = mouse.y;
 			element = document.createElement('div');
-			element.className = 'gd-annotation';      
-			
-			element.innerHTML = getTextFieldAnnotationHtml(annotationsCounter);			
-			element.id = 'gd-' + prefix + '-annotation-' + annotationsCounter;  
+			element.className = 'gd-annotation';  			
+			element.innerHTML = getTextFieldAnnotationHtml(annotationsCounter);	
 			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");
 			element.style.left = x + "px";
 			element.style.top = y + "px";
@@ -151,7 +153,7 @@
 										'<input type="number" value="10" class="gd-typewriter-font-size">'+
 										'<i class="fa fa-trash-o gd-text-field-delete"></i>'+
 									'</div>';
-		var annotationTextFieldHtml = '<textarea class="gd-typewriter-text mousetrap" data-id="' + id + '">Enter annotation text here</textarea>';
+		var annotationTextFieldHtml = '<textarea class="gd-typewriter-text mousetrap annotation" id="gd-' + currentPrefix + '-annotation-' + idNumber + '">Enter annotation text here</textarea>';
 		return annotationToolBarHtml + annotationTextFieldHtml;
 	}
 })(jQuery);

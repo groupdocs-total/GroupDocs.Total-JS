@@ -11,6 +11,10 @@
     bottom: -3px !important;
 }
 
+.gd-page {
+	position: relative;
+}
+
 /*
 ******************************************
 ANNOTATIONS TOOL BAR
@@ -20,7 +24,7 @@ ANNOTATIONS TOOL BAR
 	width: 136px;
     height: 50%;
     position: absolute;
-    top: 33%;
+    top: 28%;
 }
 
 .gd-annotations-toggle {
@@ -35,7 +39,7 @@ ANNOTATIONS TOOL BAR
 
 .gd-lbl-toggle {   
     color: #959da5;
-    z-index: 9999;
+    top: 47%;
     cursor: pointer;     	
     position: absolute;  
 }
@@ -430,12 +434,17 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 .gd-annotation {
 	position: absolute;
 	cursor: pointer;
+	z-index: 2;
+}
+
+.gd-drawn-annotation {
+	cursor: pointer;
 }
 
 .ui-resizable-handle {
     background-color: rgba(0,0,0,.75);
     width: 8px;
-    height: 8px;
+    height: 8px;	
 }
 
 .gd-annotation i{
@@ -448,33 +457,42 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 .gd-text-annotation {
     background-color: #28f;
     opacity: .3;
-    filter: alpha(opacity=20);
-    padding: 0 6px 6px 0;   
-    cursor: text;   
-    z-index: 1;
+    filter: alpha(opacity=20);   
+}
+
+.gd-textRedaction-annotation {
+    background-color: #28f;    
+    padding: 0 6px 6px 0;  
 }
 
 .gd-area-annotation {  
 	border-width: 5px;
 	border-color: #30abd4;
-	border-style: double;	
-	z-index: 1;
+	border-style: double;
 }
 
-.gd-textstrikeout-annotation {   
+.gd-resourcesRedaction-annotation {  
+	border-width: 5px;
+	border-color: #30abd4;
+	border-style: double;
+	background-color: blue;
+}
+
+.gd-textStrikeout-annotation {   
     z-index: 24;
     cursor: pointer;
 }
 
-.gd-textstrikeout-line {   
+.gd-textStrikeout-line {   
     top: 50%;
     height: 2px;
     width: 100%;
     background-color: red;   
+	position: absolute;
 }
 
 .gd-typewriter-text-area {
-    z-index: 1;        
+    z-index: 2;        
 }
 
 .gd-text-area-toolbar {      
@@ -569,6 +587,8 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 
 svg {	
-    left: 0;
-	z-index: 1;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;	
 }

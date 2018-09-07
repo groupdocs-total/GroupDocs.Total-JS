@@ -15,6 +15,15 @@
 	position: relative;
 }
 
+.gd-disable-select {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none;   /* Chrome/Safari/Opera */
+    -khtml-user-select: none;    /* Konqueror */
+    -moz-user-select: none;      /* Firefox */
+    -ms-user-select: none;       /* Internet Explorer/Edge */
+    user-select: none;           /* Non-prefixed version, currently supported by any browser but < IE9 */
+}
+
 /*
 ******************************************
 ANNOTATIONS TOOL BAR
@@ -437,24 +446,13 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 	z-index: 2;
 }
 
-.gd-drawn-annotation {
-	cursor: pointer;
-}
-
 .ui-resizable-handle {
     background-color: rgba(0,0,0,.75);
     width: 8px;
     height: 8px;	
 }
 
-.gd-annotation i{
-	position: absolute; 
-    font-size: 25px;
-    color: #af2025;   
-    cursor: pointer;	
-}
-
-.gd-text-annotation {
+.gd-text-annotation, .gd-textReplacement-annotation {
     background-color: #28f;
     opacity: .3;
     filter: alpha(opacity=20);   
@@ -465,25 +463,16 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     padding: 0 6px 6px 0;  
 }
 
-.gd-area-annotation {  
+.gd-area-annotation, .gd-resourcesRedaction-annotation {  
 	border-width: 5px;
 	border-color: #30abd4;
 	border-style: double;
 }
-
-.gd-resourcesRedaction-annotation {  
-	border-width: 5px;
-	border-color: #30abd4;
-	border-style: double;
+.gd-resourcesRedaction-annotation {  	
 	background-color: blue;
 }
 
-.gd-textStrikeout-annotation {   
-    z-index: 24;
-    cursor: pointer;
-}
-
-.gd-textStrikeout-line {   
+.gd-textStrikeout-line, .gd-textUnderline-line {   
     top: 50%;
     height: 2px;
     width: 100%;
@@ -491,42 +480,41 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 	position: absolute;
 }
 
-.gd-typewriter-text-area {
-    z-index: 2;        
+.gd-textUnderline-line {
+	top: 100%;	
+	background-color: #78e45c;
 }
 
 .gd-text-area-toolbar {      
-    cursor: pointer;   
-    border: 1px solid #8b8b8b;
-    left: 0;
+    border: 1px solid #8b8b8b;   
+    border-radius: 0;
     width: 144px;
     height: 32px;
-    background-color: #e0e0e0;   
+    background-color: #e0e0e0;
     visibility: hidden;
-	margin-bottom: 5px;
+    margin-bottom: 5px;
+    padding: 5px 0 0 0;
+}
+
+.gd-text-area-toolbar input {
+    margin-right: 5px;
+	font-size: 12px;
 }
 
 .gd-text-area-toolbar input:first-of-type {
-	width: 77px;
-    position: absolute;
-    top: 7px;
+	width: 77px;   
     font-size: 12px;
-    left: 2px;
 }
 
 .gd-typewriter-font-size {
-	width: 32px;
-    position: absolute;
-    top: 7px;
-    left: 83px;
-    font-size: 12px;
+	width: 32px;     
 }
 
-.gd-text-area-toolbar .fa-trash-o { 
-    top: 7px;
-    color: #3e4e5a;
-    left: 123px;
-    font-size: 17px;
+.gd-text-field-delete {
+    top: 1px;
+    color: #3e4e5a;  
+    font-size: 17px;  
+    position: relative;
 }
 
 .gd-typewriter-text {
@@ -562,16 +550,13 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     -webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.6);
     -moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.6);
     box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.6);
+	width: 209px;
+    height: 34px;
+    display: block;
 }
 
 .gd-replace-text-area {
     margin-top: 12px;    
-}
-
-.gd-replace-text-area-text{
-    width: 209px;
-    height: 34px;
-    display: block;
 }
 
 .gd-distance-text {
@@ -579,11 +564,6 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 	text-anchor: middle; 
 	font: 10px Arial; 
 	stroke-opacity: 1;
-}
-
-.gd-point-svg {
-	height: 25px;
-	width: 25px;
 }
 
 svg {	

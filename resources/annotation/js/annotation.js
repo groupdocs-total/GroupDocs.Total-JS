@@ -63,6 +63,7 @@ $(document).ready(function(){
 				return true;
 			} else {
 				if(!(page.id in svgList)){
+					$(page).addClass("gd-disable-select");
 					var draw = SVG(page.id).size(page.offsetWidth, page.offsetHeight);
 					svgList[page.id] = draw;
 					draw = null;
@@ -98,14 +99,20 @@ $(document).ready(function(){
 	//////////////////////////////////////////////////
     // activate currently selected annotation tool
     //////////////////////////////////////////////////
-    $('.gd-tools-container').on('click', function(e){		
-        $(e.target).parent().parent().find(".gd-tool-field").each(function(index, tool){
-			if($(tool).is( ".active" ) ) {
+    $('.gd-tools-container').on('click', function(e){	
+		var currentlyActive = null;
+		$(".gd-tool-field").each(function(index, tool){
+			if($(tool).is( ".active" )) {				
 				$(tool).removeClass("active");
-			}
+				currentlyActive = $(tool)[0];
+			}			
 		});
-		$(e.target).addClass("active");	
-		annotationType = $(e.target).data("type");		
+		if(e.target != currentlyActive) {
+			$(e.target).addClass("active");	
+			annotationType = $(e.target).data("type");
+		} else {
+			annotationType = null;
+		}				
     });
 		
 	//////////////////////////////////////////////////
@@ -201,6 +208,19 @@ $(document).ready(function(){
 				case "resourcesRedaction":					
 					++annotationsCounter;
 					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "resourcesRedaction", e);							
+					annotation = null;
+					break;
+				case "textUnderline":					
+					++annotationsCounter;
+					getTextCoordinates(annotation.pageNumber, function(){	
+						$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textUnderline", e);							
+						annotation = null;
+					});
+					break;
+				case "distance":					
+					++annotationsCounter;
+					$.fn.drawSvgAnnotation($(e.target).parent()[0], "distance");
+					$.fn.drawSvgAnnotation.drawDistance(e);							
 					annotation = null;
 					break;
 			}				
@@ -399,8 +419,7 @@ function setTextAnnotationCoordinates(mouseX, mouseY) {
 	} else if (mouseY > rows[rows.length - 1].lineTop){
 		mouseY = rows[rows.length - 1].lineTop;
 	}
-	for(var i = 0; i < rows.length; i++){
-		
+	for(var i = 0; i < rows.length; i++){		
 		if(mouseY >= rows[i].lineTop && mouseY <= rows[i + 1].lineTop){
 			correctCoordinates.y = rows[i].lineTop;
 			correctCoordinates.height = rows[i].lineHeight;
@@ -478,7 +497,7 @@ function deleteAnnotation(event){
 	annotationsList.splice($.inArray(annotationToRemove, annotationsList),1);
 	$(".gd-annotation").each(function(index, element){
 		var id = null;
-		if(element.tagName == "path"){
+		if($(element).hasClass("svg")){
 			id = parseInt($(element).attr("id").replace( /[^\d.]/g, '' ));			
 		} else {
 			id = parseInt($(element).find(".annotation").attr("id").replace( /[^\d.]/g, '' ));

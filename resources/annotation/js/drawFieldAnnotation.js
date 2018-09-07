@@ -16,10 +16,12 @@
 		var annotationToRemove = $.grep(annotationsList, function(obj){return obj.id === id;})[0];	
 		annotationsList.splice($.inArray(annotationToRemove, annotationsList),1);
 		$(".gd-annotation").each(function(index, element){
-			if(parseInt($(element).find(".annotation").attr("id").replace( /[^\d.]/g, '' )) == id){
-				$(element).remove();
-			} else {
-				return true;
+			if(!$(element).hasClass("svg")){
+				if(parseInt($(element).find(".annotation").attr("id").replace( /[^\d.]/g, '' )) == id){
+					$(element).remove();
+				} else {
+					return true;
+				}
 			}
 		});	
 	});
@@ -112,14 +114,15 @@
 		 * @param {int} annotationsCounter - Current annotation number
 		 * @param {Onject} ev - Current event
 		 */
-		drawTextField: function(canvas, annotationsList, annotation, annotationsCounter, prefix, ev) {		
+		drawTextField: function(canvas, annotationsList, annotation, annotationsCounter, prefix, ev) {	
+			event.stopPropagation();
 			$('#gd-annotations-comments-toggle').prop('checked', false);
 			mouse = getMousePosition(ev);
 			currentPrefix = prefix;
 			idNumber = annotationsCounter;
 			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");
-			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
+			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
 			zoomCorrection.x = ($(canvas).offset().left * $(canvas).css("zoom")) - $(canvas).offset().left;
 			zoomCorrection.y = ($(canvas).offset().top * $(canvas).css("zoom")) - $(canvas).offset().top;
 			annotation.id = annotationsCounter;				

@@ -30,14 +30,12 @@
         x: 0,
         y: 0       
     };
-	var zoomCorrection = {
-		x: 0,
-		y: 0
-	};
+	
 	var startX = 0;
 	var startY = 0;
     var element = null;
 	var annotationInnerHtml = null;	
+	var lineInnerHtml = null;
 	var currentPrefix = "";
 	var idNumber = null;
 	
@@ -49,11 +47,9 @@
 	 * @param {int} annotationsCounter - Current annotation number
 	 * @param {Onject} ev - Current event
 	 */
-	$.fn.drawTextAnnotation = function(canvas, annotationsList, annotation, annotationsCounter, prefix, ev) {	
+	$.fn.drawTextAnnotation = function(canvas, annotationsList, annotation, annotationsCounter, prefix, ev) {		
 		currentPrefix = prefix;
-		idNumber = annotationsCounter;
-		zoomCorrection.x = ($(canvas).offset().left * $(canvas).css("zoom")) - $(canvas).offset().left;
-		zoomCorrection.y = ($(canvas).offset().top * $(canvas).css("zoom")) - $(canvas).offset().top;	
+		idNumber = annotationsCounter;		
 		mouse = getMousePosition(ev)
 		if(element == null && ($(ev.target).prop("tagName") == "IMG" || $(ev.target).prop("tagName") == "svg")){			
 			annotation.id = idNumber;	
@@ -65,53 +61,65 @@
 			element.innerHTML = getHtmlResizeHandles();			
 			
 			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");
-			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
+			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
 			switch (currentPrefix){
 				case "text":					
 					var startCoordinates = setTextAnnotationCoordinates(x, y);
 					element.style.left = startCoordinates.x + "px";
 					element.style.top = startCoordinates.y + "px";
 					element.style.height = startCoordinates.height + "px";
-					annotationInnerHtml = getTextAnnotationHtml();
+					annotationInnerHtml = getAnnotationHtml();
 					break
 				case "area":
 					element.style.left = x + "px";
 					element.style.top = y + "px";
-					annotationInnerHtml = getAreaAnnotationHtml();
+					annotationInnerHtml = getAnnotationHtml();
 					break;
 				case "textStrikeout":
 					var startCoordinates = setTextAnnotationCoordinates(x, y);
 					element.style.left = startCoordinates.x + "px";
 					element.style.top = startCoordinates.y + "px";
 					element.style.height = startCoordinates.height + "px";
-					annotationInnerHtml = getTextStrikeoutAnnotationHtml();
+					annotationInnerHtml = getTextLineAnnotationHtml();
+					lineInnerHtml = getLineHtml();
 					break
 				case "textReplacement":
 					var startCoordinates = setTextAnnotationCoordinates(x, y);
 					element.style.left = startCoordinates.x + "px";
 					element.style.top = startCoordinates.y + "px";
 					element.style.height = startCoordinates.height + "px";
-					annotationInnerHtml = getTextAnnotationHtml();
+					annotationInnerHtml = getAnnotationHtml();
 					break;		
 				case "textRedaction":
 					var startCoordinates = setTextAnnotationCoordinates(x, y);
 					element.style.left = startCoordinates.x + "px";
 					element.style.top = startCoordinates.y + "px";
 					element.style.height = startCoordinates.height + "px";
-					annotationInnerHtml = getTextRedactionAnnotationHtml();
+					annotationInnerHtml = getAnnotationHtml();
 					break;	
 				case "resourcesRedaction":
 					element.style.left = x + "px";
 					element.style.top = y + "px";
-					annotationInnerHtml = getResourceRedactionAnnotationHtml();
-					break;					
+					annotationInnerHtml = getAnnotationHtml();
+					break;	
+				case "textUnderline":
+					var startCoordinates = setTextAnnotationCoordinates(x, y);
+					element.style.left = startCoordinates.x + "px";
+					element.style.top = startCoordinates.y + "px";
+					element.style.height = startCoordinates.height + "px";
+					annotationInnerHtml = getTextLineAnnotationHtml();
+					lineInnerHtml = getLineHtml();
+					break					
 			}
 			
-			annotation.left = parseInt(element.style.left.replace("px", "")) - zoomCorrection.x;
+			annotation.left = parseInt(element.style.left.replace("px", ""));
 			annotation.top = parseInt(element.style.top.replace("px", ""));	
 			
-			element.appendChild(annotationInnerHtml);			
+			element.appendChild(annotationInnerHtml);	
+			if(lineInnerHtml != null) {
+				element.appendChild(lineInnerHtml);					
+			}
 			canvas.prepend(element);					
 			annotationsList.push(annotation);				
 			makeResizable(annotation);				
@@ -125,7 +133,7 @@
 			}	
 			element = null;				
 			annotationInnerHtml = null;	
-			
+			lineInnerHtml = null;			
 		}		
 				 
 		canvas.onmouseup = function(e) {
@@ -140,7 +148,9 @@
 					annotationsList[annotationsList.length - 1].width = parseInt(element.style.width.replace("px", ""));
 					annotationsList[annotationsList.length - 1].height = parseInt(element.style.height.replace("px", ""));					
 				}			
-				annotationInnerHtml = null;						
+				annotationInnerHtml = null;	
+				lineInnerHtml = null;
+				element = null;
 			}
 		}
 		
@@ -156,32 +166,17 @@
 				annotation.width = parseInt(element.style.width.replace("px", ""));
 				annotation.height = parseInt(element.style.height.replace("px", ""));
 				annotationInnerHtml.style.width = parseInt(element.style.width) + "px";
-				annotationInnerHtml.style.height = parseInt(element.style.height) + "px";
+				annotationInnerHtml.style.height = parseInt(element.style.height) + "px";				
 			}
 		}    
 		
-		function getTextAnnotationHtml(){
+		function getAnnotationHtml(){
 			var annotationHtml = document.createElement('div');
-			annotationHtml.className = 'gd-text-annotation annotation';
+			annotationHtml.className = 'gd-' + currentPrefix + '-annotation annotation';
 			annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber; 
 			return annotationHtml;
-		}
-		
-		function getAreaAnnotationHtml(){
-			var annotationHtml = document.createElement('div');
-			annotationHtml.className = 'gd-area-annotation annotation';
-			annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber; 
-			return annotationHtml;
-		}
-		
-		function getTextStrikeoutAnnotationHtml(){
-			var annotationHtml = document.createElement('div');
-			annotationHtml.className = 'gd-textStrikeout-annotation annotation';
-			annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber; 
-			annotationHtml.innerHTML = '<div class="gd-textStrikeout-line"></div>';
-			return annotationHtml;
-		}
-		
+		}		
+						
 		function getTextReplaceAnnotationHtml(){		
 			var annotationHtml = document.createElement('div');			
 			annotationHtml.className = "gd-replace-text-area annotation";
@@ -190,20 +185,19 @@
 										'<textarea class="gd-replace-text-area-text mousetrap" data-id="' + idNumber + '">replace text</textarea>';
 										
 			return annotationHtml;
-		}
-		
-		function getTextRedactionAnnotationHtml(){
+		}	
+			
+		function getTextLineAnnotationHtml(){
 			var annotationHtml = document.createElement('div');
-			annotationHtml.className = 'gd-' + currentPrefix + '-annotation annotation';
-			annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber; 
+			annotationHtml.className = 'gd-' + currentPrefix + '-annotation gd-text-annotation annotation';
+			annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber; 			
 			return annotationHtml;
 		}
 		
-		function getResourceRedactionAnnotationHtml(){
+		function getLineHtml(){
 			var annotationHtml = document.createElement('div');
-			annotationHtml.className = 'gd-' + currentPrefix + '-annotation annotation';
-			annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber; 
-			return annotationHtml;
+			annotationHtml.className = 'gd-' + currentPrefix + '-line';			
+			return annotationHtml;			
 		}
 	}
 })(jQuery);

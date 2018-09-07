@@ -49,29 +49,27 @@
 		/**
 		* Draw point annotation
 		*/
-		drawPoint: function(event){
-			if(currentPrefix == "polyline"){
-				mouse = getMousePosition(event);	
-				var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-				var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);	
-				currentAnnotation.id = annotationsCounter;	
-				currentAnnotation.left = x;
-				currentAnnotation.top = y;	
-				currentAnnotation.width = pointSvgSize;
-				currentAnnotation.height = pointSvgSize;
-				annotationsList.push(currentAnnotation);
-				addComment(currentAnnotation);	
-				var circle = svgList[canvas.id].circle(svgCircleRadius);
-				circle.attr({
-					'fill': 'red',			
-					'stroke': 'black',
-					'stroke-width': 2,
-					'cx': x,
-					'cy': y,
-					'id': 'gd-point-annotation-' + annotationsCounter,
-					'class': 'gd-annotation annotation svg'
-				})
-			}
+		drawPoint: function(event){			
+			mouse = getMousePosition(event);	
+			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);	
+			currentAnnotation.id = annotationsCounter;	
+			currentAnnotation.left = x;
+			currentAnnotation.top = y;	
+			currentAnnotation.width = pointSvgSize;
+			currentAnnotation.height = pointSvgSize;
+			annotationsList.push(currentAnnotation);
+			addComment(currentAnnotation);	
+			var circle = svgList[canvas.id].circle(svgCircleRadius);
+			circle.attr({
+				'fill': 'red',			
+				'stroke': 'black',
+				'stroke-width': 2,
+				'cx': x,
+				'cy': y,
+				'id': 'gd-point-annotation-' + annotationsCounter,
+				'class': 'gd-annotation annotation svg'
+			})			
 		},
 		
 		/**
@@ -79,8 +77,8 @@
 		*/
 		drawPolyline: function(event){
 			mouse = getMousePosition(event);	
-			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);	
+			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);	
 			currentAnnotation.id = annotationsCounter;		
 			const option = {
 				'stroke': 'red',
@@ -120,8 +118,8 @@
 		*/
 		drawArrow: function(event){
 			mouse = getMousePosition(event);	
-			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);	
+			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);	
 			currentAnnotation.id = annotationsCounter;	
 			const option = {
 				'stroke': 'red',
@@ -137,12 +135,12 @@
 			svgList[canvas.id].on('mousemove', event => {
 				if (path) {
 					mouse = getMousePosition(event);
-					var endX = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin")) * 2);
-					var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin")) * 2);
+					var endX = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
+					var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
 					
 					path.plot("M" + x + "," + y + " L" + endX + "," + endY);
 					path.marker('end', 20, 20, function(add) {
-						var arrow = "M2,5 L2,14 L10,9 L2,5";
+						var arrow = "M0,7 L0,13 L12,10 z";
 						add.path(arrow);
 						
 						this.fill('red');
@@ -151,6 +149,67 @@
 			})
 			svgList[canvas.id].on('mouseup', event => {
 				if (path && currentPrefix == "arrow") {						
+					currentAnnotation.left = x;
+					currentAnnotation.top = y;	
+					currentAnnotation.width = path.width();
+					currentAnnotation.height = path.height();
+					
+					currentAnnotation.svgPath = path.attr("d");				
+					annotationsList.push(currentAnnotation);
+					addComment(currentAnnotation);		
+					path = null;
+				}
+			});		
+		},
+		
+		/**
+		* Draw distance annotation
+		*/
+		drawDistance: function(event){
+			mouse = getMousePosition(event);	
+			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
+			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);	
+			currentAnnotation.id = annotationsCounter;	
+			const option = {
+				'stroke': 'red',
+				'stroke-width': 1,
+				'fill-opacity': 0,
+				'id': 'gd-arrow-annotation-' + annotationsCounter,
+				'class': 'gd-annotation annotation svg'
+							  
+			};
+			const textOptions = {
+				'font-size': "10px"
+			};
+			let path = null;		 
+			path = svgList[canvas.id].path("M" + x + "," + y + " L" + x + "," + y).attr(option);			
+			let text = null;
+			text = svgList[canvas.id].text("0px").attr(textOptions);
+			svgList[canvas.id].on('mousemove', event => {
+				if (path) {
+					mouse = getMousePosition(event);
+					var endX = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
+					var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
+					
+					path.plot("M" + x + "," + y + " L" + endX + "," + endY);
+					text.path("M" + x + "," + (y - 3) + " L" + endX + "," + (endY - 3)).move(path.width() / 2, y).tspan(Math.round(path.width()) + "px");
+					path.marker('start', 20, 20, function(add) {
+						var arrow = "M12,7 L12,13 L0,10 z";						
+						add.path(arrow);
+						add.rect(1, 20).cx(0).fill('red')						
+						this.fill('red');
+					});						
+					path.marker('end', 20, 20, function(add) {
+						var arrow = "M0,7 L0,13 L12,10 z";
+						add.path(arrow);
+						add.rect(1, 20).cx(10).fill('red')
+						this.fill('red');
+						currentAnnotation.text = path.width() + "px";
+					});	
+				}
+			})
+			svgList[canvas.id].on('mouseup', event => {
+				if (path) {
 					currentAnnotation.left = x;
 					currentAnnotation.top = y;	
 					currentAnnotation.width = path.width();

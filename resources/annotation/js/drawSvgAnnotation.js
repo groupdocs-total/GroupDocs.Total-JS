@@ -102,13 +102,26 @@
 					currentAnnotation.top = y;	
 					currentAnnotation.width = line.width();
 					currentAnnotation.height = line.height();
-					currentAnnotation.svgPath = "M";
-					$.each(line.node.points, function(index, point){
-						currentAnnotation.svgPath = currentAnnotation.svgPath + point.x + "," + point.y + ".";
+					currentAnnotation.svgPath = "M";	
+					var previousX = 0;
+					var previousY = 0;
+					$.each(line.node.points, function(index, point){										
+						if(index == 0){
+							currentAnnotation.svgPath = currentAnnotation.svgPath + point.x + "," + point.y + "l";							
+							previousX = point.x;
+							previousY = point.y;
+						} else {				
+							previousX =  point.x - previousX;
+							previousY =  point.y - previousY;
+							currentAnnotation.svgPath = currentAnnotation.svgPath + previousX + "," + previousY + "l";	
+							previousX = point.x;
+							previousY = point.y;							
+						}
 					});
 					currentAnnotation.svgPath = currentAnnotation.svgPath.slice(0,-1);
 					annotationsList.push(currentAnnotation);							
-					addComment(currentAnnotation);					
+					addComment(currentAnnotation);	
+					line = null;
 				}
 			});		
 		},
@@ -172,14 +185,15 @@
 			currentAnnotation.id = annotationsCounter;	
 			const option = {
 				'stroke': 'red',
-				'stroke-width': 1,
+				'stroke-width': 2,
 				'fill-opacity': 0,
-				'id': 'gd-arrow-annotation-' + annotationsCounter,
+				'id': 'gd-distance-annotation-' + annotationsCounter,
 				'class': 'gd-annotation annotation svg'
 							  
 			};
 			const textOptions = {
-				'font-size': "10px"
+				'font-size': "10px",
+				'data-id': currentAnnotation.id 
 			};
 			let path = null;		 
 			path = svgList[canvas.id].path("M" + x + "," + y + " L" + x + "," + y).attr(option);			

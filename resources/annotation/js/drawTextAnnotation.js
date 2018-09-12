@@ -9,7 +9,7 @@
 	 //////////////////////////////////////////////////
     // enter text event
     //////////////////////////////////////////////////  
-	$("#gd-panzoom").bind("change", ".gd-replace-text-area-text",  function(event){
+	$("#gd-panzoom").bind("keyup", ".gd-replace-text-area-text",  function(event){
 		var id = $(event.target).data("id");
 		$.each(annotationsList, function(index, elem){
 			if(elem.id == id){
@@ -62,10 +62,10 @@
 			
 			var canvasTopOffset = $(canvas).offset().top * $(canvas).css("zoom");
 			var x = mouse.x - ($(canvas).offset().left * $(canvas).css("zoom")) - (parseInt($(canvas).css("margin-left")) * 2);
-			var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
+			var y = mouse.y - (canvasTopOffset + (parseInt($(canvas).css("margin-top")) * 2));
 			switch (currentPrefix){
 				case "text":					
-					var startCoordinates = setTextAnnotationCoordinates(x, y);
+					var startCoordinates = setTextAnnotationCoordinates(x, y - 2);
 					element.style.left = startCoordinates.x + "px";
 					element.style.top = startCoordinates.y + "px";
 					element.style.height = startCoordinates.height + "px";
@@ -113,8 +113,8 @@
 					break					
 			}
 			
-			annotation.left = parseInt(element.style.left.replace("px", ""));
-			annotation.top = parseInt(element.style.top.replace("px", ""));	
+			annotation.left = parseFloat(element.style.left.replace("px", ""));
+			annotation.top = parseFloat(element.style.top.replace("px", ""));	
 			
 			element.appendChild(annotationInnerHtml);	
 			if(lineInnerHtml != null) {
@@ -128,8 +128,8 @@
 			canvas.onmousemove = null;			 		
 			canvas.style.cursor = "default";
 			if($(ev.target).prop("tagName") == "IMG"){					
-				annotationsList[annotationsList.length - 1].width = parseInt(element.style.width.replace("px", ""));
-				annotationsList[annotationsList.length - 1].height = parseInt(element.style.height.replace("px", ""));					
+				annotationsList[annotationsList.length - 1].width = parseFloat(element.style.width.replace("px", ""));
+				annotationsList[annotationsList.length - 1].height = parseFloat(element.style.height.replace("px", ""));					
 			}	
 			element = null;				
 			annotationInnerHtml = null;	
@@ -145,8 +145,8 @@
 				canvas.onmouseup = null;				
 				canvas.style.cursor = "default";
 				if($(ev.target).prop("tagName") == "IMG"){					
-					annotationsList[annotationsList.length - 1].width = parseInt(element.style.width.replace("px", ""));
-					annotationsList[annotationsList.length - 1].height = parseInt(element.style.height.replace("px", ""));					
+					annotationsList[annotationsList.length - 1].width = parseFloat(element.style.width.replace("px", ""));
+					annotationsList[annotationsList.length - 1].height = parseFloat(element.style.height.replace("px", ""));					
 				}			
 				annotationInnerHtml = null;	
 				lineInnerHtml = null;
@@ -163,10 +163,10 @@
 					element.style.width = Math.abs(mouse.x - startX) + "px";	
 					element.style.height = Math.abs(mouse.y - startY) + "px";						
 				}
-				annotation.width = parseInt(element.style.width.replace("px", ""));
-				annotation.height = parseInt(element.style.height.replace("px", ""));
-				annotationInnerHtml.style.width = parseInt(element.style.width) + "px";
-				annotationInnerHtml.style.height = parseInt(element.style.height) + "px";				
+				annotation.width = parseFloat(element.style.width.replace("px", ""));
+				annotation.height = parseFloat(element.style.height.replace("px", ""));
+				annotationInnerHtml.style.width = parseFloat(element.style.width) + "px";
+				annotationInnerHtml.style.height = parseFloat(element.style.height) + "px";				
 			}
 		}    
 		

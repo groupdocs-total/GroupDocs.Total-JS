@@ -63,7 +63,7 @@
 	//////////////////////////////////////////////////
     // enter text event
     //////////////////////////////////////////////////  
-	$("#gd-panzoom").bind("change", ".gd-typewriter-text",  function(event){
+	$("#gd-panzoom").bind("keyup", ".gd-typewriter-text",  function(event){
 		var id = $(event.target).data("id");
 		$.each(annotationsList, function(index, elem){
 			if(elem.id == id){
@@ -141,10 +141,11 @@
 				$(this).focus();
 			})			
 			element.style.top = parseInt(element.style.top) - parseInt(($(element).find(".gd-text-area-toolbar").height() + $(element).find(".gd-text-area-toolbar").css("margin-bottom"))) + "px";
-			annotation.width = $(element).width();
-			annotation.height = $(element).height();	
+			annotation.width = $(element).find("textarea").width();
+			annotation.height = $(element).find("textarea").height();	
 			annotation.left = parseInt(element.style.left.replace("px", ""));
-			annotation.top = parseInt(element.style.top.replace("px", ""));			
+			var dashboardHeight = parseInt($(element).find(".gd-text-area-toolbar").css("margin-bottom")) + parseInt($(element).find(".gd-text-area-toolbar").css("height"));
+			annotation.top = parseInt(element.style.top.replace("px", "")) + dashboardHeight;			
 			annotationsList.push(annotation);	
 			makeResizable(annotation);			
 		} 
@@ -156,7 +157,7 @@
 										'<input type="number" value="10" class="gd-typewriter-font-size">'+
 										'<i class="fa fa-trash-o gd-text-field-delete"></i>'+
 									'</div>';
-		var annotationTextFieldHtml = '<textarea class="gd-typewriter-text mousetrap annotation" id="gd-' + currentPrefix + '-annotation-' + idNumber + '">Enter annotation text here</textarea>';
+		var annotationTextFieldHtml = '<textarea class="gd-typewriter-text mousetrap annotation" id="gd-' + currentPrefix + '-annotation-' + idNumber + '" data-id="' + idNumber + '">Enter annotation text here</textarea>';
 		return annotationToolBarHtml + annotationTextFieldHtml;
 	}
 })(jQuery);

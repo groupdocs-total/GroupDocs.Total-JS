@@ -31,7 +31,7 @@ ANNOTATIONS TOOL BAR
 */
 .gd-annotations-bar-wrapper {
 	width: 136px;
-    height: 50%;
+    height: 70%;
     position: absolute;
     top: 28%;
 }
@@ -48,7 +48,7 @@ ANNOTATIONS TOOL BAR
 
 .gd-lbl-toggle {   
     color: #959da5;
-    top: 47%;
+    top: 34%;
     cursor: pointer;     	
     position: absolute;  
 }
@@ -86,7 +86,7 @@ ANNOTATIONS TOOL BAR
 	-webkit-border-radius: 0px;
 	-moz-border-radius: 0px;
 	border-radius: 0px;	
-	padding: 6px 0px 0px 12px;	
+	padding: 0px 0px 0px 12px;	
 }
 
 .gd-tool-field {
@@ -556,7 +556,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 
 .gd-replace-text-area {
-    margin-top: 12px;    
+    margin-top: 6px;    
 }
 
 .gd-distance-text {

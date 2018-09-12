@@ -51,10 +51,10 @@ $(document).ready(function(){
     $('#gd-btn-download').off('click');
 
 	//////////////////////////////////////////////////
-    // Change all pages DIV to SVG event
+    // Add SVG to all pages DIVs
     //////////////////////////////////////////////////
 	$.initialize(".gd-page-image", function() {
-		
+		rows = null;
 		$('div.gd-page').each(function(index, page){
 			if(svgList == null) {
 				svgList	= {};
@@ -146,10 +146,15 @@ $(document).ready(function(){
 			switch (annotationType){
 				case "text":
 					++annotationsCounter;
-					getTextCoordinates(annotation.pageNumber, function(){	
+					if(rows == null){
+						getTextCoordinates(annotation.pageNumber, function(){	
+							$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "text", e);							
+							annotation = null;
+						});
+					} else {
 						$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "text", e);							
 						annotation = null;
-					});
+					}
 					break;
 				case "area":					
 					++annotationsCounter;
@@ -389,6 +394,12 @@ function getTextCoordinates(pageNumber, callback) {
 				// Ascending: first row top less than the previous
 				return row1.lineTop - row2.lineTop;
 			});
+			$.each(rows, function(index, row){
+				row.textCoordinates.sort(function(row1, row2) {
+					// Ascending: first row top less than the previous
+					return row1 - row2;
+				});
+			});
         },
         error: function(xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -502,7 +513,14 @@ function deleteAnnotation(event){
 		} else {
 			id = parseInt($(element).find(".annotation").attr("id").replace( /[^\d.]/g, '' ));
 		}
-		if(id == annotationId){
+		if(id == annotationId){			
+			if($(element).attr("id").search("distance") != -1){
+				$.each($(element).parent().find("text"), function(index, text){
+					if($(text).data("id") == id){
+						$(text).remove();
+					}
+				});
+			}
 			$(element).remove();
 		} else {
 			return true;

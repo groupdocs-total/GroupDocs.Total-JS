@@ -1,26 +1,22 @@
 #gd-header-logo {
     background-image: url('../images/logo.png') !important;
 }
-#gd-dropZone-first.hover {
+.gd-drag-n-drop-wrap-compare.hover {
     background: #ddd;
     border-color: #aaa;
 }
-#gd-dropZone-second.hover {
-    background: #ddd;
-    border-color: #aaa;
-}
-#gd-url-cancel-first, #gd-url-cancel-second {
+.gd-url-cancel {
     background: transparent;
     position: absolute;
     left: 0;
     top: 0;
 }
-#gd-url-cancel-first i {
+.gd-url-cancel-first i {
     font-size: 21px;
     margin-top: 5px;
     margin-left: 6px;
 }
-#gd-add-url-first, #gd-add-url-second {
+.gd-add-url {
     position: absolute;
     top: 0;
     color: #fff;
@@ -28,60 +24,46 @@
     padding: 7px 16px 6px;
     font-size: 12px;
 }
-#gd-url-cancel-second i {
-    font-size: 21px;
-    margin-top: 5px;
-    margin-left: 6px;
-}
-#gd-upload-files-table-first, #gd-upload-files-table-second {
-    width: 100%;
-    margin-bottom: 30px;
+.gd-upload-files-table-idx {
+    left: 15px;
+    width: 260px;
     border-spacing: 0;
+    position: relative;
 }
-#gd-upload-files-table-first>tbody>tr:nth-of-type(odd) {
+.gd-upload-files-table-idx>tbody>tr:nth-of-type(odd) {
     background-color: #f9f9f9;
 }
-#gd-upload-files-table-first div div > i {
-    font-size: 21px;
-    position: absolute;
-    top: 25px;
-    left: 10px;
-}
-#gd-upload-files-table-first .gd-filetree-name {
+.gd-filetree-name-compare {
     position: absolute;
     top: 20px;
     left: 43px;
-    width: calc(100% - 260px);
+    width: 260px;
 }
-#gd-upload-files-table-first .gd-filetree-name > span {
+.gd-filetree-name-compare > span {
     font-size: 12px;
     font-weight: 300;
     color: #9a9a9a;
     margin-right: 15px;
 }
-#gd-upload-files-table-second>tbody>tr:nth-of-type(odd) {
-    background-color: #f9f9f9;
-}
-#gd-upload-files-table-second div div > i {
+.gd-upload-files-table-i {
     font-size: 21px;
     position: absolute;
     top: 25px;
     left: 10px;
 }
-#gd-upload-files-table-second .gd-filetree-name {
-    position: absolute;
-    top: 20px;
-    left: 43px;
-    width: calc(100% - 260px);
+.wrapper {
+    display: unset;
 }
-#gd-upload-files-table-second .gd-filetree-name > span {
-    font-size: 12px;
-    font-weight: 300;
-    color: #9a9a9a;
-    margin-right: 15px;
+#gd-select-compare-files {
+    display: flex;
+    width: 100%;
+    height: initial;
+    padding-top: 60px;
 }
-#gd-pages{
-    display: table;
+#gd-pages {
+    display: flex;
+    padding-top: 0px;
+    height: calc(100% - 210px);
 }
 .gd-drag-n-drop-wrap-compare {
     margin-top: 0px;
@@ -113,12 +95,15 @@
     font-size: 12px;
     margin: 20px 0 0 0;
 }
-#gd-pages section {
+#gd-select-compare-files section {
     float: left;
     padding: 20px 20px 20px;
-    width: 50%;
 }
-#gd-upload-section-first label {
+#gd-pages section {
+    display: block;
+    padding: 20px 0 0;
+}
+.gd-upload-section-label {
     background-color: #3e4e5a;
     border-radius: 0px;
     color: #ffffff;
@@ -128,21 +113,7 @@
     text-align: center;
     font-size: 11px;
 }
-#gd-upload-section-first label i {
-    margin-right: 10px;
-    margin-left: -10px;
-}
-#gd-upload-section-second label {
-    background-color: #3e4e5a;
-    border-radius: 0px;
-    color: #ffffff;
-    padding-top: 9px;
-    padding-left: 7px;
-    display: inline-block;
-    text-align: center;
-    font-size: 11px;
-}
-#gd-upload-section-second label i {
+#gd-upload-section-label i {
     margin-right: 10px;
     margin-left: -10px;
 }
@@ -165,4 +136,52 @@
     width: 146px;
     cursor: pointer;
     text-align: center;
+}
+.gd-page {
+    display: block;
+}
+#gd-pages img {
+    text-align: center;
+    width: unset;
+}
+.swiper-wrapper {
+    height: 110px !important;
+}
+.gd-password-wrap {
+    position: absolute;
+    margin-top: 60px;
+}
+.gd-upload-complete {
+    top: Calc(100% - 102px);
+}
+.gd-upload-complete-fail {
+    font-size: 10px;
+    text-transform: uppercase;
+    text-align: center;
+    position: fixed;
+    left: calc(100% - 139px);
+    top: Calc(100% - 102px);
+    display: none;
+    color: #FF0000;
+}
+.gd-add-file-multicompare i {
+    color: #3e4e5a;
+    font-size: 108px;
+}
+.gd-files-blocks {
+    display: flex;
+    overflow-x: scroll;
+}
+.gd-close-dad-area {
+    position: inherit;
+    margin-top: -20px;
+}
+.gd-close-dad-area i {
+    color: #3e4e5a;
+}
+.gd-password-wrap > input {
+    width: unset;
+}
+.gd-url-wrap > input {
+    width: 230px;
 }

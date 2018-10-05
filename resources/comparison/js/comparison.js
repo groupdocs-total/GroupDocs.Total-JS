@@ -1549,7 +1549,7 @@ function uploadDocument(file, index, url = ''){
             '</div>'+
             '<div id="gd-upload-files-table-' + prefix + '" class="gd-upload-files-table-idx">'+
             // list of files
-            '</div>'+           
+            '</div>'+
             '</section>';
         return htmlSection;
     }
@@ -1764,22 +1764,22 @@ function uploadDocument(file, index, url = ''){
                             '</ul>'+
                             // nav bar END
                         '</div>'+
-                        // header END                       
+                        // header END
                         // pages BEGIN
                         '<div id="gd-pages">'+
                             '<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Comparing... Please wait.</div>'+
                             '<div id="gd-panzoom">'+
                                 // list of pages
-                            '</div>'+                       
+                            '</div>'+
                         '</div>'+
                         // pages END
                         '<div class="gd-comparison-bar-wrapper">'+
                             '<input id="gd-comparison-toggle" class="gd-comparison-toggle" type="checkbox" />'+
 					        '<label for="gd-comparison-toggle" class="gd-lbl-toggle"></label>'+
-                            '<div id="gd-select-compare-files">'+                                
+                            '<div id="gd-select-compare-files">'+
                                 '<div id="gd-files-blocks" class="gd-files-blocks">'+
                                     getHtmlDragAndDropArea('first') + getHtmlDragAndDropArea('second') +  getHtmlMultiCompare() +
-                                '</div>'+               
+                                '</div>'+
                             '</div>'+
                         '</div>'+
                     '</div>'+

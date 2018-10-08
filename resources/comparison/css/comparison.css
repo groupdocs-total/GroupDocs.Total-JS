@@ -24,23 +24,23 @@
     font-size: 25px;
     z-index: 9999;
 }
-.gd-lbl-toggle {   
+.gd-lbl-toggle {
     color: #959da5;
     top: 50%;
     left: 289px;
     cursor: pointer;
-    position: fixed;   
+    position: fixed;
     transform: rotate(180deg) translateX(-3px);
     z-index: 2;
 }
-.gd-comparison-bar-wrapper{   
+.gd-comparison-bar-wrapper{
     position: relative;
     top: 50px;
-    left: 0px;   
+    left: 0px;
     margin-right: 17px;
 }
 .gd-comparison-bar-wrapper.active{
-    width: 307px;   
+    width: 307px;
     margin-right: 49px;
 }
 #gd-header-logo {
@@ -107,24 +107,24 @@
     left: 10px;
     color: #959da5;
 }
-#gd-select-compare-files {   
+#gd-select-compare-files {
     width: 307px;
-    overflow: hidden;   
-    position: fixed;  
-    top: 50px;  
+    overflow: hidden;
+    position: fixed;
+    top: 50px;
     background-color: #3e4e5a;
     height: 95%;
-    overflow-y: auto;  
+    overflow-y: auto;
     z-index: 1;
 }
 .gd-drag-n-drop-wrap-compare {
     margin-top: 0px;
-    width: 268px;   
+    width: 268px;
     border: 2px dashed #ccc;
     background-color: #f8f8f8;
     text-align: center;
-    cursor: default;   
-    position: inherit; 
+    cursor: default;
+    position: inherit;
 }
 .gd-drag-n-drop-wrap-compare h2 {
     color: #cacaca;
@@ -144,8 +144,8 @@
     font-size: 12px;
     margin: 20px 0 0 0;
 }
-#gd-select-compare-files section {    
-    padding: 12px 0 13px 16px;  
+#gd-select-compare-files section {
+    padding: 12px 0 13px 16px;
     width: 281px;
 }
 .gd-drag-n-drop-buttons .btn {
@@ -179,7 +179,7 @@
 }
 .gd-modal-buttons {
     display: inline-grid;
-    font-size: 14px; 
+    font-size: 14px;
     cursor: pointer;
 }
 .gd-page {
@@ -216,8 +216,8 @@
     font-size: 50px;
 }
 .gd-files-blocks {
-    display: flex;   
-    display: inherit;   
+    display: flex;
+    display: inherit;
     height: 100%;
     width: 100%;
 }

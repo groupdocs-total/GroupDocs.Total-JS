@@ -401,7 +401,7 @@
 			};
 			var text = null;
 			// prepare svg path coordinates
-			var svgPath = annotation.svgPath.split("L")[0];						
+			var svgPath = annotation.svgPath.split("L")[0];
 			var points = annotation.svgPath.replace("M", "").split('L');
 			var x = parseFloat(points[0].split(",")[0]);
 			var y = parseFloat(points[0].split(",")[1]);

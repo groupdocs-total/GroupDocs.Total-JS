@@ -171,8 +171,10 @@ $(document).ready(function () {
                 // set annotation data
                 annotation.width = parseFloat(element.style.width.replace("px", ""));
                 annotation.height = parseFloat(element.style.height.replace("px", ""));
-                annotationInnerHtml.style.width = parseFloat(element.style.width) + "px";
-                annotationInnerHtml.style.height = parseFloat(element.style.height) + "px";
+                if (annotationInnerHtml) {
+                    annotationInnerHtml.style.width = parseFloat(element.style.width) + "px";
+                    annotationInnerHtml.style.height = parseFloat(element.style.height) + "px";
+                }
             }
         });
     }

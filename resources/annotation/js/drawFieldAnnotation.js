@@ -114,7 +114,6 @@
 		
 		/**
 		 * Draw text field annotation
-		 * @param {Object} canvas - document page to add annotation
 		 * @param {Array} annotationsList - List of all annotations
 		 * @param {Object} annotation - Current annotation
 		 * @param {int} annotationsCounter - Current annotation number

@@ -464,7 +464,7 @@ function setTextAnnotationCoordinates(mouseX, mouseY) {
 	}
 	// get most suitable row (vertical position)
 	for(var i = 0; i < rows.length; i++){		
-		if(mouseY >= rows[i].lineTop && mouseY <= rows[i + 1].lineTop){
+		if(mouseY >= rows[i].lineTop && rows[i + 1] && mouseY <= rows[i + 1].lineTop){
 			// set row top position and height
 			correctCoordinates.y = rows[i].lineTop;
 			correctCoordinates.height = rows[i].lineHeight;
@@ -611,7 +611,7 @@ function saveComment(){
 function addComment(currentAnnotation){
     $("#gd-annotation-comments").html("");
 	// check if annotation contains comments
-	if(currentAnnotation.comments != null && currentAnnotation.comments.length > 0){		
+	if(currentAnnotation && currentAnnotation.comments && currentAnnotation.comments.length > 0){
 		$.each(currentAnnotation.comments, function(index, comment){
 			if (index == 0){
 				$("#gd-annotation-comments").append(getCommentBaseHtml);

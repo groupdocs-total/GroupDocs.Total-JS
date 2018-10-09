@@ -455,7 +455,7 @@ function setTextAnnotationCoordinates(mouseX, mouseY) {
 		x: 0, 
 		y: 0,
 		height: 0
-	};
+	};		
 	// check if the mouse position is less or bigger than the first or last text row
 	if(mouseY < rows[0].lineTop) {
 		mouseY = rows[0].lineTop;
@@ -492,12 +492,18 @@ function setTextAnnotationCoordinates(mouseX, mouseY) {
 function annotate() {   
 	// set current document guid - used to check if the other document were opened
     var url = getApplicationPath('annotate');
+	var annotationsToAdd = [];
+	$.each(annotationsList, function(index, annotationToAdd){
+		if(!annotationToAdd.imported){
+			annotationsToAdd.push(annotationToAdd);
+		}
+	});
     // current document guid is taken from the viewer.js globals
     var data = {
         guid: documentGuid.replace(/\\/g, "//"),
         password: password,
 		htmlMode: false,
-        annotationsData: annotationsList,
+        annotationsData: annotationsToAdd,
 		documentType: getDocumentFormat(documentGuid).format
     };
     // annotate the document
@@ -636,7 +642,8 @@ function addComment(currentAnnotation){
  * @param {Object} currentAnnotation - currently added annotation
  */
 function makeResizable (currentAnnotation){	
-	var annotationType = currentAnnotation.type;	
+	var annotationType = currentAnnotation.type;
+
 	$(".gd-annotation").each(function(imdex, element){
 		if(!$(element).hasClass("svg")){
 			if(parseInt($(element).find(".annotation").attr("id").replace ( /[^\d.]/g, '' )) == currentAnnotation.id){
@@ -644,7 +651,7 @@ function makeResizable (currentAnnotation){
 				$(element).draggable({
 					// set restriction for image dragging area to current document page
 					containment: "#gd-page-" + currentAnnotation.pageNumber,	
-					stop: function(event, image){			
+					stop: function(event, image){
 						if(annotationType == "text" || annotationType == "textStrikeout"){
 							var coordinates = setTextAnnotationCoordinates(image.position.left, image.position.top)
 							currentAnnotation.left = coordinates.x;
@@ -652,7 +659,7 @@ function makeResizable (currentAnnotation){
 						} else {
 							currentAnnotation.left = image.position.left;
 							currentAnnotation.top = image.position.top;					
-						}
+						}	
 					},		
 				}).resizable({
 					// set restriction for image resizing to current document page

@@ -232,6 +232,7 @@ $(document).ready(function () {
         element.appendChild(annotationInnerHtml);
         if (lineInnerHtml != null) {
             element.appendChild(lineInnerHtml);
+			lineInnerHtml = null;
         }
         canvas.prepend(element);
         // add annotation into the annotations list

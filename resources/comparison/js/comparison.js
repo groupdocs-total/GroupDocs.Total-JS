@@ -110,7 +110,7 @@ $(document).ready(function(){
     $('.gd-lbl-toggle').on('click', function(e){
         $(".gd-comparison-bar-wrapper").toggleClass("active");
     });
-   
+
     //////////////////////////////////////////////////
     // Toggle navigation dropdown menus
     //////////////////////////////////////////////////
@@ -1163,28 +1163,28 @@ function addFileForUploading(uploadFiles, url) {
     if(url){
         // append URL
         table.append('<div class="swiper-container">'+
-            '<div class="swiper-wrapper">'+
-            '<div class="swiper-slide">'+
-            '<i class="fa ' + getDocumentFormat(url.split('/').pop()).icon + '"></i>'+
-            '<div class="gd-filetree-name" data-uploaded="false" data-value="' + url + '">'+
-            '<div class="gd-file-name">' + url.split('/').pop() + '</div>'+
-            '<span id="gd-upload-size"> type: ' + url.split('/').pop().split('.').pop() +'</span>'+
-            '</div>'+
-            '<div id="gd-pregress-bar-' + tableRowsNumber + '" class="gd-pregress p0 small green">'+
-            '<div class="slice">'+
-            '<div class="bar"></div>'+
-            '<div class="fill"></div>'+
-            '</div>'+
-            '</div>'+
-            '<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete"><i class="fa fa-check-circle"></i></div>'+
-            '<div id="gd-upload-failure-' + tableRowsNumber + '" class="gd-upload-complete-fail"><i class="fa fa-exclamation-circle"></i></div>'+
-            '</div>'+
-            '<div class="swiper-slide gd-desktop swiper-slide-cancel">'+
-            '<div class="files-table-remove">'+
-            '<button class="btn gd-cancel-button"><i class="fa fa-trash"></i></button>'+
-            '</div>'+
-            '</div>'+
-            '</div>'+
+                '<div class="swiper-wrapper">'+
+                    '<div class="swiper-slide">'+
+                        '<i class="fa ' + getDocumentFormat(url.split('/').pop()).icon + '"></i>'+
+                        '<div class="gd-filetree-name" data-uploaded="false" data-value="' + url + '">'+
+                            '<div class="gd-file-name">' + url.split('/').pop() + '</div>'+
+                            '<span id="gd-upload-size"> type: ' + url.split('/').pop().split('.').pop() +'</span>'+
+                        '</div>'+
+                        '<div id="gd-pregress-bar-' + tableRowsNumber + '" class="gd-pregress p0 small green gd-upload-status">'+
+                            '<div class="slice">'+
+                                '<div class="bar"></div>'+
+                                '<div class="fill"></div>'+
+                            '</div>'+
+                        '</div>'+
+                        '<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete gd-upload-status"><i class="fa fa-check-circle"></i></div>'+
+                        '<div id="gd-upload-failure-' + tableRowsNumber + '" class="gd-upload-complete-fail gd-upload-status"><i class="fa fa-exclamation-circle"></i></div>'+
+                    '</div>'+
+                    '<div class="swiper-slide gd-desktop swiper-slide-cancel">'+
+                        '<div class="files-table-remove">'+
+                            '<button class="btn gd-cancel-button"><i class="fa fa-trash"></i></button>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>'+
             '</div>');
         // increase table rows counter after adding new record
         tableRowsNumber++
@@ -1218,7 +1218,7 @@ function addFileForUploading(uploadFiles, url) {
                                         '</div>'+
                                     '</div>'+
                                     '<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete gd-upload-status"><i class="fa fa-check-circle"></i></div>'+
-                                    '<div id="gd-upload-failure-' + tableRowsNumber + '" class="gd-upload-complete-fail"><i class="fa fa-exclamation-circle"></i></div>'+
+                                    '<div id="gd-upload-failure-' + tableRowsNumber + '" class="gd-upload-complete-fail gd-upload-status"><i class="fa fa-exclamation-circle"></i></div>'+
                                 '</div>'+
                                 '<div class="swiper-slide gd-desktop swiper-slide-cancel">'+
                                     '<div class="files-table-remove">'+
@@ -1443,10 +1443,12 @@ function uploadDocument(file, index, url = ''){
             }
         },
         error: function(xhr, status, error) {
-            var err = eval("(" + xhr.responseText + ")");
-            console.log(err.message);
-            // open error popup
-            printMessage(err.message);
+            if (xhr && xhr.responseText) {
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err.message);
+                // open error popup
+                printMessage(err.message);
+            }
             $("#gd-upload-complete-" + index).fadeOut();
             $("#gd-upload-failure-" + index).fadeIn();
         }
@@ -1556,7 +1558,7 @@ function uploadDocument(file, index, url = ''){
             '</div>'+
             '<div id="gd-upload-files-table-' + prefix + '" class="gd-upload-files-table-idx">'+
             // list of files
-            '</div>'+           
+            '</div>'+
             '</section>';
         return htmlSection;
     }
@@ -1771,14 +1773,14 @@ function uploadDocument(file, index, url = ''){
                             '</ul>'+
                             // nav bar END
                         '</div>'+
-                        // header END    
+                        // header END
                         '<div class="gd-comparison-bar-wrapper active">'+
                             '<input id="gd-comparison-toggle" class="gd-comparison-toggle" type="checkbox" />'+
 					        '<label for="gd-comparison-toggle" class="gd-lbl-toggle"></label>'+
-                            '<div id="gd-select-compare-files">'+                                
+                            '<div id="gd-select-compare-files">'+
                                 '<div id="gd-files-blocks" class="gd-files-blocks">'+
                                     getHtmlDragAndDropArea('first') + getHtmlDragAndDropArea('second') +  getHtmlMultiCompare() +
-                                '</div>'+               
+                                '</div>'+
                             '</div>'+
                         '</div>'+
                         // pages BEGIN
@@ -1786,9 +1788,9 @@ function uploadDocument(file, index, url = ''){
                             '<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Comparing... Please wait.</div>'+
                             '<div id="gd-panzoom">'+
                                 // list of pages
-                            '</div>'+                       
+                            '</div>'+
                         '</div>'+
-                        // pages END                        
+                        // pages END
                     '</div>'+
                 '</div>';
         }

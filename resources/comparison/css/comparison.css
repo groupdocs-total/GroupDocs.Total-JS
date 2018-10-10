@@ -195,12 +195,8 @@
     z-index: 1;
 }
 .gd-upload-complete-fail {
-    font-size: 10px;
-    text-transform: uppercase;
-    text-align: center;
-    position: fixed;
-    left: calc(100% - 139px);
-    top: Calc(100% - 102px);
+    right: 55px;
+    top: 3px;
     display: none;
     color: #FF0000;
 }

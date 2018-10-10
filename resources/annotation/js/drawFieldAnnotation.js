@@ -176,15 +176,15 @@
 			element = document.createElement('div');
 			element.className = 'gd-annotation';  			
 			element.innerHTML = getTextFieldAnnotationHtml(annotationsCounter, annotation.text, annotation.font, annotation.fontSize);				
-			element.style.left = annotation.left + "px";
-			element.style.top = annotation.top + "px";
+			element.style.left = annotation.left + "px";			
 				
 			canvas.prepend(element);	
 			$(".gd-typewriter-text").click(function (e) {
 				e.stopPropagation()
 				$(this).focus();
 			})		
-							
+			var toolbarHeight = $(element).find(".gd-text-area-toolbar").height() + parseInt($(element).find(".gd-text-area-toolbar").css("margin-bottom")) + parseInt($(element).find(".gd-text-area-toolbar").css("padding"));
+			element.style.top = annotation.top - toolbarHeight + "px";				
 			annotationsList.push(annotation);	
 			makeResizable(annotation);		
 			$(".gd-typewriter-text").each(function(index, typeWriter){

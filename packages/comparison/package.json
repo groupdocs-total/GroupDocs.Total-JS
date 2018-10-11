@@ -1,6 +1,6 @@
 {
-  "name": "@groupdocsui/comparison",
-  "version": "0.4.16",
+  "name": "@groupdocs.ui/comparison",
+  "version": "0.4.14",
   "description": "",
   "main": "index.js",
   "scripts": {

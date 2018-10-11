@@ -1,6 +1,6 @@
 {
-  "name": "@groupdocs.ui/signature",
-  "version": "0.4.15",
+  "name": "@groupdocsui/signature",
+  "version": "0.4.14",
   "description": "",
   "main": "index.js",
   "scripts": {

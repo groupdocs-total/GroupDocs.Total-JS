@@ -1,5 +1,5 @@
 {
-  "name": "groupdocs.ui",
+  "name": "groupdocsui",
   "version": "0.4.14",
   "description": "Simple, elegant and modern UI engine re-written in JavaScript from scratch which can be easily integrated into any platform such as Java, .NET, etc.\r Simple and flexible configuration makes integration process quite easy and intuitive.",
   "main": "index.html",
@@ -14,5 +14,8 @@
   "license": "ISC",
   "devDependencies": {
     "lerna": "^3.4.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

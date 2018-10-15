@@ -1,6 +1,6 @@
 {
-  "name": "@groupdocs.ui/annotation",
-  "version": "0.4.15",
+  "name": "@groupdocs.examples.jquery/annotation",
+  "version": "0.4.14",
   "description": "",
   "main": "index.js",
   "scripts": {

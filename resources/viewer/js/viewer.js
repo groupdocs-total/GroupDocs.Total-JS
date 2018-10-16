@@ -1452,7 +1452,9 @@ function uploadDocument(file, index, url) {
     // add local file for uploading
     formData.append("file", file);
     // add URL if set
-    formData.append("url", url);
+    if (typeof url != "undefined" && url != null) {
+        formData.append("url", url);
+    }
     formData.append("rewrite", rewrite);
     $.ajax({
         // callback function which updates upload progress bar
@@ -1590,7 +1592,7 @@ function clearPassword() {
 * @param {Object} selector - element to wait for
 **/
 function isPageLoaded(selector) {
-    return new Promise(function(resolve, reject){
+    return new Promise(function (resolve, reject) {
         // check if loaded       
         const waitForEl = function (selector, count) {
             var count = 0;
@@ -1600,7 +1602,7 @@ function isPageLoaded(selector) {
                 resolve(el);
             } else {
                 // wait 100 milliseconds and check again
-                setTimeout(function(){
+                setTimeout(function () {
                     if (typeof count != "undefined" && count != null) {
                         count++;
                         if (count < 120) {

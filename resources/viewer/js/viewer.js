@@ -1594,9 +1594,9 @@ function clearPassword() {
 function isPageLoaded(selector) {
     return new Promise(function (resolve, reject) {
         // check if loaded       
-        const waitForEl = function (selector, count) {
+        var waitForEl = function (selector, count) {
             var count = 0;
-            const el = selector.find(".gd-wrapper");
+            var el = selector.find(".gd-wrapper");
             // check if element is loaded
             if (el.length > 0) {
                 resolve(el);
@@ -1966,6 +1966,9 @@ $.fn.scrollTo = function (target, options, callback) {
     }, options);
     return this.each(function () {
         var scrollPane = $(this);
+		if(isNaN(settings.zoom)){
+			settings.zoom = 100;
+		}
         var scrollTarget = (typeof settings.scrollTarget == "number") ? settings.scrollTarget : $(settings.scrollTarget);
         if (typeof settings.scrollTarget != "number") {
             var scrollYTop = scrollTarget.offset().top * settings.zoom / 100;

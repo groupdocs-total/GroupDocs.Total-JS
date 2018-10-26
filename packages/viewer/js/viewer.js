@@ -22,6 +22,7 @@ var documentData = [];
 var password = '';
 var rewrite;
 var map = {};
+var htmlMode = false;
 // add supported formats
 map['folder'] = { 'format': '', 'icon': 'fa-folder' };
 map['pdf'] = { 'format': 'Portable Document Format', 'icon': 'fa-file-pdf-o' };
@@ -141,6 +142,7 @@ $(document).ready(function () {
             // if document -> open
             clearPageContents();
             toggleModalDialog(false, '');
+			password = ""; 
             documentGuid = $(this).attr('data-guid');
             loadDocument(function (data) {
                 // Generate thumbnails
@@ -860,7 +862,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 // fix zoom in/out scaling
                 var zoomValue = 1;
                 // append page content in HTML mode
-                if (typeof htmlData.pageHtml != "undefined" && htmlData.pageHtml != null) {
+                if (htmlMode) {
                     // append page
                     gd_prefix_page.append('<div class="gd-wrapper">' + htmlData.pageHtml + '</div>');
                     // remove spinner
@@ -933,7 +935,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 }
                 // set correct width and hight for OneNote format
                 if (documentName.substr((documentName.lastIndexOf('.') + 1)) == "one") {
-                    if (typeof htmlData.pageHtml != "undefined" && htmlData.pageHtml != null) {
+                    if (htmlMode) {
                         $(".gd-wrapper").css("width", "initial");
                     } else {
                         $(".gd-wrapper").css("width", "inherit");
@@ -946,7 +948,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                     gd_prefix_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
                     if (htmlData.angle == 90 || htmlData.angle == 270) {
                         // set styles for HTML mode
-                        if (typeof htmlData.pageHtml != "undefined" && htmlData.pageHtml != null) {
+                        if (htmlMode) {
                             if (gd_page.width() > gd_page.height()) {
                                 gd_page.addClass("gd-landscape-rotated");
                             } else {
@@ -1293,7 +1295,7 @@ function rotatePages(angle) {
                 $('#gd-page-' + elem.pageNumber).css('transform', 'rotate(' + elem.angle + 'deg)');
                 // set correct styles when page has landscape orientation
                 if (elem.angle == 90 || elem.angle == 270) {
-                    if (elem.htmlMode) {
+                    if (htmlMode) {
                         if ($('#gd-page-' + elem.pageNumber).width() > $('#gd-page-' + elem.pageNumber).height()) {
                             $('#gd-page-' + elem.pageNumber).addClass("gd-landscape-rotated");
                             $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape-rotated");
@@ -1717,7 +1719,8 @@ GROUPDOCS.VIEWER PLUGIN
                 print: true,
                 defaultDocument: null,
                 browse: true,               
-                rewrite: true
+                rewrite: true,
+				htmlMode: true
             };
             options = $.extend(defaults, options);
 
@@ -1725,7 +1728,7 @@ GROUPDOCS.VIEWER PLUGIN
             applicationPath = options.applicationPath;
             preloadPageCount = options.preloadPageCount;            
             rewrite = options.rewrite;
-
+			htmlMode = options.htmlMode;
             // assembly html base
             this.append(getHtmlBase);
             this.append(getHtmlModalDialog);

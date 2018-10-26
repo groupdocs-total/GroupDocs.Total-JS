@@ -986,10 +986,9 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 }
             },
             error: function (xhr, status, error) {
-                var err = eval("(" + xhr.responseText + ")");
-                console.log(err.Message);
+                var err = eval("(" + xhr.responseText + ")");               
                 // open error popup
-                printMessage(err.error);
+                printMessage(err.message);
             }
         });
     }

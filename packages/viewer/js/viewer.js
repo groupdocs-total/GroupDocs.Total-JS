@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 /*
@@ -18,7 +18,6 @@ var preloadPageCount;
 var currentDirectory;
 var uploadFilesList = [];
 var documentGuid;
-var htmlMode = false;
 var documentData = [];
 var password = '';
 var rewrite;
@@ -731,7 +730,7 @@ function loadDocument(callback) {
     // clear global documentData array from previous document info
     documentData = [];
     // get document description
-    var data = { guid: documentGuid, htmlMode: htmlMode, password: password };
+    var data = { guid: documentGuid, password: password };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentDescription'),
@@ -845,7 +844,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
     if (!gd_prefix_page.hasClass('loaded')) {
         gd_prefix_page.addClass('loaded');
         // get document description
-        var data = { guid: documentGuid, page: pageNumber, htmlMode: htmlMode, password: password };
+        var data = { guid: documentGuid, page: pageNumber, password: password };
         $.ajax({
             type: 'POST',
             url: getApplicationPath('loadDocumentPage'),
@@ -861,7 +860,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 // fix zoom in/out scaling
                 var zoomValue = 1;
                 // append page content in HTML mode
-                if (htmlMode) {
+                if (typeof htmlData.pageHtml != "undefined" && htmlData.pageHtml != null) {
                     // append page
                     gd_prefix_page.append('<div class="gd-wrapper">' + htmlData.pageHtml + '</div>');
                     // remove spinner
@@ -934,7 +933,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 }
                 // set correct width and hight for OneNote format
                 if (documentName.substr((documentName.lastIndexOf('.') + 1)) == "one") {
-                    if (htmlMode) {
+                    if (typeof htmlData.pageHtml != "undefined" && htmlData.pageHtml != null) {
                         $(".gd-wrapper").css("width", "initial");
                     } else {
                         $(".gd-wrapper").css("width", "inherit");
@@ -947,7 +946,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                     gd_prefix_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
                     if (htmlData.angle == 90 || htmlData.angle == 270) {
                         // set styles for HTML mode
-                        if (htmlMode) {
+                        if (typeof htmlData.pageHtml != "undefined" && htmlData.pageHtml != null) {
                             if (gd_page.width() > gd_page.height()) {
                                 gd_page.addClass("gd-landscape-rotated");
                             } else {
@@ -1275,7 +1274,7 @@ function rotatePages(angle) {
     var pages = [];
     pages[0] = currentPageNumber;
     // Prepare ajax data
-    var data = { guid: documentGuid, angle: angle, pages: pages, htmlMode: htmlMode, password: password };
+    var data = { guid: documentGuid, angle: angle, pages: pages, password: password };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('rotateDocumentPages'),
@@ -1294,7 +1293,7 @@ function rotatePages(angle) {
                 $('#gd-page-' + elem.pageNumber).css('transform', 'rotate(' + elem.angle + 'deg)');
                 // set correct styles when page has landscape orientation
                 if (elem.angle == 90 || elem.angle == 270) {
-                    if (htmlMode) {
+                    if (elem.htmlMode) {
                         if ($('#gd-page-' + elem.pageNumber).width() > $('#gd-page-' + elem.pageNumber).height()) {
                             $('#gd-page-' + elem.pageNumber).addClass("gd-landscape-rotated");
                             $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape-rotated");
@@ -1717,16 +1716,14 @@ GROUPDOCS.VIEWER PLUGIN
                 upload: true,
                 print: true,
                 defaultDocument: null,
-                browse: true,
-                htmlMode: false,
+                browse: true,               
                 rewrite: true
             };
             options = $.extend(defaults, options);
 
             // set global option params
             applicationPath = options.applicationPath;
-            preloadPageCount = options.preloadPageCount;
-            htmlMode = options.htmlMode;
+            preloadPageCount = options.preloadPageCount;            
             rewrite = options.rewrite;
 
             // assembly html base

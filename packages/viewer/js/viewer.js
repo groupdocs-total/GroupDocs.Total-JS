@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 /*
@@ -18,11 +18,11 @@ var preloadPageCount;
 var currentDirectory;
 var uploadFilesList = [];
 var documentGuid;
-var htmlMode = false;
 var documentData = [];
 var password = '';
 var rewrite;
 var map = {};
+var htmlMode = false;
 // add supported formats
 map['folder'] = { 'format': '', 'icon': 'fa-folder' };
 map['pdf'] = { 'format': 'Portable Document Format', 'icon': 'fa-file-pdf-o' };
@@ -142,6 +142,7 @@ $(document).ready(function () {
             // if document -> open
             clearPageContents();
             toggleModalDialog(false, '');
+			password = ""; 
             documentGuid = $(this).attr('data-guid');
             loadDocument(function (data) {
                 // Generate thumbnails
@@ -731,7 +732,7 @@ function loadDocument(callback) {
     // clear global documentData array from previous document info
     documentData = [];
     // get document description
-    var data = { guid: documentGuid, htmlMode: htmlMode, password: password };
+    var data = { guid: documentGuid, password: password };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentDescription'),
@@ -845,7 +846,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
     if (!gd_prefix_page.hasClass('loaded')) {
         gd_prefix_page.addClass('loaded');
         // get document description
-        var data = { guid: documentGuid, page: pageNumber, htmlMode: htmlMode, password: password };
+        var data = { guid: documentGuid, page: pageNumber, password: password };
         $.ajax({
             type: 'POST',
             url: getApplicationPath('loadDocumentPage'),
@@ -985,10 +986,9 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 }
             },
             error: function (xhr, status, error) {
-                var err = eval("(" + xhr.responseText + ")");
-                console.log(err.Message);
+                var err = eval("(" + xhr.responseText + ")");               
                 // open error popup
-                printMessage(err.error);
+                printMessage(err.message);
             }
         });
     }
@@ -1275,7 +1275,7 @@ function rotatePages(angle) {
     var pages = [];
     pages[0] = currentPageNumber;
     // Prepare ajax data
-    var data = { guid: documentGuid, angle: angle, pages: pages, htmlMode: htmlMode, password: password };
+    var data = { guid: documentGuid, angle: angle, pages: pages, password: password };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('rotateDocumentPages'),
@@ -1717,18 +1717,17 @@ GROUPDOCS.VIEWER PLUGIN
                 upload: true,
                 print: true,
                 defaultDocument: null,
-                browse: true,
-                htmlMode: false,
-                rewrite: true
+                browse: true,               
+                rewrite: true,
+				htmlMode: true
             };
             options = $.extend(defaults, options);
 
             // set global option params
             applicationPath = options.applicationPath;
-            preloadPageCount = options.preloadPageCount;
-            htmlMode = options.htmlMode;
+            preloadPageCount = options.preloadPageCount;            
             rewrite = options.rewrite;
-
+			htmlMode = options.htmlMode;
             // assembly html base
             this.append(getHtmlBase);
             this.append(getHtmlModalDialog);

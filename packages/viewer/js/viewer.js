@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 /*
@@ -1508,7 +1508,7 @@ function printDocument() {
     // force each document page to be printed as a new page
     var cssPrint = '<style>' +
 		    '@media print' +
-		    '{.gd-wrapper {page-break-after:always;}';
+		    '{body, div {width: auto; border: 0; margin: 0 6px; padding: 0; float: none; position: static; overflow: visible; page-break-after: auto;}';
     // set correct page orientation if page were rotated
     documentContainer.find(".gd-page").each(function (index, page) {
         if ($(page).css("transform") != "none") {

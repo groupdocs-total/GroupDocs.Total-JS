@@ -1506,16 +1506,15 @@ function printDocument() {
     // get current document content
     var documentContainer = $("#gd-panzoom");
     // force each document page to be printed as a new page
-    var cssPrint = '<style>' +
-		    '@media print' +
-		    '{body, div {width: auto; border: 0; margin: 0 6px; padding: 0; float: none; position: static; overflow: visible; page-break-after: auto;}';
+    var cssPrint = '<style>' +           
+            '.gd-page {page-break-after:always; page-break-inside: avoid;} .gd-page:last-child {page-break-after:avoid !important;}';
     // set correct page orientation if page were rotated
     documentContainer.find(".gd-page").each(function (index, page) {
         if ($(page).css("transform") != "none") {
             cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
         }
     });
-    cssPrint = cssPrint + '}</style>';
+    cssPrint = cssPrint + '</style>';
     // open print dialog
     var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
     // add current document into the print window

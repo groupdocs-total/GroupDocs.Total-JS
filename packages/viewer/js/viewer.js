@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.3.0
+ * @version 1.4.0
  */
 
 /*
@@ -345,6 +345,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('#gd-nav-search-next').on('click', function (e) {
         var count = 0;
+        var zoomValue = getZoomValue();
         // remove/clear previously selected highlights
         $('#gd-pages').find('.gd-highlight-select').removeClass('gd-highlight-select');
         // search for matched elements
@@ -355,7 +356,8 @@ $(document).ready(function () {
                 $(this).addClass('gd-highlight-select');
                 // scroll to next page
                 $('#gd-pages').scrollTo(this, {
-                    offsetTop: 150
+                    offsetTop: 150,
+                    zoom: zoomValue
                 });
                 // check if this is last rearch result instance
                 if (search_position >= getTotalSearchMatches()) {
@@ -378,6 +380,7 @@ $(document).ready(function () {
     $('#gd-nav-search-prev').on('click', function (e) {
         var count = 1;
         var prev;
+        var zoomValue = getZoomValue();
         // remove/clear previously selected highlights
         $('#gd-pages').find('.gd-highlight-select').removeClass('gd-highlight-select');
         // search for matched elements
@@ -387,7 +390,8 @@ $(document).ready(function () {
                 $(prev).addClass('gd-highlight-select');
                 // scroll to previous page
                 $('#gd-pages').scrollTo(prev, {
-                    offsetTop: 150
+                    offsetTop: 150,
+                    zoom: zoomValue
                 });
                 // check if this is first search result instance
                 if (search_position <= 1) {

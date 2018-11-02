@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 /*
@@ -551,7 +551,6 @@ function annotate() {
     var data = {
         guid: documentGuid.replace(/\\/g, "//"),
         password: password,
-        htmlMode: false,
         annotationsData: annotationsToAdd,
         documentType: getDocumentFormat(documentGuid).format
     };

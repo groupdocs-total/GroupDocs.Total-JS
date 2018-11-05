@@ -3,14 +3,14 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 (function ($) {
 
-    /**
+	/**
 	* Create private variables.
-	**/
+	**/    
     var mouse = {
         x: 0,
         y: 0,
@@ -28,7 +28,9 @@
     var currentAnnotation = null;
     var canvasTopOffset = null;
     var currentPrefix = "";
-
+	var userMouseUp = ('ontouchend' in document.documentElement) ? 'touchend mouseup' : 'mouseup';
+    var userMouseMove = ('ontouchmove' in document.documentElement) ? 'touchmove mousemove' : 'mousemove';
+	
     /**
 	 * Draw svg annotation	
 	 */
@@ -104,16 +106,14 @@
             line = svgList[canvas.id].polyline().attr(option);
             line.draw(event);
             // set mouse move event handler
-            $('#gd-panzoom').bind('touchmove mousemove', svgList[canvas.id], function (event) {                
+            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {                
                 if (line) {
                     // draw line to next point coordinates
                     line.draw('point', event);
                 }
             })
             // set mouse up event handler
-            $('#gd-panzoom').bind('touchend mouseup', svgList[canvas.id], function (event) {
-                event.stopPropagation();
-                event.preventDefault();
+            $('#gd-panzoom').bind(userMouseUp, svgList[canvas.id], function (event) {                
                 if (line && currentPrefix == "polyline") {
                     // stop draw
                     line.draw('stop', event);
@@ -186,7 +186,7 @@
             var path = null;
             path = svgList[canvas.id].path("M" + x + "," + y + " L" + x + "," + y).attr(option);
             // set mouse move event handler
-            $('#gd-panzoom').bind('touchmove mousemove', svgList[canvas.id], function (event) {
+            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {
                 
                 if (path) {
                     // get current coordinates after mouse move
@@ -205,7 +205,7 @@
                 }
             })
             // set mouse up event handler
-            $('#gd-panzoom').bind('touchend mouseup', svgList[canvas.id], function (event) {
+            $('#gd-panzoom').bind(userMouseUp, svgList[canvas.id], function (event) {
                 if (path && currentPrefix == "arrow") {
                     // set annotation data
                     currentAnnotation.left = x;
@@ -251,7 +251,7 @@
             var text = null;
             text = svgList[canvas.id].text("0px").attr(textOptions);
             // set mouse move event
-            $('#gd-panzoom').bind('touchmove mousemove', svgList[canvas.id], function (event) {   
+            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {   
                 if (path) {
                     // get end coordinates
                     mouse = getMousePosition(event);
@@ -278,7 +278,7 @@
                 }
             })
             // set mouse up event
-            $('#gd-panzoom').bind('touchend mouseup', svgList[canvas.id], function (event) {                             
+            $('#gd-panzoom').bind(userMouseUp, svgList[canvas.id], function (event) {                             
                 if (path) {
                     currentAnnotation.left = x;
                     currentAnnotation.top = y;

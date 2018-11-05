@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 /*
@@ -13,7 +13,6 @@ GLOBAL VARIABLES
 ******************************************************************
 ******************************************************************
 */
-var annotatedDocumentGuid = "";
 var annotation = {
     id: "",
     type: "",
@@ -32,9 +31,11 @@ var annotationType = null;
 var annotationsList = [];
 var annotationsCounter = 0;
 var rows = null;
-var svgList = {};
+var svgList = null;
+var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
+var userMouseDown = ('ontouch' in document.documentElement)  ? 'touchstart mousedown' : 'mousedown';
 
-$(document).ready(function () {
+$(document).ready(function () {	
 
     /*
     ******************************************************************
@@ -56,7 +57,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Disable default download event
     //////////////////////////////////////////////////
-    $('#gd-btn-download').off('touchstart click');
+    $('#gd-btn-download').off(userMouseClick);
 
     //////////////////////////////////////////////////
     // Add SVG to all pages DIVs
@@ -65,31 +66,14 @@ $(document).ready(function () {
         // ensure that the closed comments tab doesn't
         // have active class when another document is opened
         if ($(".gd-annotations-comments-wrapper").hasClass("active")) {
-            $(".gd-annotations-comments-wrapper").toggleClass("active");
-        }
+            $(".gd-annotations-comments-wrapper").removeClass("active");
+			$('#gd-annotations-comments-toggle').prop('checked', false);
+        }		
         // set text rows data to null
-        rows = null;
+        rows = null;	
+		svgList = null;		
         // append svg element to each page, this is required to draw svg based annotations
-        $('div.gd-page').each(function (index, page) {
-            $(page).css("zoom", "1");
-            // initiate svg object
-            if (svgList == null) {
-                svgList = {};
-            }
-            if (page.id.indexOf("thumbnails") >= 0) {
-                return true;
-            } else {
-                if (!(page.id in svgList)) {
-                    $(page).addClass("gd-disable-select");
-                    // add svg object to the list for further use
-                    var draw = SVG(page.id).size(page.offsetWidth, page.offsetHeight);
-                    svgList[page.id] = draw;
-                    draw = null;
-                } else {
-                    return true;
-                }
-            }
-        });
+        addSvgContainer();
         //check if document contains annotations
         if ($(this).parent().parent().attr("id").search("thumbnails") == -1) {
             for (var i = 0; i < documentData.length; i++) {
@@ -108,15 +92,17 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Open comment bar event
     //////////////////////////////////////////////////
-    $(".gd-annotations-comments-toggle").on('touchstart click', function () {
-        $(".gd-annotations-comments-wrapper").toggleClass("active");
+    $(".gd-annotations-comments-toggle").on(userMouseClick, function () {
+         if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
+            $(".gd-annotations-comments-wrapper").addClass("active");
+        }	
     });
 
 
     //////////////////////////////////////////////////
     // Fix for tooltips of the dropdowns
     //////////////////////////////////////////////////
-    $('#gd-download-val-container').on('touchstart click', function (e) {
+    $('#gd-download-val-container').on(userMouseClick, function (e) {
         if ($(this).hasClass('open')) {
             $('#gd-btn-download-value').parent().find('.gd-tooltip').css('display', 'none');
         } else {
@@ -127,10 +113,8 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Open document event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('touchstart click', '.gd-filetree-name', function (e) {
-        if (disable_click_flag) {
-            e.preventDefault();
-            e.stopPropagation();
+    $('.gd-modal-body').on(userMouseClick, '.gd-filetree-name', function (e) {
+        if (disable_click_flag) {     
             // make annotations list empty for the new document
             annotationsList = [];
             svgList = null;
@@ -162,8 +146,8 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // activate currently selected annotation tool
     //////////////////////////////////////////////////
-    $('.gd-tools-container').on('touchstart click', function (e) {
-        e.preventDefault();
+    $('.gd-tools-container').on(userMouseClick, function (e) {
+       
         var currentlyActive = null;
         $(".gd-tool-field").each(function (index, tool) {
             if ($(tool).is(".active")) {
@@ -182,8 +166,10 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // add annotation event
     //////////////////////////////////////////////////	
-    $('#gd-panzoom').on('touchstart mousedown', 'svg', function (e) {
-        e.preventDefault();
+    $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {
+        if($("#gd-panzoom").find("svg").length == 0 && svgList == null){
+			addSvgContainer();
+	    }
         if ($(e.target).prop("tagName") == "IMG" || $(e.target).prop("tagName") == "svg") {
             // initiate annotation object if null
             if (annotation == null) {
@@ -302,9 +288,9 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // enter comment text event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on('touchstart click', 'div.gd-comment-text', function (e) {
+    $('.gd-comments-sidebar-expanded').on(userMouseClick, 'div.gd-comment-text', function (e) {
 
-        e.preventDefault();
+       
         $(e.target).parent().parent().parent().find(".gd-comment-time").last().html(new Date($.now()).toUTCString());
         $("#gd-save-comments").removeClass("gd-save-button-disabled");
     });
@@ -312,32 +298,32 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // save comment event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on('touchstart click', '#gd-save-comments', saveComment);
+    $('.gd-comments-sidebar-expanded').on(userMouseClick, '#gd-save-comments', saveComment);
 
     //////////////////////////////////////////////////
     // reply comment event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on('touchstart click', '.gd-comment-reply', function (e) {
+    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-reply', function (e) {
 
-        e.preventDefault();
+       
         $(".gd-comment-reply").before(getCommentHtml);
     });
 
     //////////////////////////////////////////////////
     // cancel comment event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on('touchstart click', '.gd-comment-cancel', function (e) {
+    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-cancel', function (e) {
 
-        e.preventDefault();
+       
         $(".gd-comment-box-sidebar").find(".gd-annotation-comment").last().find(".gd-comment-text").html("");
     });
 
     //////////////////////////////////////////////////
     // delete comment event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on('touchstart click', '.gd-delete-comment', function (e) {
+    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-delete-comment', function (e) {
 
-        e.preventDefault();
+       
         // check if there is no more comments for the annotation
         if ($(".gd-comment-box-sidebar").find(".gd-annotation-comment").length == 1) {
             // delete annotation
@@ -361,11 +347,9 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // annotation click event
     //////////////////////////////////////////////////
-    $('#gd-panzoom').on('touchstart click', '.gd-annotation', function (e) {
-
-        e.preventDefault();
+    $('#gd-panzoom').on(userMouseClick, '.gd-annotation', function (e) {       
         if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
-            $(".gd-annotations-comments-wrapper").toggleClass("active");
+            $(".gd-annotations-comments-wrapper").addClass("active");
         }
         if (e.target.tagName != "I" && e.target.tagName != "INPUT" && e.target.tagName != "TEXTAREA") {
             $("#gd-annotation-comments").html("");
@@ -404,11 +388,19 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Download event
     //////////////////////////////////////////////////
-    $('#gd-btn-download-value > li').on('touchstart click', function (e) {
-
-        e.preventDefault();
+    $('#gd-btn-download-value > li').on(userMouseClick, function (e) {       
         download($(this));
     });
+	
+	$('#gd-annotations-comments-toggle').on(userMouseClick, function (){
+		if($('#gd-annotations-comments-toggle').prop('checked')){
+			if(!$(".gd-annotations-comments-wrapper").hasClass("active")){
+				$(".gd-annotations-comments-wrapper").addClass("active");
+			}
+		} else {
+			$(".gd-annotations-comments-wrapper").removeClass("active");
+		}			
+	});
 });
 
 /*
@@ -499,39 +491,22 @@ function getTextCoordinates(pageNumber, callback) {
   * @param {int} mouseX - current mouse X position
   * @param {int} mouseY - current mouse Y position
  */
-function setTextAnnotationCoordinates(mouseX, mouseY) {
-    var correctCoordinates = {
-        x: 0,
-        y: 0,
-        height: 0
-    };
-    // check if the mouse position is less or bigger than the first or last text row
-    if (mouseY < rows[0].lineTop) {
-        mouseY = rows[0].lineTop;
-    } else if (mouseY > rows[rows.length - 1].lineTop) {
-        mouseY = rows[rows.length - 1].lineTop;
-    }
+function getTextLineHeight(mouseX, mouseY) {
+    var height = 0;  
+	if(mouseY < rows[0].lineTop){
+		mouseY = rows[0].lineTop;
+	}
     // get most suitable row (vertical position)
     for (var i = 0; i < rows.length; i++) {
         if (mouseY >= rows[i].lineTop && rows[i + 1] && mouseY <= rows[i + 1].lineTop) {
-            // set row top position and height
-            correctCoordinates.y = rows[i].lineTop;
-            correctCoordinates.height = rows[i].lineHeight;
-            // get most suitable symbol coordinates in the row (horizontal position)
-            for (var n = 0; n < rows[i].textCoordinates.length; n++) {
-                if (mouseX >= rows[i].textCoordinates[n] && mouseX < rows[i].textCoordinates[n + 1]) {
-                    correctCoordinates.x = rows[i].textCoordinates[n];
-                    break;
-                } else {
-                    continue;
-                }
-            }
+            // set row top position and height           
+            height = rows[i].lineHeight;            
             break;
         } else {
             continue
         }
     }
-    return correctCoordinates;
+    return height;
 }
 
 
@@ -550,7 +525,7 @@ function annotate() {
     // current document guid is taken from the viewer.js globals
     var data = {
         guid: documentGuid.replace(/\\/g, "//"),
-        password: password,
+        password: password,       
         annotationsData: annotationsToAdd,
         documentType: getDocumentFormat(documentGuid).format
     };
@@ -573,10 +548,9 @@ function annotate() {
                     printMessage(returnedData.message);
                 }
                 return;
-            }
-            annotatedDocumentGuid = returnedData.guid;
+            }            
             result = '<div id="gd-modal-annotated">Document annotated successfully</div>';
-            toggleModalDialog(true, 'Annotation', result);
+            toggleModalDialog(true, 'Annotation', result);			
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -676,7 +650,7 @@ function addComment(currentAnnotation) {
     } else {
         $('#gd-annotations-comments-toggle').prop('checked', true);
         if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
-            $(".gd-annotations-comments-wrapper").toggleClass("active");
+            $(".gd-annotations-comments-wrapper").addClass("active");
         }
         currentAnnotation.comments = [];
         $("#gd-annotation-comments").append(getCommentBaseHtml);
@@ -700,15 +674,16 @@ function makeResizable(currentAnnotation) {
                     // set restriction for image dragging area to current document page
                     containment: "#gd-page-" + currentAnnotation.pageNumber,
                     stop: function (event, image) {
-                        if (annotationType == "text" || annotationType == "textStrikeout") {
-                            var coordinates = setTextAnnotationCoordinates(image.position.left, image.position.top)
-                            currentAnnotation.left = coordinates.x;
-                            currentAnnotation.top = coordinates.y;
+                        if (annotationType == "text" || annotationType == "textStrikeout" || annotationType == "textUnderline") {
+                            var lineHeight = getTextLineHeight(image.position.left, image.position.top);							
+                            currentAnnotation.left = image.position.left;
+                            currentAnnotation.top = image.position.top;
+							currentAnnotation.height = lineHeight;
                         } else {
                             currentAnnotation.left = image.position.left;
                             currentAnnotation.top = image.position.top;
                         }
-                    },
+                    },					
                 }).resizable({
                     // set restriction for image resizing to current document page
                     containment: "#gd-page-" + currentAnnotation.pageNumber,
@@ -890,6 +865,31 @@ function download(button) {
     }
 }
 
+/**
+ * Append SVG container to each document page
+ */
+function addSvgContainer(){
+	$('div.gd-page').each(function (index, page) {
+		$(page).css("zoom", "1");
+		// initiate svg object
+		if (svgList == null) {
+			svgList = {};
+		}
+		if (page.id.indexOf("thumbnails") >= 0) {
+			return true;
+		} else {
+			if (!(page.id in svgList) && $(page).find("svg").length == 0) {
+				$(page).addClass("gd-disable-select");
+				// add svg object to the list for further use
+				var draw = SVG(page.id).size(page.offsetWidth, page.offsetHeight);
+				svgList[page.id] = draw;
+				draw = null;
+			} else {
+				return true;
+			}
+		}
+	});
+}
 /*
 ******************************************************************
 ******************************************************************

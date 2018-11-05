@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 /*
@@ -96,6 +96,7 @@ map['mobi'] = { 'format': 'Mobipocket eBook', 'icon': 'fa-file-pdf' };
 map['tex'] = { 'format': 'LaTeX Source Document', 'icon': 'fa-file-pdf' };
 map['djvu'] = { 'format': 'Multi-Layer Raster Image', 'icon': 'fa-file-alt' };
 map['unknown'] = { 'format': 'This format is not supported', 'icon': 'fa-file' };
+var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
 
 $(document).ready(function(){
 
@@ -107,14 +108,14 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Toggle comparison tab
     //////////////////////////////////////////////////
-    $('.gd-lbl-toggle').on('click', function(e){
+    $('.gd-lbl-toggle').on(userMouseClick, function(e){
         $(".gd-comparison-bar-wrapper").toggleClass("active");
     });
 
     //////////////////////////////////////////////////
     // Toggle navigation dropdown menus
     //////////////////////////////////////////////////
-    $('.gd-nav-toggle').on('click', function(e){
+    $('.gd-nav-toggle').on(userMouseClick, function(e){
         if($(this).hasClass('open')){
             $(this).removeClass('open');
         }else{
@@ -127,12 +128,12 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Close modal dialog event
     //////////////////////////////////////////////////
-    $('.gd-modal-close-action').on('click', closeModal);
+    $('.gd-modal-close-action').on(userMouseClick, closeModal);
 
     //////////////////////////////////////////////////
     // File or directory click event from file tree
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '.gd-filetree-name', function(e){
+    $('.gd-modal-body').on(userMouseClick, '.gd-filetree-name', function(e){
         var isDir = $(this).parent().find('.fa-folder').hasClass('fa-folder');
         if(isDir){
             // if directory -> browse
@@ -154,7 +155,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Go to parent directory event from file tree
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '.gd-go-up', function(e){
+    $('.gd-modal-body').on(userMouseClick, '.gd-go-up', function(e){
         if(currentDirectory.length > 0 && currentDirectory.indexOf('/') == -1){
             currentDirectory = '';
         }else{
@@ -166,11 +167,11 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Download event
     //////////////////////////////////////////////////
-    $('#gd-btn-download-all').on('click', function(e){
+    $('#gd-btn-download-all').on(userMouseClick, function(e){
         downloadDocument();
     });
 
-    $('#gd-btn-download-summary').on('click', function(e){
+    $('#gd-btn-download-summary').on(userMouseClick, function(e){
         downloadDocument(resultData.length - 1);
     });
     //////////////////////////////////////////////////
@@ -193,7 +194,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Open first URL input event
     //////////////////////////////////////////////////
-    $('#gd-url-button-first').on('click', function () {
+    $('#gd-url-button-first').on(userMouseClick, function () {
         $('#gd-url-wrap-first').slideDown('fast');
         $('#gd-url-first').focus();
     });
@@ -201,7 +202,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Close first URL input event
     //////////////////////////////////////////////////
-    $('#gd-url-cancel-first').on('click', function () {
+    $('#gd-url-cancel-first').on(userMouseClick, function () {
         $('#gd-url-wrap-first').slideUp('fast');
         $('#gd-url-first').val('');
     });
@@ -209,7 +210,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Add first file via URL event
     //////////////////////////////////////////////////
-    $('#gd-add-url-first').on('click', function () {
+    $('#gd-add-url-first').on(userMouseClick, function () {
         var url = $("#gd-url-first").val();
         fillFileVariables('first', '', url, '');
         addFileForComparing(null, url, 'first');
@@ -219,7 +220,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Open second URL input event
     //////////////////////////////////////////////////
-    $('#gd-url-button-second').on('click', function () {
+    $('#gd-url-button-second').on(userMouseClick, function () {
         $('#gd-url-wrap-second').slideDown('fast');
         $('#gd-url-second').focus();
     });
@@ -227,7 +228,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Close second URL input event
     //////////////////////////////////////////////////
-    $('#gd-url-cancel-second').on('click', function () {
+    $('#gd-url-cancel-second').on(userMouseClick, function () {
         $('#gd-url-wrap-second').slideUp('fast');
         $('#gd-url-second').val('');
     });
@@ -235,7 +236,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Add second file via URL event
     //////////////////////////////////////////////////
-    $('#gd-add-url-second').on('click', function () {
+    $('#gd-add-url-second').on(userMouseClick, function () {
         var url = $("#gd-url-second").val();
         fillFileVariables('second', '', url, '');
         addFileForComparing(null, url, 'second');
@@ -245,20 +246,20 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Print event
     //////////////////////////////////////////////////
-    $('#gd-btn-print').on('click', function(){
+    $('#gd-btn-print').on(userMouseClick, function(){
         printResults();
     });
 
     //////////////////////////////////////////////////
     // Open document button (upload dialog) click
     //////////////////////////////////////////////////
-    $('#gd-open-document-first').on('click', function(e){
+    $('#gd-open-document-first').on(userMouseClick, function(e){
         toggleModalDialog(false, '');
         fileNumber = 'first';
         loadFileTree('');
     });
 
-    $('#gd-open-document-second').on('click', function(e){
+    $('#gd-open-document-second').on(userMouseClick, function(e){
         toggleModalDialog(false, '');
         fileNumber = 'second';
         loadFileTree('');
@@ -267,7 +268,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Submit password button click (password required modal)
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', "#gd-password-submit", function(e){
+    $('.gd-modal-body').on(userMouseClick, "#gd-password-submit", function(e){
         password = $('#gd-password-input').val();
         $('#gd-password-input').val('');
         toggleModalDialog(false, '');
@@ -276,7 +277,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Click on modal body event (used to change slide in swiper)
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-modal-content', function(e){
+    $('.gd-modal-body').on(userMouseClick, '#gd-modal-content', function(e){
         if(isMobile()){
             if($('#gd-upload-files-table > div').length > 0){
                 var swiper = new Swiper('.swiper-container');
@@ -294,7 +295,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Compare two files event
     //////////////////////////////////////////////////
-    $('#gd-btn-compare').on('click', function () {
+    $('#gd-btn-compare').on(userMouseClick, function () {
         var context;
         var contentType = 'application/json';
         var data;
@@ -434,7 +435,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Clean current comparison results
     //////////////////////////////////////////////////
-    $('#gd-btn-clean-compare').on('click', function () {
+    $('#gd-btn-clean-compare').on(userMouseClick, function () {
         clearFilesRows('first');
         clearFilesRows('second');
         clearAndShowSelection('first');
@@ -450,7 +451,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Zoom values event
     //////////////////////////////////////////////////
-    $('#gd-btn-zoom-value > li').bind('click', function(e){
+    $('#gd-btn-zoom-value > li').bind(userMouseClick, function(e){
         var zoomValue = $(this).text();
         switch(zoomValue){
             case 'Fit Width':
@@ -483,7 +484,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Zoom in event
     //////////////////////////////////////////////////
-    $('#gd-btn-zoom-in').on('click', function(e){
+    $('#gd-btn-zoom-in').on(userMouseClick, function(e){
         var zoom_val = getZoomValue();
         if(zoom_val < 490){
             zoom_val = zoom_val + 10;
@@ -494,7 +495,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Zoom out event
     //////////////////////////////////////////////////
-    $('#gd-btn-zoom-out').on('click', function(e){
+    $('#gd-btn-zoom-out').on(userMouseClick, function(e){
         var zoom_val = getZoomValue();
         if(zoom_val > 30){
             zoom_val = zoom_val - 10;
@@ -553,7 +554,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Open modal dialog (file upload) event
     //////////////////////////////////////////////////
-    $('#gd-btn-upload').on('click', function(e){
+    $('#gd-btn-upload').on(userMouseClick, function(e){
         toggleModalDialog(true, 'Upload Document', getHtmlUploadForModal());
         var dropZone = $('#gd-dropZone');
         if (typeof dropZone[0] != "undefined") {
@@ -586,7 +587,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Cancel file upload event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', ".gd-cancel-button", function(e){
+    $('.gd-modal-body').on(userMouseClick, ".gd-cancel-button", function(e){
         // get selected files
         var button = $(this);
         // get file name which will be deleted
@@ -617,7 +618,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Upload event
     //////////////////////////////////////////////////
-    $(".gd-modal-body").on('click', '#gd-upload-button', function(e){
+    $(".gd-modal-body").on(userMouseClick, '#gd-upload-button', function(e){
         // get current number of table rows
         var tableRows = $('#gd-upload-files-table > div');
         // initiate URL counter required for proper calculating of the uploaded files in case local files uploaded with URLs
@@ -648,7 +649,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Open URL input event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-url-button', function () {
+    $('.gd-modal-body').on(userMouseClick, '#gd-url-button', function () {
         $('#gd-url-wrap').slideDown('fast');
         $('#gd-url').focus();
     });
@@ -656,7 +657,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Close URL input event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-url-cancel', function () {
+    $('.gd-modal-body').on(userMouseClick, '#gd-url-cancel', function () {
         $('#gd-url-wrap').slideUp('fast');
         $('#gd-url').val('');
     });
@@ -664,7 +665,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Add file via URL event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-add-url', function () {
+    $('.gd-modal-body').on(userMouseClick, '#gd-add-url', function () {
         addFileForUploading(null, $("#gd-url").val());
         $('#gd-url').val('');
     });
@@ -682,12 +683,12 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Open document button (upload dialog) click
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-open-document', function(e){
+    $('.gd-modal-body').on(userMouseClick, '#gd-open-document', function(e){
         toggleModalDialog(false, '');
         loadFileTree('');
     });
 
-    $('#gd-add-file-multicompare').on('click', function(e){
+    $('#gd-add-file-multicompare').on(userMouseClick, function(e){
         var prefix = 'idx' + idx;
         var newDragnDrop = getHtmlDragAndDropArea(prefix)
         $(newDragnDrop).insertBefore("#gd-add-multicompare");
@@ -699,21 +700,21 @@ $(document).ready(function(){
             // add files to the table
             addFileForComparing(input.get(0).files, null, prefix);
         });
-        $('#gd-url-button-' + prefix).on('click', function () {
+        $('#gd-url-button-' + prefix).on(userMouseClick, function () {
             $('#gd-url-wrap-' + prefix).slideDown('fast');
             $('#gd-url-' + prefix).focus();
         });
-        $('#gd-url-cancel-' + prefix).on('click', function () {
+        $('#gd-url-cancel-' + prefix).on(userMouseClick, function () {
             $('#gd-url-wrap-' + prefix).slideUp('fast');
             $('#gd-url-' + prefix).val('');
         });
-        $('#gd-add-url-' + prefix).on('click', function () {
+        $('#gd-add-url-' + prefix).on(userMouseClick, function () {
             var url = $("#gd-url-" + prefix).val();
             fillFileVariables(prefix, '', url, '');
             addFileForComparing(null, url, prefix);
             $('#gd-url-' + prefix).val('');
         });
-        $('#gd-open-document-' + prefix).on('click', function(e){
+        $('#gd-open-document-' + prefix).on(userMouseClick, function(e){
             toggleModalDialog(false, '');
             fileNumber = prefix;
             loadFileTree('');
@@ -1352,7 +1353,7 @@ function addFileForComparing(uploadFiles, url, prefix) {
         });
     }
 
-    $('#gd-cancel-button-' + prefix).on('click', function() {
+    $('#gd-cancel-button-' + prefix).on(userMouseClick, function() {
         // get selected files
         var button = $(this);
         // remove table row
@@ -1413,14 +1414,14 @@ function uploadDocument(file, index, url = ''){
             // upload progress
             xhr.upload.addEventListener("progress", function(event){
                 if (event.lengthComputable) {
-                    $(".gd-modal-close-action").off('click');
+                    $(".gd-modal-close-action").off(userMouseClick);
                     $("#gd-open-document").prop("disabled", true);
                     // increase progress
                     $("#gd-pregress-bar-" + index).addClass("p"+ Math.round(event.loaded / event.total * 100));
                     if(event.loaded == event.total){
                         $("#gd-pregress-bar-" + index).fadeOut();
                         $("#gd-upload-complete-" + index).fadeIn();
-                        $('.gd-modal-close-action').on('click', closeModal);
+                        $('.gd-modal-close-action').on(userMouseClick, closeModal);
                         $("#gd-open-document").prop("disabled", false);
                     }
                 }
@@ -1608,7 +1609,7 @@ function uploadDocument(file, index, url = ''){
      * @param prefix - prefix for selection area
      */
     function initCloseButton(prefix) {
-        $('#gd-close-dad-area-' + prefix).on('click', function(e) {
+        $('#gd-close-dad-area-' + prefix).on(userMouseClick, function(e) {
             fillFileVariables(prefix, '', '', '');
             $('#gd-upload-section-' + prefix).remove();
         });

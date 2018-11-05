@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.0.0
+ * @version 1.1.0
  */
  
 //////////////////////////////////////////////////
@@ -66,7 +66,9 @@ $(document).ready(function () {
     var lineInnerHtml = null;
     var currentPrefix = "";
     var idNumber = null;
-   
+    var userMouseUp = ('ontouchend' in document.documentElement) ? 'touchend mouseup' : 'mouseup';
+    var userMouseMove = ('ontouchmove' in document.documentElement) ? 'touchmove mousemove' : 'mousemove';
+
     /**
 	 * Draw text annotation
 	 * @param {Object} canvas - document page to add annotation
@@ -96,8 +98,8 @@ $(document).ready(function () {
             element.innerHTML = getHtmlResizeHandles();
             // calculate start point coordinates according to the document page
             var canvasTopOffset = $(canvas).offset().top;
-            var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
-            var y = mouse.y - (canvasTopOffset + (parseInt($(canvas).css("margin-top")) * 2));
+            var x = mouse.x - $(canvas).offset().left;
+            var y = mouse.y - canvasTopOffset;
             // draw the annotation
             switch (currentPrefix) {
                 case "area":
@@ -107,10 +109,10 @@ $(document).ready(function () {
                     break;
                 case "textStrikeout":
                     // get text coordinates data - required since the annotation of this type can be added only over the text
-                    var startCoordinates = setTextAnnotationCoordinates(x, y);
-                    element.style.left = startCoordinates.x + "px";
-                    element.style.top = startCoordinates.y + "px";
-                    element.style.height = startCoordinates.height + "px";
+                    var lineheight = getTextLineHeight(x, y);
+                    element.style.left = x + "px";
+                    element.style.top = y + "px";
+                    element.style.height = lineheight + "px";
                     annotationInnerHtml = getTextLineAnnotationHtml();
                     lineInnerHtml = getLineHtml();
                     break;
@@ -121,19 +123,19 @@ $(document).ready(function () {
                     break;
                 case "textUnderline":
                     // get text coordinates data - required since the annotation of this type can be added only over the text
-                    var startCoordinates = setTextAnnotationCoordinates(x, y);
-                    element.style.left = startCoordinates.x + "px";
-                    element.style.top = startCoordinates.y + "px";
-                    element.style.height = startCoordinates.height + "px";
+                    var lineheight = getTextLineHeight(x, y);
+                    element.style.left = x + "px";
+                    element.style.top = y + "px";
+                    element.style.height = lineheight + "px";
                     annotationInnerHtml = getTextLineAnnotationHtml();
                     lineInnerHtml = getLineHtml();
                     break;
                 default:
                     // get text coordinates data - required since the annotation of this type can be added only over the text
-                    var startCoordinates = setTextAnnotationCoordinates(x, y - 2);
-                    element.style.left = startCoordinates.x + "px";
-                    element.style.top = startCoordinates.y + "px";
-                    element.style.height = startCoordinates.height + "px";
+                    var lineheight = getTextLineHeight(x, y - 2);
+                    element.style.left = x + "px";
+                    element.style.top = y + "px";
+                    element.style.height = lineheight + "px";
                     annotationInnerHtml = getAnnotationHtml();
                     break;
             }
@@ -163,9 +165,7 @@ $(document).ready(function () {
         }
         // set mouse up event
         // this handler used to get annotation width and height after draw process
-        $('#gd-panzoom').bind('touchend mouseup', $(canvas), function (e) {
-            e.stopPropagation();
-            e.preventDefault();
+        $(canvas).on(userMouseUp, function (e) {
             if (element != null && e.target.tagName != "TEXTAREA") {
                 if (currentPrefix == "textReplacement") {
                     element.appendChild(getTextReplaceAnnotationHtml(idNumber));
@@ -186,8 +186,7 @@ $(document).ready(function () {
 
         // set mouse move event
         // this handler used to get annotation width and height while draw process
-        $('#gd-panzoom').bind('touchmove mousemove', $(canvas), function (e) {           
-            e.preventDefault();
+        $(canvas).on(userMouseMove, function (e) {
             mouse = getMousePosition(e);
             if (element !== null) {
                 if (currentPrefix == "text") {

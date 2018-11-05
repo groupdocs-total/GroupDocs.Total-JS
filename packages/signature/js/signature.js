@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 /*
@@ -36,8 +36,9 @@ var signature = {
     documentType: "",
 	deleted: false
 }
+var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
 
-$(document).ready(function(){
+$(document).ready(function(){	
 
     /*
     ******************************************************************
@@ -48,12 +49,12 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Disable default download event
     //////////////////////////////////////////////////
-    $('#gd-btn-download').off('click');
+    $('#gd-btn-download').off(userMouseClick);
 
     //////////////////////////////////////////////////
     // Fix for tooltips of the dropdowns
     //////////////////////////////////////////////////
-    $('#gd-download-val-container').on('click', function(e){
+    $('#gd-download-val-container').on(userMouseClick, function(e){
         if($(this).hasClass('open')){
             $('#gd-btn-download-value').parent().find('.gd-tooltip').css('display', 'none');
         }else{
@@ -61,18 +62,18 @@ $(document).ready(function(){
         }
     });
 
-    $('#gd-signature-val-container').on('click', function(e){
+    $('#gd-signature-val-container').on(userMouseClick, function(e){
         if($(this).hasClass('open')){
             $('#gd-btn-signature-value').parent().find('.gd-tooltip').css('display', 'none');
         }else{
             $('#gd-btn-signature-value').parent().find('.gd-tooltip').css('display', 'initial');
         }
-    });
-
+    });	
+	
     //////////////////////////////////////////////////
     // Digital sign event
     //////////////////////////////////////////////////
-    $('#qd-digital-sign').on('click', function(e){
+    $('#qd-digital-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
@@ -86,7 +87,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Image sign event
     //////////////////////////////////////////////////
-    $('#qd-image-sign').on('click', function(e){
+    $('#qd-image-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
@@ -100,7 +101,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Stamp sign event
     //////////////////////////////////////////////////
-    $('#gd-stamp-sign').on('click', function(e){
+    $('#gd-stamp-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
@@ -114,7 +115,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Optical sign event
     //////////////////////////////////////////////////
-    $('#qd-qr-sign, #qd-barcode-sign').on('click', function(e){
+    $('#qd-qr-sign, #qd-barcode-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
@@ -149,7 +150,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Text sign event
     //////////////////////////////////////////////////
-    $('#qd-text-sign').on('click', function(e){
+    $('#qd-text-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
@@ -163,7 +164,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Open signatures browse button click
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '.gd-browse-signatures', function(e){
+    $('.gd-modal-body').on(userMouseClick, '.gd-browse-signatures', function(e){
         $('#modalDialog .gd-modal-title').text("Signing Document");
         $( "#gd-signature-draw-step" ).remove();
         if( $("#gd-signature-select-step").length == 0){
@@ -183,7 +184,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Open signatures draw button click
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '.gd-draw-signatures', function(e) {
+    $('.gd-modal-body').on(userMouseClick, '.gd-draw-signatures', function(e) {
         $('#modalDialog .gd-modal-title').text("Signing Document");
         $("#gd-signature-select-step").remove();
         if( $("#gd-signature-draw-step").length == 0){
@@ -224,7 +225,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // signature or directory click event from signature tree
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '.gd-signature-name', function(e){
+    $('.gd-modal-body').on(userMouseClick, '.gd-signature-name', function(e){
         var isDir = $(this).parent().find('.fa-folder').hasClass('fa-folder');
         if(isDir){
             // if directory -> browse
@@ -242,7 +243,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Go to parent directory event from signature tree
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '.gd-go-up-signature', function(e){
+    $('.gd-modal-body').on(userMouseClick, '.gd-go-up-signature', function(e){
         if(currentDirectory.length > 0 && currentDirectory.indexOf('/') == -1){
             currentDirectory = "";
         }else{
@@ -267,7 +268,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Signature select event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '.gd-signature', function(e){
+    $('.gd-modal-body').on(userMouseClick, '.gd-signature', function(e){
         // get selected signature guid
         if (typeof $(this).find("label").data("guid") != "undefined") {
             signature.signatureGuid = $(this).find("label").data("guid");
@@ -286,7 +287,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Back button click event (digital signing modal)
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-back', function(e){
+    $('.gd-modal-body').on(userMouseClick, '#gd-back', function(e){
         var currentSlide;
 		if(!/Mobi/.test(navigator.userAgent)){		
 			$("#gd-next").css("left", "calc(100% - 90px)");
@@ -310,12 +311,12 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Next button click event (digital signing modal)
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-next', switchToNextSlide);
+    $('.gd-modal-body').on(userMouseClick, '#gd-next', switchToNextSlide);
 
     //////////////////////////////////////////////////
     // Select page number event (image signing modal)
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '.gd-page-number', function(pageNumber){
+    $('.gd-modal-body').on(userMouseClick, '.gd-page-number', function(pageNumber){
         $(".gd-signature-information-review i").html($(pageNumber.target).html());
     });
 
@@ -331,7 +332,7 @@ $(document).ready(function(){
         // enable save button on the dashboard
         if($("#gd-nav-save").hasClass("gd-save-disabled")) {
             $("#gd-nav-save").removeClass("gd-save-disabled");
-            $("#gd-nav-save").on('click', function(){
+            $("#gd-nav-save").on(userMouseClick, function(){
                 sign();
             });
         }
@@ -345,7 +346,7 @@ $(document).ready(function(){
         $(this).parent().draggable("enable").rotatable("enable").resizable("enable");
         // disable save button on the dashboard
         $("#gd-nav-save").addClass("gd-save-disabled");
-        $("#gd-nav-save").off('click');
+        $("#gd-nav-save").off(userMouseClick);
 		$(this).hide();
 		$(this).parent().find("#gd-cancel").show();
 		$(this).parent().find("#gd-apply").show();
@@ -363,7 +364,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Export drawn image signature
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#bcPaint-export', function(){
+    $('.gd-modal-body').on(userMouseClick, '#bcPaint-export', function(){
         var drawnImage = $.fn.bcPaint.export();
         saveDrawnImage(drawnImage);
     });
@@ -371,7 +372,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Enable NEXT button when at least one stamp shape is added
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', 'button#csg-shape-add', function(){
+    $('.gd-modal-body').on(userMouseClick, 'button#csg-shape-add', function(){
         $(".gd-signature-select").removeClass("gd-signing-disabled");
     });
 
@@ -387,7 +388,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Export drawn Optical signature - detect Color border change event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-qr-border-color .bcPicker-color', function(){
+    $('.gd-modal-body').on(userMouseClick, '#gd-qr-border-color .bcPicker-color', function(){
         var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
         opticalProperties.borderColor = $(this).css("background-color");
         opticalProperties.imageGuid = signature.signatureGuid;
@@ -406,7 +407,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Export drawn Text signature - detect color change event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-text-border-color .bcPicker-color, #gd-text-background .bcPicker-color, #gd-text-font-color .bcPicker-color', function(){
+    $('.gd-modal-body').on(userMouseClick, '#gd-text-border-color .bcPicker-color, #gd-text-background .bcPicker-color, #gd-text-font-color .bcPicker-color', function(){
         var textProperties = $.fn.textGenerator.getProperties();       
         switch($(this).parent().parent().attr("id")){
             case "gd-text-font-color":
@@ -435,18 +436,18 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Download event
     //////////////////////////////////////////////////
-    $('#gd-btn-download-value > li').bind('click', function(e){
+    $('#gd-btn-download-value > li').bind(userMouseClick, function(e){
         download($(this));
     });
 	
 	//////////////////////////////////////////////////
     // Pages diapason entering event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-from, #gd-to', function(e){
+    $('.gd-modal-body').on(userMouseClick, '#gd-from, #gd-to', function(e){
 		$("#gd-radio-diapason").prop("checked", true);
     });
 
-    $('#gd-btn-upload').on('click', function (e) {
+    $('#gd-btn-upload').on(userMouseClick, function (e) {
         $(".gd-modal-dialog").removeClass("gd-signature-modal-dialog");
     });
 
@@ -570,14 +571,14 @@ function uploadSignature(file, index, url) {
             // upload progress
             xhr.upload.addEventListener("progress", function(event){
                 if (event.lengthComputable) {
-                    $(".gd-modal-close-action").off('click');
+                    $(".gd-modal-close-action").off(userMouseClick);
                     $("#gd-open-document").prop("disabled", true);
                     // increase progress
                     $("#gd-pregress-bar-" + index).addClass("p"+ Math.round(event.loaded / event.total * 100));
                     if(event.loaded == event.total){
                         $("#gd-pregress-bar-" + index).fadeOut();
                         $("#gd-upload-complete-" + index).fadeIn();
-                        $('.gd-modal-close-action').on('click', closeModal);
+                        $('.gd-modal-close-action').on(userMouseClick, closeModal);
                         $("#gd-open-document").prop("disabled", false);
                     }
                 }

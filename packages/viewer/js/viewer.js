@@ -21,6 +21,7 @@ var documentGuid;
 var documentData = [];
 var password = '';
 var rewrite;
+var loadedPagesCount = 0;
 var map = {};
 var htmlMode = false;
 // add supported formats
@@ -140,6 +141,15 @@ $(document).ready(function () {
             loadFileTree(currentDirectory);
         } else {
             // if document -> open
+			(!$('#gd-btn-zoom-value').hasClass("disabled")) ? $('#gd-btn-zoom-value').addClass("disabled") : "";
+			$('#gd-btn-zoom-value > li').unbind("click");			
+			(!$('#gd-btn-zoom-in').hasClass("disabled")) ? $('#gd-btn-zoom-in').addClass("disabled") : "";
+			$('#gd-btn-zoom-in').unbind("click");
+			(!$('#gd-btn-zoom-out').hasClass("disabled")) ? $('#gd-btn-zoom-out').addClass("disabled") : "";
+			$('#gd-btn-zoom-out').unbind("click");			
+			(!$('#gd-btn-print').hasClass("disabled")) ? $('#gd-btn-print').addClass("disabled") : "";
+			$('#gd-btn-print').unbind("click");		
+			(!$('#gd-btn-download').hasClass("disabled")) ? $('#gd-btn-download').addClass("disabled") : "";							
             clearPageContents();
             toggleModalDialog(false, '');
 			password = ""; 
@@ -161,62 +171,7 @@ $(document).ready(function () {
             currentDirectory = currentDirectory.replace(/\/[^\/]+\/?$/, '');
         }
         loadFileTree(currentDirectory);
-    });
-
-    //////////////////////////////////////////////////
-    // Zoom values event
-    //////////////////////////////////////////////////
-    $('#gd-btn-zoom-value > li').bind('click', function (e) {
-        var zoomValue = $(this).text();
-        switch (zoomValue) {
-            case 'Fit Width':
-                // get page width
-                var pageWidth = $('.gd-page').width();
-                // get screen width
-                var screenWidth = $('#gd-pages').width();
-                // get scale ratio
-                var scale = (pageWidth / screenWidth) * 100;
-                // set values
-                zoomValue = 200 - scale;
-                break;
-            case 'Fit Height':
-                // get page height
-                var pageHeight = $('.gd-page').height();
-                // get screen height
-                var screenHeight = $('#gd-pages').height();
-                // get scale ratio
-                var scale = (screenHeight / pageHeight) * 100;
-                // set values
-                zoomValue = scale;
-                break;
-            default:
-                zoomValue = zoomValue.slice(0, -1);
-                break;
-        }
-        setZoomValue(zoomValue);
-    });
-
-    //////////////////////////////////////////////////
-    // Zoom in event
-    //////////////////////////////////////////////////
-    $('#gd-btn-zoom-in').on('click', function (e) {
-        var zoom_val = getZoomValue();
-        if (zoom_val < 490) {
-            zoom_val = zoom_val + 10;
-        }
-        setZoomValue(zoom_val);
-    });
-
-    //////////////////////////////////////////////////
-    // Zoom out event
-    //////////////////////////////////////////////////
-    $('#gd-btn-zoom-out').on('click', function (e) {
-        var zoom_val = getZoomValue();
-        if (zoom_val > 30) {
-            zoom_val = zoom_val - 10;
-        }
-        setZoomValue(zoom_val);
-    });
+    });      
 
     //////////////////////////////////////////////////
     // Page navigation event
@@ -558,14 +513,7 @@ $(document).ready(function () {
     $('.gd-modal-body').on('click', '#gd-add-url', function () {
         addFileForUpload(null, $("#gd-url").val());
         $('#gd-url').val('');
-    });
-
-    //////////////////////////////////////////////////
-    // Print event
-    //////////////////////////////////////////////////
-    $('#gd-btn-print').on('click', function (e) {
-        printDocument();
-    });
+    });    
 
     //////////////////////////////////////////////////
     // Open modal dialog (file upload) event
@@ -988,6 +936,23 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                         gd_prefix_page.removeClass("gd-thumbnails-landscape-image");
                     }
                 }
+				if(prefix != "thumbnails-"){
+					loadedPagesCount = loadedPagesCount + 1;
+					var pagesAttr = $('#gd-page-num').text().split('/');      
+					var lastPageNumber = parseInt(pagesAttr[1]);
+					if(loadedPagesCount == lastPageNumber){
+						$('#gd-btn-zoom-value > li').bind("click", setZoomLevel);
+						$('#gd-btn-zoom-value').removeClass("disabled");
+						$('#gd-btn-zoom-in').bind('click', zoomIn);
+						$('#gd-btn-zoom-out').bind('click', zoomOut);
+						$('#gd-btn-zoom-in').removeClass('disabled');
+						$('#gd-btn-zoom-out').removeClass('disabled');
+						$('#gd-btn-print').bind('click', printDocument);
+						$('#gd-btn-print').removeClass('disabled');						
+						$('#gd-btn-download').removeClass('disabled');
+						loadedPagesCount = 0;						
+					}
+				}				
             },
             error: function (xhr, status, error) {
                 var err = eval("(" + xhr.responseText + ")");               
@@ -1164,10 +1129,22 @@ function setZoomValue(zoom_val) {
     var style = [
 	'zoom: ' + zoom_val_webkit,
 	'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
-	'-moz-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')' // for mozilla browser
+	'-moz-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+	'-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+    '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+    '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'        
     ].join(';');
-    // add style
-    $('#gd-panzoom').attr('style', style);
+    // check if current browser is IE - if browser is IE we need to add zoom styles to each document page instead of gd-panzoom element
+	var ua = window.navigator.userAgent;
+	var is_ie = /MSIE|Trident/.test(ua);
+
+	if ( is_ie ) {
+	  $.each($('#gd-panzoom').find(".gd-page"), function(index, page){
+		  $(page).attr('style', style);
+	  });
+	} else {
+		$('#gd-panzoom').attr('style', style);
+	}
 }
 
 /**
@@ -1622,6 +1599,61 @@ function isPageLoaded(selector) {
 }
 
 /**
+* Set zoom level
+*/
+function setZoomLevel() {
+	var zoomValue = $(this).text();
+	switch (zoomValue) {
+		case 'Fit Width':
+			// get page width
+			var pageWidth = $('.gd-page').width();
+			// get screen width
+			var screenWidth = $('#gd-pages').width();
+			// get scale ratio
+			var scale = (pageWidth / screenWidth) * 100;
+			// set values
+			zoomValue = 200 - scale;
+			break;
+		case 'Fit Height':
+			// get page height
+			var pageHeight = $('.gd-page').height();
+			// get screen height
+			var screenHeight = $('#gd-pages').height();
+			// get scale ratio
+			var scale = (screenHeight / pageHeight) * 100;
+			// set values
+			zoomValue = scale;
+			break;
+		default:
+			zoomValue = zoomValue.slice(0, -1);
+			break;
+	}
+	setZoomValue(zoomValue);
+}
+
+/**
+* Zoom in
+*/
+function zoomIn() {
+	var zoom_val = getZoomValue();
+	if (zoom_val < 490) {
+		zoom_val = zoom_val + 10;
+	}
+	setZoomValue(zoom_val);
+}
+
+/**
+* Zoom out
+*/
+function zoomOut() {
+	var zoom_val = getZoomValue();
+	if (zoom_val > 30) {
+		zoom_val = zoom_val - 10;
+	}
+	setZoomValue(zoom_val);
+}
+
+/**
 * Get HTML content for file browser modal
 **/
 function getHtmlFileBrowser() {
@@ -1869,7 +1901,7 @@ GROUPDOCS.VIEWER PLUGIN
         return '<li class="gd-nav-toggle" id="gd-zoom-val-container">' +
 					'<span id="gd-zoom-value">100%</span>' +
 					'<span class="gd-nav-caret"></span>' +
-					'<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-zoom-value">' +
+					'<ul class="gd-nav-dropdown-menu gd-nav-dropdown disabled" id="gd-btn-zoom-value">' +
 						'<li>25%</li>' +
 						'<li>50%</li>' +
 						'<li>100%</li>' +
@@ -1881,11 +1913,11 @@ GROUPDOCS.VIEWER PLUGIN
 						'<li>Fit Height</li>' +
 		            '</ul>' +
 				'</li>' +
-				'<li id="gd-btn-zoom-in">' +
+				'<li id="gd-btn-zoom-in" class="disabled">' +
 					'<i class="fa fa-search-plus"></i>' +
 					'<span class="gd-tooltip">Zoom In</span>' +
 				'</li>' +
-				'<li id="gd-btn-zoom-out">' +
+				'<li id="gd-btn-zoom-out" class="disabled">' +
 					'<i class="fa fa-search-minus"></i>' +
 					'<span class="gd-tooltip">Zoom Out</span>' +
 				'</li>';
@@ -1935,11 +1967,11 @@ GROUPDOCS.VIEWER PLUGIN
     }
 
     function getHtmlNavDownloadPanel() {
-        return '<li id="gd-btn-download"><i class="fa fa-download"></i><span class="gd-tooltip">Download</span></li>';
+        return '<li id="gd-btn-download" class="disabled"><i class="fa fa-download"></i><span class="gd-tooltip">Download</span></li>';
     }
 
     function getHtmlNavPrintPanel() {
-        return '<li id="gd-btn-print"><i class="fa fa-print"></i><span class="gd-tooltip">Print</span></li>';
+        return '<li id="gd-btn-print" class="disabled"><i class="fa fa-print"></i><span class="gd-tooltip">Print</span></li>';
     }
 
     function getHtmlNavUploadPanel() {

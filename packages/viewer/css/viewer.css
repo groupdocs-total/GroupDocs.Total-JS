@@ -177,7 +177,9 @@ NAV BUTTONS
 #gd-nav-right .gd-tooltip::after {
     left: 85%;
 }
-
+.disabled {
+	cursor: not-allowed !important;
+}
 /*
 ******************************************
 SEARCH

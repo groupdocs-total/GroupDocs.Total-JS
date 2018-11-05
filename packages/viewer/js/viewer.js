@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.4.0
+ * @version 1.5.0
  */
 
 /*
@@ -1488,7 +1488,7 @@ function printDocument() {
     var documentContainer = $("#gd-panzoom");
     // force each document page to be printed as a new page
     var cssPrint = '<style>' +           
-            '.gd-page {page-break-after:always; page-break-inside: avoid;} .gd-page:last-child {page-break-after:avoid !important;}';
+            '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
     // set correct page orientation if page were rotated
     documentContainer.find(".gd-page").each(function (index, page) {
         if ($(page).css("transform") != "none") {

@@ -810,7 +810,6 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                     printMessage(htmlData.error);
                     return;
                 }
-
                 // fix zoom in/out scaling
                 var zoomValue = 1;
                 // append page content in HTML mode
@@ -821,29 +820,15 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                     gd_prefix_page.find('.gd-page-spinner').hide();
                     // fix to avoid using the spinner DIV size
                     if (preloadPageCount == 0) {
-                       if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && !/Edge/.test(navigator.userAgent)) {							
-							width = gd_page.innerWidth();
-							height = gd_page.innerHeight();							
-                        } else if(gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && /Edge/.test(navigator.userAgent)){
-							width = gd_page.innerWidth() / 10;
-							height = gd_page.innerHeight();
-							if(getDocumentFormat(documentGuid).format.search("Word") != -1 || prefix == "thumbnails-"){
-								width = gd_page.innerWidth();
-							}							
-						}
+                       var pageSize = setDocumentPageSize(gd_page, prefix, width, height)
+					   width = pageSize.width;
+					   height = pageSize.height;
                     } else {
                         // set correct width and height for document pages
                         if (prefix == "") {
-                            if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && !/Edge/.test(navigator.userAgent)) {
-                                width = gd_page.innerWidth();
-                                height = gd_page.innerHeight();
-                            } else if(gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && /Edge/.test(navigator.userAgent)) {
-								width = gd_page.innerWidth() / 10;
-								height = gd_page.innerHeight();
-								if(getDocumentFormat(documentGuid).format.search("Word") != -1){
-									width = gd_page.innerWidth();
-								}
-							}
+                            var pageSize = setDocumentPageSize(gd_page, prefix, width, height)
+						    width = pageSize.width;
+						    height = pageSize.height;
                         } else {
                             // set correct width and height for thumbnails
                             if (width > height && htmlData.angle == 0) {
@@ -973,6 +958,31 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
             }
         });
     }
+}
+
+/**
+* Calculate document page width and height
+* @param {Object} gd_page = document page placeholder object;
+* @param {string} prefix - elements id prefix
+* @param {int} width - current page width
+* @param {int} height - current page height
+*/
+function setDocumentPageSize(gd_page, prefix, width, height){
+	var pageSize = {
+		width: 0,
+		height: 0
+	}
+	if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && !/Edge/.test(navigator.userAgent)) {							
+		pageSize.width = gd_page.innerWidth();
+		pageSize.height = gd_page.innerHeight();							
+	} else if(gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && /Edge/.test(navigator.userAgent)){
+		pageSize.width = gd_page.innerWidth() / 10;
+		pageSize.height = gd_page.innerHeight();
+		if(getDocumentFormat(documentGuid).format.search("Word") != -1 || prefix == "thumbnails-"){
+			pageSize.width = gd_page.innerWidth();
+		}							
+	}
+	return pageSize;
 }
 
 /**

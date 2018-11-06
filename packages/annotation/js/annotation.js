@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 /*
@@ -70,8 +70,7 @@ $(document).ready(function () {
 			$('#gd-annotations-comments-toggle').prop('checked', false);
         }		
         // set text rows data to null
-        rows = null;	
-		svgList = null;		
+        rows = null;			
         // append svg element to each page, this is required to draw svg based annotations
         addSvgContainer();
         //check if document contains annotations
@@ -114,10 +113,10 @@ $(document).ready(function () {
     // Open document event
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, '.gd-filetree-name', function (e) {
-        if (disable_click_flag) {     
-            // make annotations list empty for the new document
-            annotationsList = [];
-            svgList = null;
+        annotationsList = [];
+        svgList = null;
+		if (disable_click_flag) {     
+            // make annotations list empty for the new document            
             $("#gd-annotation-comments").html("");
             $('#gd-annotations-comments-toggle').prop('checked', false);
             var isDir = $(this).parent().find('.fa-folder').hasClass('fa-folder');

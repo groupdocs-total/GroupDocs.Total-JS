@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 /*
@@ -18,6 +18,7 @@ var signaturesList = [];
 var currentDocumentGuid = "";
 var pagesDiapason = [];
 var signedDocumentGuid = "";
+var imageSaved = false;
 var signature = {
     signaturePassword:  "",
     signatureComment: "",
@@ -38,7 +39,7 @@ var signature = {
 }
 var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
 
-$(document).ready(function(){	
+$(document).ready(function(){
 
     /*
     ******************************************************************
@@ -68,8 +69,8 @@ $(document).ready(function(){
         }else{
             $('#gd-btn-signature-value').parent().find('.gd-tooltip').css('display', 'initial');
         }
-    });	
-	
+    });
+
     //////////////////////////////////////////////////
     // Digital sign event
     //////////////////////////////////////////////////
@@ -174,6 +175,7 @@ $(document).ready(function(){
         }
         // open browse signatures step
         switchSlide(1, 0, "right");
+        $(".gd-signature-select").addClass("gd-signing-disabled");
         // set currently active step pagination
         if(!$($(".gd-pagination")[0]).hasClass("gd-pagination-active")){
             $($(".gd-pagination")[0]).addClass("gd-pagination-active")
@@ -203,6 +205,8 @@ $(document).ready(function(){
                 if ($("#bcPaint-container").length == 0) {
                     $("#gd-draw-image").bcPaint();
                 }
+                $(".gd-signature-select").removeClass("gd-signing-disabled");
+                imageSaved = false;
                 break;
             case "stamp":
                 if( $("#csg-container").length == 0) {
@@ -289,7 +293,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, '#gd-back', function(e){
         var currentSlide;
-		if(!/Mobi/.test(navigator.userAgent)){		
+		if(!/Mobi/.test(navigator.userAgent)){
 			$("#gd-next").css("left", "calc(100% - 90px)");
 		} else {
 			$("#gd-next").css("left", "calc(100% - 195px)");
@@ -351,13 +355,13 @@ $(document).ready(function(){
 		$(this).parent().find("#gd-cancel").show();
 		$(this).parent().find("#gd-apply").show();
     });
-	
+
 	//////////////////////////////////////////////////
     // Cancel image current state button click event
     //////////////////////////////////////////////////
     $("#gd-panzoom").on("click", "#gd-cancel", function(){
 		var signatureToDelete = parseInt($(this).parent().find("img").attr("id").replace ( /[^\d.]/g, '' ));
-		signaturesList[signatureToDelete].deleted = true;;        
+		signaturesList[signatureToDelete].deleted = true;;
 		$("#gd-draggable-helper-" + signatureToDelete).remove();
     });
 
@@ -369,6 +373,12 @@ $(document).ready(function(){
         saveDrawnImage(drawnImage);
     });
 
+    //////////////////////////////////////////////////
+    // Reset drawn image signature
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').on('click', '#bcPaint-reset', function(){
+        imageSaved = false;
+    });
     //////////////////////////////////////////////////
     // Enable NEXT button when at least one stamp shape is added
     //////////////////////////////////////////////////
@@ -400,7 +410,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     $('.gd-modal-body').on('keyup', '.gd-text-property', function(){
         var textProperties = $.fn.textGenerator.getProperties();
-		$.fn.textGenerator.draw(textProperties);       
+		$.fn.textGenerator.draw(textProperties);
         $(".gd-signature-select").removeClass("gd-signing-disabled");
     });
 
@@ -420,16 +430,16 @@ $(document).ready(function(){
                 textProperties.backgroundColor = $(this).css("background-color");
                 break;
         }
-		$.fn.textGenerator.draw(textProperties);    
-		$(".gd-signature-select").removeClass("gd-signing-disabled");		
+		$.fn.textGenerator.draw(textProperties);
+		$(".gd-signature-select").removeClass("gd-signing-disabled");
     });
-	
+
 	//////////////////////////////////////////////////
     // Export drawn Text signature - detect select change event
     //////////////////////////////////////////////////
     $('.gd-modal-body').on('change', '#gd-text-border-style-line .gd-border-style-select, .gd-text-checkbox label input', function(){
-        var textProperties = $.fn.textGenerator.getProperties();            
-		$.fn.textGenerator.draw(textProperties);       
+        var textProperties = $.fn.textGenerator.getProperties();
+		$.fn.textGenerator.draw(textProperties);
 		$(".gd-signature-select").removeClass("gd-signing-disabled");
     });
 
@@ -439,7 +449,7 @@ $(document).ready(function(){
     $('#gd-btn-download-value > li').bind(userMouseClick, function(e){
         download($(this));
     });
-	
+
 	//////////////////////////////////////////////////
     // Pages diapason entering event
     //////////////////////////////////////////////////
@@ -645,7 +655,7 @@ function sign() {
             break;
         case "text": url = getApplicationPath('signText')
             break;
-    }	
+    }
     // current document guid is taken from the viewer.js globals
     var data = {
         guid: documentGuid,
@@ -673,7 +683,7 @@ function sign() {
                     printMessage(returnedData.message);
                 }
                 return;
-            }			
+            }
             signedDocumentGuid = returnedData.guid;
             // prepare signing results HTML
             result = '<div id="gd-modal-signed">Document signed successfully</div>';
@@ -724,9 +734,9 @@ function saveDrawnImage(image) {
             signature.signatureGuid = returnedData.guid;
             signature.imageHeight = $("#bcPaintCanvas")[0].height;
             signature.imageWidth = $("#bcPaintCanvas")[0].width;
+            imageSaved = true;
             // load signatuers from storage
             loadSignaturesTree('');
-            $(".gd-signature-select").removeClass("gd-signing-disabled");
         },
         error: function(xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -886,7 +896,7 @@ function saveDrawnText(properties, callback) {
             // set curent signature data
             signature.signatureGuid = returnedData.imageGuid;
             signature.imageHeight = returnedData.height;
-            signature.imageWidth = returnedData.width;           
+            signature.imageWidth = returnedData.width;
         },
         error: function(xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -1059,7 +1069,7 @@ function getHtmlTextSign() {
     // prepare signing steps HTML
     var uploadStep = getHtmlSignatureUploadModal();
     var signaturesSelectStep = getHtmlSignaturesSelectModal();
-    var drawStep = getHtmlDrawModal(signature.signatureType);    
+    var drawStep = getHtmlDrawModal(signature.signatureType);
     var signaturePageSelectStep = getHtmlPagesSelectModal();
     var footer = getHtmlSigningModalFooter(2);
     // generate signing modal HTML
@@ -1119,20 +1129,20 @@ function getHtmlSignaturesSelectModal(){
 function getHtmlPagesSelectModal(){
     var stepHeader = '<div class="gd-signing-label">'+
                         '<div>2. Select page(s) <i>Enter pages diapason to add signature to the specific page(s). <br/> If you need to add signature to all pages you can use all pages selector</i></div>'+
-                    '</div>';                  
+                    '</div>';
     var pageSelector = '<div class="gd-pages-label">'+
 							'pages:'+
-						'</div>'+						
+						'</div>'+
 						'<div id="gd-all-pages">'+
 							'<div class="gd-signature" id="gd-pages-select-radio">'+
 								'<input id="gd-radio-all" class="gd-signature-radio" name="gd-radio" type="radio">'+
 								'<label for="gd-radio-all" class="gd-all-pages-label">all</label>'+
 								'<input id="gd-radio-diapason" class="gd-signature-radio" name="gd-radio" type="radio">'+
 								'<label for="gd-radio-diapason" class="gd-all-pages-label">'+
-									'<div class="gd-pages">'+  													
+									'<div class="gd-pages">'+
 										'<div class="gd-pages-diapason">'+
 											'<label>from: </label>'+
-											'<input id="gd-from" type="number">'+				
+											'<input id="gd-from" type="number">'+
 											'<label>to: </label>'+
 											'<input id="gd-to" type="number">'+
 										'</div>'+
@@ -1208,7 +1218,7 @@ function getHtmlReviewModal(){
     }
     return '<div class="gd-signing-label">'+
 				'<div>3. Finish <i>Review signature info and confirm</i></div>'+
-			'</div>'+ 
+			'</div>'+
 			'<div class="gd-signature-information-review">'+
 				info+
 			'</div>';
@@ -1244,7 +1254,7 @@ function getPagesDiapason(){
 	var startPage = parseInt($("#gd-from").val());
 	var endPage = parseInt($("#gd-to").val())
 	if($("#gd-radio-all").is(":checked")) {
-		for(var i = 1; i <= $("#gd-panzoom > div").length; i++) {	
+		for(var i = 1; i <= $("#gd-panzoom > div").length; i++) {
 			pages.push(i);
 		}
 	} else {
@@ -1263,9 +1273,14 @@ function getPagesDiapason(){
  * Next button click event
  */
 function switchToNextSlide(){
+    var gd = $("#gd-next");
+
+    if (gd && gd.length > 0 && gd[0].className.includes("disabled")) {
+        return;
+    }
     // check if the last step
-    if($("#gd-next").html() == "CONFIRM") {		
-		pagesDiapason = getPagesDiapason();		
+    if(gd.html() == "CONFIRM") {
+        pagesDiapason = getPagesDiapason();
         // get current signature type
         switch (signature.signatureType) {
             case "digital":
@@ -1273,25 +1288,25 @@ function switchToNextSlide(){
                 switchSlide(4, 3, "right");
                 // sign document if step is last
                 sign();
-                break;           
+                break;
             case "stamp":
-				if($("#gd-signature-draw-step").length == 1) {
-					saveDrawnStamp(loadSignatureImage);
-				} else {
-					loadSignatureImage();
-				}                    
-				break;           
-            case "text":                
-				if($("#gd-sign-section").find("#gd-signature-select-step").length > 0){
-					loadSignatureImage();
-				} else {
-					// save text signature				
-					saveDrawnText($.fn.textGenerator.getProperties(), loadSignatureImage);
-				}
-                break
-			default:
-				loadSignatureImage();
-				
+                if($("#gd-signature-draw-step").length == 1) {
+                    saveDrawnStamp(loadSignatureImage);
+                } else {
+                    loadSignatureImage();
+                }
+                break;
+            case "text":
+                if($("#gd-sign-section").find("#gd-signature-select-step").length > 0){
+                    loadSignatureImage();
+                } else {
+                    // save text signature
+                    saveDrawnText($.fn.textGenerator.getProperties(), loadSignatureImage);
+                }
+                break;
+            default:
+                loadSignatureImage();
+
         }
     } else {
         var currentSlide = null;
@@ -1303,6 +1318,10 @@ function switchToNextSlide(){
             // if next step is last step, update next button to confirm button
             if ($($(".gd-slide")[index + 1]).data("last")) {
                 $("#gd-next").html("CONFIRM");
+                // if last slide selecting pages, confirm - disabled
+                if ($($(".gd-slide")[index + 1])[0].id == "gd-signature-page-select-step") {
+                    $(".gd-signature-select").addClass("gd-signing-disabled");
+                }
                 if(/Mobi/.test(navigator.userAgent)){
                     $("#gd-next").css("left",  "calc(100% - 285px)", "!important");
                 } else {
@@ -1316,6 +1335,12 @@ function switchToNextSlide(){
         // if next step is review signing data - save entered data values
         if ($(".gd-signature-information").is(":visible")) {
             setAdditionalInformation();
+        }
+        // if image signature was drawn, save it
+        var gd1 = $("#gd-draw-image");
+        if (gd1 && gd1.is(":visible") && !imageSaved) {
+            var drawnImage = $.fn.bcPaint.export();
+            saveDrawnImage(drawnImage);
         }
         // switch to next signing step if the current step is not last
         switchSlide(currentSlide + 1, currentSlide, "right");
@@ -1362,7 +1387,7 @@ function setAdditionalInformation(){
 /**
  * Get selected signature image stream
  */
-function loadSignatureImage() {	
+function loadSignatureImage() {
 	// current document guid is taken from the viewer.js globals
 	var data = { guid: signature.signatureGuid, page: 1, password: "" };
 	$('#gd-modal-spinner').show();
@@ -1380,9 +1405,9 @@ function loadSignatureImage() {
 				return;
 			}
 			// when ajax is done insert loaded image into the document page
-			toggleModalDialog(false, "");			
+			toggleModalDialog(false, "");
 			var signatureGuid = "";
-			var signatureType = "";			
+			var signatureType = "";
 			var width = 0;
 			var height = 0;
 			// check if image should be added to all pages
@@ -1391,7 +1416,7 @@ function loadSignatureImage() {
 				signature.pageNumber = pagesDiapason[n];
 				 if(typeof(signature.signatureGuid) != "undefined"){
 					signatureType = signature.signatureType;
-					signatureGuid = signature.signatureGuid;					
+					signatureGuid = signature.signatureGuid;
 					width = signature.imageWidth;
 					height = signature.imageHeight;
 				}
@@ -1401,7 +1426,7 @@ function loadSignatureImage() {
 				signature.imageWidth = width;
 				signature.imageHeight = height;
 				insertImage(returnedData.pageImage, pagesDiapason[n]);
-			}			
+			}
 		},
 		error: function(xhr, status, error) {
 			var err = eval("(" + xhr.responseText + ")");
@@ -1410,7 +1435,7 @@ function loadSignatureImage() {
             // open error popup
 			printMessage(err.message);
 		}
-	});	
+	});
 }
 
 /**

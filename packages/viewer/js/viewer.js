@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.5.0
+ * @version 1.6.0
  */
 
 /*
@@ -821,27 +821,39 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                     gd_prefix_page.find('.gd-page-spinner').hide();
                     // fix to avoid using the spinner DIV size
                     if (preloadPageCount == 0) {
-                        if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1) {
-                            width = gd_page.innerWidth();
-                            height = gd_page.innerHeight();
-                        }
+                       if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && !/Edge/.test(navigator.userAgent)) {							
+							width = gd_page.innerWidth();
+							height = gd_page.innerHeight();							
+                        } else if(gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && /Edge/.test(navigator.userAgent)){
+							width = gd_page.innerWidth() / 10;
+							height = gd_page.innerHeight();
+							if(getDocumentFormat(documentGuid).format.search("Word") != -1 || prefix == "thumbnails-"){
+								width = gd_page.innerWidth();
+							}							
+						}
                     } else {
                         // set correct width and height for document pages
                         if (prefix == "") {
-                            if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1) {
+                            if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && !/Edge/.test(navigator.userAgent)) {
                                 width = gd_page.innerWidth();
                                 height = gd_page.innerHeight();
-                            }
+                            } else if(gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && /Edge/.test(navigator.userAgent)) {
+								width = gd_page.innerWidth() / 10;
+								height = gd_page.innerHeight();
+								if(getDocumentFormat(documentGuid).format.search("Word") != -1){
+									width = gd_page.innerWidth();
+								}
+							}
                         } else {
                             // set correct width and height for thumbnails
                             if (width > height && htmlData.angle == 0) {
                                 // change the width and height in places if page is landscape oriented
                                 width = $("#gd-page-1").innerHeight();
-                                height = $("#gd-page-1").innerWidth();
+                                height = $("#gd-page-1").innerWidth();								
                             } else {
                                 // use first document page sezie to fix thumbnails size issue
                                 width = $("#gd-page-1").innerWidth();
-                                height = $("#gd-page-1").innerHeight();
+                                height = $("#gd-page-1").innerHeight();								
                             }
                         }
                     }

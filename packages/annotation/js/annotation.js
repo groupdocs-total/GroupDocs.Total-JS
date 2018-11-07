@@ -691,6 +691,9 @@ function makeResizable(currentAnnotation) {
 							case "polyline":				
 								currentAnnotation.svgPath = stopMovePolyline(image);															
 								break;
+							case "arrow":				
+								currentAnnotation.svgPath = stopMoveArrow(image);															
+								break;
 						}	
 					} else {
 						currentAnnotation.left = image.position.left;
@@ -710,6 +713,10 @@ function makeResizable(currentAnnotation) {
 							previouseMouseX = x;
 							previouseMouseY = y;
 							$(image.helper[0]).attr("points", $.trim(newCoordinates));
+							break;
+						case "arrow":
+							var newCoordinates = moveArrow(image, x, y);							
+							$(image.helper[0]).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
 							break;
 					}						
 				},					
@@ -739,6 +746,18 @@ function makeResizable(currentAnnotation) {
 			});
 		}        
     });
+}
+
+/**
+ * Set updated SVG path coordinates when arrow annotation move is finish
+ * @param {Object} image - current arrow object
+ */
+function stopMoveArrow(image){
+	var svgPath = "M";	
+	$.each($(image.helper[0]).attr("d").split(" "), function (index, point) {
+		svgPath = svgPath + point.split(",")[0] + "," + point.split(",")[1] + " ";		
+	});	
+	return svgPath;							
 }
 
 /**
@@ -775,8 +794,8 @@ function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
 	var newCoordinates = "";
 	var offsetX = 0;
 	var	offsetY = 0;
-	var firstPointX = parseInt($(image.helper[0]).attr("points").split(" ")[0].split(",")[0]);
-	var firstPointY = parseInt($(image.helper[0]).attr("points").split(" ")[0].split(",")[1]);
+	var firstPointX = parseInt($(image.helper[0]).attr("points").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+	var firstPointY = parseInt($(image.helper[0]).attr("points").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));
 	if(previouseMouseX == 0){	
 		offsetX = 0;		
 	} else {
@@ -787,11 +806,33 @@ function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
 	} else {
 		offsetY = y - previouseMouseY;
 	}
-	var previouseX = 0;
-	var previouseY = 0;
 	$.each($(image.helper[0]).attr("points").split(" "), function(index, coordinates){								
-		var currentX = parseInt(coordinates.split(",")[0]) + offsetX;								
-		var	currentY = parseInt(coordinates.split(",")[1]) + offsetY;
+		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
+		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
+		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
+	});
+	return newCoordinates;	
+}
+
+/**
+ * recalculate SVG path coordinates when polyline annotation move
+ * @param {Object} image - current polyline object
+ * @param {int} x - current mouse position X
+ * @param {int} y - current mouse position Y
+ * @param {int} previouseMouseX - previouse mouse position X
+ * @param {int} previouseMouseY - previouse mouse position Y
+ */
+function moveArrow(image, x, y){
+	var newCoordinates = "";
+	var offsetX = 0;
+	var	offsetY = 0;
+	var firstPointX = parseInt($(image.helper[0]).attr("d").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+	var firstPointY = parseInt($(image.helper[0]).attr("d").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));
+	offsetX = x - firstPointX;
+	offsetY = y - firstPointY;	
+	$.each($(image.helper[0]).attr("d").split(" "), function(index, coordinates){								
+		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
+		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
 		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
 	});
 	return newCoordinates;	

@@ -195,7 +195,7 @@
                     var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
                     var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
                     // update svg with the end point and draw line between
-                    path.plot("M" + x + "," + y + " L" + endX + "," + endY);
+                    path.plot("M" + x.toFixed(0) + "," + y.toFixed(0) + " L" + endX.toFixed(0) + "," + endY.toFixed(0));
                     // add arrow marker at the line end
                     path.marker('end', 20, 20, function (add) {
                         var arrow = "M0,7 L0,13 L12,10 z";
@@ -342,9 +342,11 @@
             svgPath = points[0];
             $.each(points, function (index, point) {
                 if (index != 0) {
-                    svgPath = svgPath + " " + (x + parseFloat(point.split(",")[0])) + "," + (y + parseFloat(point.split(",")[1]));
-                    x = (x + parseFloat(point.split(",")[0]));
-                    y = (y + parseFloat(point.split(",")[1]));
+					if(point != ""){
+						svgPath = svgPath + " " + (x + parseFloat(point.split(",")[0])) + "," + (y + parseFloat(point.split(",")[1]));
+						x = (x + parseFloat(point.split(",")[0]));
+						y = (y + parseFloat(point.split(",")[1]));
+					}
                 } else {
                     return true;
                 }

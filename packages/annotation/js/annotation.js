@@ -35,7 +35,7 @@ var svgList = null;
 var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
 var userMouseDown = ('ontouch' in document.documentElement)  ? 'touchstart mousedown' : 'mousedown';
 
-$(document).ready(function () {	
+$(document).ready(function () {
 
     /*
     ******************************************************************
@@ -68,9 +68,9 @@ $(document).ready(function () {
         if ($(".gd-annotations-comments-wrapper").hasClass("active")) {
             $(".gd-annotations-comments-wrapper").removeClass("active");
 			$('#gd-annotations-comments-toggle').prop('checked', false);
-        }		
+        }
         // set text rows data to null
-        rows = null;			
+        rows = null;
         // append svg element to each page, this is required to draw svg based annotations
         addSvgContainer();
         //check if document contains annotations
@@ -94,7 +94,7 @@ $(document).ready(function () {
     $(".gd-annotations-comments-toggle").on(userMouseClick, function () {
          if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
             $(".gd-annotations-comments-wrapper").addClass("active");
-        }	
+        }
     });
 
 
@@ -115,8 +115,8 @@ $(document).ready(function () {
     $('.gd-modal-body').on(userMouseClick, '.gd-filetree-name', function (e) {
         annotationsList = [];
         svgList = null;
-		if (disable_click_flag) {     
-            // make annotations list empty for the new document            
+		if (disable_click_flag) {
+            // make annotations list empty for the new document
             $("#gd-annotation-comments").html("");
             $('#gd-annotations-comments-toggle').prop('checked', false);
             var isDir = $(this).parent().find('.fa-folder').hasClass('fa-folder');
@@ -146,19 +146,24 @@ $(document).ready(function () {
     // activate currently selected annotation tool
     //////////////////////////////////////////////////
     $('.gd-tools-container').on(userMouseClick, function (e) {
-       
+        //e.preventDefault();
+        $('.gd-tool-field').removeClass('active');
+        annotationType = null;
+        // TODO : cancel on toolbar
+    });
+
+    $('.gd-tool-field').on('touchstart click',function(e){
+        e.stopPropagation();
         var currentlyActive = null;
-        $(".gd-tool-field").each(function (index, tool) {
-            if ($(tool).is(".active")) {
-                $(tool).removeClass("active");
-                currentlyActive = $(tool)[0];
-            }
-        });
-        if (e.target != currentlyActive) {
-            $(e.target).addClass("active");
-            annotationType = $(e.target).data("type");
-        } else {
+        var tool = e.target;
+        if ($(tool).hasClass("active")) {
+            $(tool).removeClass("active");
+            currentlyActive = $(tool)[0];
             annotationType = null;
+        }else{
+            $('.gd-tool-field').removeClass('active');
+            $(tool).addClass("active");
+            annotationType = $(tool).data("type");
         }
     });
 
@@ -289,7 +294,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('.gd-comments-sidebar-expanded').on(userMouseClick, 'div.gd-comment-text', function (e) {
 
-       
+
         $(e.target).parent().parent().parent().find(".gd-comment-time").last().html(new Date($.now()).toUTCString());
         $("#gd-save-comments").removeClass("gd-save-button-disabled");
     });
@@ -304,7 +309,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-reply', function (e) {
 
-       
+
         $(".gd-comment-reply").before(getCommentHtml);
     });
 
@@ -313,7 +318,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-cancel', function (e) {
 
-       
+
         $(".gd-comment-box-sidebar").find(".gd-annotation-comment").last().find(".gd-comment-text").html("");
     });
 
@@ -322,7 +327,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-delete-comment', function (e) {
 
-       
+
         // check if there is no more comments for the annotation
         if ($(".gd-comment-box-sidebar").find(".gd-annotation-comment").length == 1) {
             // delete annotation
@@ -346,7 +351,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // annotation click event
     //////////////////////////////////////////////////
-    $('#gd-panzoom').on(userMouseClick, '.gd-annotation', function (e) {       
+    $('#gd-panzoom').on(userMouseClick, '.gd-annotation', function (e) {
         if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
             $(".gd-annotations-comments-wrapper").addClass("active");
         }
@@ -387,10 +392,10 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Download event
     //////////////////////////////////////////////////
-    $('#gd-btn-download-value > li').on(userMouseClick, function (e) {       
+    $('#gd-btn-download-value > li').on(userMouseClick, function (e) {
         download($(this));
     });
-	
+
 	$('#gd-annotations-comments-toggle').on(userMouseClick, function (){
 		if($('#gd-annotations-comments-toggle').prop('checked')){
 			if(!$(".gd-annotations-comments-wrapper").hasClass("active")){
@@ -398,7 +403,7 @@ $(document).ready(function () {
 			}
 		} else {
 			$(".gd-annotations-comments-wrapper").removeClass("active");
-		}			
+		}
 	});
 });
 
@@ -474,7 +479,6 @@ function getTextCoordinates(pageNumber, callback) {
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
-            console.log(err.Message);
             // open error popup
             printMessage(err.message);
         }
@@ -491,15 +495,15 @@ function getTextCoordinates(pageNumber, callback) {
   * @param {int} mouseY - current mouse Y position
  */
 function getTextLineHeight(mouseX, mouseY) {
-    var height = 0;  
+    var height = 0;
 	if(mouseY < rows[0].lineTop){
 		mouseY = rows[0].lineTop;
 	}
     // get most suitable row (vertical position)
     for (var i = 0; i < rows.length; i++) {
         if (mouseY >= rows[i].lineTop && rows[i + 1] && mouseY <= rows[i + 1].lineTop) {
-            // set row top position and height           
-            height = rows[i].lineHeight;            
+            // set row top position and height
+            height = rows[i].lineHeight;
             break;
         } else {
             continue
@@ -524,7 +528,7 @@ function annotate() {
     // current document guid is taken from the viewer.js globals
     var data = {
         guid: documentGuid.replace(/\\/g, "//"),
-        password: password,       
+        password: password,
         annotationsData: annotationsToAdd,
         documentType: getDocumentFormat(documentGuid).format
     };
@@ -547,13 +551,12 @@ function annotate() {
                     printMessage(returnedData.message);
                 }
                 return;
-            }            
+            }
             result = '<div id="gd-modal-annotated">Document annotated successfully</div>';
-            toggleModalDialog(true, 'Annotation', result);			
+            toggleModalDialog(true, 'Annotation', result);
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
-            console.log(err.Message);
             // open error popup
             printMessage(err.message);
         }
@@ -1105,10 +1108,7 @@ GROUPDOCS.ANNOTATION PLUGIN
     */
     function getHtmlAnnotationsBarBase() {
         return '<div class=gd-annotations-bar-wrapper>' +
-					// open/close trigger button BEGIN
-					'<input id="gd-annotations-toggle" class="gd-annotations-toggle" type="checkbox" />' +
-					'<label for="gd-annotations-toggle" class="gd-lbl-toggle"></label>' +
-					// open/close trigger button END
+
 					// annotations tools
 					'<div class="gd-tools-container gd-embed-annotation-tools gd-ui-draggable">' +
 						// annotations tools list BEGIN
@@ -1142,7 +1142,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlTextAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-text-box" data-type="text">' +
+                    '<button class="gd-tool-field gd-text-box" data-type="text">' +
+                        '<i class="fas fa-highlighter fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">text</span>' +
 					'</button>' +
 				'</li>';
@@ -1150,7 +1151,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlAreaAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-area-box" data-type="area">' +
+                    '<button class="gd-tool-field gd-area-box" data-type="area">' +
+                        '<i class="fas fa-vector-square fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">area</span>' +
 					'</button>' +
 				'</li>';
@@ -1158,7 +1160,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlPointAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-point-box" data-type="point">' +
+                    '<button class="gd-tool-field gd-point-box" data-type="point">' +
+                        '<i class="fas fa-thumbtack fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">point</span>' +
 					'</button>' +
 				'</li>';
@@ -1166,7 +1169,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlTextStrikeoutAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-strike-box" data-type="textStrikeout">' +
+                    '<button class="gd-tool-field gd-strike-box" data-type="textStrikeout">' +
+                        '<i class="fas fa-strikethrough fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">strikeout</span>' +
 					'</button>' +
 				'</li>';
@@ -1174,7 +1178,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlPolylineAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-polyline-box" data-type="polyline">' +
+                    '<button class="gd-tool-field gd-polyline-box" data-type="polyline">' +
+                        '<i class="fas fa-signature fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">polyline</span>' +
 					'</button>' +
 				'</li>';
@@ -1182,7 +1187,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlTextFieldAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-highlight-box" data-type="textField">' +
+                    '<button class="gd-tool-field gd-highlight-box" data-type="textField">' +
+                        '<i class="fas fa-i-cursor fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">text field</span>' +
 					'</button>' +
 				'</li>';
@@ -1190,7 +1196,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlWatermarkdAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-watermark-box" data-type="watermark">' +
+                    '<button class="gd-tool-field gd-watermark-box" data-type="watermark">' +
+                        '<i class="fas fa-tint fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">watermark</span>' +
 					'</button>' +
 				'</li>';
@@ -1198,7 +1205,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlTextReplacementAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-replace-box" data-type="textReplacement">' +
+                    '<button class="gd-tool-field gd-replace-box" data-type="textReplacement">' +
+                        '<i class="fas fa-edit fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">text replacement</span>' +
 					'</button>' +
 				'</li>';
@@ -1206,7 +1214,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlArrowAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-arrow-tool" data-type="arrow">' +
+                    '<button class="gd-tool-field gd-arrow-tool" data-type="arrow">' +
+                        '<i class="fas fa-mouse-pointer fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">arrow</span>' +
 					'</button>' +
 				'</li>';
@@ -1214,15 +1223,17 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlTextRedactionAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-redtext-box" data-type="textRedaction">' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">text redaction</span>' +
+                    '<button class="gd-tool-field gd-redtext-box" data-type="textRedaction">' +
+                        '<i class="fas fa-brush fa-lg fa-inverse"></i>' +
+						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">Black out</span>' +
 					'</button>' +
 				'</li>';
     }
 
     function getHtmlResourcesRedactionAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-redarea-box" data-type="resourcesRedaction">' +
+                    '<button class="gd-tool-field gd-redarea-box" data-type="resourcesRedaction">' +
+                        '<i class="fas fa-object-group fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">resource redaction</span>' +
 					'</button>' +
 				'</li>';
@@ -1230,7 +1241,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlTextUnderlineAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-underline-tool" data-type="textUnderline">' +
+                    '<button class="gd-tool-field gd-underline-tool" data-type="textUnderline">' +
+                        '<i class="fas fa-underline fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">underline text</span>' +
 					'</button>' +
 				'</li>';
@@ -1238,7 +1250,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 
     function getHtmlDistanceAnnotationElement() {
         return '<li>' +
-					'<button class="gd-tool-field gd-ruler-tool" data-type="distance">' +
+                    '<button class="gd-tool-field gd-ruler-tool" data-type="distance">' +
+                        '<i class="fas fa-ruler fa-lg fa-inverse"></i>' +
 						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">distance</span>' +
 					'</button>' +
 				'</li>';

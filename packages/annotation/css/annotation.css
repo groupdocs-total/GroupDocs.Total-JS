@@ -11,6 +11,9 @@
     bottom: -3px !important;
 }
 
+.ui-draggable-handle{
+    cursor: move !important;
+}
 .gd-page {
 	position: relative;
 }
@@ -31,63 +34,33 @@ ANNOTATIONS TOOL BAR
 */
 .gd-annotations-bar-wrapper {
     position: absolute;
-    top: 28%;
-	left: 0px;
+    top: 50px;
+    left: 0px;
+    bottom: 0px;
     z-index: 99999;
 }
 
-.gd-annotations-toggle {
-	display: none;
-	position: fixed;
-	top: 52%;
-	left: 120px;
-	height: 53px;
-	font-size: 25px;
-	z-index: 9999;
-}
-
-.gd-lbl-toggle {   
-    color: #959da5;
-    top: 42%;
-    left: 3px;
-    cursor: pointer;
-    position: absolute;  
-}
-.gd-lbl-toggle::before {
-    content: ' ';
-    display: block;
-    border-top: 30px solid transparent;
-    border-bottom: 30px solid transparent;
-    border-left: 5px solid currentColor;
-}
-.gd-embed-annotation-tools{
-  width: 0px;
-  overflow: hidden;
-  transition: width .25s ease-in-out;
-}
-.gd-annotations-toggle:checked + .gd-lbl-toggle + .gd-embed-annotation-tools{
-  width: 64px;
-}
-
-.gd-annotations-toggle:checked + .gd-lbl-toggle {
-  left: 50px;
-  transition: left .25s ease-in-out;
-}
-
-.gd-annotations-toggle:checked + .gd-lbl-toggle {
-  transform: rotate(180deg) translateX(-3px);
+#gd-panzoom{
+    margin-left: 50px !important;
 }
 
 .gd-tool-field .gd-popupdiv-hover {
 	display: none;
 }
 
-.gd-tools-container {		
-	background: #3e4e5a;
+.gd-tools-container {	
+    height: 100%;	
+	background: #FFFFFF;
 	-webkit-border-radius: 0px;
 	-moz-border-radius: 0px;
 	border-radius: 0px;	
-	padding: 0px 0px 0px 12px;	
+}
+
+.gd-tools-container ul{
+    margin: 0px;
+}
+.gd-tools-container ul li {
+    margin: 10px;
 }
 
 .gd-tool-field {
@@ -98,20 +71,14 @@ ANNOTATIONS TOOL BAR
 	-o-transition: all 0.3s ease;
 	transition: all 0.3s ease;
 	height: 45px;
-	border: 1px solid #8a8a8a;
-	-webkit-box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
-	box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
+
 	display: inline-block;
 	margin: 3px 0px 0px 1px;
 	cursor: move;	
 }
 
 .gd-tool-field:hover {
-	border: 1px solid #d45119;
-	-webkit-box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.35);
-	-moz-box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.35);
-	box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.35);
+    
 }
 
 .gd-tool-field:hover .gd-popupdiv-hover {
@@ -119,30 +86,37 @@ ANNOTATIONS TOOL BAR
 }
 
 .gd-tool-field-tooltip {	
-    width: 134px;
+    padding: 3px 0.5em;    
     background-color: #08090a;
     color: #fff !important;
     text-align: center;
-    border-radius: 0px;   
+    border-radius: 2px;   
     position: fixed;
     z-index: 20; 
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .gd-tool-field-tooltip::after {
-    content: " ";
-    position: absolute;
-	bottom: 40%;
-    left: -1%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent black transparent;
+	right: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+	border-color: rgba(0, 0, 0, 0);
+	border-right-color: #000000;
+	border-width: 5px;
+	margin-top: -5px;
 }
 
-button.gd-tool-field {
-	width: 47px;
-	height: 47px;
+button > * {
+    pointer-events: none;
+  }
+.gd-tool-field {
+    text-align: center;
+    vertical-align: middle;
 	cursor: pointer;
 }
 
@@ -154,119 +128,29 @@ button.gd-tool-field {
 .gd-embed-annotation-tools .gd-tool-field {
 	width: 32px;
 	height: 32px;
-	background-size: contain !important;
+    border: none;
+    background-color: transparent;
+    border-radius: 3px;
+    position: relative;
 }
 
 .gd-embed-annotation-tools .gd-tool-field.active{
-	background-size: contain !important;
+    background-color: #e7e7e7;
+}
+.gd-embed-annotation-tools .gd-tool-field > i{
+	color: #959da5;
+}
+.gd-embed-annotation-tools .gd-tool-field:hover > i{
+    color: #3e4e5a;
+}
+.gd-embed-annotation-tools .gd-tool-field.active > i{
+    color: #3e4e5a;
 }
 
 .gd-embed-annotation-tools .gd-tool-field-tooltip {
-	left: 53px !important;    
-}
-
-.gd-embed-annotation-tools .gd-text-box {
-	background: url(../images/text.png) no-repeat;	
-}
-
-.gd-embed-annotation-tools .gd-text-box.active {
-	background: url(../images/text_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-point-box {
-	background: url(../images/point.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-point-box.active {
-	background: url(../images/point_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-area-box {
-	background: url(../images/area.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-area-box.active {
-	background: url(../images/area_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-strike-box {
-	background: url(../images/strike_out_text.png) no-repeat;	
-}
-
-.gd-embed-annotation-tools .gd-strike-box.active {
-	background: url(../images/strike_out_text_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-highlight-box {
-	background: url(../images/type_writer.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-highlight-box.active {
-	background: url(../images/type_writer_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-polyline-box {
-	background: url(../images/polyline.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-polyline-box.active {
-	background: url(../images/polyline_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-watermark-box {
-	background: url(../images/watermark.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-watermark-box.active {
-	background: url(../images/watermark_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-replace-box {
-	background: url(../images/text_replace.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-replace-box.active {
-	background: url(../images/text_replace_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-redtext-box {
-	background: url(../images/text_redaction.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-redtext-box.active {
-	background: url(../images/text_redaction_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-redarea-box {
-	background: url(../images/resource_redaction.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-redarea-box.active {
-	background: url(../images/resource_redaction_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-arrow-tool {
-	background: url(../images/arrow.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-arrow-tool.active {
-	background: url(../images/arrow_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-underline-tool {
-	background: url(../images/underline.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-underline-tool.active {
-	background: url(../images/underline_active.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-ruler-tool {
-	background: url(../images/distance.png) no-repeat;
-}
-
-.gd-embed-annotation-tools .gd-ruler-tool.active {
-	background: url(../images/distance_active.png) no-repeat;
+    position: absolute;
+    left: 35px !important;
+    top:10px;
 }
 
 /*
@@ -469,9 +353,9 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 
 .gd-area-annotation, .gd-resourcesRedaction-annotation {  
-	border-width: 5px;
+	border-width: 1px;
 	border-color: #30abd4;
-	border-style: double;
+	border-style: solid;
 }
 .gd-resourcesRedaction-annotation {  	
 	background-color: blue;

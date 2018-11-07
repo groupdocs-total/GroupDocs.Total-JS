@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 (function ($) {
@@ -82,6 +82,7 @@
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
             })
+			makeResizable(currentAnnotation);
         },
 
         /**
@@ -126,7 +127,7 @@
                     var previousX = 0;
                     var previousY = 0;
                     // prepare SVG path string, important note: all point coordinates except the first one are not coordinates, 
-                    //but the number of pixels that need to be added or subtracted from the previous point in order to obtain the amount of displacement.
+                    // but the number of pixels that need to be added or subtracted from the previous point in order to obtain the amount of displacement.
                     // This is required by the GRoupDocs.Annotation library to draw the SVG path
                     if (line.node.points.numberOfItems) { // for safari
                         for (i = 0; i < line.node.points.numberOfItems; i++) {
@@ -162,6 +163,7 @@
                     line = null;
                 }
             });
+			makeResizable(currentAnnotation);
         },
 
         /**
@@ -186,8 +188,7 @@
             var path = null;
             path = svgList[canvas.id].path("M" + x + "," + y + " L" + x + "," + y).attr(option);
             // set mouse move event handler
-            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {
-                
+            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {                
                 if (path) {
                     // get current coordinates after mouse move
                     mouse = getMousePosition(event);
@@ -219,6 +220,7 @@
                     path = null;
                 }
             });
+			makeResizable(currentAnnotation);
         },
 
         /**
@@ -291,6 +293,7 @@
                     path = null;
                 }
             });
+			makeResizable(currentAnnotation);
         },
 
         /**
@@ -313,6 +316,7 @@
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
             });
+			makeResizable(annotation);
         },
 
         /**
@@ -347,7 +351,7 @@
             });
             // draw imported annotation
             line = svgList[canvas.id].polyline(svgPath).attr(option);
-
+			makeResizable(annotation);
         },
 
         /**
@@ -374,6 +378,7 @@
                 this.fill('red');
             });
             annotationsList[annotationsList.length - 1].svgPath = "M" + annotation.left + "," + annotation.top + " L" + (annotation.left + annotation.width) + "," + (annotation.top + annotation.height);
+			makeResizable(annotation);
         },
 
         /**
@@ -435,6 +440,7 @@
                 this.fill('red');
             });
             annotationsList[annotationsList.length - 1].svgPath = svgPath;
+			makeResizable(annotation);
         },
     });
 

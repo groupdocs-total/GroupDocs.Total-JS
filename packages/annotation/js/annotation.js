@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.3.0
+ * @version 1.4.0
  */
 
 /*
@@ -664,54 +664,134 @@ function addComment(currentAnnotation) {
  */
 function makeResizable(currentAnnotation) {
     var annotationType = currentAnnotation.type;
-
-    $(".gd-annotation").each(function (imdex, element) {
-        if (!$(element).hasClass("svg")) {
-            if (parseInt($(element).find(".annotation").attr("id").replace(/[^\d.]/g, '')) == currentAnnotation.id) {
-                // enable dragging and resizing features for current image
-                $(element).draggable({
-                    // set restriction for image dragging area to current document page
-                    containment: "#gd-page-" + currentAnnotation.pageNumber,
-                    stop: function (event, image) {
-                        if (annotationType == "text" || annotationType == "textStrikeout" || annotationType == "textUnderline") {
-                            var lineHeight = getTextLineHeight(image.position.left, image.position.top);							
-                            currentAnnotation.left = image.position.left;
-                            currentAnnotation.top = image.position.top;
-							currentAnnotation.height = lineHeight;
-                        } else {
-                            currentAnnotation.left = image.position.left;
-                            currentAnnotation.top = image.position.top;
-                        }
-                    },					
-                }).resizable({
-                    // set restriction for image resizing to current document page
-                    containment: "#gd-page-" + currentAnnotation.pageNumber,
-                    stop: function (event, image) {
-                        currentAnnotation.width = image.size.width;
-                        currentAnnotation.height = image.size.height;
-                        currentAnnotation.left = image.position.left;
-                        currentAnnotation.top = image.position.top;
-                    },
-                    // set image resize handles
-                    handles: {
-                        'ne': '.ui-resizable-ne',
-                        'se': '.ui-resizable-se',
-                        'sw': '.ui-resizable-sw',
-                        'nw': '.ui-resizable-nw'
-                    },
-                    grid: [10, 10],
-                    resize: function (event, image) {
-                        $(event.target).find(".gd-" + annotationType + "-annotation").css("width", image.size.width);
-                        $(event.target).find(".gd-" + annotationType + "-annotation").css("height", image.size.height);
-                        $(event.target).find(".gd-" + annotationType + "-annotation").css("left", image.position.left);
-                        $(event.target).find(".gd-" + annotationType + "-annotation").css("top", image.position.top);
-                    }
-                });
-            }
-        } else {
-            return true;
-        }
+    $(".gd-annotation").each(function (imdex, element) {  
+		var id = (typeof $(element).find(".annotation").attr("id") != "undefined") ? parseInt($(element).find(".annotation").attr("id").replace(/[^\d.]/g, '')) : parseInt($(element).attr("id").replace(/[^\d.]/g, ''));
+		if (id == currentAnnotation.id) {
+			var previouseMouseX = 0;
+			var previouseMouseY = 0;
+			// enable dragging and resizing features for current image
+			$(element).draggable({
+				// set restriction for image dragging area to current document page
+				containment: "#gd-page-" + currentAnnotation.pageNumber,
+				stop: function (event, image) {
+					if (annotationType == "text" || annotationType == "textStrikeout" || annotationType == "textUnderline") {
+						var lineHeight = getTextLineHeight(image.position.left, image.position.top);							
+						currentAnnotation.left = image.position.left;
+						currentAnnotation.top = image.position.top;
+						currentAnnotation.height = lineHeight;
+					} else if(annotationType == "point" || annotationType == "polyline" || annotationType == "arrow" || annotationType == "distance") {
+						switch (annotationType) {
+							case "point":							
+								currentAnnotation.left = $(image.helper[0]).attr("cx");
+								currentAnnotation.top = $(image.helper[0]).attr("cy");								
+								break;
+							case "polyline":				
+								currentAnnotation.svgPath = stopMovePolyline(image);															
+								break;
+						}	
+					} else {
+						currentAnnotation.left = image.position.left;
+						currentAnnotation.top = image.position.top;
+					}
+				},	
+				drag: function (event, image) {	
+					var x = parseInt(image.position.left - $("#gd-page-" + currentAnnotation.pageNumber).offset().left);
+					var y = parseInt(image.position.top - $("#gd-page-" + currentAnnotation.pageNumber).offset().top);
+					switch (annotationType) {
+						case "point":							
+							$(image.helper[0]).attr("cx", x);
+							$(image.helper[0]).attr("cy", y);
+							break;
+						case "polyline":
+							var newCoordinates = movePolyline(image, x, y, previouseMouseX, previouseMouseY);
+							previouseMouseX = x;
+							previouseMouseY = y;
+							$(image.helper[0]).attr("points", $.trim(newCoordinates));
+							break;
+					}						
+				},					
+			}).resizable({
+				// set restriction for image resizing to current document page
+				containment: "#gd-page-" + currentAnnotation.pageNumber,
+				stop: function (event, image) {
+					currentAnnotation.width = image.size.width;
+					currentAnnotation.height = image.size.height;
+					currentAnnotation.left = image.position.left;
+					currentAnnotation.top = image.position.top;
+				},
+				// set image resize handles
+				handles: {
+					'ne': '.ui-resizable-ne',
+					'se': '.ui-resizable-se',
+					'sw': '.ui-resizable-sw',
+					'nw': '.ui-resizable-nw'
+				},
+				grid: [10, 10],
+				resize: function (event, image) {
+					$(event.target).find(".gd-" + annotationType + "-annotation").css("width", image.size.width);
+					$(event.target).find(".gd-" + annotationType + "-annotation").css("height", image.size.height);
+					$(event.target).find(".gd-" + annotationType + "-annotation").css("left", image.position.left);
+					$(event.target).find(".gd-" + annotationType + "-annotation").css("top", image.position.top);
+				}
+			});
+		}        
     });
+}
+
+/**
+ * Set updated SVG path coordinates when polyline annotation move is finish
+ * @param {Object} image - current polyline object
+ */
+function stopMovePolyline(image){
+	var svgPath = "M";
+	var previousX = 0;
+	var previousY = 0;
+	$.each($(image.helper[0]).attr("points").split(" "), function (index, point) {
+		if (index == 0) {
+			svgPath = svgPath + point.split(",")[0] + "," + point.split(",")[1] + "l";
+		} else {
+			previousX = point.split(",")[0] - previousX;
+			previousY = point.split(",")[1] - previousY;
+			svgPath = svgPath + previousX + "," + previousY + "l";
+		}
+		previousX = point.split(",")[0];
+		previousY = point.split(",")[1];
+	});	
+	return svgPath;							
+}
+
+/**
+ * recalculate SVG path coordinates when polyline annotation move
+ * @param {Object} image - current polyline object
+ * @param {int} x - current mouse position X
+ * @param {int} y - current mouse position Y
+ * @param {int} previouseMouseX - previouse mouse position X
+ * @param {int} previouseMouseY - previouse mouse position Y
+ */
+function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
+	var newCoordinates = "";
+	var offsetX = 0;
+	var	offsetY = 0;
+	var firstPointX = parseInt($(image.helper[0]).attr("points").split(" ")[0].split(",")[0]);
+	var firstPointY = parseInt($(image.helper[0]).attr("points").split(" ")[0].split(",")[1]);
+	if(previouseMouseX == 0){	
+		offsetX = 0;		
+	} else {
+		offsetX = x - previouseMouseX;		
+	}	
+	if(previouseMouseY == 0){
+		offsetY = 0;
+	} else {
+		offsetY = y - previouseMouseY;
+	}
+	var previouseX = 0;
+	var previouseY = 0;
+	$.each($(image.helper[0]).attr("points").split(" "), function(index, coordinates){								
+		var currentX = parseInt(coordinates.split(",")[0]) + offsetX;								
+		var	currentY = parseInt(coordinates.split(",")[1]) + offsetY;
+		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
+	});
+	return newCoordinates;	
 }
 
 /**

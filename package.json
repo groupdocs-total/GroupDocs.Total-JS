@@ -4,7 +4,8 @@
   "description": "Simple, elegant and modern UI engine re-written in JavaScript from scratch which can be easily integrated into any platform such as Java, .NET, etc.\r Simple and flexible configuration makes integration process quite easy and intuitive.",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "./node_modules/.bin/gulp browser-sync"
   },
   "repository": {
     "type": "git",
@@ -13,6 +14,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "browser-sync": "^2.26.3",
+    "gulp": "^3.9.1",
     "lerna": "^3.4.3"
   },
   "publishConfig": {

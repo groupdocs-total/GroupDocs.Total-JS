@@ -332,6 +332,7 @@ $(document).ready(function(){
         $(this).parent().draggable("disable").rotatable("disable").resizable("disable");
 		$(this).hide();
 		$(this).parent().find("#gd-cancel").hide();
+        $(this).parent().find(".ui-rotatable-handle").hide();
 		$(this).parent().find("#gd-edit").show();
         // enable save button on the dashboard
         if($("#gd-nav-save").hasClass("gd-save-disabled")) {
@@ -354,6 +355,7 @@ $(document).ready(function(){
 		$(this).hide();
 		$(this).parent().find("#gd-cancel").show();
 		$(this).parent().find("#gd-apply").show();
+        $(this).parent().find(".ui-rotatable-handle").show();
     });
 
 	//////////////////////////////////////////////////

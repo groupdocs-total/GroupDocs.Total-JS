@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 (function ($) {
@@ -82,6 +82,7 @@
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
             })
+			makeResizable(currentAnnotation);
         },
 
         /**
@@ -126,7 +127,7 @@
                     var previousX = 0;
                     var previousY = 0;
                     // prepare SVG path string, important note: all point coordinates except the first one are not coordinates, 
-                    //but the number of pixels that need to be added or subtracted from the previous point in order to obtain the amount of displacement.
+                    // but the number of pixels that need to be added or subtracted from the previous point in order to obtain the amount of displacement.
                     // This is required by the GRoupDocs.Annotation library to draw the SVG path
                     if (line.node.points.numberOfItems) { // for safari
                         for (i = 0; i < line.node.points.numberOfItems; i++) {
@@ -162,6 +163,7 @@
                     line = null;
                 }
             });
+			makeResizable(currentAnnotation);
         },
 
         /**
@@ -186,15 +188,14 @@
             var path = null;
             path = svgList[canvas.id].path("M" + x + "," + y + " L" + x + "," + y).attr(option);
             // set mouse move event handler
-            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {
-                
+            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {                
                 if (path) {
                     // get current coordinates after mouse move
                     mouse = getMousePosition(event);
                     var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
                     var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
                     // update svg with the end point and draw line between
-                    path.plot("M" + x + "," + y + " L" + endX + "," + endY);
+                    path.plot("M" + x.toFixed(0) + "," + y.toFixed(0) + " L" + endX.toFixed(0) + "," + endY.toFixed(0));
                     // add arrow marker at the line end
                     path.marker('end', 20, 20, function (add) {
                         var arrow = "M0,7 L0,13 L12,10 z";
@@ -212,13 +213,17 @@
                     currentAnnotation.top = y;
                     currentAnnotation.width = path.width();
                     currentAnnotation.height = path.height();
-
-                    currentAnnotation.svgPath = path.attr("d");
+					var svgPath = "M";
+					$.each(path.attr("d").split(" "), function (index, point) {
+						svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";		
+					});	
+                    currentAnnotation.svgPath = $.trim(svgPath.slice(0,-1));
                     annotationsList.push(currentAnnotation);
                     addComment(currentAnnotation);
                     path = null;
                 }
             });
+			makeResizable(currentAnnotation);
         },
 
         /**
@@ -260,7 +265,7 @@
                     // draw the last point and the line between
                     path.plot("M" + x + "," + y + " L" + endX + "," + endY);
                     // update text value and draw it in accordance with the svg
-                    text.path("M" + x + "," + (y - 3) + " L" + endX + "," + (endY - 3)).move(path.width() / 2, y).tspan(Math.round(path.width()) + "px");
+                    text.path("M" + x + "," + (y - 10) + " L" + endX + "," + (endY - 3)).move(path.width() / 2.5, y).tspan(Math.round(path.width()) + "px");
                     // add start and end arrows
                     path.marker('start', 20, 20, function (add) {
                         var arrow = "M12,7 L12,13 L0,10 z";
@@ -284,13 +289,17 @@
                     currentAnnotation.top = y;
                     currentAnnotation.width = path.width();
                     currentAnnotation.height = path.height();
-
-                    currentAnnotation.svgPath = path.attr("d");
+					var svgPath = "M";
+					$.each(path.attr("d").split(" "), function (index, point) {
+						svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";		
+					});	
+                    currentAnnotation.svgPath = $.trim(svgPath.slice(0,-1));
                     annotationsList.push(currentAnnotation);
                     addComment(currentAnnotation);
                     path = null;
                 }
             });
+			makeResizable(currentAnnotation);
         },
 
         /**
@@ -313,6 +322,7 @@
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
             });
+			makeResizable(annotation);
         },
 
         /**
@@ -338,16 +348,18 @@
             svgPath = points[0];
             $.each(points, function (index, point) {
                 if (index != 0) {
-                    svgPath = svgPath + " " + (x + parseFloat(point.split(",")[0])) + "," + (y + parseFloat(point.split(",")[1]));
-                    x = (x + parseFloat(point.split(",")[0]));
-                    y = (y + parseFloat(point.split(",")[1]));
+					if(point != ""){
+						svgPath = svgPath + " " + (x + parseFloat(point.split(",")[0])) + "," + (y + parseFloat(point.split(",")[1]));
+						x = (x + parseFloat(point.split(",")[0]));
+						y = (y + parseFloat(point.split(",")[1]));
+					}
                 } else {
                     return true;
                 }
             });
             // draw imported annotation
             line = svgList[canvas.id].polyline(svgPath).attr(option);
-
+			makeResizable(annotation);
         },
 
         /**
@@ -374,6 +386,7 @@
                 this.fill('red');
             });
             annotationsList[annotationsList.length - 1].svgPath = "M" + annotation.left + "," + annotation.top + " L" + (annotation.left + annotation.width) + "," + (annotation.top + annotation.height);
+			makeResizable(annotation);
         },
 
         /**
@@ -435,6 +448,7 @@
                 this.fill('red');
             });
             annotationsList[annotationsList.length - 1].svgPath = svgPath;
+			makeResizable(annotation);
         },
     });
 

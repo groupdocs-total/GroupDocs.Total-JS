@@ -213,8 +213,11 @@
                     currentAnnotation.top = y;
                     currentAnnotation.width = path.width();
                     currentAnnotation.height = path.height();
-
-                    currentAnnotation.svgPath = path.attr("d");
+					var svgPath = "M";
+					$.each(path.attr("d").split(" "), function (index, point) {
+						svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";		
+					});	
+                    currentAnnotation.svgPath = $.trim(svgPath.slice(0,-1));
                     annotationsList.push(currentAnnotation);
                     addComment(currentAnnotation);
                     path = null;
@@ -262,7 +265,7 @@
                     // draw the last point and the line between
                     path.plot("M" + x + "," + y + " L" + endX + "," + endY);
                     // update text value and draw it in accordance with the svg
-                    text.path("M" + x + "," + (y - 3) + " L" + endX + "," + (endY - 3)).move(path.width() / 2, y).tspan(Math.round(path.width()) + "px");
+                    text.path("M" + x + "," + (y - 10) + " L" + endX + "," + (endY - 3)).move(path.width() / 2.5, y).tspan(Math.round(path.width()) + "px");
                     // add start and end arrows
                     path.marker('start', 20, 20, function (add) {
                         var arrow = "M12,7 L12,13 L0,10 z";
@@ -286,8 +289,11 @@
                     currentAnnotation.top = y;
                     currentAnnotation.width = path.width();
                     currentAnnotation.height = path.height();
-
-                    currentAnnotation.svgPath = path.attr("d");
+					var svgPath = "M";
+					$.each(path.attr("d").split(" "), function (index, point) {
+						svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";		
+					});	
+                    currentAnnotation.svgPath = $.trim(svgPath.slice(0,-1));
                     annotationsList.push(currentAnnotation);
                     addComment(currentAnnotation);
                     path = null;

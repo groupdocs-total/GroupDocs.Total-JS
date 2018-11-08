@@ -625,8 +625,7 @@ function saveComment() {
             // add comment
             if (existedComment.length == 0) {
                 annotationToAddComments.comments.push(comment);
-            }
-            annotationToAddComments = null;
+            }            
             comment = null;
         } else {
             return true;
@@ -694,6 +693,9 @@ function makeResizable(currentAnnotation) {
 							case "arrow":				
 								currentAnnotation.svgPath = stopMoveArrow(image);															
 								break;
+							case "distance":				
+								currentAnnotation.svgPath = stopMoveArrow(image);															
+								break;
 						}	
 					} else {
 						currentAnnotation.left = image.position.left;
@@ -715,7 +717,11 @@ function makeResizable(currentAnnotation) {
 							$(image.helper[0]).attr("points", $.trim(newCoordinates));
 							break;
 						case "arrow":
-							var newCoordinates = moveArrow(image, x, y);							
+							var newCoordinates = moveArrow(image, x, y, $("#gd-page-" + currentAnnotation.pageNumber), "arrow");							
+							$(image.helper[0]).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
+							break;
+						case "distance":
+							var newCoordinates = moveArrow(image, x, y, $("#gd-page-" + currentAnnotation.pageNumber), "distance");							
 							$(image.helper[0]).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
 							break;
 					}						
@@ -755,7 +761,7 @@ function makeResizable(currentAnnotation) {
 function stopMoveArrow(image){
 	var svgPath = "M";	
 	$.each($(image.helper[0]).attr("d").split(" "), function (index, point) {
-		svgPath = svgPath + point.split(",")[0] + "," + point.split(",")[1] + " ";		
+		svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " ";		
 	});	
 	return svgPath;							
 }
@@ -822,19 +828,32 @@ function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
  * @param {int} previouseMouseX - previouse mouse position X
  * @param {int} previouseMouseY - previouse mouse position Y
  */
-function moveArrow(image, x, y){
+function moveArrow(image, x, y, canvas, type){
 	var newCoordinates = "";
 	var offsetX = 0;
 	var	offsetY = 0;
 	var firstPointX = parseInt($(image.helper[0]).attr("d").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
-	var firstPointY = parseInt($(image.helper[0]).attr("d").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));
-	offsetX = x - firstPointX;
-	offsetY = y - firstPointY;	
+	var firstPointY = parseInt($(image.helper[0]).attr("d").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));	
+	if(x != 0 && x < $(canvas).outerWidth()) {
+		offsetX = x - firstPointX;
+	}
+	if(y != 0) {
+		offsetY = y - firstPointY;	
+	}	
 	$.each($(image.helper[0]).attr("d").split(" "), function(index, coordinates){								
 		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
 		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
 		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
 	});
+	if(type == "distance"){
+		var newTextCoordinates = "";
+		$.each($(image.helper[0]).attr("d").split(" "), function(index, coordinates){								
+			var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
+			var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
+			newTextCoordinates = newTextCoordinates + currentX + "," + (currentY - 10) + " ";			
+		});			
+		$($(image.helper).next("text").find("textPath").attr("href")).attr("d", "M" + $.trim(newTextCoordinates).replace(" ", " L"));
+	}
 	return newCoordinates;	
 }
 

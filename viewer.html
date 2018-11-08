@@ -16,8 +16,9 @@
 	<body>
 		<div id="element"></div>
 		<script type="text/javascript">
+            var host = !window.location.hostname ? 'localhost' : window.location.hostname;
 			$('#element').viewer({
-				applicationPath: 'http://localhost:8080/viewer/',
+				applicationPath: 'http://' + host + ':8080/viewer/',
 			    defaultDocument: '',			  
 			    preloadPageCount: 0,
 			    rewrite: true,

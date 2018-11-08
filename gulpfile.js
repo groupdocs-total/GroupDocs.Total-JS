@@ -15,7 +15,8 @@ gulp.task('browser-sync', function() {
     browserSync.init({
         server: {
             baseDir: "./"
-        }
+        },
+        plugins: ['bs-console-qrcode']
     });
     gulp.watch(["**/css/*.css"],['css-watch']);
     gulp.watch(["**/js/*.js"], ['js-watch']);

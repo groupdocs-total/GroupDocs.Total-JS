@@ -19,8 +19,9 @@
 <body>
 <div id="element"></div>
 <script type="text/javascript">
+    var host = !window.location.hostname ? 'localhost' : window.location.hostname;
     $('#element').comparison({
-        applicationPath: 'http://localhost:8080/comparison/',
+        applicationPath: 'http://' + host + ':8080/comparison/',
         download: true,
         upload: true,
         print: true,

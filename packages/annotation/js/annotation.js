@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.4.0
+ * @version 1.5.0
  */
 
 /*
@@ -32,8 +32,8 @@ var annotationsList = [];
 var annotationsCounter = 0;
 var rows = null;
 var svgList = null;
-var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
-var userMouseDown = ('ontouch' in document.documentElement)  ? 'touchstart mousedown' : 'mousedown';
+var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';
+var userMouseDown = ('ontouchstart' in document.documentElement)  ? 'mousedown touchstart' : 'mousedown';
 
 $(document).ready(function () {
 
@@ -146,14 +146,16 @@ $(document).ready(function () {
     // activate currently selected annotation tool
     //////////////////////////////////////////////////
     $('.gd-tools-container').on(userMouseClick, function (e) {
-        //e.preventDefault();
+        e.preventDefault();
+		e.stopPropagation();
         $('.gd-tool-field').removeClass('active');
         annotationType = null;
         // TODO : cancel on toolbar
     });
 
-    $('.gd-tool-field').on('touchstart click',function(e){
-        e.stopPropagation();
+    $('.gd-tool-field').on(userMouseClick, function(e){
+        e.preventDefault();
+		e.stopPropagation();
         var currentlyActive = null;
         var tool = e.target;
         if ($(tool).hasClass("active")) {
@@ -170,10 +172,12 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // add annotation event
     //////////////////////////////////////////////////	
-    $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {
+    $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {	
+e.preventDefault();
+		e.stopPropagation();	
         if($("#gd-panzoom").find("svg").length == 0 && svgList == null){
 			addSvgContainer();
-	    }
+	    }		
         if ($(e.target).prop("tagName") == "IMG" || $(e.target).prop("tagName") == "svg") {
             // initiate annotation object if null
             if (annotation == null) {
@@ -424,8 +428,8 @@ function getMousePosition(event) {
     };
     var ev = event || window.event; //Moz || IE
     if (ev.pageX || ev.touches[0].pageX) { //Moz
-        mouse.x = (typeof ev.pageX != "undefined") ? ev.pageX : ev.touches[0].pageX;
-        mouse.y = (typeof ev.pageY != "undefined") ? ev.pageY : ev.touches[0].pageY;
+        mouse.x = (typeof ev.pageX != "undefined" && ev.pageX != 0) ? ev.pageX : ev.touches[0].pageX;
+        mouse.y = (typeof ev.pageY != "undefined" && ev.pageY != 0) ? ev.pageY : ev.touches[0].pageY;
     } else if (ev.clientX) { //IE
         mouse.x = ev.clientX + document.body.scrollLeft;
         mouse.y = ev.clientY + document.body.scrollTop;

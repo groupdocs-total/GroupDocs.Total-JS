@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.4.0
+ * @version 1.5.0
  */
 
 /*
@@ -32,8 +32,8 @@ var annotationsList = [];
 var annotationsCounter = 0;
 var rows = null;
 var svgList = null;
-var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
-var userMouseDown = ('ontouch' in document.documentElement)  ? 'touchstart mousedown' : 'mousedown';
+var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';
+var userMouseDown = ('ontouchstart' in document.documentElement)  ? 'mousedown touchstart' : 'mousedown';
 
 $(document).ready(function () {
 
@@ -152,7 +152,7 @@ $(document).ready(function () {
         // TODO : cancel on toolbar
     });
 
-    $('.gd-tool-field').on('touchstart click',function(e){
+    $('.gd-tool-field').on(userMouseClick, function(e){
         e.stopPropagation();
         var currentlyActive = null;
         var tool = e.target;
@@ -171,6 +171,7 @@ $(document).ready(function () {
     // add annotation event
     //////////////////////////////////////////////////	
     $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {
+		e.preventDefault();
         if($("#gd-panzoom").find("svg").length == 0 && svgList == null){
 			addSvgContainer();
 	    }

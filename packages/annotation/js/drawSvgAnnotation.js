@@ -57,7 +57,7 @@
         /**
 		* Draw point annotation
 		*/
-        drawPoint: function (event) {
+        drawPoint: function (event) {			
             mouse = getMousePosition(event);
             // get current x and y coordinates
             var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
@@ -89,7 +89,7 @@
 		* Draw polyline annotation
 		*/
         drawPolyline: function (event) {
-            mouse = getMousePosition(event);
+            mouse = getMousePosition(event);				
             // get x and y coordinates
             var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
             var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
@@ -107,9 +107,15 @@
             line = svgList[canvas.id].polyline().attr(option);
             line.draw(event);
             // set mouse move event handler
-            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {                
+            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {
                 if (line) {
                     // draw line to next point coordinates
+					if(typeof event.clientX == "undefined"){
+						event.clientX = event.touches[0].clientX;
+					}
+					if(typeof event.clientY == "undefined"){
+						event.clientY = event.touches[0].clientY;
+					}
                     line.draw('point', event);
                 }
             })
@@ -169,7 +175,7 @@
         /**
 		* Draw arrow annotation
 		*/
-        drawArrow: function (event) {
+        drawArrow: function (event) {			
             mouse = getMousePosition(event);
             // get coordinates
             var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);

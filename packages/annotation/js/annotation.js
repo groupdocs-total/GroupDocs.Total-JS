@@ -146,14 +146,16 @@ $(document).ready(function () {
     // activate currently selected annotation tool
     //////////////////////////////////////////////////
     $('.gd-tools-container').on(userMouseClick, function (e) {
-        //e.preventDefault();
+        e.preventDefault();
+		e.stopPropagation();
         $('.gd-tool-field').removeClass('active');
         annotationType = null;
         // TODO : cancel on toolbar
     });
 
     $('.gd-tool-field').on(userMouseClick, function(e){
-        e.stopPropagation();
+        e.preventDefault();
+		e.stopPropagation();
         var currentlyActive = null;
         var tool = e.target;
         if ($(tool).hasClass("active")) {
@@ -170,11 +172,12 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // add annotation event
     //////////////////////////////////////////////////	
-    $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {
-		e.preventDefault();
+    $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {	
+e.preventDefault();
+		e.stopPropagation();	
         if($("#gd-panzoom").find("svg").length == 0 && svgList == null){
 			addSvgContainer();
-	    }
+	    }		
         if ($(e.target).prop("tagName") == "IMG" || $(e.target).prop("tagName") == "svg") {
             // initiate annotation object if null
             if (annotation == null) {
@@ -425,8 +428,8 @@ function getMousePosition(event) {
     };
     var ev = event || window.event; //Moz || IE
     if (ev.pageX || ev.touches[0].pageX) { //Moz
-        mouse.x = (typeof ev.pageX != "undefined") ? ev.pageX : ev.touches[0].pageX;
-        mouse.y = (typeof ev.pageY != "undefined") ? ev.pageY : ev.touches[0].pageY;
+        mouse.x = (typeof ev.pageX != "undefined" && ev.pageX != 0) ? ev.pageX : ev.touches[0].pageX;
+        mouse.y = (typeof ev.pageY != "undefined" && ev.pageY != 0) ? ev.pageY : ev.touches[0].pageY;
     } else if (ev.clientX) { //IE
         mouse.x = ev.clientX + document.body.scrollLeft;
         mouse.y = ev.clientY + document.body.scrollTop;

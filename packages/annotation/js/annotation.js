@@ -573,6 +573,11 @@ function deleteAnnotation(event) {
                 });
             }
             $(element).remove();
+			$.each($(".gd-bounding-box"), function(index, boundingBox){
+				if($(boundingBox).data("id").search(id) != -1){
+					$(boundingBox).remove();
+				}
+			});
         } else {
             return true;
         }

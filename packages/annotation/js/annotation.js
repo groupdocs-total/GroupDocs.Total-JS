@@ -476,7 +476,7 @@ function getTextCoordinates(pageNumber, callback) {
   * @param {int} mouseY - current mouse Y position
  */
 function getTextLineHeight(mouseX, mouseY) {
-    var height = 0;
+    var height = 0;	
 	if(mouseY < rows[0].lineTop){
 		mouseY = rows[0].lineTop;
 	}
@@ -665,7 +665,7 @@ function makeResizable(currentAnnotation) {
 				containment: "#gd-page-" + currentAnnotation.pageNumber,
 				stop: function (event, image) {
 					if (annotationType == "text" || annotationType == "textStrikeout" || annotationType == "textUnderline") {
-						var lineHeight = getTextLineHeight(image.position.left, image.position.top);							
+						var lineHeight = getTextCoordinates(currentAnnotation.pageNumber, getTextLineHeight(image.position.left, image.position.top));							
 						currentAnnotation.left = image.position.left;
 						currentAnnotation.top = image.position.top;
 						currentAnnotation.height = lineHeight;

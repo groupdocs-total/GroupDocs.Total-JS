@@ -480,6 +480,8 @@
                 this.fill('red');
             });
             annotationsList[annotationsList.length - 1].svgPath = svgPath;
+			var boundingBox = getBoundingBox(annotation, x, y, distance);
+			canvas.prepend(boundingBox);
 			makeResizable(annotation);
         },
     });

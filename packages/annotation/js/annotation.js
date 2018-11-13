@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.5.0
+ * @version 1.6.0
  */
 
 /*
@@ -87,17 +87,7 @@ $(document).ready(function () {
             }
         }
     });
-
-    //////////////////////////////////////////////////
-    // Open comment bar event
-    //////////////////////////////////////////////////
-    $(".gd-annotations-comments-toggle").on(userMouseClick, function () {
-         if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
-            $(".gd-annotations-comments-wrapper").addClass("active");
-        }
-    });
-
-
+	
     //////////////////////////////////////////////////
     // Fix for tooltips of the dropdowns
     //////////////////////////////////////////////////
@@ -173,7 +163,7 @@ $(document).ready(function () {
     // add annotation event
     //////////////////////////////////////////////////	
     $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {	
-e.preventDefault();
+		e.preventDefault();
 		e.stopPropagation();	
         if($("#gd-panzoom").find("svg").length == 0 && svgList == null){
 			addSvgContainer();
@@ -297,8 +287,6 @@ e.preventDefault();
     // enter comment text event
     //////////////////////////////////////////////////
     $('.gd-comments-sidebar-expanded').on(userMouseClick, 'div.gd-comment-text', function (e) {
-
-
         $(e.target).parent().parent().parent().find(".gd-comment-time").last().html(new Date($.now()).toUTCString());
         $("#gd-save-comments").removeClass("gd-save-button-disabled");
     });
@@ -306,82 +294,71 @@ e.preventDefault();
     //////////////////////////////////////////////////
     // save comment event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on(userMouseClick, '#gd-save-comments', saveComment);
+    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-reply', saveComment);
 
     //////////////////////////////////////////////////
     // reply comment event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-reply', function (e) {
-
-
-        $(".gd-comment-reply").before(getCommentHtml);
+    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-add-comment-reply', function (e) {    
+		e.preventDefault();
+		e.stopPropagation();
+		$("#gd-annotation-comments").append(getCommentBaseHtml($(e.target).parent().data("annotationid")));        
+        $(".gd-add-comment-reply").last().before(getCommentHtml);
     });
 
     //////////////////////////////////////////////////
     // cancel comment event
     //////////////////////////////////////////////////
     $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-cancel', function (e) {
-
-
         $(".gd-comment-box-sidebar").find(".gd-annotation-comment").last().find(".gd-comment-text").html("");
     });
 
     //////////////////////////////////////////////////
     // delete comment event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-delete-comment', function (e) {
-
-
-        // check if there is no more comments for the annotation
-        if ($(".gd-comment-box-sidebar").find(".gd-annotation-comment").length == 1) {
-            // delete annotation
-            deleteAnnotation(e);
-            $("#gd-annotation-comments").html("");
-        } else {
-            // delete comment
-            var annotationId = $(e.target).parent().parent().parent().parent().parent().data("annotationId");
-            for (var i = 0; i < annotationsList.length; i++) {
-                if (annotationId = annotationsList[i].id) {
-                    var text = $(e.target).parent().parent().parent().parent().find(".gd-comment-text").html();
-                    annotationsList[i].comments = $.grep(annotationsList[i].comments, function (value) {
-                        return value.text != text;
-                    });
-                }
-            }
-            $(e.target).parent().parent().parent().parent().remove();
-        }
+    $('#gd-panzoom').on(userMouseClick, '.gd-delete-comment', function (e) {       
+		// delete annotation
+		deleteAnnotation(e);
+		$("#gd-annotation-comments").html("");       
     });
 
     //////////////////////////////////////////////////
-    // annotation click event
+    // comments icon click event
     //////////////////////////////////////////////////
-    $('#gd-panzoom').on(userMouseClick, '.gd-annotation', function (e) {
+    $('#gd-panzoom').on(userMouseClick, '.gd-comments', function (e) {
         if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
             $(".gd-annotations-comments-wrapper").addClass("active");
+			$('#gd-annotations-comments-toggle').prop('checked', true);
         }
-        if (e.target.tagName != "I" && e.target.tagName != "INPUT" && e.target.tagName != "TEXTAREA") {
-            $("#gd-annotation-comments").html("");
-            $('#gd-annotations-comments-toggle').prop('checked', true);
+        if (e.target.tagName != "INPUT" && e.target.tagName != "TEXTAREA") {
+            $("#gd-annotation-comments").html("");            
             var annotationId = null;
-            if (typeof $(e.target).attr("id") != "undefined") {
+            if (typeof $(e.target).parent().parent().data("id") != "undefined") {
                 // get cuurent annotation id
-                annotationId = parseInt($(e.target).attr("id").replace(/[^\d.]/g, ''));
-                // get and append all comments for the annotation
-                $("#gd-annotation-comments").append(getCommentBaseHtml);
-                $(".gd-comment-box-sidebar").data("annotationId", annotationId);
+                annotationId = parseInt($(e.target).parent().parent().data("id").replace(/[^\d.]/g, ''));                
+               
                 for (var i = 0; i < annotationsList.length; i++) {
-                    if (annotationsList[i].id == annotationId) {
-                        if (annotationsList[i].comments != null && annotationsList[i].comments.length != 0) {
-                            for (var n = 0; n < annotationsList[i].comments.length; n++) {
-                                $(".gd-comment-reply").before(getCommentHtml);
-                                $(".gd-comment-time").last().html(annotationsList[i].comments[n].time);
-                                $(".gd-comment-text").last().html(annotationsList[i].comments[n].text);
-                                $(".gd-comment-text").data("saved", true);
-                                $(".gd-comment-user-name").last().val(annotationsList[i].comments[n].userName);
-                            }
-                        } else {
-                            $(".gd-comment-reply").before(getCommentHtml);
-                        }
+                    if (annotationsList[i].id == annotationId) {					
+						if (annotationsList[i].comments != null && annotationsList[i].comments.length != 0) {
+							for (var n = 0; n < annotationsList[i].comments.length; n++) {
+								// get and append all comments for the annotation
+								$("#gd-annotation-comments").append(getCommentBaseHtml(annotationId));
+								$(".gd-add-comment-reply").last().before(getCommentHtml);
+								$(".gd-comment-time").last().html(annotationsList[i].comments[n].time);
+								$(".gd-comment-text").last().html(annotationsList[i].comments[n].text);
+								$(".gd-comment-text").data("saved", true);                                
+								$(".gd-comment-user-name").remove();
+								$(".gd-comment-user").last().html(annotationsList[i].comments[n].userName);
+								$(".gd-comment-text").css("border", "0px");
+								$(".gd-comment-text").css("min-height", "0px");
+								$(".gd-comment-cancel").hide();
+								$(".gd-comment-reply").hide();
+								$(".gd-add-comment-reply").show();
+							}
+						} else {            
+							$("#gd-annotation-comments").append(getCommentBaseHtml(annotationId));							
+							$(".gd-add-comment-reply").last().before(getCommentHtml);
+						}						
                         return;
                     } else {
                         continue;
@@ -573,7 +550,7 @@ function annotate() {
  */
 function deleteAnnotation(event) {
     // get annotation id
-    var annotationId = $(event.target).parent().parent().parent().parent().parent().data("annotationId");
+    var annotationId = $(event.target).data("id");
     // get annotation data to delete
     var annotationToRemove = $.grep(annotationsList, function (obj) { return obj.id === annotationId; })[0];
     // delete annotation from the annotations list
@@ -611,7 +588,7 @@ function saveComment() {
         // set saved flag
         if (!$(currentComment).find(".gd-comment-text").data("saved")) {
             $(currentComment).find(".gd-comment-text").data("saved", true);
-            var annotationId = $(currentComment).parent().data("annotationId");
+            var annotationId = $(currentComment).parent().data("annotationid");
             // get current annotation from the annotations list
             var annotationToAddComments = $.grep(annotationsList, function (obj) { return obj.id === annotationId; })[0];
             // initiate comment object
@@ -630,6 +607,13 @@ function saveComment() {
             if (existedComment.length == 0) {
                 annotationToAddComments.comments.push(comment);
             }            
+			$(currentComment).find(".gd-comment-user").html(comment.userName);
+			$(currentComment).find(".gd-comment-user-name").remove();
+			$(currentComment).find(".gd-comment-text").css("border", "0px");
+			$(currentComment).find(".gd-comment-text").css("min-height", "0px");
+			$(currentComment).parent().find(".gd-comment-cancel").hide();
+			$(currentComment).parent().find(".gd-comment-reply").hide();
+			$(currentComment).parent().find(".gd-add-comment-reply").show();
             comment = null;
         } else {
             return true;
@@ -647,20 +631,15 @@ function addComment(currentAnnotation) {
     if (currentAnnotation && currentAnnotation.comments && currentAnnotation.comments.length > 0) {
         $.each(currentAnnotation.comments, function (index, comment) {
             if (index == 0) {
-                $("#gd-annotation-comments").append(getCommentBaseHtml);
+                $("#gd-annotation-comments").append(getCommentBaseHtml(currentAnnotation.id));
             }
-            $(".gd-comment-box-sidebar").data("annotationId", currentAnnotation.id);
-            $(".gd-comment-reply").before(getCommentHtml(comment));
+            $(".gd-comment-box-sidebar").data("annotationid", currentAnnotation.id);
+            $(".gd-add-comment-reply").before(getCommentHtml(comment));			
         });
-    } else {
-        $('#gd-annotations-comments-toggle').prop('checked', true);
-        if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
-            $(".gd-annotations-comments-wrapper").addClass("active");
-        }
+    } else {        
         currentAnnotation.comments = [];
-        $("#gd-annotation-comments").append(getCommentBaseHtml);
-        $(".gd-comment-box-sidebar").data("annotationId", currentAnnotation.id);
-        $(".gd-comment-reply").before(getCommentHtml);
+        $("#gd-annotation-comments").append(getCommentBaseHtml(currentAnnotation.id));        
+        $(".gd-add-comment-reply").before(getCommentHtml);
     }
 }
 
@@ -670,8 +649,8 @@ function addComment(currentAnnotation) {
  */
 function makeResizable(currentAnnotation) {
     var annotationType = currentAnnotation.type;
-    $(".gd-annotation").each(function (imdex, element) {  
-		var id = (typeof $(element).find(".annotation").attr("id") != "undefined") ? parseInt($(element).find(".annotation").attr("id").replace(/[^\d.]/g, '')) : parseInt($(element).attr("id").replace(/[^\d.]/g, ''));
+    $(".gd-bounding-box").each(function (imdex, element) {  
+		var id = parseInt($(element).data("id").replace(/[^\d.]/g, ''));
 		if (id == currentAnnotation.id) {
 			var previouseMouseX = 0;
 			var previouseMouseY = 0;
@@ -688,8 +667,8 @@ function makeResizable(currentAnnotation) {
 					} else if(annotationType == "point" || annotationType == "polyline" || annotationType == "arrow" || annotationType == "distance") {
 						switch (annotationType) {
 							case "point":							
-								currentAnnotation.left = $(image.helper[0]).attr("cx");
-								currentAnnotation.top = $(image.helper[0]).attr("cy");								
+								currentAnnotation.left = $("#" + $(image.helper[0]).data("id")).attr("cx");
+								currentAnnotation.top =	$("#" + $(image.helper[0]).data("id")).attr("cy");;								
 								break;
 							case "polyline":				
 								currentAnnotation.svgPath = stopMovePolyline(image);															
@@ -707,26 +686,28 @@ function makeResizable(currentAnnotation) {
 					}
 				},	
 				drag: function (event, image) {	
-					var x = parseInt(image.position.left - $("#gd-page-" + currentAnnotation.pageNumber).offset().left);
-					var y = parseInt(image.position.top - $("#gd-page-" + currentAnnotation.pageNumber).offset().top);
+					var x = image.position.left;
+					var y = image.position.top;
 					switch (annotationType) {
 						case "point":							
-							$(image.helper[0]).attr("cx", x);
-							$(image.helper[0]).attr("cy", y);
+							x = x + ($(image.helper[0]).width() / 2);
+							y = y + ($(image.helper[0]).height() / 2);
+							$("#" + $(image.helper[0]).data("id")).attr("cx", x);
+							$("#" + $(image.helper[0]).data("id")).attr("cy", y);
 							break;
 						case "polyline":
 							var newCoordinates = movePolyline(image, x, y, previouseMouseX, previouseMouseY);
 							previouseMouseX = x;
 							previouseMouseY = y;
-							$(image.helper[0]).attr("points", $.trim(newCoordinates));
+							$("#" + $(image.helper[0]).data("id")).attr("points", $.trim(newCoordinates));
 							break;
 						case "arrow":
-							var newCoordinates = moveArrow(image, x, y, $("#gd-page-" + currentAnnotation.pageNumber), "arrow");							
-							$(image.helper[0]).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
+							var newCoordinates = moveArrow(image, x, y, $("#gd-page-" + currentAnnotation.pageNumber));							
+							$("#" + $(image.helper[0]).data("id")).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
 							break;
 						case "distance":
-							var newCoordinates = moveArrow(image, x, y, $("#gd-page-" + currentAnnotation.pageNumber), "distance");							
-							$(image.helper[0]).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
+							var newCoordinates = moveDistance(image, x, y, $("#gd-page-" + currentAnnotation.pageNumber));							
+							$("#" + $(image.helper[0]).data("id")).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
 							break;
 					}						
 				},					
@@ -764,7 +745,7 @@ function makeResizable(currentAnnotation) {
  */
 function stopMoveArrow(image){
 	var svgPath = "M";	
-	$.each($(image.helper[0]).attr("d").split(" "), function (index, point) {
+	$.each($("#" + $(image.helper[0]).data("id")).attr("d").split(" "), function (index, point) {
 		svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " ";		
 	});	
 	return svgPath;							
@@ -778,7 +759,7 @@ function stopMovePolyline(image){
 	var svgPath = "M";
 	var previousX = 0;
 	var previousY = 0;
-	$.each($(image.helper[0]).attr("points").split(" "), function (index, point) {
+	$.each($("#" + $(image.helper[0]).data("id")).attr("points").split(" "), function (index, point) {
 		if (index == 0) {
 			svgPath = svgPath + point.split(",")[0] + "," + point.split(",")[1] + "l";
 		} else {
@@ -789,7 +770,7 @@ function stopMovePolyline(image){
 		previousX = point.split(",")[0];
 		previousY = point.split(",")[1];
 	});	
-	return svgPath;							
+	return svgPath.slice(0,-1);							
 }
 
 /**
@@ -804,8 +785,8 @@ function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
 	var newCoordinates = "";
 	var offsetX = 0;
 	var	offsetY = 0;
-	var firstPointX = parseInt($(image.helper[0]).attr("points").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
-	var firstPointY = parseInt($(image.helper[0]).attr("points").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));
+	var firstPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("points").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+	var firstPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("points").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));
 	if(previouseMouseX == 0){	
 		offsetX = 0;		
 	} else {
@@ -816,7 +797,7 @@ function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
 	} else {
 		offsetY = y - previouseMouseY;
 	}
-	$.each($(image.helper[0]).attr("points").split(" "), function(index, coordinates){								
+	$.each($("#" + $(image.helper[0]).data("id")).attr("points").split(" "), function(index, coordinates){								
 		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
 		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
 		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
@@ -832,34 +813,75 @@ function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
  * @param {int} previouseMouseX - previouse mouse position X
  * @param {int} previouseMouseY - previouse mouse position Y
  */
-function moveArrow(image, x, y, canvas, type){
-	var newCoordinates = "";
+function moveArrow(image, x, y, canvas){	 
+	var newCoordinates = "";	
 	var offsetX = 0;
 	var	offsetY = 0;
-	var firstPointX = parseInt($(image.helper[0]).attr("d").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
-	var firstPointY = parseInt($(image.helper[0]).attr("d").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));	
+	var firstPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+	var firstPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));	
+	var secondPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
+	var secondPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
 	if(x != 0 && x < $(canvas).outerWidth()) {
-		offsetX = x - firstPointX;
+		if(firstPointX > secondPointX){
+			offsetX = (x + image.helper[0].offsetWidth) - firstPointX;
+		} else {
+			offsetX = (x + 5) - firstPointX;
+		}
 	}
 	if(y != 0) {
-		offsetY = y - firstPointY;	
+		if(firstPointY > secondPointY){
+			offsetY = (y + image.helper[0].offsetHeight) - firstPointY;
+		} else {
+			offsetY = (y + 5) - firstPointY;
+		}
 	}	
-	$.each($(image.helper[0]).attr("d").split(" "), function(index, coordinates){								
+	$.each($("#" + $(image.helper[0]).data("id")).attr("d").split(" "), function(index, coordinates){								
 		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
 		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
 		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
-	});
-	if(type == "distance"){
-		var newTextCoordinates = "";
-		$.each($(image.helper[0]).attr("d").split(" "), function(index, coordinates){								
-			var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
-			var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
-			newTextCoordinates = newTextCoordinates + currentX + "," + (currentY - 10) + " ";			
-		});			
-		$($(image.helper).next("text").find("textPath").attr("href")).attr("d", "M" + $.trim(newTextCoordinates).replace(" ", " L"));
-	}
+	});	
 	return newCoordinates;	
 }
+
+/**
+ * recalculate SVG path coordinates when polyline annotation move
+ * @param {Object} image - current polyline object
+ * @param {int} x - current mouse position X
+ * @param {int} y - current mouse position Y
+ * @param {int} previouseMouseX - previouse mouse position X
+ * @param {int} previouseMouseY - previouse mouse position Y
+ */
+function moveDistance(image, x, y, canvas){	 
+	var newCoordinates = "";	
+	var offsetX = 0;
+	var	offsetY = 0;
+	var firstPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+	var firstPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));		
+	var secondPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
+	var secondPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
+	if(x != 0 && x < $(canvas).outerWidth()) {
+		if(firstPointX > secondPointX){
+			offsetX = (x + image.helper[0].offsetWidth - 25) - firstPointX;
+		} else {
+			offsetX = (x + 25) - firstPointX;
+		}
+	}
+	if(y != 0) {
+		if(firstPointY > secondPointY){
+			offsetY = (y + image.helper[0].offsetHeight - 25) - firstPointY;
+		} else {
+			offsetY = (y + 25) - firstPointY;
+		}
+	}		
+	$.each($("#" + $(image.helper[0]).data("id")).attr("d").split(" "), function(index, coordinates){								
+		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
+		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
+		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
+	});	
+	$($("#" + $(image.helper[0]).data("id")).next("text").find("textPath").attr("href")).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));	
+	return newCoordinates;	
+}
+
 
 /**
  * Import already existed annotations
@@ -961,23 +983,23 @@ function getHtmlResizeHandles() {
 function getCommentHtml(comment) {
     var time = (typeof comment.time != "undefined") ? comment.time : "";
     var text = (typeof comment.text != "undefined") ? comment.text : "";
-    var userName = (typeof comment.userName != "undefined") ? comment.userName : "";
+    var userName = (typeof comment.userName != "undefined") ? comment.userName : "";	
     return '<div class="gd-annotation-comment">' +
                 '<div class="gd-comment-avatar">' +
                     '<span class="gd-blanc-avatar-icon">' +
-                        '<i class="fa fa-commenting-o fa-flip-horizontal" aria-hidden="true"></i>' +
+                        '<i class="fas fa-user-circle"></i>' +
+						'<p class="gd-comment-user">' +
+                            userName +
+                        '</p>' +
                         '<p class="gd-comment-time">' +
                             time +
-                        '</p>' +
-                        '<div class="gd-delete-comment">' +
-                            '<i class="fa fa-trash-o" aria-hidden="true"></i>' +
-                        '</div>' +
+                        '</p>' +                        
                     '</span>' +
                 '</div>	' +
                 '<div class="gd-comment-text-wrapper mousetrap">' +
                     '<span class="comment-box-pointer"></span>' +
-                    '<div class="gd-comment-text mousetrap" contenteditable="true" data-saved="false">' + text + '</div>' +
-                    '<input type="text" placeholder="User name" class="gd-comment-user-name" value="' + userName + '">' +
+					'<input type="text" placeholder="User name" class="gd-comment-user-name" value="' + userName + '">' +
+                    '<div class="gd-comment-text mousetrap" contenteditable="true" data-saved="false">' + text + '</div>' +                    
                 '</div>' +
             '</div>';
 }
@@ -985,11 +1007,12 @@ function getCommentHtml(comment) {
 /**
  * Get HTML markup of the comment
  */
-function getCommentBaseHtml() {
-    return '<div class="gd-comment-box-sidebar" data-annotationId="0">' +
+function getCommentBaseHtml(annotationId) {
+    return '<div class="gd-comment-box-sidebar" data-annotationid="' + annotationId + '">' +
 				// comments will be here
-				'<a class="gd-save-button gd-comment-reply" href="#">reply</a>' +
-				'<a class="gd-save-button gd-comment-cancel" href="#">cancel</a>' +
+				'<a class="gd-save-button gd-add-comment-reply" href="#">Reply</a>' +
+				'<a class="gd-save-button gd-comment-reply" href="#">Reply</a>' +
+				'<a class="gd-save-button gd-comment-cancel" href="#">Cancel</a>' +
 			'</div>';
 }
 
@@ -1035,6 +1058,14 @@ function addSvgContainer(){
 			}
 		}
 	});
+}
+
+function getContextMenu(annotationId){
+	return '<div class="gd-context-menu">' +
+				'<i class="fas fa-arrows-alt"></i>'+
+				'<i class="fas fa-trash gd-delete-comment" data-id="' + annotationId + '"></i>'+
+				'<i class="fas fa-comments gd-comments"></i>'+
+			'</div>';
 }
 /*
 ******************************************************************
@@ -1188,17 +1219,15 @@ GROUPDOCS.ANNOTATION PLUGIN
         return '<div class=gd-annotations-comments-wrapper>' +
 					// open/close trigger button BEGIN
 					'<input id="gd-annotations-comments-toggle" class="gd-annotations-comments-toggle" type="checkbox" />' +
-					'<label for="gd-annotations-comments-toggle" class="gd-lbl-comments-toggle"></label>' +
+					'<label for="gd-annotations-comments-toggle" class="gd-lbl-comments-toggle"><i class="fas fa-times"></i></label>' +
 					// open/close trigger button END
 					'<div class="gd-comments-sidebar-expanded gd-ui-tabs gd-ui-widget gd-ui-widget-content gd-ui-corner-all">' +
 						'<div id="gd-tab-comments" class="gd-comments-content">' +
-							'<div class="gd-viewport">' +
-								'<h3 class="gd-com-heading gd-colon">Comments for annotations:</h3>' +
+							'<div class="gd-viewport">' +								
 								'<div class="gd-overview" id="gd-annotation-comments">' +
 									// annotation comments will be here
 								'</div>' +
-							'</div>' +
-							'<a  id="gd-save-comments" class="gd-save-button gd-save-button-disabled" href="#">save</a>' +
+							'</div>' +							
 						'</div>' +
 					'</div>' +
 				'</div>';

@@ -244,10 +244,14 @@ $(document).ready(function () {
                 annotationInnerHtml.style.height = annotation.height + "px";
                 annotationInnerHtml.style.width = annotation.width + "px";
                 lineInnerHtml = getLineHtml();
-                break;
+                break;			
             default:
                 element.style.left = annotation.left + "px";
-                element.style.top = annotation.top + "px";
+				if(prefix == "textReplacement"){
+					 element.style.top = ($(canvas).height() - annotation.top) + "px";
+				} else {
+					element.style.top = annotation.top + "px";
+				}
                 element.style.height = annotation.height + "px";
                 element.style.width = annotation.width + "px";
                 annotationInnerHtml = getAnnotationHtml();
@@ -261,6 +265,10 @@ $(document).ready(function () {
             element.appendChild(lineInnerHtml);
 			lineInnerHtml = null;
         }
+		if(prefix == "textReplacement"){
+			element.appendChild(getTextReplaceAnnotationHtml(annotation.id));
+			$(element).find("textarea").val(annotation.text);
+		}
 		element.setAttribute("data-id", $(element).find(".annotation").attr("id"));
         canvas.prepend(element);
         // add annotation into the annotations list

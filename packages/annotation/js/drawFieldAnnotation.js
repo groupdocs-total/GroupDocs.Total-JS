@@ -138,11 +138,12 @@
 			startY = mouse.y;
 			// prepare annotation HTML element
 			element = document.createElement('div');
-			element.className = 'gd-annotation';  			
+			element.className = 'gd-annotation gd-bounding-box';  			
 			element.innerHTML = getTextFieldAnnotationHtml(annotationsCounter);	
 			var canvasTopOffset = $(canvas).offset().top;
 			element.style.left = x + "px";
 			element.style.top = y + "px";
+			element.setAttribute("data-id", $(element).find(".annotation").attr("id"));
 			// draw annotation
 			canvas.prepend(element);	
 			$(".gd-typewriter-text").click(function (e) {
@@ -155,7 +156,12 @@
 			annotation.left = parseInt(element.style.left.replace("px", ""));
 			var dashboardHeight = parseInt($(element).find(".gd-text-area-toolbar").css("margin-bottom")) + parseInt($(element).find(".gd-text-area-toolbar").css("height"));
 			annotation.top = parseInt(element.style.top.replace("px", "")) + dashboardHeight;			
-			annotationsList.push(annotation);	
+			annotationsList.push(annotation);
+			$.each($(".gd-bounding-box"), function(index, box){
+				if($(box).data("id").search("watermark") != -1 || $(box).data("id").search("textField") != -1){
+					$(box).css("outline", "0px");		
+				}
+			});			
 			makeResizable(annotation);			
 		},
 
@@ -173,10 +179,10 @@
 			annotationsCounter;			
 			annotation.id = annotationsCounter;				
 			element = document.createElement('div');
-			element.className = 'gd-annotation';  			
+			element.className = 'gd-annotation gd-bounding-box';  			
 			element.innerHTML = getTextFieldAnnotationHtml(annotationsCounter, annotation.text, annotation.font, annotation.fontSize);				
 			element.style.left = annotation.left + "px";			
-				
+			element.setAttribute("data-id", $(element).find(".annotation").attr("id"));
 			canvas.prepend(element);	
 			$(".gd-typewriter-text").click(function (e) {
 				e.stopPropagation()
@@ -184,7 +190,12 @@
 			})		
 			var toolbarHeight = $(element).find(".gd-text-area-toolbar").height() + parseInt($(element).find(".gd-text-area-toolbar").css("margin-bottom")) + parseInt($(element).find(".gd-text-area-toolbar").css("padding"));
 			element.style.top = annotation.top - toolbarHeight + "px";				
-			annotationsList.push(annotation);	
+			annotationsList.push(annotation);
+			$.each($(".gd-bounding-box"), function(index, box){
+				if($(box).data("id").search("watermark") != -1 || $(box).data("id").search("textField") != -1){
+					$(box).css("outline", "0px");		
+				}
+			});	
 			makeResizable(annotation);		
 			$(".gd-typewriter-text").each(function(index, typeWriter){
 				if($(typeWriter).data("id") == annotationsCounter){

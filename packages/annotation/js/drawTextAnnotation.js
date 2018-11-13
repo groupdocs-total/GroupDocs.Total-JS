@@ -261,6 +261,7 @@ $(document).ready(function () {
             element.appendChild(lineInnerHtml);
 			lineInnerHtml = null;
         }
+		element.setAttribute("data-id", $(element).find(".annotation").attr("id"));
         canvas.prepend(element);
         // add annotation into the annotations list
         annotationsList.push(annotation);

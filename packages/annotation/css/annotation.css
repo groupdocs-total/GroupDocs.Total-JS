@@ -170,28 +170,21 @@ ANNOTATIONS COMMENTS BAR
 
 .gd-lbl-comments-toggle{
 	position: fixed;
-    top: 52%;
-	right: 12px;
+    top: 9%;   
     color: #959da5;
-	z-index: 2;
-	cursor: pointer;
+    z-index: 2;
+    cursor: pointer;
+    font-size: 25px;
 }
-.gd-lbl-comments-toggle::before {
-    content: ' ';
-    display: block;
-    border-top: 30px solid transparent;
-    border-bottom: 30px solid transparent;
-    border-right: 5px solid currentColor;
-}
-.gd-comments-sidebar-expanded {
-	width: 33px;
+
+.gd-comments-sidebar-expanded {	
 	overflow: hidden;
 	transition: width .25s ease-in-out;
 	position: fixed;
 	right: 0;
 	top: 50px;
 	left: auto;
-	background-color: #3e4e5a;
+	background-color: #ffffff;
 	height: 95%;		
 	overflow-y: auto;
 	z-index: 1;
@@ -211,7 +204,7 @@ ANNOTATIONS COMMENTS BAR
 }
 
 .gd-annotations-comments-toggle:checked + .gd-lbl-comments-toggle {
-  right: 286px;
+  right: 13px;
   transition: right .25s ease-in-out;
 }
 
@@ -237,29 +230,40 @@ ANNOTATIONS COMMENTS BAR
 .gd-com-heading{
     font-size:15px !important;
 	color: #959da5;
-	margin: 12px 0px 0px 10px;
+	margin: 7px 0px 0px 31px;
 }
 .gd-comment-time{
 	position: absolute;
-	top: 13px;
-    left: 31px;
-    color: #959da5;
+    top: 24px;
+    left: 45px;
+    color: #3e4e5a;
     font-size: 14px !important;
 }
+
+.gd-comment-user {
+	font-size: 20px;
+    color: #3e4e5a;
+    top: 1px;
+    left: 45px;
+    position: absolute;
+}
+
 .gd-comment-text-wrapper{
     position:relative;
     display:inline-block;
 	margin-top: 17px;
 }
 
-.gd-comment-text{
-	background: #fff;
-    padding: 20px 8px 10px;
+.gd-comment-text {
+    background: #fff;
+    padding: 5px 8px 10px;
     width: 244px;
+    min-height: 90px;
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
     border-radius: 0px;
-    margin: -11px 0 0 10px;
+    border: 1px solid #959da5;
+    margin: 13px 0 0 10px;
     position: relative;
     color: #333;
     font-size: 14px;
@@ -273,50 +277,59 @@ ANNOTATIONS COMMENTS BAR
 .gd-comment-box-sidebar{
     position:relative;
     padding:20px 0 0 18px;
-    margin: 2px 0 25px;
+    margin: 2px 0 -42px;
 }
 
 .gd-comment-avatar{
     position: relative;
-	top: 0px;
+    top: 24px;
     left: 8px;
     font-size: 26px;
     color: #959da5;
 }
 
+.gd-comment-avatar span i{
+	font-size: 40px;
+}
+
 .gd-save-button {
-	border-radius: 0px;   
+	border-radius: 8px;
     display: inline-block;
     text-align: center;
-    width: 100px;
-    height: 31px;
-	position: relative;
+    width: 73px;
+    height: 24px;
+    position: relative;
     top: -25px;
-    left: 11px;
-    background-color: #30abd4;
-    font-size: 18px;
-    color: #fff;   
+    left: 116px;
+    background-color: #3e4e5a;
+    font-size: 14px;
+    color: #fff;
+    text-decoration: none;
     padding: 5px 0px;
 }
 
-.gd-comment-cancel {
-	margin: 0px 0px 0px 37px;
-    background-color: #ff000096;
+.gd-add-comment-reply {
+    background: white;
+    color: #0a0a0a;
+    left: 11px;
+    display: none;
+    font-size: 17px;
 }
 
-.gd-delete-comment{
-	color: #959da5;
-    position: absolute;
-	top: 4px;
-    right: 30px;
-    font-size: 26px;
+.gd-comment-cancel {
+	margin: 0px 0px 0px 2px;
+    background-color: #ffffff;
+    color: #80868c;
+}
+
+.gd-delete-comment, .gd-comments{
 	cursor: pointer;
 }
 
 #gd-save-comments {
 	width: 246px;
-    margin-left: 11px;
-	margin-top: 34px;
+    margin-left: 20px;
+    margin-top: 37px;
 }
 
 .gd-save-button-disabled {
@@ -328,6 +341,22 @@ ANNOTATIONS COMMENTS BAR
 ANNOTATIONS ADDED TO THE DOCUMENT
 ******************************************
 */
+
+.gd-context-menu {
+    width: 94px;
+    height: 30px;
+    border: 2px solid #25c2d4;
+    border-radius: 10px;
+    position: absolute;
+    left: calc(100% - 79%);
+    top: -33px;
+}
+
+.gd-context-menu i {
+    font-size: 17px;
+    color: #25c2d4;
+    margin: 5px;
+}
 
 .gd-annotation {
 	position: absolute;
@@ -454,11 +483,17 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 	text-anchor: middle; 
 	font: 10px Arial; 
 	stroke-opacity: 1;
+
+}
+
+.gd-bounding-box {
+	outline: 2px solid #ccc;
+	z-index: 9;
 }
 
 svg {	
     z-index: 1;
     position: absolute;
     top: 0;
-    left: 0;	
+    left: 0;		
 }

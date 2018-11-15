@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 (function ($) {
@@ -82,6 +82,8 @@
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
             })
+			var boundingBox = getBoundingBox(currentAnnotation, x, y, circle);			
+			canvas.prepend(boundingBox);
 			makeResizable(currentAnnotation);
         },
 
@@ -166,10 +168,12 @@
                     annotationsList.push(currentAnnotation);
                     // add comments
                     addComment(currentAnnotation);
+					var boundingBox = getBoundingBox(currentAnnotation, x, y, line);			
+					canvas.prepend(boundingBox);
                     line = null;
+					makeResizable(currentAnnotation);
                 }
-            });
-			makeResizable(currentAnnotation);
+            });			
         },
 
         /**
@@ -226,10 +230,12 @@
                     currentAnnotation.svgPath = $.trim(svgPath.slice(0,-1));
                     annotationsList.push(currentAnnotation);
                     addComment(currentAnnotation);
+					var boundingBox = getBoundingBox(currentAnnotation, x, y, path);			
+					canvas.prepend(boundingBox);
                     path = null;
+					makeResizable(currentAnnotation);
                 }
-            });
-			makeResizable(currentAnnotation);
+            });			
         },
 
         /**
@@ -301,11 +307,13 @@
 					});	
                     currentAnnotation.svgPath = $.trim(svgPath.slice(0,-1));
                     annotationsList.push(currentAnnotation);
-                    addComment(currentAnnotation);
-                    path = null;
+                    addComment(currentAnnotation); 
+					var boundingBox = getBoundingBox(currentAnnotation, x, y, path);			
+					canvas.prepend(boundingBox);
+					path = null;
+					makeResizable(currentAnnotation);
                 }
-            });
-			makeResizable(currentAnnotation);
+            });			
         },
 
         /**
@@ -328,6 +336,8 @@
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
             });
+			var boundingBox = getBoundingBox(annotation, annotation.left, annotation.top, circle);
+			canvas.prepend(boundingBox);
 			makeResizable(annotation);
         },
 
@@ -365,7 +375,9 @@
             });
             // draw imported annotation
             line = svgList[canvas.id].polyline(svgPath).attr(option);
-			makeResizable(annotation);
+			var boundingBox = getBoundingBox(annotation, annotation.left, annotation.top, line);
+			canvas.prepend(boundingBox);
+			makeResizable(annotation);		
         },
 
         /**
@@ -392,6 +404,20 @@
                 this.fill('red');
             });
             annotationsList[annotationsList.length - 1].svgPath = "M" + annotation.left + "," + annotation.top + " L" + (annotation.left + annotation.width) + "," + (annotation.top + annotation.height);
+			var x = 0;
+			var y = 0;
+			if(annotation.left > (annotation.left + annotation.width)){
+				x = (annotation.left + annotation.width);
+			} else {
+				x = annotation.left;
+			}
+			if(annotation.top > (annotation.top + annotation.height)){
+				y = (annotation.top + annotation.height);
+			} else {
+				y = annotation.top;
+			}
+			var boundingBox = getBoundingBox(annotation, x, y, arrow);
+			canvas.prepend(boundingBox);
 			makeResizable(annotation);
         },
 
@@ -454,6 +480,8 @@
                 this.fill('red');
             });
             annotationsList[annotationsList.length - 1].svgPath = svgPath;
+			var boundingBox = getBoundingBox(annotation, x, y, distance);
+			canvas.prepend(boundingBox);
 			makeResizable(annotation);
         },
     });
@@ -540,4 +568,78 @@
 
         },
     });
+	
+	/**
+	 * draw bound div which will set annotation area used to drag it
+	 * @param {Object} currentAnnotation - current annotation object
+	 * @param {int} x - current mouse position X
+	 * @param {int} y - current mouse position Y
+	 * @param {Object} svgElement - currently dranw SVG
+	 */
+	function getBoundingBox(currentAnnotation, x, y, svgElement){
+		var boundingBox = document.createElement('div');
+		boundingBox.className = 'gd-bounding-box';
+		boundingBox.setAttribute("data-id", svgElement.id());		
+		boundingBox.style.position = "absolute";
+		var width = (currentAnnotation.width < 0) ? Math.abs(currentAnnotation.width) : currentAnnotation.width;
+		var height = (currentAnnotation.height < 0) ? Math.abs(currentAnnotation.height) : currentAnnotation.height;
+		switch (currentAnnotation.type ){
+			case "polyline":
+				x = svgElement.node.points[0].x;
+				y = svgElement.node.points[0].y;
+				$.each(svgElement.node.points, function(index, point){
+					if(x > point.x){
+						x = point.x;
+					}
+					if(y > point.y){
+						y = point.y;
+					}
+				});
+				break;
+			case "point":
+				x = x - (width / 2);
+				y = y - (height / 2);
+				break;
+			case "arrow":
+				width = width + 10;
+				height = height + 10;
+				var points = $(svgElement.node).attr("d").split(" ");
+				$.each(points, function(index, point){
+					var currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
+					var currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
+					if(currentX < x) {
+						x = currentX;
+					}
+					if(currentY < y){
+						y = currentY;
+					}
+				});
+				x = x - 5;
+				y = y - 5;
+				break;
+			case "distance":
+				width = width + 40;
+				height = height + 50;
+				var points = $(svgElement.node).attr("d").split(" ");
+				$.each(points, function(index, point){
+					var currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
+					var currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
+					if(currentX < x) {
+						x = currentX;
+					}
+					if(currentY < y){
+						y = currentY;
+					}
+				});
+				x = x - 25;
+				y = y - 25;
+				break;
+		}
+		boundingBox.style.width = width + "px";
+		boundingBox.style.height = height + "px";
+		boundingBox.style.left = x.toFixed(0) + "px";
+		boundingBox.style.top = y.toFixed(0) + "px";
+		boundingBox.innerHTML = getContextMenu(currentAnnotation.id);
+		return boundingBox;
+	}
 })(jQuery);

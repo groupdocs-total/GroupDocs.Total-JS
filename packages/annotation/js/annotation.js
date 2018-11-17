@@ -65,14 +65,18 @@ $(document).ready(function () {
     $.initialize(".gd-page-image", function () {
         // ensure that the closed comments tab doesn't
         // have active class when another document is opened
-        if ($(".gd-annotations-comments-wrapper").hasClass("active")) {
-            $(".gd-annotations-comments-wrapper").removeClass("active");
-			$('#gd-annotations-comments-toggle').prop('checked', false);
+        if (isCommentsPanelOpened()) {
+            closeCommentsPanel();
         }
         // set text rows data to null
         rows = null;
         // append svg element to each page, this is required to draw svg based annotations
         addSvgContainer();
+
+        if(isMobile()){
+            setZoomLevel("Fit Width");
+        }
+
         //check if document contains annotations
         if ($(this).parent().parent().attr("id").search("thumbnails") == -1) {
             for (var i = 0; i < documentData.length; i++) {
@@ -107,8 +111,7 @@ $(document).ready(function () {
         svgList = null;
 		if (disable_click_flag) {
             // make annotations list empty for the new document
-            $("#gd-annotation-comments").html("");
-            $('#gd-annotations-comments-toggle').prop('checked', false);
+            clearComments();
             var isDir = $(this).parent().find('.fa-folder').hasClass('fa-folder');
             if (isDir) {
                 // if directory -> browse
@@ -140,29 +143,25 @@ $(document).ready(function () {
 		e.stopPropagation();
         $('.gd-tool-field').removeClass('active');
         annotationType = null;
-        // TODO : cancel on toolbar
+        // TODO : cancel on toolbar click
     });
 
     $('.gd-tool-field').on(userMouseClick, function(e){
         e.preventDefault();
 		e.stopPropagation();
-        var currentlyActive = null;
-        var tool = e.target;
-        if ($(tool).hasClass("active")) {
-            $(tool).removeClass("active");
-            currentlyActive = $(tool)[0];
-            annotationType = null;
+        var tool = $(e.target);
+
+        if (tool.hasClass("active")) {
+            disableDrawingModeFor(tool);
         }else{
-            $('.gd-tool-field').removeClass('active');
-            $(tool).addClass("active");
-            annotationType = $(tool).data("type");
+            enableDrawingModeFor(tool);
         }
     });
 
     //////////////////////////////////////////////////
     // add annotation event
     //////////////////////////////////////////////////	
-    $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {	
+    $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {
 		e.preventDefault();
 		e.stopPropagation();	
         if($("#gd-panzoom").find("svg").length == 0 && svgList == null){
@@ -284,89 +283,43 @@ $(document).ready(function () {
     });
 
     //////////////////////////////////////////////////
-    // enter comment text event
+    // delete annotation event
     //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on(userMouseClick, 'div.gd-comment-text', function (e) {
-        $(e.target).parent().parent().parent().find(".gd-comment-time").last().html(new Date($.now()).toUTCString());
-        $("#gd-save-comments").removeClass("gd-save-button-disabled");
-    });
-
-    //////////////////////////////////////////////////
-    // save comment event
-    //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-reply', saveComment);
-
-    //////////////////////////////////////////////////
-    // reply comment event
-    //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-add-comment-reply', function (e) {    
-		e.preventDefault();
-		e.stopPropagation();
-		$("#gd-annotation-comments").append(getCommentBaseHtml($(e.target).parent().data("annotationid")));        
-        $(".gd-add-comment-reply").last().before(getCommentHtml);
-    });
-
-    //////////////////////////////////////////////////
-    // cancel comment event
-    //////////////////////////////////////////////////
-    $('.gd-comments-sidebar-expanded').on(userMouseClick, '.gd-comment-cancel', function (e) {
-        $(".gd-comment-box-sidebar").find(".gd-annotation-comment").last().find(".gd-comment-text").html("");
-    });
-
-    //////////////////////////////////////////////////
-    // delete comment event
-    //////////////////////////////////////////////////
-    $('#gd-panzoom').on(userMouseClick, '.gd-delete-comment', function (e) {       
-		// delete annotation
+    $('#gd-panzoom').on(userMouseClick, '.gd-delete-comment', function (e) {
+        //e.stopPropagation();
 		deleteAnnotation(e);
-		$("#gd-annotation-comments").html("");       
+		clearComments();
     });
 
+    //////////////////////////////////////////////////
+    // Close comments panel event
+    //////////////////////////////////////////////////
+    $('.gd-annotations-comments-header div.close').click(function () {
+        closeCommentsPanel();
+    });
+    $('.gd-add-comment-action').click(function(){
+        openCommentForm();
+    });
+    $('.gd-comments-cancel-action').click(function () {
+        closeCommentForm();
+    });
     //////////////////////////////////////////////////
     // comments icon click event
     //////////////////////////////////////////////////
     $('#gd-panzoom').on(userMouseClick, '.gd-comments', function (e) {
-        if (!$(".gd-annotations-comments-wrapper").hasClass("active")) {
-            $(".gd-annotations-comments-wrapper").addClass("active");
-			$('#gd-annotations-comments-toggle').prop('checked', true);
-        }
+        //e.stopPropagation();
+        var commentsDrawer = $(".gd-annotations-comments-wrapper");
         if (e.target.tagName != "INPUT" && e.target.tagName != "TEXTAREA") {
-            $("#gd-annotation-comments").html("");            
-            var annotationId = null;
             if (typeof $(e.target).parent().parent().data("id") != "undefined") {
                 // get cuurent annotation id
-                annotationId = parseInt($(e.target).parent().parent().data("id").replace(/[^\d.]/g, ''));                
-               
-                for (var i = 0; i < annotationsList.length; i++) {
-                    if (annotationsList[i].id == annotationId) {					
-						if (annotationsList[i].comments != null && annotationsList[i].comments.length != 0) {
-							for (var n = 0; n < annotationsList[i].comments.length; n++) {
-								// get and append all comments for the annotation
-								$("#gd-annotation-comments").append(getCommentBaseHtml(annotationId));
-								$(".gd-add-comment-reply").last().before(getCommentHtml);
-								$(".gd-comment-time").last().html(annotationsList[i].comments[n].time);
-								$(".gd-comment-text").last().html(annotationsList[i].comments[n].text);
-								$(".gd-comment-text").data("saved", true);                                
-								$(".gd-comment-user-name").remove();
-								$(".gd-comment-user").last().html(annotationsList[i].comments[n].userName);
-								$(".gd-comment-text").css("border", "0px");
-								$(".gd-comment-text").css("min-height", "0px");
-								$(".gd-comment-cancel").hide();
-								$(".gd-comment-reply").hide();
-								$(".gd-add-comment-reply").show();
-							}
-						} else {            
-							$("#gd-annotation-comments").append(getCommentBaseHtml(annotationId));							
-							$(".gd-add-comment-reply").last().before(getCommentHtml);
-						}						
-                        return;
-                    } else {
-                        continue;
-                    }
+                var annotationId = parseInt($(e.target).parent().parent().data("id").replace(/[^\d.]/g, ''));
+                var annotationToAddComments = $.grep(annotationsList, function (obj) { return obj.id === annotationId; })[0];
+                addComment(annotationToAddComments);
+                commentsDrawer.data('id', annotationId);
+                if(commentsDrawer.data('id')){
+                    openCommentsPanel()
                 }
             }
-        } else {
-            return;
         }
     });
 
@@ -377,15 +330,10 @@ $(document).ready(function () {
         download($(this));
     });
 
-	$('#gd-annotations-comments-toggle').on(userMouseClick, function (){
-		if($('#gd-annotations-comments-toggle').prop('checked')){
-			if(!$(".gd-annotations-comments-wrapper").hasClass("active")){
-				$(".gd-annotations-comments-wrapper").addClass("active");
-			}
-		} else {
-			$(".gd-annotations-comments-wrapper").removeClass("active");
-		}
-	});
+    //////////////////////////////////////////////////
+    // Comment form submit event
+    //////////////////////////////////////////////////
+	$('#gd-reply-form').submit(saveReply);
 });
 
 /*
@@ -533,8 +481,19 @@ function annotate() {
                 }
                 return;
             }
-            result = '<div id="gd-modal-annotated">Document annotated successfully</div>';
-            toggleModalDialog(true, 'Annotation', result);
+            result = '<div id="gd-modal-annotated"><div class="check_mark">\n' +
+                '  <div class="sa-icon sa-success animate">\n' +
+                '    <span class="sa-line sa-tip animateSuccessTip"></span>\n' +
+                '    <span class="sa-line sa-long animateSuccessLong"></span>\n' +
+                '    <div class="sa-placeholder"></div>\n' +
+                '    <div class="sa-fix"></div>\n' +
+                '  </div>\n' +
+                '</div></div>';
+            toggleSuccessModalDialog(true, 'Annotation', result);
+            $('.gd-modal-close-action').on('click', function () {
+                toggleSuccessModalDialog(false, 'Annotation', result)
+                $('.gd-modal-close-action').off('click').click(closeModal);
+            });
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -549,6 +508,9 @@ function annotate() {
  * @param {Object} event - delete annotation button click event data
  */
 function deleteAnnotation(event) {
+    if (!confirm("Do you want to delete?")){
+        return false;
+    }
     // get annotation id
     var annotationId = $(event.target).data("id");
     // get annotation data to delete
@@ -563,7 +525,7 @@ function deleteAnnotation(event) {
         } else {
             id = parseInt($(element).find(".annotation").attr("id").replace(/[^\d.]/g, ''));
         }
-        if (id == annotationId) {
+        if (id === annotationId) {
             if (typeof $(element).attr("id") != "undefined" && $(element).attr("id").search("distance") != -1) {
                 // remove text element for distance annotation
                 $.each($(element).parent().find("text"), function (index, text) {
@@ -585,77 +547,177 @@ function deleteAnnotation(event) {
     $("#gd-save-comments").addClass("gd-save-button-disabled");
 }
 
-/**
- * Save comment to the annotation
- */
-function saveComment() {
-    $(".gd-annotation-comment").each(function (index, currentComment) {
-        // set saved flag
-        if (!$(currentComment).find(".gd-comment-text").data("saved")) {
-            $(currentComment).find(".gd-comment-text").data("saved", true);
-            var annotationId = $(currentComment).parent().data("annotationid");
-            // get current annotation from the annotations list
-            var annotationToAddComments = $.grep(annotationsList, function (obj) { return obj.id === annotationId; })[0];
-            // initiate comment object
-            var comment = {
-                time: null,
-                text: "",
-                userName: ""
-            };
-            // set comment data
-            comment.time = $(currentComment).find(".gd-comment-time").html();
-            comment.text = $(currentComment).find(".gd-comment-text").html();
-            comment.userName = $(currentComment).find(".gd-comment-user-name").val() == "" ? "Anonym A." : $(currentComment).find(".gd-comment-user-name").val();
-            // check if the same comment is already added - used for import annotations
-            var existedComment = $.grep(annotationToAddComments.comments, function (e) { return e.text.trim() == comment.text.trim(); });
-            // add comment
-            if (existedComment.length == 0) {
-                annotationToAddComments.comments.push(comment);
-            }            
-			$(currentComment).find(".gd-comment-user").html(comment.userName);
-			$(currentComment).find(".gd-comment-user-name").remove();
-			$(currentComment).find(".gd-comment-text").css("border", "0px");
-			$(currentComment).find(".gd-comment-text").css("min-height", "0px");
-			$(currentComment).parent().find(".gd-comment-cancel").hide();
-			$(currentComment).parent().find(".gd-comment-reply").hide();
-			$(currentComment).parent().find(".gd-add-comment-reply").show();
-            comment = null;
-        } else {
-            return true;
+function clearComments(){
+    $(".gd-annotations-comments-body").html("");
+}
+
+function isCommentsPanelOpened(){
+    return $(".gd-annotations-comments-wrapper").hasClass("active");
+}
+
+function openCommentsPanel(){
+    var commentsDrawer = $(".gd-annotations-comments-wrapper");
+    commentsDrawer.addClass('active');
+}
+
+function closeCommentsPanel(){
+    var commentsDrawer = $(".gd-annotations-comments-wrapper");
+    commentsDrawer.removeClass('active');
+}
+
+function openCommentForm(){
+    $('.gd-annotations-comments-form').slideDown(100);
+    $('.gd-comments-nonideal-state').hide();
+}
+
+function closeCommentForm(){
+    var annotationId = parseInt($('.gd-annotations-comments-wrapper').data('id'));
+    var annotationToAddComments = $.grep(annotationsList, function (obj) { return obj.id === annotationId; })[0];
+    $('.gd-annotations-comments-form').slideUp(100,function(){
+        if(annotationToAddComments.comments.length === 0){
+            $('.gd-comments-nonideal-state').show();
         }
     });
 }
 
+function resetCommentForm(){
+    $('#gd-reply-form').get(0).reset();
+}
+
+function enableDrawingModeFor(tool){
+    $('.gd-tool-field').removeClass('active');
+    tool.addClass("active");
+    annotationType = tool.data("type");
+    $('#gd-panzoom').addClass("drawing");
+}
+
+function disableDrawingModeFor(tool){
+    tool.removeClass("active");
+    annotationType = null;
+    $('#gd-panzoom').removeClass("drawing");
+}
+function getRectangleFromPath(path){
+    var leftTop = {
+        x : Number.MAX_VALUE,
+        y : Number.MAX_VALUE
+    };
+    var rightBottom = {
+        x : Number.MIN_VALUE,
+        y : Number.MIN_VALUE
+    };
+    for(var idx in path){
+        leftTop.x = (path[idx].x < leftTop.x) ? path[idx].x : leftTop.x;
+        leftTop.y = (path[idx].y < leftTop.y) ? path[idx].y : leftTop.y;
+        rightBottom.x = (path[idx].x >= rightBottom.x) ? path[idx].x : rightBottom.x;
+        rightBottom.y = (path[idx].y >= rightBottom.y) ? path[idx].y : rightBottom.y;
+    }
+    return {
+        left  : leftTop.x,
+        top   : leftTop.y,
+        width : rightBottom.x - leftTop.x,
+        height: rightBottom.y - leftTop.y
+    }
+}
+function convertPairsToPoints(spaceSeparatedPoints){
+    var pairs = spaceSeparatedPoints.split(' ');
+    var points = [];
+    for(var idx in pairs){
+        var pair = pairs[idx].split(',');
+        points.push({
+            x : parseInt(pair[0]),
+            y : parseInt(pair[1])
+        })
+    }
+    return points;
+}
 /**
 * Add comment into the comments bar
 * @param {Object} currentAnnotation - currently added annotation
 */
 function addComment(currentAnnotation) {
-    $("#gd-annotation-comments").html("");
+    clearComments();
     // check if annotation contains comments
     if (currentAnnotation && currentAnnotation.comments && currentAnnotation.comments.length > 0) {
         $.each(currentAnnotation.comments, function (index, comment) {
-            if (index == 0) {
-                $("#gd-annotation-comments").append(getCommentBaseHtml(currentAnnotation.id));
-            }
-            $(".gd-comment-box-sidebar").data("annotationid", currentAnnotation.id);
-            $(".gd-add-comment-reply").before(getCommentHtml(comment));			
+            var commentHtml = $(getCommentHtml(comment));
+            commentHtml.hide();
+            $(".gd-annotations-comments-body").prepend(commentHtml);
+            commentHtml.fadeIn(500);
+            $('.gd-comments-nonideal-state').hide();
         });
     } else {        
         currentAnnotation.comments = [];
-        $("#gd-annotation-comments").append(getCommentBaseHtml(currentAnnotation.id));        
-        $(".gd-add-comment-reply").before(getCommentHtml);
+        $('.gd-comments-nonideal-state').show();
     }
+}
+/**
+ * Toggle modal dialog
+ * @param {boolean} open - open/close value
+ * @param {string} title - title to display in modal dialog (popup)
+ */
+function toggleSuccessModalDialog(open, title, content) {
+
+    if (open) {
+        $('#modalDialog .gd-modal-title').text(title);
+        $('#modalDialog')
+            .addClass('success')
+            .css('opacity', 0)
+            .fadeIn('fast')
+            .animate(
+                { opacity: 1 },
+                { queue: false, duration: 'fast' }
+            );
+        $('#modalDialog').addClass('in');
+        $(".gd-modal-body").append(content);
+    } else {
+        $('#modalDialog').removeClass('in');
+        $('#modalDialog').removeClass('success');
+        $('#modalDialog')
+            .css('opacity', 1)
+            .fadeIn('fast')
+            .animate(
+                { opacity: 0 },
+                { queue: false, duration: 'fast' }
+            )
+            .css('display', 'none');
+        $(".gd-modal-body").html('');
+    }
+}
+function toggleContextFor(element){
+    $('.gd-context-menu').hide();
+    $('.gd-bounding-box').css('z-index',9);
+    $(element).find('.gd-context-menu').show();
+    $(element).css('z-index',99999);
 }
 
 /**
  * Make current annotation draggble and resizable
  * @param {Object} currentAnnotation - currently added annotation
  */
-function makeResizable(currentAnnotation) {
+function makeResizable(currentAnnotation, html) {
     var annotationType = currentAnnotation.type;
-    $(".gd-bounding-box").each(function (imdex, element) {  
-		var id = parseInt($(element).data("id").replace(/[^\d.]/g, ''));
+
+    if(html){
+        var element = $(html);
+        toggleContextFor(element);
+        $('.gd-context-menu').mousedown(function (e) {
+            if(!$(e.target).hasClass('fa-arrows-alt')){
+                e.stopPropagation();
+            }
+        });
+        disableDrawingModeFor($('.gd-tool-field.active'));
+        $(element).mousedown(function (e) {
+            toggleContextFor(element);
+            if(isCommentsPanelOpened() && currentAnnotation.id !== parseInt($(".gd-annotations-comments-wrapper").data('id'))){
+                closeCommentForm();
+                closeCommentsPanel();
+            }
+        });
+    }
+
+
+    $(".gd-bounding-box").each(function (imdex, element) {
+        var id = parseInt($(element).data("id").replace(/[^\d.]/g, ''));
 		if (id == currentAnnotation.id) {
 			var previouseMouseX = 0;
 			var previouseMouseY = 0;
@@ -715,7 +777,7 @@ function makeResizable(currentAnnotation) {
 							$("#" + $(image.helper[0]).data("id")).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
 							break;
 					}						
-				},					
+				}
 			}).resizable({
 				// set restriction for image resizing to current document page
 				containment: "#gd-page-" + currentAnnotation.pageNumber,
@@ -732,7 +794,6 @@ function makeResizable(currentAnnotation) {
 					'sw': '.ui-resizable-sw',
 					'nw': '.ui-resizable-nw'
 				},
-				grid: [10, 10],
 				resize: function (event, image) {
 					$(event.target).find(".gd-" + annotationType + "-annotation").css("width", image.size.width);
 					$(event.target).find(".gd-" + annotationType + "-annotation").css("height", image.size.height);
@@ -989,22 +1050,22 @@ function getCommentHtml(comment) {
     var time = (typeof comment.time != "undefined") ? comment.time : "";
     var text = (typeof comment.text != "undefined") ? comment.text : "";
     var userName = (typeof comment.userName != "undefined") ? comment.userName : "";	
+
     return '<div class="gd-annotation-comment">' +
                 '<div class="gd-comment-avatar">' +
-                    '<span class="gd-blanc-avatar-icon">' +
-                        '<i class="fas fa-user-circle"></i>' +
-						'<p class="gd-comment-user">' +
-                            userName +
-                        '</p>' +
-                        '<p class="gd-comment-time">' +
-                            time +
-                        '</p>' +                        
-                    '</span>' +
-                '</div>	' +
-                '<div class="gd-comment-text-wrapper mousetrap">' +
-                    '<span class="comment-box-pointer"></span>' +
-					'<input type="text" placeholder="User name" class="gd-comment-user-name" value="' + userName + '">' +
-                    '<div class="gd-comment-text mousetrap" contenteditable="true" data-saved="false">' + text + '</div>' +                    
+                    '<div class="gd-comment-userpic">' +
+                        '<i class="fas fa-lg fa-user-circle"></i>' +
+                    '</div>' +
+                    '<div class="gd-comment-username">' +
+                        userName +
+                    '</div>' +
+                '</div>' +
+                '<div class="gd-comment-content">' +
+                    text +
+                '</div>'+
+                '<div class="gd-comment-footer">' +
+                    '<div class="gd-comment-toggle-reply"></div>' +
+                    '<div class="gd-comment-created-at">'+$.timeago(new Date(time))+'</div>' +
                 '</div>' +
             '</div>';
 }
@@ -1066,12 +1127,37 @@ function addSvgContainer(){
 }
 
 function getContextMenu(annotationId){
-	return '<div class="gd-context-menu">' +
-				'<i class="fas fa-arrows-alt"></i>'+
-				'<i class="fas fa-trash gd-delete-comment" data-id="' + annotationId + '"></i>'+
-				'<i class="fas fa-comments gd-comments"></i>'+
+	return '<div class="gd-context-menu hidden">' +
+				'<i class="fas fa-arrows-alt fa-sm"></i>'+
+				'<i class="fas fa-trash-alt fa-sm gd-delete-comment" data-id="' + annotationId + '"></i>'+
+				'<i class="fas fa-comments fa-sm gd-comments"></i>'+
 			'</div>';
 }
+
+
+function saveReply(e){
+    e.preventDefault();
+    var nameField = $(e.target).find('#comment-name');
+    var messageField = $(e.target).find('#comment-message');
+    var annotationId = parseInt($('.gd-annotations-comments-wrapper').data('id'));
+    var annotationToAddComments = $.grep(annotationsList, function (obj) { return obj.id === annotationId; })[0];
+    var comment = {
+        time: (new Date()).toUTCString(),
+        text: messageField.val(),
+        userName: nameField.val()
+    };
+    // check if the same comment is already added - used for import annotations
+    var existedComment = $.grep(annotationToAddComments.comments, function (e) { return e.text.trim() == comment.text.trim(); });
+    // add comment
+    if (existedComment.length === 0) {
+        annotationToAddComments.comments.push(comment);
+    }
+    addComment(annotationToAddComments);
+    resetCommentForm();
+    closeCommentForm();
+    return false;
+}
+
 /*
 ******************************************************************
 ******************************************************************
@@ -1221,20 +1307,50 @@ GROUPDOCS.ANNOTATION PLUGIN
     }
 
     function getHtmlAnnotationCommentsBase() {
-        return '<div class=gd-annotations-comments-wrapper>' +
+        return '<div class="gd-annotations-comments-wrapper" data-id="">' +
 					// open/close trigger button BEGIN
-					'<input id="gd-annotations-comments-toggle" class="gd-annotations-comments-toggle" type="checkbox" />' +
-					'<label for="gd-annotations-comments-toggle" class="gd-lbl-comments-toggle"><i class="fas fa-times"></i></label>' +
-					// open/close trigger button END
-					'<div class="gd-comments-sidebar-expanded gd-ui-tabs gd-ui-widget gd-ui-widget-content gd-ui-corner-all">' +
-						'<div id="gd-tab-comments" class="gd-comments-content">' +
-							'<div class="gd-viewport">' +								
-								'<div class="gd-overview" id="gd-annotation-comments">' +
-									// annotation comments will be here
-								'</div>' +
-							'</div>' +							
-						'</div>' +
-					'</div>' +
+                    '<div class="gd-annotations-comments-header">' +
+                        '<div class="gd-annotations-comments-header-flex">' +
+                            '<div class="add gd-add-comment-action">' +
+                                '<div>' +
+                                    '+'+
+                                '</div>' +
+                            '</div>' +
+                            '<div class="title">' +
+                                '<span>Comments</span>' +
+                            '</div>' +
+                            '<div class="close">' +
+                                '<div>' +
+                                    '&times;'+
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="gd-annotations-comments-form hidden">' +
+                        '<form autocomplete="off" id="gd-reply-form">' +
+                            '<div class="gd-comment-input">' +
+                                '<input required="required" id="comment-name" placeholder="Name" name="comment-name" class="gd-comment-user-name" />'+
+                            '</div>'+
+                            '<div class="gd-comment-input">' +
+                                '<textarea required="required" id="comment-message" placeholder="Message"></textarea>'+
+                            '</div>'+
+                            '<div class="gd-comment-controls">' +
+                                '<button type="button" class="gd-btn gd-btn-default gd-comments-cancel-action">Cancel</button>' +
+                                '<button class="gd-btn gd-btn-primary">Reply</button>' +
+                            '</div>' +
+                        '</form>' +
+                    '</div>'+
+                    '<div class="gd-comments-nonideal-state">' +
+                        '<div class="gd-comments-nonideal-state-icon">' +
+                            '<i class="far fa-comments"></i>' +
+                        '</div>' +
+                        '<div class="gd-comments-nonideal-state-message">' +
+                            'No comments yet. Be the first one, <span class="gd-add-comment-action">add comment</span>.'+
+                        '</div>' +
+                    '</div>' +
+                    '<div class="gd-annotations-comments-body">' +
+
+                    '</div>'+
 				'</div>';
     }
 

@@ -88,7 +88,6 @@ $(document).ready(function () {
         if (element == null && ($(ev.target).prop("tagName") == "IMG" || $(ev.target).prop("tagName") == "svg")) {
             annotation.id = idNumber;
             // set mouse cursor style
-            canvas.style.cursor = "crosshair";
             // set start position
             startX = mouse.x;
             startY = mouse.y;
@@ -150,12 +149,10 @@ $(document).ready(function () {
             // prepend annotation element into the document page
 			element.setAttribute("data-id", $(element).find(".annotation").attr("id"));
             canvas.prepend(element);
-            annotationsList.push(annotation);			
-            makeResizable(annotation);
+            annotationsList.push(annotation);
         } else {
             // drop all data when draw is finished
             canvas.onmousemove = null;
-            canvas.style.cursor = "default";
             if ($(ev.target).prop("tagName") == "IMG") {
                 annotationsList[annotationsList.length - 1].width = parseFloat(element.style.width.replace("px", ""));
                 annotationsList[annotationsList.length - 1].height = parseFloat(element.style.height.replace("px", ""));
@@ -171,18 +168,18 @@ $(document).ready(function () {
                 if (currentPrefix == "textReplacement") {
                     element.appendChild(getTextReplaceAnnotationHtml(idNumber));
                 }
-                canvas.onmousemove = null;
-                canvas.onmouseup = null;
-                canvas.style.cursor = "default";
                 if ($(ev.target).prop("tagName") == "IMG") {
                     annotationsList[annotationsList.length - 1].width = parseFloat(element.style.width.replace("px", ""));
                     annotationsList[annotationsList.length - 1].height = parseFloat(element.style.height.replace("px", ""));
                 }
                 addComment(annotationsList[annotationsList.length - 1]);
+                makeResizable(annotation, element);
                 annotationInnerHtml = null;
                 lineInnerHtml = null;
                 element = null;
             }
+            $(canvas).off(userMouseUp);
+            $(canvas).off(userMouseMove);
         });
 
         // set mouse move event
@@ -244,7 +241,21 @@ $(document).ready(function () {
                 annotationInnerHtml.style.height = annotation.height + "px";
                 annotationInnerHtml.style.width = annotation.width + "px";
                 lineInnerHtml = getLineHtml();
-                break;			
+                break;
+            case "textRedaction":
+                var dimensions = getRectangleFromPath(JSON.parse(annotation.svgPath));
+                // workaround bug in annotation lib
+                // TODO : remove when fixed
+                var pageHeight = $('.gd-page.loaded').height();
+                element.style.top = (pageHeight - dimensions.top - dimensions.height) + "px";
+                // end workaround bug in annotation lib
+
+                element.style.left = dimensions.left + "px";
+                element.style.height = dimensions.height + "px";
+                element.style.width = dimensions.width + "px";
+                annotationInnerHtml = getTextLineAnnotationHtml();
+                lineInnerHtml = getLineHtml();
+                break;
             default:
                 element.style.left = annotation.left + "px";
 				if(prefix == "textReplacement"){
@@ -273,7 +284,7 @@ $(document).ready(function () {
         canvas.prepend(element);
         // add annotation into the annotations list
         annotationsList.push(annotation);
-        makeResizable(annotation);
+        makeResizable(annotation,element);
         addComment(annotation);       
     }
 

@@ -306,7 +306,6 @@ $(document).ready(function () {
         // search for matched elements
         $('.gd-highlight').each(function (e) {
             if (count == search_position) {
-                console.log(this);
                 // add selected highlight
                 $(this).addClass('gd-highlight-select');
                 // scroll to next page
@@ -1623,8 +1622,8 @@ function isPageLoaded(selector) {
 /**
 * Set zoom level
 */
-function setZoomLevel() {
-	var zoomValue = $(this).text();
+function setZoomLevel(zoomString) {
+	var zoomValue = zoomString || $(this).text();
 	switch (zoomValue) {
 		case 'Fit Width':
 			// get page width
@@ -1737,6 +1736,10 @@ function getHtmlUpload() {
 							'<button id="gd-open-document" type="button" class="btn">Browse files</button>' +
 						'</section>';
     return uploadSection;
+}
+
+function isMobile(){
+    return $('body:after').css('content') === 'mobile';
 }
 
 /*
@@ -1899,7 +1902,7 @@ GROUPDOCS.VIEWER PLUGIN
 			        '<div class="gd-modal-content" id="gd-modal-content">' +
 			            // header
 			            '<div class="gd-modal-header">' +
-							'<div class="gd-modal-close gd-modal-close-action"><span>x</span></div>' +
+							'<div class="gd-modal-close gd-modal-close-action"><span>&times;</span></div>' +
 							'<h4 class="gd-modal-title"></h4>' +
 			            '</div>' +
 			            // body

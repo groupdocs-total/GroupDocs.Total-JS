@@ -19,6 +19,29 @@ body {
 }
 /*
 ******************************************
+Mobile desktop detector to be used in JS
+******************************************
+*/
+body:after {
+    visibility: hidden;
+    height: 0;
+    font-size: 0;
+}
+@media (max-width: 1024px) {
+    body:after {
+        content: "mobile";
+    }
+}
+@media (min-width: 1024px) {
+    body:after {
+        content: "desktop";
+    }
+}
+.hidden{
+    display: none;
+}
+/*
+******************************************
 Content wrapper
 ******************************************
 */
@@ -247,7 +270,7 @@ PAGES
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    overflow-y: scroll!important;
+    overflow-y: auto !important;
     padding-top: 60px;
 
     /* Hides the scrollbar */
@@ -380,6 +403,7 @@ MODAL
     background-color: rgba(0,0,0,0.5);
 }
 .gd-modal-dialog {
+    box-shadow: #0005 0px 0px 10px;
     position: absolute;
     width: 700px;
     height: 500px;

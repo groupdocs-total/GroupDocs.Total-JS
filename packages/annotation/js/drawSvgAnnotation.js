@@ -74,17 +74,17 @@
             // draw the point SVG
             var circle = svgList[canvas.id].circle(svgCircleRadius);
             circle.attr({
-                'fill': 'red',
+                'fill': 'blue',
                 'stroke': 'black',
                 'stroke-width': 2,
                 'cx': x,
                 'cy': y,
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
-            })
+            });
 			var boundingBox = getBoundingBox(currentAnnotation, x, y, circle);			
 			canvas.prepend(boundingBox);
-			makeResizable(currentAnnotation);
+			makeResizable(currentAnnotation, boundingBox);
         },
 
         /**
@@ -97,8 +97,8 @@
             var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
             currentAnnotation.id = annotationsCounter;
             // set polyline draw options
-            const option = {
-                'stroke': 'red',
+            var option = {
+                'stroke': 'blue',
                 'stroke-width': 2,
                 'fill-opacity': 0,
                 'id': 'gd-polyline-annotation-' + annotationsCounter,
@@ -171,7 +171,7 @@
 					var boundingBox = getBoundingBox(currentAnnotation, x, y, line);			
 					canvas.prepend(boundingBox);
                     line = null;
-					makeResizable(currentAnnotation);
+					makeResizable(currentAnnotation, boundingBox);
                 }
             });			
         },
@@ -186,8 +186,8 @@
             var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
             currentAnnotation.id = annotationsCounter;
             // set draw options
-            const option = {
-                'stroke': 'red',
+            var option = {
+                'stroke': 'blue',
                 'stroke-width': 2,
                 'fill-opacity': 0,
                 'id': 'gd-arrow-annotation-' + annotationsCounter,
@@ -211,7 +211,7 @@
                         var arrow = "M0,7 L0,13 L12,10 z";
                         add.path(arrow);
 
-                        this.fill('red');
+                        this.fill('blue');
                     });
                 }
             })
@@ -233,7 +233,7 @@
 					var boundingBox = getBoundingBox(currentAnnotation, x, y, path);			
 					canvas.prepend(boundingBox);
                     path = null;
-					makeResizable(currentAnnotation);
+					makeResizable(currentAnnotation, boundingBox);
                 }
             });			
         },
@@ -248,8 +248,8 @@
             var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
             currentAnnotation.id = annotationsCounter;
             // set draw options
-            const option = {
-                'stroke': 'red',
+            var option = {
+                'stroke': 'blue',
                 'stroke-width': 2,
                 'fill-opacity': 0,
                 'id': 'gd-distance-annotation-' + annotationsCounter,
@@ -257,7 +257,7 @@
 
             };
             // set text options
-            const textOptions = {
+            var textOptions = {
                 'font-size': "12px",
                 'data-id': currentAnnotation.id
             };
@@ -282,14 +282,14 @@
                     path.marker('start', 20, 20, function (add) {
                         var arrow = "M12,7 L12,13 L0,10 z";
                         add.path(arrow);
-                        add.rect(1, 20).cx(0).fill('red')
-                        this.fill('red');
+                        add.rect(1, 20).cx(0).fill('blue')
+                        this.fill('blue');
                     });
                     path.marker('end', 20, 20, function (add) {
                         var arrow = "M0,7 L0,13 L12,10 z";
                         add.path(arrow);
-                        add.rect(1, 20).cx(11).fill('red')
-                        this.fill('red');
+                        add.rect(1, 20).cx(11).fill('blue')
+                        this.fill('blue');
                         currentAnnotation.text = Math.round(path.width()) + "px";
                     });
                 }
@@ -311,7 +311,7 @@
 					var boundingBox = getBoundingBox(currentAnnotation, x, y, path);			
 					canvas.prepend(boundingBox);
 					path = null;
-					makeResizable(currentAnnotation);
+					makeResizable(currentAnnotation, boundingBox);
                 }
             });			
         },
@@ -328,7 +328,7 @@
             // draw imported annotation
             var circle = svgList[canvas.id].circle(svgCircleRadius);
             circle.attr({
-                'fill': 'red',
+                'fill': 'blue',
                 'stroke': 'black',
                 'stroke-width': 2,
                 'cx': annotation.left,
@@ -338,7 +338,7 @@
             });
 			var boundingBox = getBoundingBox(annotation, annotation.left, annotation.top, circle);
 			canvas.prepend(boundingBox);
-			makeResizable(annotation);
+			makeResizable(annotation, boundingBox);
         },
 
         /**
@@ -348,13 +348,13 @@
             annotation.id = annotationsCounter;
             annotationsList.push(annotation);
             addComment(annotation);
-            const option = {
-                'stroke': 'red',
+            var option = {
+                'stroke': '#82abc7',
                 'stroke-width': 2,
                 'fill-opacity': 0,
                 'id': 'gd-polyline-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
-            }
+            };
             var line = null;
             var svgPath = "";
             // recalculate path points coordinates from the offset values back to the coordinates values - why we need this described above in the draw polyline action
@@ -369,15 +369,21 @@
 						x = (x + parseFloat(point.split(",")[0]));
 						y = (y + parseFloat(point.split(",")[1]));
 					}
-                } else {
-                    return true;
                 }
             });
             // draw imported annotation
             line = svgList[canvas.id].polyline(svgPath).attr(option);
+
+            // fix dimensions
+            var dimensions = getRectangleFromPath(convertPairsToPoints(svgPath));
+            annotation.top = dimensions.top;
+            annotation.left = dimensions.left;
+            annotation.width = dimensions.width;
+            annotation.height = dimensions.height;
+
 			var boundingBox = getBoundingBox(annotation, annotation.left, annotation.top, line);
 			canvas.prepend(boundingBox);
-			makeResizable(annotation);		
+			makeResizable(annotation, boundingBox);
         },
 
         /**
@@ -387,21 +393,21 @@
             currentAnnotation.id = annotationsCounter;
             annotationsList.push(annotation);
             addComment(annotation);
-            const option = {
-                'stroke': 'red',
+            var option = {
+                'stroke': 'blue',
                 'stroke-width': 2,
                 'fill-opacity': 0,
                 'id': 'gd-arrow-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
 
-            }
+            };
             // draw imported annotation
             var arrow = svgList[canvas.id].path("M" + annotation.left + "," + annotation.top + " L" + (annotation.left + annotation.width) + "," + (annotation.top + annotation.height)).attr(option);
             arrow.marker('end', 20, 20, function (add) {
                 var arrow = "M0,7 L0,13 L12,10 z";
                 add.path(arrow);
 
-                this.fill('red');
+                this.fill('blue');
             });
             annotationsList[annotationsList.length - 1].svgPath = "M" + annotation.left + "," + annotation.top + " L" + (annotation.left + annotation.width) + "," + (annotation.top + annotation.height);
 			var x = 0;
@@ -418,7 +424,7 @@
 			}
 			var boundingBox = getBoundingBox(annotation, x, y, arrow);
 			canvas.prepend(boundingBox);
-			makeResizable(annotation);
+			makeResizable(annotation, boundingBox);
         },
 
         /**
@@ -435,15 +441,15 @@
             annotation.text = Math.round(annotation.width) + "px";
             annotationsList.push(annotation);
             addComment(annotation);
-            const option = {
-                'stroke': 'red',
+            var option = {
+                'stroke': 'blue',
                 'stroke-width': 2,
                 'fill-opacity': 0,
                 'id': 'gd-distance-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
 
             };
-            const textOptions = {
+            var textOptions = {
                 'font-size': "12px",
                 'data-id': currentAnnotation.id
             };
@@ -470,19 +476,19 @@
             distance.marker('start', 20, 20, function (add) {
                 var arrow = "M12,7 L12,13 L0,10 z";
                 add.path(arrow);
-                add.rect(1, 20).cx(0).fill('red')
-                this.fill('red');
+                add.rect(1, 20).cx(0).fill('blue')
+                this.fill('blue');
             });
             distance.marker('end', 20, 20, function (add) {
                 var arrow = "M0,7 L0,13 L12,10 z";
                 add.path(arrow);
-                add.rect(1, 20).cx(11).fill('red')
-                this.fill('red');
+                add.rect(1, 20).cx(11).fill('blue')
+                this.fill('blue');
             });
             annotationsList[annotationsList.length - 1].svgPath = svgPath;
 			var boundingBox = getBoundingBox(annotation, x, y, distance);
 			canvas.prepend(boundingBox);
-			makeResizable(annotation);
+			makeResizable(annotation, boundingBox);
         },
     });
 

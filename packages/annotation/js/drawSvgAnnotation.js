@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.3.0
+ * @version 1.4.0
  */
 
 (function ($) {
@@ -23,7 +23,7 @@
         x: 0,
         y: 0
     };
-
+	var markerWidth = 20;
     var canvas = null;
     var currentAnnotation = null;
     var canvasTopOffset = null;
@@ -182,8 +182,8 @@
         drawArrow: function (event) {			
             mouse = getMousePosition(event);
             // get coordinates
-            var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
-            var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
+            var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
+            var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;
             currentAnnotation.id = annotationsCounter;
             // set draw options
             var option = {
@@ -202,12 +202,12 @@
                 if (path) {
                     // get current coordinates after mouse move
                     mouse = getMousePosition(event);
-                    var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
-                    var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
+                    var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
+                    var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;
                     // update svg with the end point and draw line between
                     path.plot("M" + x.toFixed(0) + "," + y.toFixed(0) + " L" + endX.toFixed(0) + "," + endY.toFixed(0));
                     // add arrow marker at the line end
-                    path.marker('end', 20, 20, function (add) {
+                    path.marker('end', markerWidth, markerWidth, function (add) {
                         var arrow = "M0,7 L0,13 L12,10 z";
                         add.path(arrow);
 

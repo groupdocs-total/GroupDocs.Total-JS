@@ -367,6 +367,7 @@ function getMousePosition(event) {
  * @param {int} pageNumber - the page number of which you need information
  */
 function getTextCoordinates(pageNumber, callback) {
+    fadeAll(true);
     var url = getApplicationPath('textCoordinates');
     // current document guid is taken from the viewer.js globals
     var data = {
@@ -381,6 +382,7 @@ function getTextCoordinates(pageNumber, callback) {
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (returnedData) {
+            fadeAll(false);
             $('#gd-modal-spinner').hide();
             var result = "";
             if (returnedData.message != undefined) {
@@ -407,6 +409,7 @@ function getTextCoordinates(pageNumber, callback) {
             });
         },
         error: function (xhr, status, error) {
+            fadeAll(false);
             var err = eval("(" + xhr.responseText + ")");
             // open error popup
             printMessage(err.message);
@@ -446,6 +449,7 @@ function getTextLineHeight(mouseX, mouseY) {
  * Annotate current document
  */
 function annotate() {
+    fadeAll(true);
     // set current document guid - used to check if the other document were opened
     var url = getApplicationPath('annotate');
     var annotationsToAdd = [];
@@ -468,6 +472,7 @@ function annotate() {
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (returnedData) {
+            fadeAll(false);
             $('#gd-modal-spinner').hide();
             var result = "";
             if (returnedData.message != undefined) {
@@ -496,6 +501,7 @@ function annotate() {
             });
         },
         error: function (xhr, status, error) {
+            fadeAll(false);
             var err = eval("(" + xhr.responseText + ")");
             // open error popup
             printMessage(err.message);

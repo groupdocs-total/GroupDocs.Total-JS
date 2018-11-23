@@ -675,6 +675,14 @@ function loadFileTree(dir) {
     });
 }
 
+function fadeAll(on) {
+    if (on) {
+        $('#gd-container-fade').show();
+    } else {
+        $('#gd-container-fade').hide();
+    }
+}
+
 /**
 * Open/Load document
 * @param {object} callback - document pages array
@@ -682,6 +690,7 @@ function loadFileTree(dir) {
 function loadDocument(callback) {
     // clear global documentData array from previous document info
     documentData = [];
+    fadeAll(true);
     // get document description
     var data = { guid: documentGuid, password: password };
     $.ajax({
@@ -690,6 +699,7 @@ function loadDocument(callback) {
         data: JSON.stringify(data),
         contentType: "application/json",
         success: function (returnedData) {
+            fadeAll(false);
             if (returnedData.message != undefined) {
                 if (returnedData.message == "Password Required") {
                     openPasswordModal();
@@ -712,6 +722,7 @@ function loadDocument(callback) {
             generatePagesTemplate(returnedData, totalPageNumber);
         },
         error: function (xhr, status, error) {
+            fadeAll(false);
             var err = eval("(" + xhr.responseText + ")");
             console.log(err.Message);
             // open error popup
@@ -1893,7 +1904,10 @@ GROUPDOCS.VIEWER PLUGIN
 			        // pages END
 
 			    '</div>' +
-			'</div>';
+			'</div>' +
+            '<div id="gd-container-fade" class="gd-container-fade">' +
+            '<div class="gd-container-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
+            '</div>';
     }
 
     function getHtmlModalDialog() {

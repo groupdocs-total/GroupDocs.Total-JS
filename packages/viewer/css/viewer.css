@@ -65,6 +65,29 @@ CONTAINER
 }
 /*
 ******************************************
+FADE
+******************************************
+*/
+.gd-container-fade {
+    position: fixed;
+    margin: auto;
+    display: none;
+    overflow: hidden;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+    background-color: rgba(0,0,0,0.5);
+}
+.gd-container-spinner {
+    width: 50%;
+    margin: calc(50% - 250px) auto;
+}
+/*
+******************************************
 HEADER
 ******************************************
 */

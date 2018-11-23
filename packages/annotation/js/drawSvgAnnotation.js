@@ -287,9 +287,12 @@
                     if (annotationWidth < 0) {
                         annotationWidth = Math.abs(annotationWidth);
                     }
-                    moveTextPositionX = Math.abs((annotationWidth / 2) - markerWidth);
-
+                    moveTextPositionX = Math.abs((annotationWidth / 2) - markerWidth);					
+					
                     text.path(textPath).move(moveTextPositionX, y).tspan(Math.round(annotationWidth) + "px");
+					if( navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ){
+						$("text[data-id='" + currentAnnotation.id +"']").attr("y", 0);
+					}
                     // add start and end arrows
                     path.marker('start', markerWidth, markerWidth, function (add) {
                         var arrow = "M12,7 L12,13 L0,10 z";
@@ -308,7 +311,7 @@
             })
             // set mouse up event
             $('#gd-panzoom').bind(userMouseUp, svgList[canvas.id], function (event) {
-                if (path) {
+                if (path) {					
                     currentAnnotation.left = x;
                     currentAnnotation.top = y;
                     currentAnnotation.width = path.width();
@@ -604,16 +607,16 @@
         var height = (currentAnnotation.height < 0) ? Math.abs(currentAnnotation.height) : currentAnnotation.height;
         switch (currentAnnotation.type) {
             case "polyline":
-                x = svgElement.node.points[0].x;
-                y = svgElement.node.points[0].y;
-                $.each(svgElement.node.points, function (index, point) {
-                    if (x > point.x) {
-                        x = point.x;
+                x = svgElement.node.points.getItem(0).x;
+                y = svgElement.node.points.getItem(0).y;
+				for(var i =0; i < svgElement.node.points.numberOfItems; i++) {                
+                    if (x > svgElement.node.points.getItem(i).x) {
+                        x = svgElement.node.points.getItem(i).x;
                     }
-                    if (y > point.y) {
-                        y = point.y;
+                    if (y > svgElement.node.points.getItem(i).y) {
+                        y = svgElement.node.points.getItem(i).y;
                     }
-                });
+                };
                 break;
             case "point":
                 x = x - (width / 2);

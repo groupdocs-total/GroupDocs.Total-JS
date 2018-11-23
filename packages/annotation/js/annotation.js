@@ -73,7 +73,7 @@ $(document).ready(function () {
         // append svg element to each page, this is required to draw svg based annotations
         addSvgContainer();
 
-        if(isMobile()){
+        if(isMobile() && !/Edge/.test(navigator.userAgent)){
             setZoomLevel("Fit Width");
         }
 

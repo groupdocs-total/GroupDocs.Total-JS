@@ -10,7 +10,7 @@
 
 	/**
 	* Create private variables.
-	**/    
+	**/
     var mouse = {
         x: 0,
         y: 0,
@@ -28,9 +28,9 @@
     var currentAnnotation = null;
     var canvasTopOffset = null;
     var currentPrefix = "";
-	var userMouseUp = ('ontouchend' in document.documentElement) ? 'touchend mouseup' : 'mouseup';
+    var userMouseUp = ('ontouchend' in document.documentElement) ? 'touchend mouseup' : 'mouseup';
     var userMouseMove = ('ontouchmove' in document.documentElement) ? 'touchmove mousemove' : 'mousemove';
-	
+
     /**
 	 * Draw svg annotation	
 	 */
@@ -57,7 +57,7 @@
         /**
 		* Draw point annotation
 		*/
-        drawPoint: function (event) {			
+        drawPoint: function (event) {
             mouse = getMousePosition(event);
             // get current x and y coordinates
             var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
@@ -82,16 +82,16 @@
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
             });
-			var boundingBox = getBoundingBox(currentAnnotation, x, y, circle);			
-			canvas.prepend(boundingBox);
-			makeResizable(currentAnnotation, boundingBox);
+            var boundingBox = getBoundingBox(currentAnnotation, x, y, circle);
+            canvas.prepend(boundingBox);
+            makeResizable(currentAnnotation, boundingBox);
         },
 
         /**
 		* Draw polyline annotation
 		*/
         drawPolyline: function (event) {
-            mouse = getMousePosition(event);				
+            mouse = getMousePosition(event);
             // get x and y coordinates
             var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
             var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
@@ -112,17 +112,17 @@
             $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {
                 if (line) {
                     // draw line to next point coordinates
-					if(typeof event.clientX == "undefined"){
-						event.clientX = event.touches[0].clientX;
-					}
-					if(typeof event.clientY == "undefined"){
-						event.clientY = event.touches[0].clientY;
-					}
+                    if (typeof event.clientX == "undefined") {
+                        event.clientX = event.touches[0].clientX;
+                    }
+                    if (typeof event.clientY == "undefined") {
+                        event.clientY = event.touches[0].clientY;
+                    }
                     line.draw('point', event);
                 }
             })
             // set mouse up event handler
-            $('#gd-panzoom').bind(userMouseUp, svgList[canvas.id], function (event) {                
+            $('#gd-panzoom').bind(userMouseUp, svgList[canvas.id], function (event) {
                 if (line && currentPrefix == "polyline") {
                     // stop draw
                     line.draw('stop', event);
@@ -168,18 +168,18 @@
                     annotationsList.push(currentAnnotation);
                     // add comments
                     addComment(currentAnnotation);
-					var boundingBox = getBoundingBox(currentAnnotation, x, y, line);			
-					canvas.prepend(boundingBox);
+                    var boundingBox = getBoundingBox(currentAnnotation, x, y, line);
+                    canvas.prepend(boundingBox);
                     line = null;
-					makeResizable(currentAnnotation, boundingBox);
+                    makeResizable(currentAnnotation, boundingBox);
                 }
-            });			
+            });
         },
 
         /**
 		* Draw arrow annotation
 		*/
-        drawArrow: function (event) {			
+        drawArrow: function (event) {
             mouse = getMousePosition(event);
             // get coordinates
             var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
@@ -198,7 +198,7 @@
             var path = null;
             path = svgList[canvas.id].path("M" + x + "," + y + " L" + x + "," + y).attr(option);
             // set mouse move event handler
-            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {                
+            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {
                 if (path) {
                     // get current coordinates after mouse move
                     mouse = getMousePosition(event);
@@ -223,19 +223,19 @@
                     currentAnnotation.top = y;
                     currentAnnotation.width = path.width();
                     currentAnnotation.height = path.height();
-					var svgPath = "M";
-					$.each(path.attr("d").split(" "), function (index, point) {
-						svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";		
-					});	
-                    currentAnnotation.svgPath = $.trim(svgPath.slice(0,-1));
+                    var svgPath = "M";
+                    $.each(path.attr("d").split(" "), function (index, point) {
+                        svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";
+                    });
+                    currentAnnotation.svgPath = $.trim(svgPath.slice(0, -1));
                     annotationsList.push(currentAnnotation);
                     addComment(currentAnnotation);
-					var boundingBox = getBoundingBox(currentAnnotation, x, y, path);			
-					canvas.prepend(boundingBox);
+                    var boundingBox = getBoundingBox(currentAnnotation, x, y, path);
+                    canvas.prepend(boundingBox);
                     path = null;
-					makeResizable(currentAnnotation, boundingBox);
+                    makeResizable(currentAnnotation, boundingBox);
                 }
-            });			
+            });
         },
 
         /**
@@ -268,52 +268,64 @@
             var text = null;
             text = svgList[canvas.id].text("0px").attr(textOptions);
             // set mouse move event
-            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {   
+            $('#gd-panzoom').bind(userMouseMove, svgList[canvas.id], function (event) {
                 if (path) {
                     // get end coordinates
                     mouse = getMousePosition(event);
-                    var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
-                    var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
+                    var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
+                    var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;
+
                     // draw the last point and the line between
                     path.plot("M" + x + "," + y + " L" + endX + "," + endY);
-                    // update text value and draw it in accordance with the svg
-                    text.path("M" + x + "," + (y - 10) + " L" + endX + "," + (endY - 3)).move(path.width() / 2.5, y).tspan(Math.round(path.width()) + "px");
+                    // update text value and draw it in accordance with the svg					
+                    var textPath = "";
+                    var moveTextPositionX = 0;
+                    var point1 = { X: x, Y: y };
+                    var point2 = { X: endX, Y: endY };
+                    var annotationWidth = getDistance(point1, point2);
+                    textPath = getTextPath(x, y, endX, endY, path);
+                    if (annotationWidth < 0) {
+                        annotationWidth = Math.abs(annotationWidth);
+                    }
+                    moveTextPositionX = Math.abs((annotationWidth / 2) - markerWidth);
+
+                    text.path(textPath).move(moveTextPositionX, y).tspan(Math.round(annotationWidth) + "px");
                     // add start and end arrows
-                    path.marker('start', 20, 20, function (add) {
+                    path.marker('start', markerWidth, markerWidth, function (add) {
                         var arrow = "M12,7 L12,13 L0,10 z";
                         add.path(arrow);
-                        add.rect(1, 20).cx(0).fill('blue')
+                        add.rect(1, markerWidth).cx(0).fill('blue')
                         this.fill('blue');
                     });
-                    path.marker('end', 20, 20, function (add) {
+                    path.marker('end', markerWidth, markerWidth, function (add) {
                         var arrow = "M0,7 L0,13 L12,10 z";
                         add.path(arrow);
-                        add.rect(1, 20).cx(11).fill('blue')
+                        add.rect(1, markerWidth).cx(11).fill('blue')
                         this.fill('blue');
                         currentAnnotation.text = Math.round(path.width()) + "px";
                     });
                 }
             })
             // set mouse up event
-            $('#gd-panzoom').bind(userMouseUp, svgList[canvas.id], function (event) {                             
+            $('#gd-panzoom').bind(userMouseUp, svgList[canvas.id], function (event) {
                 if (path) {
                     currentAnnotation.left = x;
                     currentAnnotation.top = y;
                     currentAnnotation.width = path.width();
                     currentAnnotation.height = path.height();
-					var svgPath = "M";
-					$.each(path.attr("d").split(" "), function (index, point) {
-						svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";		
-					});	
-                    currentAnnotation.svgPath = $.trim(svgPath.slice(0,-1));
+                    var svgPath = "M";
+                    $.each(path.attr("d").split(" "), function (index, point) {
+                        svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";
+                    });
+                    currentAnnotation.svgPath = $.trim(svgPath.slice(0, -1));
                     annotationsList.push(currentAnnotation);
-                    addComment(currentAnnotation); 
-					var boundingBox = getBoundingBox(currentAnnotation, x, y, path);			
-					canvas.prepend(boundingBox);
-					path = null;
-					makeResizable(currentAnnotation, boundingBox);
+                    addComment(currentAnnotation);
+                    var boundingBox = getBoundingBox(currentAnnotation, x, y, path);
+                    canvas.prepend(boundingBox);
+                    path = null;
+                    makeResizable(currentAnnotation, boundingBox);
                 }
-            });			
+            });
         },
 
         /**
@@ -336,9 +348,9 @@
                 'id': 'gd-point-annotation-' + annotationsCounter,
                 'class': 'gd-annotation annotation svg'
             });
-			var boundingBox = getBoundingBox(annotation, annotation.left, annotation.top, circle);
-			canvas.prepend(boundingBox);
-			makeResizable(annotation, boundingBox);
+            var boundingBox = getBoundingBox(annotation, annotation.left, annotation.top, circle);
+            canvas.prepend(boundingBox);
+            makeResizable(annotation, boundingBox);
         },
 
         /**
@@ -364,11 +376,11 @@
             svgPath = points[0];
             $.each(points, function (index, point) {
                 if (index != 0) {
-					if(point != ""){
-						svgPath = svgPath + " " + (x + parseFloat(point.split(",")[0])) + "," + (y + parseFloat(point.split(",")[1]));
-						x = (x + parseFloat(point.split(",")[0]));
-						y = (y + parseFloat(point.split(",")[1]));
-					}
+                    if (point != "") {
+                        svgPath = svgPath + " " + (x + parseFloat(point.split(",")[0])) + "," + (y + parseFloat(point.split(",")[1]));
+                        x = (x + parseFloat(point.split(",")[0]));
+                        y = (y + parseFloat(point.split(",")[1]));
+                    }
                 }
             });
             // draw imported annotation
@@ -381,9 +393,9 @@
             annotation.width = dimensions.width;
             annotation.height = dimensions.height;
 
-			var boundingBox = getBoundingBox(annotation, annotation.left, annotation.top, line);
-			canvas.prepend(boundingBox);
-			makeResizable(annotation, boundingBox);
+            var boundingBox = getBoundingBox(annotation, annotation.left, annotation.top, line);
+            canvas.prepend(boundingBox);
+            makeResizable(annotation, boundingBox);
         },
 
         /**
@@ -403,28 +415,28 @@
             };
             // draw imported annotation
             var arrow = svgList[canvas.id].path("M" + annotation.left + "," + annotation.top + " L" + (annotation.left + annotation.width) + "," + (annotation.top + annotation.height)).attr(option);
-            arrow.marker('end', 20, 20, function (add) {
+            arrow.marker('end', markerWidth, markerWidth, function (add) {
                 var arrow = "M0,7 L0,13 L12,10 z";
                 add.path(arrow);
 
                 this.fill('blue');
             });
             annotationsList[annotationsList.length - 1].svgPath = "M" + annotation.left + "," + annotation.top + " L" + (annotation.left + annotation.width) + "," + (annotation.top + annotation.height);
-			var x = 0;
-			var y = 0;
-			if(annotation.left > (annotation.left + annotation.width)){
-				x = (annotation.left + annotation.width);
-			} else {
-				x = annotation.left;
-			}
-			if(annotation.top > (annotation.top + annotation.height)){
-				y = (annotation.top + annotation.height);
-			} else {
-				y = annotation.top;
-			}
-			var boundingBox = getBoundingBox(annotation, x, y, arrow);
-			canvas.prepend(boundingBox);
-			makeResizable(annotation, boundingBox);
+            var x = 0;
+            var y = 0;
+            if (annotation.left > (annotation.left + annotation.width)) {
+                x = (annotation.left + annotation.width);
+            } else {
+                x = annotation.left;
+            }
+            if (annotation.top > (annotation.top + annotation.height)) {
+                y = (annotation.top + annotation.height);
+            } else {
+                y = annotation.top;
+            }
+            var boundingBox = getBoundingBox(annotation, x, y, arrow);
+            canvas.prepend(boundingBox);
+            makeResizable(annotation, boundingBox);
         },
 
         /**
@@ -471,24 +483,25 @@
             var distance = svgList[canvas.id].path(svgPath).attr(option);
             // draw text with the distance data
             text = svgList[canvas.id].text(annotation.width + "px").attr(textOptions)
-            text.path(svgPath).tspan(Math.round(annotation.width) + "px").dx(annotation.width / 2).dy(-5);
+            var correctDistance = (annotation.width > 5) ? annotation.width : Math.abs(annotation.height);
+            text.path(svgPath).tspan(Math.round(correctDistance) + "px").dx((correctDistance / 2) - markerWidth).dy(-5);
             // add start and end arrows
-            distance.marker('start', 20, 20, function (add) {
+            distance.marker('start', markerWidth, markerWidth, function (add) {
                 var arrow = "M12,7 L12,13 L0,10 z";
                 add.path(arrow);
-                add.rect(1, 20).cx(0).fill('blue')
+                add.rect(1, markerWidth).cx(0).fill('blue')
                 this.fill('blue');
             });
-            distance.marker('end', 20, 20, function (add) {
+            distance.marker('end', markerWidth, markerWidth, function (add) {
                 var arrow = "M0,7 L0,13 L12,10 z";
                 add.path(arrow);
-                add.rect(1, 20).cx(11).fill('blue')
+                add.rect(1, markerWidth).cx(11).fill('blue')
                 this.fill('blue');
             });
             annotationsList[annotationsList.length - 1].svgPath = svgPath;
-			var boundingBox = getBoundingBox(annotation, x, y, distance);
-			canvas.prepend(boundingBox);
-			makeResizable(annotation, boundingBox);
+            var boundingBox = getBoundingBox(annotation, x, y, distance);
+            canvas.prepend(boundingBox);
+            makeResizable(annotation, boundingBox);
         },
     });
 
@@ -510,8 +523,8 @@
             }
 
             arr = [
-				[p.x - zoomCorrection.x, p.y - zoomCorrection.y],
-				[p.x - zoomCorrection.x, p.y - zoomCorrection.y]
+                [p.x - zoomCorrection.x, p.y - zoomCorrection.y],
+                [p.x - zoomCorrection.x, p.y - zoomCorrection.y]
             ];
 
             this.el.plot(arr);
@@ -544,7 +557,7 @@
                 var y = (typeof e.clientY != "undefined") ? e.clientY : e.touches[0].clientY;
                 // Add the new Point to the point-array
                 var p = this.transformPoint(x, y),
-				arr = this.el.array().valueOf();
+                    arr = this.el.array().valueOf();
                 p.x = p.x - zoomCorrection.x;
                 p.y = p.y - zoomCorrection.y;
                 arr.push(this.snapToGrid([p.x, p.y]));
@@ -574,7 +587,7 @@
 
         },
     });
-	
+
 	/**
 	 * draw bound div which will set annotation area used to drag it
 	 * @param {Object} currentAnnotation - current annotation object
@@ -582,70 +595,112 @@
 	 * @param {int} y - current mouse position Y
 	 * @param {Object} svgElement - currently dranw SVG
 	 */
-	function getBoundingBox(currentAnnotation, x, y, svgElement){
-		var boundingBox = document.createElement('div');
-		boundingBox.className = 'gd-bounding-box';
-		boundingBox.setAttribute("data-id", svgElement.id());		
-		boundingBox.style.position = "absolute";
-		var width = (currentAnnotation.width < 0) ? Math.abs(currentAnnotation.width) : currentAnnotation.width;
-		var height = (currentAnnotation.height < 0) ? Math.abs(currentAnnotation.height) : currentAnnotation.height;
-		switch (currentAnnotation.type ){
-			case "polyline":
-				x = svgElement.node.points[0].x;
-				y = svgElement.node.points[0].y;
-				$.each(svgElement.node.points, function(index, point){
-					if(x > point.x){
-						x = point.x;
-					}
-					if(y > point.y){
-						y = point.y;
-					}
-				});
-				break;
-			case "point":
-				x = x - (width / 2);
-				y = y - (height / 2);
-				break;
-			case "arrow":
-				width = width + 10;
-				height = height + 10;
-				var points = $(svgElement.node).attr("d").split(" ");
-				$.each(points, function(index, point){
-					var currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
-					var currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
-					if(currentX < x) {
-						x = currentX;
-					}
-					if(currentY < y){
-						y = currentY;
-					}
-				});
-				x = x - 5;
-				y = y - 5;
-				break;
-			case "distance":
-				width = width + 40;
-				height = height + 50;
-				var points = $(svgElement.node).attr("d").split(" ");
-				$.each(points, function(index, point){
-					var currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
-					var currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
-					if(currentX < x) {
-						x = currentX;
-					}
-					if(currentY < y){
-						y = currentY;
-					}
-				});
-				x = x - 25;
-				y = y - 25;
-				break;
-		}
-		boundingBox.style.width = width + "px";
-		boundingBox.style.height = height + "px";
-		boundingBox.style.left = x.toFixed(0) + "px";
-		boundingBox.style.top = y.toFixed(0) + "px";
-		boundingBox.innerHTML = getContextMenu(currentAnnotation.id);
-		return boundingBox;
-	}
+    function getBoundingBox(currentAnnotation, x, y, svgElement) {
+        var boundingBox = document.createElement('div');
+        boundingBox.className = 'gd-bounding-box';
+        boundingBox.setAttribute("data-id", svgElement.id());
+        boundingBox.style.position = "absolute";
+        var width = (currentAnnotation.width < 0) ? Math.abs(currentAnnotation.width) : currentAnnotation.width;
+        var height = (currentAnnotation.height < 0) ? Math.abs(currentAnnotation.height) : currentAnnotation.height;
+        switch (currentAnnotation.type) {
+            case "polyline":
+                x = svgElement.node.points[0].x;
+                y = svgElement.node.points[0].y;
+                $.each(svgElement.node.points, function (index, point) {
+                    if (x > point.x) {
+                        x = point.x;
+                    }
+                    if (y > point.y) {
+                        y = point.y;
+                    }
+                });
+                break;
+            case "point":
+                x = x - (width / 2);
+                y = y - (height / 2);
+                break;
+            case "arrow":
+                width = width + 10;
+                height = height + 10;
+                var points = $(svgElement.node).attr("d").split(" ");
+                $.each(points, function (index, point) {
+                    var currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
+                    var currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
+                    if (currentX < x) {
+                        x = currentX;
+                    }
+                    if (currentY < y) {
+                        y = currentY;
+                    }
+                });
+                x = x - 5;
+                y = y - 5;
+                break;
+            case "distance":
+                width = width + 40;
+                height = height + 50;
+                var points = $(svgElement.node).attr("d").split(" ");
+                $.each(points, function (index, point) {
+                    var currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
+                    var currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
+                    if (currentX < x) {
+                        x = currentX;
+                    }
+                    if (currentY < y) {
+                        y = currentY;
+                    }
+                });
+                x = x - 25;
+                y = y - 25;
+                break;
+        }
+        boundingBox.style.width = width + "px";
+        boundingBox.style.height = height + "px";
+        boundingBox.style.left = x.toFixed(0) + "px";
+        boundingBox.style.top = y.toFixed(0) + "px";
+        boundingBox.innerHTML = getContextMenu(currentAnnotation.id);
+        return boundingBox;
+    }
+
+	/**
+	 * calculate distance annotation
+	 * @param {Object} point1 - coordinates of the start point
+	 * @param {Object} point2 - coordinates of the end point	
+	 */
+    function getDistance(point1, point2) {
+        var xs = 0;
+        var ys = 0;
+        xs = point2.X - point1.X;
+        xs = xs * xs;
+
+        ys = point2.Y - point1.Y;
+        ys = ys * ys;
+
+        return Math.sqrt(xs + ys);
+    }
+
+	/**
+	 * calculate distance annotation text marker SVG path
+	 * @param {int} x - start point X
+	 * @param {int} y - start point Y
+	 * @param {int} endX - end point X
+	 * @param {int} endY - end point Y
+	 * @param {Object} path - distance annotation object
+	 */
+    function getTextPath(x, y, endX, endY, path) {
+        var textPath = "";
+        if (endX > x) {
+            textPath = "M" + x + "," + (y - 5) + " L" + endX + "," + (endY - 5);
+        } else {
+            textPath = "M" + endX + "," + (endY - 5) + " L" + x + "," + (y - 5);
+        }
+        if (path.width() < 15) {
+            if (endY > y) {
+                textPath = "M" + (x + 5) + "," + y + " L" + (endX + 5) + "," + endY;
+            } else {
+                textPath = "M" + (endX + 5) + "," + endY + " L" + (x + 5) + "," + y;
+            }
+        }
+        return textPath;
+    }
 })(jQuery);

@@ -678,8 +678,10 @@ function loadFileTree(dir) {
 function fadeAll(on) {
     if (on) {
         $('#gd-container-fade').show();
+        $('#gd-container-fade-text').show();
     } else {
         $('#gd-container-fade').hide();
+        $('#gd-container-fade-text').hide();
     }
 }
 
@@ -744,6 +746,8 @@ function generatePagesTemplate(data, totalPageNumber, prefix) {
     if (data.message == undefined) {
         // set empty for undefined of null
         prefix = prefix || '';
+        // hide loading text only
+        $('#gd-container-fade-text').hide();
         // loop though pages
         $.each(data, function (index, elem) {
             // set document description
@@ -1907,7 +1911,7 @@ GROUPDOCS.VIEWER PLUGIN
 			    '</div>' +
 			'</div>' +
             '<div id="gd-container-fade" class="gd-container-fade">' +
-            '<div class="gd-container-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
+            '<div id="gd-container-fade-text" class="gd-container-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
             '</div>';
     }
 

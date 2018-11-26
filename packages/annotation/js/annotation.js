@@ -412,7 +412,7 @@ function getTextCoordinates(pageNumber, callback) {
             fadeAll(false);
             var err = eval("(" + xhr.responseText + ")");
             // open error popup
-            printMessage(err.message);
+            printMessage(err ? err.message : 'Error occurred while loading');
         }
     }).done(function () {
         if (typeof callback == "function") {

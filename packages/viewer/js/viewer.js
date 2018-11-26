@@ -819,7 +819,10 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
             data: JSON.stringify(data),
             contentType: "application/json",
             success: function (htmlData) {
-                fadeAll(false);
+                // only for the first page
+                if (loadedPagesCount == 0) {
+                    fadeAll(false);
+                }
                 if (htmlData.error != undefined) {
                     // open error popup
                     printMessage(htmlData.error);
@@ -948,9 +951,9 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                         gd_prefix_page.removeClass("gd-thumbnails-landscape-image");
                     }
                 }
-				if(prefix != "thumbnails-"){
-					loadedPagesCount = loadedPagesCount + 1;
-					var pagesAttr = $('#gd-page-num').text().split('/');      
+                loadedPagesCount = loadedPagesCount + 1;
+                if(prefix != "thumbnails-"){
+					var pagesAttr = $('#gd-page-num').text().split('/');
 					var lastPageNumber = parseInt(pagesAttr[1]);
 					if(loadedPagesCount == lastPageNumber){
 						$('#gd-btn-zoom-value > li').bind("click", setZoomLevel);
@@ -969,7 +972,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
             error: function (xhr, status, error) {
                 var err = eval("(" + xhr.responseText + ")");               
                 // open error popup
-                printMessage(err.message);
+                printMessage(err ? err.message : 'Error occurred while loading');
             }
         });
     }

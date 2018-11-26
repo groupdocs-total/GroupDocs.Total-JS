@@ -692,6 +692,8 @@ function fadeAll(on) {
 function loadDocument(callback) {
     // clear global documentData array from previous document info
     documentData = [];
+    loadedPagesCount = 0;
+    // fade all controls
     fadeAll(true);
     // get document description
     var data = { guid: documentGuid, password: password };
@@ -965,7 +967,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
 						$('#gd-btn-print').bind('click', printDocument);
 						$('#gd-btn-print').removeClass('disabled');						
 						$('#gd-btn-download').removeClass('disabled');
-						loadedPagesCount = 0;						
+						loadedPagesCount = 0;
 					}
 				}				
             },

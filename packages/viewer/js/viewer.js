@@ -699,8 +699,8 @@ function loadDocument(callback) {
         data: JSON.stringify(data),
         contentType: "application/json",
         success: function (returnedData) {
-            fadeAll(false);
             if (returnedData.message != undefined) {
+                fadeAll(false);
                 if (returnedData.message == "Password Required") {
                     openPasswordModal();
                 } else if (returnedData.message == "Incorrect password") {
@@ -815,6 +815,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
             data: JSON.stringify(data),
             contentType: "application/json",
             success: function (htmlData) {
+                fadeAll(false);
                 if (htmlData.error != undefined) {
                     // open error popup
                     printMessage(htmlData.error);

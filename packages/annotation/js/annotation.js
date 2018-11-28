@@ -35,6 +35,12 @@ var svgList = null;
 var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';
 var userMouseDown = ('ontouchstart' in document.documentElement)  ? 'mousedown touchstart' : 'mousedown';
 
+$( document ).ajaxStart(function() {
+    fadeAll(true);
+});
+$( document ).ajaxComplete(function( event, request, settings ) {
+    fadeAll(false);
+});
 $(document).ready(function () {
 
     /*
@@ -382,7 +388,6 @@ function getTextCoordinates(pageNumber, callback) {
         contentType: 'application/json',
         success: function (returnedData) {
             $('#gd-modal-spinner').hide();
-            var result = "";
             if (returnedData.message != undefined) {
                 if (returnedData.message.toLowerCase().indexOf("password") != -1) {
                     $("#gd-password-required").html(returnedData.message);
@@ -409,7 +414,7 @@ function getTextCoordinates(pageNumber, callback) {
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
             // open error popup
-            printMessage(err.message);
+            printMessage(err ? err.message : 'Error occurred while loading');
         }
     }).done(function () {
         if (typeof callback == "function") {

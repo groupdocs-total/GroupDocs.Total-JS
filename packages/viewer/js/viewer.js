@@ -675,6 +675,16 @@ function loadFileTree(dir) {
     });
 }
 
+function fadeAll(on) {
+    if (on) {
+        $('#gd-container-fade').show();
+        $('#gd-container-fade-text').show();
+    } else {
+        $('#gd-container-fade').hide();
+        $('#gd-container-fade-text').hide();
+    }
+}
+
 /**
 * Open/Load document
 * @param {object} callback - document pages array
@@ -682,15 +692,20 @@ function loadFileTree(dir) {
 function loadDocument(callback) {
     // clear global documentData array from previous document info
     documentData = [];
+    loadedPagesCount = 0;
+    // fade all controls
+    fadeAll(true);
     // get document description
     var data = { guid: documentGuid, password: password };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentDescription'),
         data: JSON.stringify(data),
+        global: false,
         contentType: "application/json",
         success: function (returnedData) {
             if (returnedData.message != undefined) {
+                fadeAll(false);
                 if (returnedData.message == "Password Required") {
                     openPasswordModal();
                 } else if (returnedData.message == "Incorrect password") {
@@ -712,6 +727,7 @@ function loadDocument(callback) {
             generatePagesTemplate(returnedData, totalPageNumber);
         },
         error: function (xhr, status, error) {
+            fadeAll(false);
             var err = eval("(" + xhr.responseText + ")");
             console.log(err.Message);
             // open error popup
@@ -733,6 +749,8 @@ function generatePagesTemplate(data, totalPageNumber, prefix) {
     if (data.message == undefined) {
         // set empty for undefined of null
         prefix = prefix || '';
+        // hide loading text only
+        $('#gd-container-fade-text').hide();
         // loop though pages
         $.each(data, function (index, elem) {
             // set document description
@@ -802,8 +820,13 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
             type: 'POST',
             url: getApplicationPath('loadDocumentPage'),
             data: JSON.stringify(data),
+            global: false,
             contentType: "application/json",
             success: function (htmlData) {
+                // only for the first page
+                if (loadedPagesCount == 0) {
+                    fadeAll(false);
+                }
                 if (htmlData.error != undefined) {
                     // open error popup
                     printMessage(htmlData.error);
@@ -932,9 +955,9 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                         gd_prefix_page.removeClass("gd-thumbnails-landscape-image");
                     }
                 }
-				if(prefix != "thumbnails-"){
-					loadedPagesCount = loadedPagesCount + 1;
-					var pagesAttr = $('#gd-page-num').text().split('/');      
+                loadedPagesCount = loadedPagesCount + 1;
+                if(prefix != "thumbnails-"){
+					var pagesAttr = $('#gd-page-num').text().split('/');
 					var lastPageNumber = parseInt(pagesAttr[1]);
 					if(loadedPagesCount == lastPageNumber){
 						$('#gd-btn-zoom-value > li').bind("click", setZoomLevel);
@@ -946,14 +969,15 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
 						$('#gd-btn-print').bind('click', printDocument);
 						$('#gd-btn-print').removeClass('disabled');						
 						$('#gd-btn-download').removeClass('disabled');
-						loadedPagesCount = 0;						
+						loadedPagesCount = 0;
 					}
 				}				
             },
             error: function (xhr, status, error) {
+                fadeAll(false);
                 var err = eval("(" + xhr.responseText + ")");               
                 // open error popup
-                printMessage(err.message);
+                printMessage(err ? err.message : 'Error occurred while loading');
             }
         });
     }
@@ -1893,7 +1917,10 @@ GROUPDOCS.VIEWER PLUGIN
 			        // pages END
 
 			    '</div>' +
-			'</div>';
+			'</div>' +
+            '<div id="gd-container-fade" class="gd-container-fade">' +
+            '<div id="gd-container-fade-text" class="gd-container-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
+            '</div>';
     }
 
     function getHtmlModalDialog() {

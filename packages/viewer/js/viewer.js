@@ -701,6 +701,7 @@ function loadDocument(callback) {
         type: 'POST',
         url: getApplicationPath('loadDocumentDescription'),
         data: JSON.stringify(data),
+        global: false,
         contentType: "application/json",
         success: function (returnedData) {
             if (returnedData.message != undefined) {
@@ -819,6 +820,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
             type: 'POST',
             url: getApplicationPath('loadDocumentPage'),
             data: JSON.stringify(data),
+            global: false,
             contentType: "application/json",
             success: function (htmlData) {
                 // only for the first page
@@ -972,6 +974,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
 				}				
             },
             error: function (xhr, status, error) {
+                fadeAll(false);
                 var err = eval("(" + xhr.responseText + ")");               
                 // open error popup
                 printMessage(err ? err.message : 'Error occurred while loading');

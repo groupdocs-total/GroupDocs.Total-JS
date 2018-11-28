@@ -461,7 +461,7 @@ TODO: move this to common
     color: #80868c;
 }
 
-.gd-delete-comment, .gd-comments{
+.gd-delete-comment, .gd-comments, .gd-edit-text-field{
 	cursor: pointer;
 }
 
@@ -512,9 +512,11 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 
 .ui-resizable-handle {
-    background-color: rgba(0,0,0,.75);
-    width: 8px;
-    height: 8px;	
+    background-color: #3c97fe;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    border:1px solid #FFFFFF;
 }
 
 .gd-text-annotation, .gd-textReplacement-annotation, .gd-resourcesRedaction-annotation{
@@ -584,6 +586,85 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     position: relative;
 }
 
+
+
+.gd-textField-wrapper{
+    background-color: #FFFFFF00;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+    border:1px solid #0000FF;
+}
+.gd-textField-annotation{
+    padding: 0px;
+    border-radius: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    resize: none;
+    font-size: 15px;
+    margin: 0px;
+    color: #0000FF;
+    font-family: Arial;
+    overflow: hidden;
+    line-height: 17px;
+    background-color: transparent;
+    min-width: 1em;
+    min-height: 1em;
+    width: 100%;
+    height: 100%;
+    border:1px solid transparent;
+}
+.gd-textField-annotation.clone{
+    text-align: left;
+    width: max-content;
+    height: auto;
+    margin: 0px;
+    min-width: 1em;
+    min-height: 1em;
+    border:1px solid transparent;
+
+}
+
+
+.gd-watermark-wrapper{
+    background-color: #FFFFFF00;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+}
+.gd-watermark-annotation{
+    padding: 0px;
+    border-radius: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    resize: none;
+    font-size: 40px;
+    margin: 0px;
+    color: #807fff;
+    font-family: Arial;
+    overflow: hidden;
+    letter-spacing: 0.006em;
+    line-height: 37px;
+    background-color: transparent;
+    min-width: 1em;
+    min-height: 1em;
+    width: 100%;
+    height: 100%;
+    border:1px solid transparent;
+}
+.gd-watermark-annotation.clone{
+    text-align: left;
+    width: max-content;
+    height: auto;
+    margin: 0px;
+    min-width: 1em;
+    min-height: 1em;
+    border:1px solid transparent;
+
+}
+
 .gd-typewriter-text {
 	top: -14px;   
     display: block;
@@ -635,8 +716,8 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 
 }
 
-.gd-bounding-box {
-	outline: 1px dotted #ccc;
+.gd-bounding-box.gd-active-annotation {
+	outline: 1px solid #3c97fe;
 	z-index: 9;
 }
 

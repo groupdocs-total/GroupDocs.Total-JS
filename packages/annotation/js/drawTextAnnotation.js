@@ -93,8 +93,7 @@ $(document).ready(function () {
             startY = mouse.y;
             // create HTML markup for the annotation element
             element = document.createElement('div');
-            element.className = 'gd-annotation gd-bounding-box';			
-            element.innerHTML = getHtmlResizeHandles() + getContextMenu(annotation.id);
+            element.className = 'gd-annotation gd-bounding-box';
             // calculate start point coordinates according to the document page
             var canvasTopOffset = $(canvas).offset().top;
             var x = mouse.x - $(canvas).offset().left;
@@ -105,6 +104,16 @@ $(document).ready(function () {
                     element.style.left = x + "px";
                     element.style.top = y + "px";
                     annotationInnerHtml = getAnnotationHtml();
+                    break;
+                case "textField":
+                    element.style.left = x + "px";
+                    element.style.top = y + "px";
+                    annotationInnerHtml = getTextFieldAnnotationHtml();
+                    break;
+                case "watermark":
+                    element.style.left = x + "px";
+                    element.style.top = y + "px";
+                    annotationInnerHtml = getWatermarkAnnotationHtml();
                     break;
                 case "textStrikeout":
                     // get text coordinates data - required since the annotation of this type can be added only over the text
@@ -143,6 +152,7 @@ $(document).ready(function () {
             annotation.top = parseFloat(element.style.top.replace("px", ""));
             // append line element if the annotation is text strikeout or underline
             element.appendChild(annotationInnerHtml);
+            setupContextMenu(element,currentPrefix,annotation);
             if (lineInnerHtml != null) {
                 element.appendChild(lineInnerHtml);
             }
@@ -153,7 +163,7 @@ $(document).ready(function () {
         } else {
             // drop all data when draw is finished
             canvas.onmousemove = null;
-            if ($(ev.target).prop("tagName") == "IMG") {
+            if ($(ev.target).prop("tagName") === "IMG") {
                 annotationsList[annotationsList.length - 1].width = parseFloat(element.style.width.replace("px", ""));
                 annotationsList[annotationsList.length - 1].height = parseFloat(element.style.height.replace("px", ""));
             }
@@ -164,20 +174,23 @@ $(document).ready(function () {
         // set mouse up event
         // this handler used to get annotation width and height after draw process
         $(canvas).on(userMouseUp, function (e) {
-            if (element != null && e.target.tagName != "TEXTAREA") {
-                if (currentPrefix == "textReplacement") {
+            if (['textField','watermark'].indexOf(currentPrefix) >= 0) {
+                attachTextFieldBehaviour(element,annotation);
+            }
+            if (element != null && e.target.tagName !== "TEXTAREA") {
+                if (currentPrefix === "textReplacement") {
                     element.appendChild(getTextReplaceAnnotationHtml(idNumber));
                 }
-                if ($(ev.target).prop("tagName") == "IMG") {
+                if ($(ev.target).prop("tagName") === "IMG") {
                     annotationsList[annotationsList.length - 1].width = parseFloat(element.style.width.replace("px", ""));
                     annotationsList[annotationsList.length - 1].height = parseFloat(element.style.height.replace("px", ""));
+                    addComment(annotationsList[annotationsList.length - 1]);
                 }
-                addComment(annotationsList[annotationsList.length - 1]);
-                makeResizable(annotation, element);
-                annotationInnerHtml = null;
-                lineInnerHtml = null;
-                element = null;
             }
+            makeResizable(annotation, element);
+            annotationInnerHtml = null;
+            lineInnerHtml = null;
+            element = null;
             $(canvas).off(userMouseUp);
             $(canvas).off(userMouseMove);
         });
@@ -185,6 +198,9 @@ $(document).ready(function () {
         // set mouse move event
         // this handler used to get annotation width and height while draw process
         $(canvas).on(userMouseMove, function (e) {
+            if (currentPrefix === "textField") {
+                return true;
+            }
             mouse = getMousePosition(e);
             if (element !== null) {
                 if (currentPrefix == "text") {
@@ -200,9 +216,10 @@ $(document).ready(function () {
                     annotationInnerHtml.style.width = parseFloat(element.style.width) + "px";
                     annotationInnerHtml.style.height = parseFloat(element.style.height) + "px";
                 }
+                setTextFieldSize(annotation,$(element).find('textarea'));
             }
         });
-    }
+    };
 
     /**
 	 * Import text annotation
@@ -221,7 +238,7 @@ $(document).ready(function () {
         // prepare annotation HTML markup
         element = document.createElement('div');
         element.className = 'gd-annotation gd-bounding-box';
-        element.innerHTML = getHtmlResizeHandles() + getContextMenu(annotation.id);		
+
         switch (currentPrefix) {
             case "textStrikeout":
                 element.style.left = annotation.left + "px";
@@ -231,6 +248,16 @@ $(document).ready(function () {
                 annotationInnerHtml.style.height = annotation.height + "px";
                 annotationInnerHtml.style.width = annotation.width + "px";
                 lineInnerHtml = getLineHtml();
+                break;
+            case "textField":
+                element.style.left = annotation.left + "px";
+                element.style.top = annotation.top + "px";
+                annotationInnerHtml = getTextFieldAnnotationHtml();
+                break;
+            case "watermark":
+                element.style.left = annotation.left + "px";
+                element.style.top = annotation.top + "px";
+                annotationInnerHtml = getWatermarkAnnotationHtml();
                 break;
             case "textUnderline":
                 element.style.left = annotation.left + "px";
@@ -258,7 +285,7 @@ $(document).ready(function () {
                 break;
             default:
                 element.style.left = annotation.left + "px";
-				if(prefix == "textReplacement"){
+				if(prefix === "textReplacement"){
 					 element.style.top = ($(canvas).height() - annotation.top) + "px";
 				} else {
 					element.style.top = annotation.top + "px";
@@ -272,11 +299,16 @@ $(document).ready(function () {
         }
         // draw imported annotation
         element.appendChild(annotationInnerHtml);
+        setupContextMenu(element,currentPrefix,annotation);
+
+        if (['textField','watermark'].indexOf(currentPrefix) >= 0) {
+            attachTextFieldBehaviour(element,annotation,"move");
+        }
         if (lineInnerHtml != null) {
             element.appendChild(lineInnerHtml);
 			lineInnerHtml = null;
         }
-		if(prefix == "textReplacement"){
+		if(prefix === "textReplacement"){
 			element.appendChild(getTextReplaceAnnotationHtml(annotation.id));
 			$(element).find("textarea").val(annotation.text);
 		}
@@ -286,13 +318,41 @@ $(document).ready(function () {
         annotationsList.push(annotation);
         makeResizable(annotation,element);
         addComment(annotation);       
-    }
+    };
 
     function getAnnotationHtml() {
         var annotationHtml = document.createElement('div');
         annotationHtml.className = 'gd-' + currentPrefix + '-annotation annotation';
         annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber;		
         return annotationHtml;
+    }
+
+    function getTextFieldAnnotationHtml() {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'gd-textField-wrapper';
+        var cloned = document.createElement('pre');
+        cloned.id = 'gd-' + currentPrefix + '-annotation-' + idNumber + '-cloned';
+        cloned.className = 'gd-' + currentPrefix + '-annotation clone';
+        var annotationHtml = document.createElement('textarea');
+        annotationHtml.className = 'gd-' + currentPrefix + '-annotation annotation';
+        annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber;
+        wrapper.appendChild(annotationHtml);
+        wrapper.appendChild(cloned);
+        return wrapper;
+    }
+
+    function getWatermarkAnnotationHtml() {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'gd-watermark-wrapper';
+        var cloned = document.createElement('pre');
+        cloned.id = 'gd-' + currentPrefix + '-annotation-' + idNumber + '-cloned';
+        cloned.className = 'gd-' + currentPrefix + '-annotation clone';
+        var annotationHtml = document.createElement('textarea');
+        annotationHtml.className = 'gd-' + currentPrefix + '-annotation annotation';
+        annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber;
+        wrapper.appendChild(annotationHtml);
+        wrapper.appendChild(cloned);
+        return wrapper;
     }
 
     function getTextReplaceAnnotationHtml() {
@@ -316,5 +376,138 @@ $(document).ready(function () {
         var annotationHtml = document.createElement('div');
         annotationHtml.className = 'gd-' + currentPrefix + '-line';		
         return annotationHtml;
-    }	
+    }
+
+    function attachTextFieldBehaviour(element,annotation,mode){
+        var textarea = $(element).find('textarea');
+        var clone = textarea.parent().find('.clone');
+        var nativechange = false;
+        textarea.keydown(function (e) {
+            var elm = textarea.get()[0];
+            var start = elm.selectionStart;
+            var end = elm.selectionEnd;
+            if([37,39,46,9,18,16,127,38,27,17,20,40,91].indexOf(e.keyCode) < 0 && !e.metaKey){
+                annotation.text = annotation.text ? annotation.text : '';
+                if(e.keyCode === 13){
+                    annotation.text = annotation.text.slice(0, start) + "\n" + annotation.text.slice(end);
+                }else if(e.keyCode === 8){
+                    annotation.text = annotation.text.slice(0, start - (start === end ? 1 : 0)) + annotation.text.slice(end);
+                }else{
+                    annotation.text = annotation.text.slice(0, start) + e.key + annotation.text.slice(end);
+                }
+                e.stopPropagation();
+                e.preventDefault();
+                updateTextFieldSize(annotation,textarea);
+                elm.selectionStart = elm.selectionEnd = start + 1;
+            }
+            if(e.metaKey){
+                nativechange = true;
+            }
+        });
+        textarea.bind('paste',function (e) {
+            nativechange = true;
+        });
+        textarea.keyup(function (e) {
+            if(nativechange){
+                annotation.text = textarea.val();
+                updateTextFieldSize(annotation,textarea);
+                nativechange = !nativechange;
+            }
+        });
+        textarea.blur(function () {
+            textarea.hide();
+            clone.show();
+        });
+        clone.dblclick(function () {
+            textarea.show();
+            clone.hide();
+            textarea.focus();
+        });
+        setTextFieldSize(annotation,textarea);
+        if(mode && mode === 'move'){
+            clone.show();
+            textarea.hide();
+            textarea.blur();
+        }else{
+            clone.hide();
+            textarea.show();
+            textarea.focus();
+        }
+
+    }
+
+    function emptySpaceOnLineEnd(annotation){
+        return (annotation.text.charAt(annotation.text.length - 1) === "\n" ? ' ' : '')
+    }
+
+    function setTextFieldSize(annotation, textarea) {
+        var original = $(textarea);
+        var wrapper = original.parent();
+        var clone = original.parent().find('.clone');
+        var boundingBox = original.closest('.gd-bounding-box');
+        clone.text(annotation.text + emptySpaceOnLineEnd(annotation));
+        original.val(annotation.text);
+
+        var borderCompensation = annotation.type === 'textField' ? 4 : 2;
+
+        var width = (annotation.width || clone.width()) + borderCompensation;
+        var height = (annotation.height || clone.height()) + borderCompensation;
+
+        wrapper.width(width);
+        wrapper.height(height);
+
+        boundingBox.width(width);
+        boundingBox.height(height);
+        if(annotation.type === 'textField'){
+            boundingBox.css('margin','1px');
+        }
+
+    }
+
+    function updateTextFieldSize(annotation, textarea){
+        var original = $(textarea);
+        var cloneValue = annotation.text;
+        var wrapper = original.parent();
+        var clone = original.parent().find('.clone');
+        var boundingBox = original.closest('.gd-bounding-box');
+        var borderCompensation = annotation.type === 'textField' ? 4 : 2;
+
+        clone.text(cloneValue + emptySpaceOnLineEnd(annotation));
+
+        var width = clone.width() + borderCompensation;
+        var height = clone.height() + borderCompensation;
+
+        wrapper.width(width);
+        wrapper.height(height);
+        boundingBox.width(width);
+        boundingBox.height(height);
+        if(annotation.type === 'textField'){
+            boundingBox.css('margin','1px');
+        }
+
+        annotation.width = width;
+        annotation.height = height;
+
+        original.val(annotation.text);
+    }
+
+    function setupContextMenu(element, currentPrefix, annotation) {
+        if(['textField','watermark'].indexOf(currentPrefix) >= 0){
+            $(element).append(getContextMenu(annotation.id,true));
+            var contextMenu = $(element).find('.gd-context-menu');
+            var editButton = contextMenu.find('.fa-i-cursor');
+            var textarea = $(element).find('textarea');
+            var clone = textarea.parent().find('.clone');
+
+            contextMenu.width(100);
+            editButton.click(function () {
+                clone.hide();
+                textarea.show();
+                textarea.focus();
+            })
+        }else{
+            $(element).append(getHtmlResizeHandles() + getContextMenu(annotation.id));
+        }
+        return element;
+    }
 })(jQuery);

@@ -348,6 +348,22 @@ PAGES
     max-width: 100vw !important;
     display: -webkit-box;
 }
+.doc-page {    
+    position: relative !important;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    zoom: 0.78;
+}
+
+.doc-page svg {
+	position: relative !important;
+}
+
+.doc-page-watermark {    
+    z-index: 1 !important;
+}
 
 /*
 ******************************************
@@ -460,8 +476,6 @@ MODAL
     width: 100%;
     height: calc(100% - 52px);
     overflow-y: auto;
-    /* margin-right: 14px; */
-    /* padding-right: 28px; */
 }
 .gd-modal-table {
     width: 100%;

@@ -453,10 +453,8 @@ function annotate() {
     // set current document guid - used to check if the other document were opened
     var url = getApplicationPath('annotate');
     var annotationsToAdd = [];
-    $.each(annotationsList, function (index, annotationToAdd) {
-        if (!annotationToAdd.imported) {
-            annotationsToAdd.push(annotationToAdd);
-        }
+    $.each(annotationsList, function (index, annotationToAdd) {        
+	   annotationsToAdd.push(annotationToAdd);        
     });
     // current document guid is taken from the viewer.js globals
     var data = {

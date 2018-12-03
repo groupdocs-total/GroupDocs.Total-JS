@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.6.0
+ * @version 1.7.0
  */
 
 /*
@@ -959,8 +959,8 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 if(prefix != "thumbnails-"){
 					var pagesAttr = $('#gd-page-num').text().split('/');
 					var lastPageNumber = parseInt(pagesAttr[1]);
-					if(loadedPagesCount == lastPageNumber){
-						$('#gd-btn-zoom-value > li').bind("click", setZoomLevel);
+					if(loadedPagesCount == lastPageNumber || preloadPageCount != 0){
+						$('#gd-btn-zoom-value > li').bind("click", function(){setZoomLevel.apply(this);});
 						$('#gd-btn-zoom-value').removeClass("disabled");
 						$('#gd-btn-zoom-in').bind('click', zoomIn);
 						$('#gd-btn-zoom-out').bind('click', zoomOut);
@@ -1679,18 +1679,20 @@ function setZoomLevel(zoomString) {
 /**
 * Zoom in
 */
-function zoomIn() {
+function zoomIn(event) {
+	event.stopImmediatePropagation();
 	var zoom_val = getZoomValue();
 	if (zoom_val < 490) {
 		zoom_val = zoom_val + 10;
 	}
-	setZoomValue(zoom_val);
+	setZoomValue(zoom_val);	
 }
 
 /**
 * Zoom out
 */
-function zoomOut() {
+function zoomOut(event) {
+	event.stopImmediatePropagation();
 	var zoom_val = getZoomValue();
 	if (zoom_val > 30) {
 		zoom_val = zoom_val - 10;

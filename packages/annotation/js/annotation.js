@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.6.0
+ * @version 1.7.0
  */
 
 /*
@@ -196,11 +196,9 @@ $(document).ready(function () {
             // add annotation			
             switch (annotationType) {
                 case "text":
-                    ++annotationsCounter;
-                    getTextCoordinates(annotation.pageNumber, function () {
-                        $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "text", e);
-                        annotation = null;
-                    });
+                    ++annotationsCounter;                    
+					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "text", e);
+					annotation = null;                   
                     break;
                 case "area":
                     ++annotationsCounter;
@@ -214,11 +212,9 @@ $(document).ready(function () {
                     annotation = null;
                     break;
                 case "textStrikeout":
-                    ++annotationsCounter;
-                    getTextCoordinates(annotation.pageNumber, function () {
-                        $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textStrikeout", e);
-                        annotation = null;
-                    });
+                    ++annotationsCounter;                   
+					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textStrikeout", e);
+					annotation = null;                  
                     break;
                 case "polyline":
                     ++annotationsCounter;
@@ -239,11 +235,9 @@ $(document).ready(function () {
                     annotation = null;
                     break;
                 case "textReplacement":
-                    ++annotationsCounter;
-                    getTextCoordinates(annotation.pageNumber, function () {
-                        $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textReplacement", e);
-                        annotation = null;
-                    });
+                    ++annotationsCounter;                    
+					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textReplacement", e);
+					annotation = null;                   
                     break;
                 case "arrow":
                     ++annotationsCounter;
@@ -252,11 +246,9 @@ $(document).ready(function () {
                     annotation = null;
                     break;
                 case "textRedaction":
-                    ++annotationsCounter;
-                    getTextCoordinates(annotation.pageNumber, function () {
-                        $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textRedaction", e);
-                        annotation = null;
-                    });
+                    ++annotationsCounter;                   
+					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textRedaction", e);
+					annotation = null;                    
                     break;
                 case "resourcesRedaction":
                     ++annotationsCounter;
@@ -264,11 +256,9 @@ $(document).ready(function () {
                     annotation = null;
                     break;
                 case "textUnderline":
-                    ++annotationsCounter;
-                    getTextCoordinates(annotation.pageNumber, function () {
-                        $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textUnderline", e);
-                        annotation = null;
-                    });
+                    ++annotationsCounter;                    
+					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textUnderline", e);
+					annotation = null;                    
                     break;
                 case "distance":
                     ++annotationsCounter;
@@ -366,85 +356,6 @@ function getMousePosition(event) {
     }
     return mouse;
 }
-
-/**
- * Get current page text coordinates
- * @param {int} pageNumber - the page number of which you need information
- */
-function getTextCoordinates(pageNumber, callback) {
-    var url = getApplicationPath('textCoordinates');
-    // current document guid is taken from the viewer.js globals
-    var data = {
-        guid: documentGuid,
-        password: password,
-        pageNumber: pageNumber
-    };
-    // get text data for the document page
-    $.ajax({
-        type: 'POST',
-        url: url,
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function (returnedData) {
-            $('#gd-modal-spinner').hide();
-            if (returnedData.message != undefined) {
-                if (returnedData.message.toLowerCase().indexOf("password") != -1) {
-                    $("#gd-password-required").html(returnedData.message);
-                    $("#gd-password-required").show();
-                } else {
-                    // open error popup
-                    printMessage(returnedData.message);
-                }
-                return;
-            }
-            // set rows data
-            rows = returnedData;
-            rows.sort(function (row1, row2) {
-                // Ascending: first row top less than the previous
-                return row1.lineTop - row2.lineTop;
-            });
-            $.each(rows, function (index, row) {
-                row.textCoordinates.sort(function (row1, row2) {
-                    // Ascending: first row top less than the previous
-                    return row1 - row2;
-                });
-            });
-        },
-        error: function (xhr, status, error) {
-            var err = eval("(" + xhr.responseText + ")");
-            // open error popup
-            printMessage(err ? err.message : 'Error occurred while loading');
-        }
-    }).done(function () {
-        if (typeof callback == "function") {
-            callback();
-        }
-    });
-}
-
-/**
- * Compare and set text annotation position according to the text position
-  * @param {int} mouseX - current mouse X position
-  * @param {int} mouseY - current mouse Y position
- */
-function getTextLineHeight(mouseX, mouseY) {
-    var height = 0;	
-	if(mouseY < rows[0].lineTop){
-		mouseY = rows[0].lineTop;
-	}
-    // get most suitable row (vertical position)
-    for (var i = 0; i < rows.length; i++) {
-        if (mouseY >= rows[i].lineTop && rows[i + 1] && mouseY <= rows[i + 1].lineTop) {
-            // set row top position and height
-            height = rows[i].lineHeight;
-            break;
-        } else {
-            continue
-        }
-    }
-    return height;
-}
-
 
 /**
  * Annotate current document
@@ -733,11 +644,10 @@ function makeResizable(currentAnnotation, html) {
     $(element).draggable({
         containment: "#gd-page-" + currentAnnotation.pageNumber,
         stop: function (event, image) {
-            if (['text','textStrikeout','textUnderline'].indexOf(annotationType) >= 0) {
-                var lineHeight = getTextCoordinates(currentAnnotation.pageNumber, getTextLineHeight(image.position.left, image.position.top));
+            if (['text','textStrikeout','textUnderline'].indexOf(annotationType) >= 0) {               
                 currentAnnotation.left = Math.ceil(image.position.left);
                 currentAnnotation.top = Math.ceil(image.position.top);
-                currentAnnotation.height = lineHeight;
+                currentAnnotation.height = image.helper[0].clientHeight;
             } else if(['point','polyline','arrow','distance'].indexOf(annotationType) >= 0) {
                 switch (annotationType) {
                     case "point":

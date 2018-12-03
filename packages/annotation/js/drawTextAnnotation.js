@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.2.0
+ * @version 1.3.0
  */
  
 //////////////////////////////////////////////////
@@ -116,11 +116,9 @@ $(document).ready(function () {
                     annotationInnerHtml = getWatermarkAnnotationHtml();
                     break;
                 case "textStrikeout":
-                    // get text coordinates data - required since the annotation of this type can be added only over the text
-                    var lineheight = getTextLineHeight(x, y);
+                    // get text coordinates data - required since the annotation of this type can be added only over the text                    
                     element.style.left = x + "px";
-                    element.style.top = y + "px";
-                    element.style.height = lineheight + "px";
+                    element.style.top = y + "px";                    
                     annotationInnerHtml = getTextLineAnnotationHtml();
                     lineInnerHtml = getLineHtml();
                     break;
@@ -130,20 +128,16 @@ $(document).ready(function () {
                     annotationInnerHtml = getAnnotationHtml();
                     break;
                 case "textUnderline":
-                    // get text coordinates data - required since the annotation of this type can be added only over the text
-                    var lineheight = getTextLineHeight(x, y);
+                    // get text coordinates data - required since the annotation of this type can be added only over the text                   
                     element.style.left = x + "px";
-                    element.style.top = y + "px";
-                    element.style.height = lineheight + "px";
+                    element.style.top = y + "px";                 
                     annotationInnerHtml = getTextLineAnnotationHtml();
                     lineInnerHtml = getLineHtml();
                     break;
                 default:
-                    // get text coordinates data - required since the annotation of this type can be added only over the text
-                    var lineheight = getTextLineHeight(x, y - 2);
+                    // get text coordinates data - required since the annotation of this type can be added only over the text                   
                     element.style.left = x + "px";
-                    element.style.top = y + "px";
-                    element.style.height = lineheight + "px";
+                    element.style.top = y + "px";                  
                     annotationInnerHtml = getAnnotationHtml();
                     break;
             }
@@ -202,13 +196,9 @@ $(document).ready(function () {
                 return true;
             }
             mouse = getMousePosition(e);
-            if (element !== null) {
-                if (currentPrefix == "text") {
-                    element.style.width = Math.abs(mouse.x - startX) + "px";
-                } else {
-                    element.style.width = Math.abs(mouse.x - startX) + "px";
-                    element.style.height = Math.abs(mouse.y - startY) + "px";
-                }
+            if (element !== null) {                
+				element.style.width = Math.abs(mouse.x - startX) + "px";
+				element.style.height = Math.abs(mouse.y - startY) + "px";                
                 // set annotation data
                 annotation.width = parseFloat(element.style.width.replace("px", ""));
                 annotation.height = parseFloat(element.style.height.replace("px", ""));
@@ -270,16 +260,14 @@ $(document).ready(function () {
                 lineInnerHtml = getLineHtml();
                 break;
             case "textRedaction":
-                var dimensions = getRectangleFromPath(JSON.parse(annotation.svgPath));
+                //var dimensions = getRectangleFromPath(JSON.parse(annotation.svgPath));
                 // workaround bug in annotation lib
-                // TODO : remove when fixed
-                var pageHeight = $('.gd-page.loaded').height();
-                element.style.top = (pageHeight - dimensions.top - dimensions.height) + "px";
+                // TODO : remove when fixed                
+                element.style.top = annotation.top + "px";
                 // end workaround bug in annotation lib
-
-                element.style.left = dimensions.left + "px";
-                element.style.height = dimensions.height + "px";
-                element.style.width = dimensions.width + "px";
+                element.style.left = annotation.left + "px";
+                element.style.height = annotation.height + "px";
+                element.style.width = annotation.width + "px";
                 annotationInnerHtml = getTextLineAnnotationHtml();
                 lineInnerHtml = getLineHtml();
                 break;

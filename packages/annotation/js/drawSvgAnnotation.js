@@ -204,6 +204,9 @@
                     mouse = getMousePosition(event);
                     var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
                     var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;
+					var coordinates = validateCoordinates(endX, endY, canvas);
+					endX = coordinates.x;
+					endY = coordinates.y;
                     // update svg with the end point and draw line between
                     path.plot("M" + x.toFixed(0) + "," + y.toFixed(0) + " L" + endX.toFixed(0) + "," + endY.toFixed(0));
                     // add arrow marker at the line end
@@ -273,8 +276,10 @@
                     // get end coordinates
                     mouse = getMousePosition(event);
                     var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
-                    var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;
-
+                    var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;					
+					var coordinates = validateCoordinates(endX, endY, canvas);
+					endX = coordinates.x;
+					endY = coordinates.y;
                     // draw the last point and the line between
                     path.plot("M" + x + "," + y + " L" + endX + "," + endY);
                     // update text value and draw it in accordance with the svg					
@@ -706,4 +711,30 @@
         }
         return textPath;
     }
+	
+	/**
+	 * Validate coordinates if they are out of the canvas.
+	 * @param {int} x - start point X
+	 * @param {int} y - start point Y	 
+	 * @param {Object} canvas - draw canvas
+	 */
+	function validateCoordinates(x, y, canvas){
+		var coordinates = {x: 0, y: 0}
+		if(x > $(canvas).width()){
+			coordinates.x = $(canvas).width() - markerWidth;
+		} else if(x < 0){
+			coordinates.x = markerWidth;			
+		} else {
+			coordinates.x = x;
+		}
+		
+		if(y > $(canvas).height()){
+			coordinates.y = $(canvas).height() - markerWidth;
+		} else if(y < 0){
+			coordinates.y = markerWidth;
+		} else {
+			coordinates.y = y;
+		}
+		return coordinates;
+	}
 })(jQuery);

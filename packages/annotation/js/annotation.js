@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.7.0
+ * @version 1.8.0
  */
 
 /*
@@ -78,7 +78,8 @@ $(document).ready(function () {
         rows = null;
         // append svg element to each page, this is required to draw svg based annotations
         addSvgContainer();
-
+		showAllAnnotations();	 
+		hideNotSupportedAnnotations();
         if(isMobile() && !/Edge/.test(navigator.userAgent)){
             setZoomLevel("Fit Width");
         }
@@ -675,8 +676,8 @@ function makeResizable(currentAnnotation, html) {
             var currentAnnotationPage = $("#gd-page-" + currentAnnotation.pageNumber);
             switch (annotationType) {
                 case "point":
-                    x = x + ($(image.helper[0]).width() / 2);
-                    y = y + ($(image.helper[0]).height() / 2);
+                    x = x + (25 / 2);
+                    y = y + (25 / 2);
                     svgElement.attr("cx", x);
                     svgElement.attr("cy", y);
                     break;
@@ -1028,6 +1029,9 @@ function addSvgContainer(){
 	});
 }
 
+/**
+ * Append context menu for annotation
+ */
 function getContextMenu(annotationId, editable){
 	return '<div class="gd-context-menu hidden">' +
 				'<i class="fas fa-arrows-alt fa-sm"></i>'+
@@ -1037,7 +1041,9 @@ function getContextMenu(annotationId, editable){
 			'</div>';
 }
 
-
+/**
+ * Save current reply
+ */
 function saveReply(e){
     e.preventDefault();
     var nameField = $(e.target).find('#comment-name');
@@ -1059,6 +1065,33 @@ function saveReply(e){
     resetCommentForm();
     closeCommentForm();
     return false;
+}
+
+/**
+ * Hide not supported annotation for current file type
+ */
+function hideNotSupportedAnnotations(){
+	 var notSupported = $.fn.notSupportedAnnotations();
+	 if(notSupported.length > 0){
+		 $.each(notSupported, function(index, notSupportedAnnotation){
+			 var allButtons = $("#gd-annotations-tools").find("button");
+			 $.each(allButtons, function(index, button){
+				 if($(button).data("type") == notSupportedAnnotation){
+					 $(button).parent().hide();
+				 }
+			 });
+		 });
+	 }
+}
+
+/**
+ * Show all annotations
+ */
+function showAllAnnotations(){	 
+	var allButtons = $("#gd-annotations-tools").find("button");
+	$.each(allButtons, function(index, button){		
+			$(button).parent().show();		
+	});		 
 }
 
 /*

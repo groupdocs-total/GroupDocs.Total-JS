@@ -378,7 +378,7 @@
             var line = null;
             var svgPath = "";
             // recalculate path points coordinates from the offset values back to the coordinates values - why we need this described above in the draw polyline action
-            var points = annotation.svgPath.replace("M", "").split('l');
+            var points = annotation.svgPath.replace("M", "").split('L');
             var x = parseFloat(points[0].split(",")[0]);
             var y = parseFloat(points[0].split(",")[1]);
             svgPath = points[0];

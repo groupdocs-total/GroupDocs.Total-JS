@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.7.0
+ * @version 1.8.0
  */
 
 /*
@@ -1116,52 +1116,55 @@ GROUPDOCS.ANNOTATION PLUGIN
                 $("#gd-annotations-tools").append(getHtmlTextAnnotationElement);
             }
 
+			if (options.textStrikeoutAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlTextStrikeoutAnnotationElement);
+            }
+			
+			if (options.textUnderlineAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlTextUnderlineAnnotationElement);
+            }
+			
+			if (options.textReplacementAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlTextReplacementAnnotationElement);
+            }
+			
+			if (options.textRedactionAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlTextRedactionAnnotationElement);
+            }
+			
+			$("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
+			if (options.polylineAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlPolylineAnnotationElement);
+            }
+			
+			if (options.arrowAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlArrowAnnotationElement);
+            }
+			
+			if (options.distanceAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlDistanceAnnotationElement);
+            }			
+				
             if (options.areaAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlAreaAnnotationElement);
             }
 
-            if (options.pointAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlPointAnnotationElement);
-            }
-
-            if (options.textStrikeoutAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlTextStrikeoutAnnotationElement);
-            }
-
-            if (options.polylineAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlPolylineAnnotationElement);
-            }
-
-            if (options.textFieldAnnotation) {
+			if (options.resourcesRedactionAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlResourcesRedactionAnnotationElement);
+            }			
+			
+			$("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
+			if (options.textFieldAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlTextFieldAnnotationElement);
             }
-
-            if (options.watermarkAnnotation) {
+			
+			if (options.watermarkAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlWatermarkdAnnotationElement);
             }
-
-            if (options.textReplacementAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlTextReplacementAnnotationElement);
-            }
-
-            if (options.arrowAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlArrowAnnotationElement);
-            }
-
-            if (options.textRedactionAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlTextRedactionAnnotationElement);
-            }
-
-            if (options.resourcesRedactionAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlResourcesRedactionAnnotationElement);
-            }
-
-            if (options.textUnderlineAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlTextUnderlineAnnotationElement);
-            }
-
-            if (options.distanceAnnotation) {
-                $("#gd-annotations-tools").append(getHtmlDistanceAnnotationElement);
+			
+			$("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
+            if (options.pointAnnotation) {
+                $("#gd-annotations-tools").append(getHtmlPointAnnotationElement);
             }
 
             // assembly nav bar
@@ -1374,6 +1377,10 @@ GROUPDOCS.ANNOTATION PLUGIN
 				'</li>';
     }
 
+	function getHtmlAnnotationSplitter() {
+        return '<li class="gd-annotation-separator" role="separator"></li>';
+    }
+	
     function getHtmlSavePanel() {
         return '<li id="gd-nav-save" class="gd-save-disabled"><i class="fa fa-floppy-o"></i><span class="gd-tooltip">Save</span></li>';
     }

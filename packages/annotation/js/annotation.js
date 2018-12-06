@@ -77,13 +77,11 @@ $(document).ready(function () {
         // set text rows data to null
         rows = null;
         // append svg element to each page, this is required to draw svg based annotations
-        addSvgContainer();
-		showAllAnnotations();	 
-		hideNotSupportedAnnotations();
+        addSvgContainer();		
         if(isMobile() && !/Edge/.test(navigator.userAgent)){
             setZoomLevel("Fit Width");
         }
-
+		hideNotSupportedAnnotations(documentData[0].supportedAnnotations);
         //check if document contains annotations
         if ($(this).parent().parent().attr("id").search("thumbnails") == -1) {
             for (var i = 0; i < documentData.length; i++) {
@@ -676,8 +674,8 @@ function makeResizable(currentAnnotation, html) {
             var currentAnnotationPage = $("#gd-page-" + currentAnnotation.pageNumber);
             switch (annotationType) {
                 case "point":
-                    x = x + (25 / 2);
-                    y = y + (25 / 2);
+                    x = x + ($(image.helper[0]).width() / 2);
+                    y = y + ($(image.helper[0]).height() / 2);
                     svgElement.attr("cx", x);
                     svgElement.attr("cy", y);
                     break;
@@ -1067,31 +1065,17 @@ function saveReply(e){
     return false;
 }
 
-/**
- * Hide not supported annotation for current file type
- */
-function hideNotSupportedAnnotations(){
-	 var notSupported = $.fn.notSupportedAnnotations();
-	 if(notSupported.length > 0){
-		 $.each(notSupported, function(index, notSupportedAnnotation){
-			 var allButtons = $("#gd-annotations-tools").find("button");
-			 $.each(allButtons, function(index, button){
-				 if($(button).data("type") == notSupportedAnnotation){
-					 $(button).parent().hide();
-				 }
-			 });
-		 });
-	 }
-}
-
-/**
- * Show all annotations
- */
-function showAllAnnotations(){	 
-	var allButtons = $("#gd-annotations-tools").find("button");
-	$.each(allButtons, function(index, button){		
-			$(button).parent().show();		
-	});		 
+function hideNotSupportedAnnotations(supportedAnnotations){
+	if(supportedAnnotations.length > 0){		 
+		var allButtons = $("#gd-annotations-tools").find("button");
+		$.each(allButtons, function(index, button){
+			if($.inArray($(button).data("type"), supportedAnnotations) == -1){				
+				$(button).parent().hide();
+			} else {
+				$(button).parent().show();
+			}
+		});		
+	}
 }
 
 /*

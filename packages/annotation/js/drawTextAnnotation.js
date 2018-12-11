@@ -458,7 +458,7 @@ $(document).ready(function () {
         var wrapper = original.parent();
         var clone = original.parent().find('.clone');
         var boundingBox = original.closest('.gd-bounding-box');
-        var borderCompensation = annotation.type === 'textField' ? 4 : 2;
+        var borderCompensation = 2;
 
         clone.text(cloneValue + emptySpaceOnLineEnd(annotation));
 

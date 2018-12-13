@@ -77,12 +77,11 @@ $(document).ready(function () {
         // set text rows data to null
         rows = null;
         // append svg element to each page, this is required to draw svg based annotations
-        addSvgContainer();
-
+        addSvgContainer();		
         if(isMobile() && !/Edge/.test(navigator.userAgent)){
             setZoomLevel("Fit Width");
         }
-
+		hideNotSupportedAnnotations(documentData[0].supportedAnnotations);
         //check if document contains annotations
         if ($(this).parent().parent().attr("id").search("thumbnails") == -1) {
             for (var i = 0; i < documentData.length; i++) {
@@ -1028,6 +1027,9 @@ function addSvgContainer(){
 	});
 }
 
+/**
+ * Append context menu for annotation
+ */
 function getContextMenu(annotationId, editable){
 	return '<div class="gd-context-menu hidden">' +
 				'<i class="fas fa-arrows-alt fa-sm"></i>'+
@@ -1037,7 +1039,9 @@ function getContextMenu(annotationId, editable){
 			'</div>';
 }
 
-
+/**
+ * Save current reply
+ */
 function saveReply(e){
     e.preventDefault();
     var nameField = $(e.target).find('#comment-name');
@@ -1059,6 +1063,19 @@ function saveReply(e){
     resetCommentForm();
     closeCommentForm();
     return false;
+}
+
+function hideNotSupportedAnnotations(supportedAnnotations){
+	if(supportedAnnotations.length > 0){		 
+		var allButtons = $("#gd-annotations-tools").find("button");
+		$.each(allButtons, function(index, button){
+			if($.inArray($(button).data("type"), supportedAnnotations) == -1){				
+				$(button).parent().hide();
+			} else {
+				$(button).parent().show();
+			}
+		});		
+	}
 }
 
 /*

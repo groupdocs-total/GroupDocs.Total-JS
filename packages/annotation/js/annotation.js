@@ -81,13 +81,15 @@ $(document).ready(function () {
         if(isMobile() && !/Edge/.test(navigator.userAgent)){
             setZoomLevel("Fit Width");
         }
-		hideNotSupportedAnnotations(documentData[0].supportedAnnotations);
+		hideNotSupportedAnnotations(documentData.supportedAnnotations);
         //check if document contains annotations
         if ($(this).parent().parent().attr("id").search("thumbnails") == -1) {
-            for (var i = 0; i < documentData.length; i++) {
-                if (documentData[i].annotations != null && documentData[i].annotations.length > 0) {
-                    $.each(documentData[i].annotations, function (index, annotationData) {
-                        if (annotationData != null && annotationData.pageNumber == documentData[i].number && annotationData.imported != true) {
+            let pages = documentData.pages;
+            for (var i = 0; i < pages.length; i++) {
+                let page = pages[i];
+                if (page.annotations != null && page.annotations.length > 0) {
+                    $.each(page.annotations, function (index, annotationData) {
+                        if (annotationData != null && annotationData.pageNumber == page.number && annotationData.imported != true) {
                             importAnnotation(annotationData);
                             annotationData.imported = true;
                         }
@@ -134,7 +136,7 @@ $(document).ready(function () {
                 toggleModalDialog(false, '');
                 loadDocument(function (data) {
                     // Generate thumbnails
-                    generatePagesTemplate(data, data.length, 'thumbnails-');
+                    generatePagesTemplate(data, data.length);
                 });
             }
         }
@@ -1432,12 +1434,11 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
     // set empty for undefined of null
     prefix = prefix || '';
     // initialize data
-    var gd_prefix_page = $('#gd-' + prefix + 'page-' + pageNumber);
     var gd_page = $('#gd-page-' + pageNumber);
-    var pageData = documentData[pageNumber-1];
+    var pageData = documentData.pages[pageNumber-1];
 
     if(preloadPageCount === 0 && pageData.data){
-        renderpage(documentName,gd_prefix_page,gd_page,null,prefix, width, height,pageData.data);
+        renderpage(documentName, gd_page, null, prefix, width, height, pageData.data);
     }else{
         if (!gd_prefix_page.hasClass('loaded')) {
             gd_prefix_page.addClass('loaded');
@@ -1450,7 +1451,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 global: false,
                 contentType: "application/json",
                 success: function (htmlData) {
-                    renderpage(documentName,gd_prefix_page,gd_page,htmlData,prefix, width, height);
+                    renderpage(documentName, gd_page, htmlData, prefix, width, height);
                 },
                 error: function (xhr, status, error) {
                     fadeAll(false);
@@ -1463,7 +1464,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
     }
 }
 
-function renderpage(documentName,gd_prefix_page,gd_page,htmlData,prefix, width, height,data) {
+function renderpage(documentName, gd_page, htmlData, prefix, width, height, data) {
     // only for the first page
     if (loadedPagesCount == 0) {
         fadeAll(false);
@@ -1477,33 +1478,25 @@ function renderpage(documentName,gd_prefix_page,gd_page,htmlData,prefix, width, 
     var zoomValue = 1;
 
     data = data || htmlData.pageImage;
-    gd_prefix_page.find('.gd-page-spinner').hide();
+    gd_page.find('.gd-page-spinner').hide();
     // check if page is horizontally displayed
     if (width > height) {
         zoomValue = 0.79;
     }
     // if current document if image file fix its zoom
     if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
-        if (prefix == "thumbnails-") {
-            if (width > ($("#gd-thumbnails").width() * 2)) {
-                zoomValue = 0.5;
-            } else {
-                zoomValue = 1.2;
-            }
-        } else {
-            if (width > $(window).width()) {
-                zoomValue = 0.79;
-            }
+        if (width > $(window).width()) {
+            zoomValue = 0.79;
         }
     } else {
         zoomValue = 1.2;
     }
     // set correct size
-    gd_prefix_page.css('width', width);
-    gd_prefix_page.css('height', height);
-    gd_prefix_page.css('zoom', zoomValue);
+    gd_page.css('width', width);
+    gd_page.css('height', height);
+    gd_page.css('zoom', zoomValue);
     // append page image, in image mode append occurred after setting the size to avoid zero size usage
-    gd_prefix_page.append('<div class="gd-wrapper">' +
+    gd_page.append('<div class="gd-wrapper">' +
         '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + data + '" alt></image>' +
         '</div>');
     // set correct width and hight for OneNote format
@@ -1516,7 +1509,22 @@ function renderpage(documentName,gd_prefix_page,gd_page,htmlData,prefix, width, 
     }
     // rotate page if it were rotated earlier
     loadedPagesCount = loadedPagesCount + 1;
-    if(prefix != "thumbnails-"){
+    if (prefix == "thumbnails-") {
+        var gd_prefix_page = $('#gd-' + prefix + 'page-' + data.number);
+        if (width > ($("#gd-thumbnails").width() * 2)) {
+            zoomValue = 0.5;
+        } else {
+            zoomValue = 1.2;
+        }
+        // set correct size
+        gd_prefix_page.css('width', width);
+        gd_prefix_page.css('height', height);
+        gd_prefix_page.css('zoom', zoomValue);
+        // append page image, in image mode append occurred after setting the size to avoid zero size usage
+        gd_prefix_page.append('<div class="gd-wrapper">' +
+            '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + data + '" alt></image>' +
+            '</div>');
+    } else {
         var pagesAttr = $('#gd-page-num').text().split('/');
         var lastPageNumber = parseInt(pagesAttr[1]);
         if(loadedPagesCount == lastPageNumber){

@@ -149,7 +149,7 @@ $(document).ready(function () {
 			$('#gd-btn-zoom-out').unbind("click");			
 			(!$('#gd-btn-print').hasClass("disabled")) ? $('#gd-btn-print').addClass("disabled") : "";
 			$('#gd-btn-print').unbind("click");		
-			(!$('#gd-btn-download').hasClass("disabled")) ? $('#gd-btn-download').addClass("disabled") : "";							
+			($('#gd-btn-download').hasClass("disabled")) ? $('#gd-btn-download').removeClass("disabled") : "";							
             clearPageContents();
             toggleModalDialog(false, '');
 			password = ""; 

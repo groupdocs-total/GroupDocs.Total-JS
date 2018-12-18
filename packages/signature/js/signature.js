@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 /*
@@ -45,23 +45,7 @@ $(document).ready(function(){
     ******************************************************************
     NAV BAR CONTROLS
     ******************************************************************
-    */
-
-    //////////////////////////////////////////////////
-    // Disable default download event
-    //////////////////////////////////////////////////
-    $('#gd-btn-download').off(userMouseClick);
-
-    //////////////////////////////////////////////////
-    // Fix for tooltips of the dropdowns
-    //////////////////////////////////////////////////
-    $('#gd-download-val-container').on(userMouseClick, function(e){
-        if($(this).hasClass('open')){
-            $('#gd-btn-download-value').parent().find('.gd-tooltip').css('display', 'none');
-        }else{
-            $('#gd-btn-download-value').parent().find('.gd-tooltip').css('display', 'initial');
-        }
-    });
+    */    
 
     $('#gd-signature-val-container').on(userMouseClick, function(e){
         if($(this).hasClass('open')){
@@ -443,13 +427,6 @@ $(document).ready(function(){
         var textProperties = $.fn.textGenerator.getProperties();
 		$.fn.textGenerator.draw(textProperties);
 		$(".gd-signature-select").removeClass("gd-signing-disabled");
-    });
-
-    //////////////////////////////////////////////////
-    // Download event
-    //////////////////////////////////////////////////
-    $('#gd-btn-download-value > li').bind(userMouseClick, function(e){
-        download($(this));
     });
 
 	//////////////////////////////////////////////////
@@ -1581,29 +1558,6 @@ function setGridPosition(width, height){
     $('.ui-resizable-w').css('top', (height/2-4)+'px');
 }
 
-/**
- * Download document
- * @param {Object} button - Clicked download button
- */
-function download (button){
-    var signed = false;
-    var documentName = "";
-    if($(button).attr("id") == "gd-signed-download"){
-        signed = true;
-        documentName = signedDocumentGuid;
-        signedDocumentGuid = "";
-    } else {
-        documentName = documentGuid;
-    }
-    if(typeof documentName != "undefined" && documentName != ""){
-         // Open download dialog
-         window.location.assign(getApplicationPath("downloadDocument/?path=") + documentName + "&signed=" + signed);
-    } else {
-         // open error popup
-         printMessage("Please open or sign document first");
-    }
-}
-
 /*
 ******************************************************************
 ******************************************************************
@@ -1633,14 +1587,11 @@ GROUPDOCS.SIGNATURE PLUGIN
                 digitalSignature: true,
                 qrCodeSignature: true,
                 barCodeSignature: true,
-                stampSignature: true,
-                downloadOriginal: true,
-                downloadSigned: true
+                stampSignature: true,                
             };
 
             options = $.extend(defaults, options);
-
-            getHtmlDownloadPanel();
+           
             $(gd_navbar).append(getHtmlSignaturePanel);
             $(gd_navbar).append(getHtmlSavePanel);
 
@@ -1666,15 +1617,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 
             if(options.stampSignature){
                 $("#gd-btn-signature-value").append(getHtmlStampSignatureElement);
-            }
-
-            if(options.downloadOriginal){
-                $("#gd-btn-download-value").append(getHtmlDownloadOriginalElement());
-            }
-
-            if(options.downloadSigned){
-                $("#gd-btn-download-value").append(getHtmlDownloadSignedElement());
-            }
+            }            
         }
     };
 
@@ -1711,31 +1654,7 @@ GROUPDOCS.SIGNATURE PLUGIN
             // signature types will be here
             '</ul>'+
             '</li>';
-    }
-
-    function getHtmlDownloadPanel(){
-        var downloadBtn = $("#gd-btn-download");
-        var defaultHtml = downloadBtn.html();
-        var downloadDropDown = '<li class="gd-nav-toggle" id="gd-download-val-container">'+
-            '<span id="gd-download-value">' +
-            '<i class="fa fa-download"></i>' +
-            '<span class="gd-tooltip">Download</span>' +
-            '</span>'+
-            '<span class="gd-nav-caret"></span>'+
-            '<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-download-value">'+
-            // download types will be here
-            '</ul>'+
-            '</li>';
-        downloadBtn.html(downloadDropDown);
-    }
-
-    function getHtmlDownloadOriginalElement(){
-        return '<li id="gd-original-download">Download Original</li>';
-    }
-
-    function getHtmlDownloadSignedElement(){
-        return '<li id="gd-signed-download">Download Signed</li>';
-    }
+    }   
 
     function getHtmlSavePanel(){
         return '<li id="gd-nav-save" class="gd-save-disabled"><i class="fa fa-floppy-o"></i><span class="gd-tooltip">Save</span></li>';

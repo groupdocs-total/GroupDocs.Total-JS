@@ -3,7 +3,7 @@
  * Copyright (c) 2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.8.0
+ * @version 1.9.0
  */
 
 /*
@@ -61,11 +61,6 @@ $(document).ready(function () {
     });
 
     //////////////////////////////////////////////////
-    // Disable default download event
-    //////////////////////////////////////////////////
-    $('#gd-btn-download').off(userMouseClick);
-
-    //////////////////////////////////////////////////
     // Add SVG to all pages DIVs
     //////////////////////////////////////////////////
     $.initialize(".gd-page-image", function () {
@@ -97,18 +92,7 @@ $(document).ready(function () {
                 }
             }
         }
-    });
-	
-    //////////////////////////////////////////////////
-    // Fix for tooltips of the dropdowns
-    //////////////////////////////////////////////////
-    $('#gd-download-val-container').on(userMouseClick, function (e) {
-        if ($(this).hasClass('open')) {
-            $('#gd-btn-download-value').parent().find('.gd-tooltip').css('display', 'none');
-        } else {
-            $('#gd-btn-download-value').parent().find('.gd-tooltip').css('display', 'initial');
-        }
-    });
+    });   
 
     //////////////////////////////////////////////////
     // Open document event
@@ -317,14 +301,7 @@ $(document).ready(function () {
                 }
             }
         }
-    });
-
-    //////////////////////////////////////////////////
-    // Download event
-    //////////////////////////////////////////////////
-    $('#gd-btn-download-value > li').on(userMouseClick, function (e) {
-        download($(this));
-    });
+    });    
 
     //////////////////////////////////////////////////
     // Comment form submit event
@@ -985,23 +962,7 @@ function getCommentHtml(comment) {
             '</div>';
 }
 
-/**
- * Download document
- * @param {Object} button - Clicked download button
- */
-function download(button) {
-    var annotated = false;
-    if ($(button).attr("id") == "gd-annotated-download") {
-        annotated = true;
-    }
-    if (typeof documentGuid != "undefined" && documentGuid != "") {
-        // Open download dialog
-        window.location.assign(getApplicationPath("downloadDocument/?path=") + documentGuid + "&annotated=" + annotated);
-    } else {
-        // open error popup
-        printMessage("Please open document first");
-    }
-}
+
 
 /**
  * Append SVG container to each document page
@@ -1116,14 +1077,12 @@ GROUPDOCS.ANNOTATION PLUGIN
                 textRedactionAnnotation: true,
                 resourcesRedactionAnnotation: true,
                 textUnderlineAnnotation: true,
-                distanceAnnotation: true,
-                downloadOriginal: true,
-                downloadAnnotated: true
+                distanceAnnotation: true,               
             };
 
             options = $.extend(defaults, options);
 
-            getHtmlDownloadPanel();
+            //getHtmlDownloadPanel();
             $('#gd-navbar').append(getHtmlSavePanel);
             // assembly annotation tools side bar html base
             $(".wrapper").append(getHtmlAnnotationsBarBase);
@@ -1184,16 +1143,7 @@ GROUPDOCS.ANNOTATION PLUGIN
 			$("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
             if (options.pointAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlPointAnnotationElement);
-            }
-
-            // assembly nav bar
-            if (options.downloadOriginal) {
-                $("#gd-btn-download-value").append(getHtmlDownloadOriginalElement());
-            }
-
-            if (options.downloadAnnotated) {
-                $("#gd-btn-download-value").append(getHtmlDownloadAnnotatedElement());
-            }
+            }           
         }
     };
 
@@ -1403,31 +1353,6 @@ GROUPDOCS.ANNOTATION PLUGIN
     function getHtmlSavePanel() {
         return '<li id="gd-nav-save" class="gd-save-disabled"><i class="fa fa-floppy-o"></i><span class="gd-tooltip">Save</span></li>';
     }
-
-    function getHtmlDownloadPanel() {
-        var downloadBtn = $("#gd-btn-download");
-        var defaultHtml = downloadBtn.html();
-        var downloadDropDown = '<li class="gd-nav-toggle" id="gd-download-val-container">' +
-									'<span id="gd-download-value">' +
-										'<i class="fa fa-download"></i>' +
-										'<span class="gd-tooltip">Download</span>' +
-									'</span>' +
-									'<span class="gd-nav-caret"></span>' +
-									'<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-download-value">' +
-										// download types will be here
-									'</ul>' +
-								'</li>';
-        downloadBtn.html(downloadDropDown);
-    }
-
-    function getHtmlDownloadOriginalElement() {
-        return '<li id="gd-original-download">Download Original</li>';
-    }
-
-    function getHtmlDownloadAnnotatedElement() {
-        return '<li id="gd-annotated-download">Download Annotated</li>';
-    }
-
 })(jQuery);
 
 function appendHtmlContent(pageNumber, documentName, prefix, width, height) {

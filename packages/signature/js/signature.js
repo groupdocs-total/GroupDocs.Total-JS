@@ -17,7 +17,6 @@ var signatureImageIndex = 0;
 var signaturesList = [];
 var currentDocumentGuid = "";
 var pagesDiapason = [];
-var signedDocumentGuid = "";
 var imageSaved = false;
 var signature = {
     signaturePassword:  "",
@@ -663,7 +662,6 @@ function sign() {
                 }
                 return;
             }
-            signedDocumentGuid = returnedData.guid;
             // prepare signing results HTML
             result = '<div id="gd-modal-signed">Document signed successfully</div>';
             // show signing results

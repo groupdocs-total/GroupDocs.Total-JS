@@ -84,9 +84,9 @@ $(document).ready(function () {
 		hideNotSupportedAnnotations(documentData.supportedAnnotations);
         //check if document contains annotations
         if ($(this).parent().parent().attr("id").search("thumbnails") == -1) {
-            let pages = documentData.pages;
+            var pages = documentData.pages;
             for (var i = 0; i < pages.length; i++) {
-                let page = pages[i];
+                var page = pages[i];
                 if (page.annotations != null && page.annotations.length > 0) {
                     $.each(page.annotations, function (index, annotationData) {
                         if (annotationData != null && annotationData.pageNumber == page.number && annotationData.imported != true) {

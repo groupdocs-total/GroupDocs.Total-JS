@@ -18,7 +18,7 @@ var preloadPageCount;
 var currentDirectory;
 var uploadFilesList = [];
 var documentGuid;
-var documentData = [];
+var documentData = {};
 var password = '';
 var rewrite;
 var loadedPagesCount = 0;
@@ -209,15 +209,15 @@ $(document).ready(function () {
                     if (prevPage) {
                         // load previous page
                         // to set correct page size we use global array documentData which contains all info about current document
-                        appendHtmlContent(currentPageNumber, documentGuid, '', documentData[currentPageNumber - 1].width, documentData[currentPageNumber - 1].height);
+                        appendHtmlContent(currentPageNumber, documentGuid, '', documentData.pages[currentPageNumber - 1].width, documentData.pages[currentPageNumber - 1].height);
                     } else {
                         // load next page
-                        appendHtmlContent(currentPageNumber + 1, documentGuid, '', documentData[currentPageNumber].width, documentData[currentPageNumber].height);
+                        appendHtmlContent(currentPageNumber + 1, documentGuid, '', documentData.pages[currentPageNumber].width, documentData.pages[currentPageNumber].height);
                     }
                 } else {
                     // load last page if to jump to it via last page button
-                    appendHtmlContent(currentPageNumber, documentGuid, '', documentData[currentPageNumber - 1].width, documentData[currentPageNumber - 1].height);
-                    appendHtmlContent(currentPageNumber - 1, documentGuid, '', documentData[currentPageNumber - 2].width, documentData[currentPageNumber - 2].height);
+                    appendHtmlContent(currentPageNumber, documentGuid, '', documentData.pages[currentPageNumber - 1].width, documentData.pages[currentPageNumber - 1].height);
+                    appendHtmlContent(currentPageNumber - 1, documentGuid, '', documentData.pages[currentPageNumber - 2].width, documentData.pages[currentPageNumber - 2].height);
                 }
             }
         }
@@ -261,14 +261,14 @@ $(document).ready(function () {
                     // if scroll down load next page
                     if (scrollDown) {
                         if (pagePosition + 1 <= lastPageNumber) {
-                            appendHtmlContent(pagePosition + 1, documentGuid, '', documentData[pagePosition].width, documentData[pagePosition].height);
+                            appendHtmlContent(pagePosition + 1, documentGuid, '', documentData.pages[pagePosition].width, documentData.pages[pagePosition].height);
                         } else if (pagePosition == lastPageNumber) {
-                            appendHtmlContent(pagePosition, documentGuid, '', documentData[pagePosition - 1].width, documentData[pagePosition - 1].height);
+                            appendHtmlContent(pagePosition, documentGuid, '', documentData.pages[pagePosition - 1].width, documentData.pages[pagePosition - 1].height);
                         }
                     } else {
                         // if scroll up load previous page
                         if (currentPageNumber - 1 >= 1) {
-                            appendHtmlContent(currentPageNumber - 1, documentGuid, '', documentData[pagePosition - 1].width, documentData[pagePosition - 1].height);
+                            appendHtmlContent(currentPageNumber - 1, documentGuid, '', documentData.pages[pagePosition - 1].width, documentData.pages[pagePosition - 1].height);
                         }
                     }
                 }
@@ -388,11 +388,11 @@ $(document).ready(function () {
         var lastPageNumber = parseInt(pagesAttr[1]);
 
         if (page == lastPageNumber) {
-            appendHtmlContent(page, documentGuid, "", documentData[page - 2].width, documentData[page - 2].height);
-            appendHtmlContent(page, documentGuid, "", documentData[page - 1].width, documentData[page - 1].height);
+            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 2].width, documentData.pages[page - 2].height);
+            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 1].width, documentData.pages[page - 1].height);
         } else {
-            appendHtmlContent(page, documentGuid, "", documentData[page - 1].width, documentData[page - 1].height);
-            appendHtmlContent(page + 1, documentGuid, "", documentData[page].width, documentData[page].height);
+            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 1].width, documentData.pages[page - 1].height);
+            appendHtmlContent(page + 1, documentGuid, "", documentData.pages[page].width, documentData.pages[page].height);
         }
         // set navigation to current page
         setNavigationPageValues(page, lastPageNumber);
@@ -691,7 +691,7 @@ function fadeAll(on) {
 */
 function loadDocument(callback) {
     // clear global documentData array from previous document info
-    documentData = [];
+    documentData = {};
     loadedPagesCount = 0;
     // fade all controls
     fadeAll(true);
@@ -717,14 +717,12 @@ function loadDocument(callback) {
                 }
                 return;
             }
-            // get total page number
-            var totalPageNumber = returnedData.length;
-            // set total page number on navigation panel
-            setNavigationPageValues('1', totalPageNumber);
             // set current document data globally
             documentData = returnedData;
-            // render pages
-            generatePagesTemplate(returnedData, totalPageNumber);
+            // get total page number
+            var totalPageNumber = documentData.pages.length;
+            // set total page number on navigation panel
+            setNavigationPageValues('1', totalPageNumber);
         },
         error: function (xhr, status, error) {
             fadeAll(false);
@@ -735,7 +733,9 @@ function loadDocument(callback) {
         }
     }).done(function (data) {
         // return POST data
-        callback(data);
+        if (callback) {
+            callback(data.pages);
+        }
     });
 }
 
@@ -758,11 +758,17 @@ function generatePagesTemplate(data, totalPageNumber, prefix) {
             var pageWidth = elem.width;
             var pageHeight = elem.height;
             // append empty page
-            $('#gd-' + prefix + 'panzoom').append(
-				'<div id="gd-' + prefix + 'page-' + pageNumber + '" class="gd-page" style="min-width: ' + pageWidth + 'px; min-height: ' + pageHeight + 'px;">' +
+            $('#gd-panzoom').append(
+				'<div id="gd-page-' + pageNumber + '" class="gd-page" style="min-width: ' + pageWidth + 'px; min-height: ' + pageHeight + 'px;">' +
 				'<div class="gd-page-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
 				'</div>'
 			);
+            if (prefix) {
+                $('#gd-' + prefix + 'panzoom').append(
+                    '<div id="gd-' + prefix + 'page-' + pageNumber + '" class="gd-page" style="min-width: ' + pageWidth + 'px; min-height: ' + pageHeight + 'px;">' +
+                    '</div>'
+                );
+            }
         });
         var counter = 0;
         // check pre-load page number is bigger than total pages number
@@ -771,28 +777,18 @@ function generatePagesTemplate(data, totalPageNumber, prefix) {
         } else {
             counter = preloadPageCount;
         }
-        if (prefix == '') {
-            // get page according to the pre-load page number
-            if (preloadPageCount > 0) {
-                for (var i = 0; i < counter; i++) {
-                    // render page
-                    appendHtmlContent(i + 1, documentGuid, '', data[i].width, data[i].height);
-                }
-
-            } else {
-                // get all pages
-                for (var i = 0; i < totalPageNumber; i++) {
-                    appendHtmlContent(i + 1, documentGuid, '', data[i].width, data[i].height);
-                }
+        // get page according to the pre-load page number
+        if (preloadPageCount > 0) {
+            for (var i = 0; i < counter; i++) {
+                // render page
+                appendHtmlContent(i + 1, documentGuid, prefix, data[i].width, data[i].height);
             }
+
         } else {
-            // load all thumbnails only when any of document pages is loaded.
-            // this is required to fix issue with thumbnails resolution
-            isPageLoaded($('#gd-page-1')).then(function (element) {
-                for (var i = 0; i < totalPageNumber; i++) {
-                    appendHtmlContent(i + 1, documentGuid, 'thumbnails-', data[i].width, data[i].height);
-                }
-            });
+            // get all pages
+            for (var i = 0; i < totalPageNumber; i++) {
+                appendHtmlContent(i + 1, documentGuid, prefix, data[i].width, data[i].height);
+            }
         }
     }
 }
@@ -809,11 +805,10 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
     // set empty for undefined of null
     prefix = prefix || '';
     // initialize data
-    var gd_prefix_page = $('#gd-' + prefix + 'page-' + pageNumber);
     var gd_page = $('#gd-page-' + pageNumber);
 
-    if (!gd_prefix_page.hasClass('loaded')) {
-        gd_prefix_page.addClass('loaded');
+    if (!gd_page.hasClass('loaded')) {
+        gd_page.addClass('loaded');
         // get document description
         var data = { guid: documentGuid, page: pageNumber, password: password };
         $.ajax({
@@ -832,79 +827,56 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                     printMessage(htmlData.error);
                     return;
                 }
+                // remove spinner
+                gd_page.find('.gd-page-spinner').hide();
                 // fix zoom in/out scaling
                 var zoomValue = 1;
                 // append page content in HTML mode
                 if (htmlMode) {
                     // append page
-                    gd_prefix_page.append('<div class="gd-wrapper">' + htmlData.pageHtml + '</div>');
-                    // remove spinner
-                    gd_prefix_page.find('.gd-page-spinner').hide();
+                    gd_page.append('<div class="gd-wrapper">' + htmlData.pageHtml + '</div>');
                     // fix to avoid using the spinner DIV size
                     if (preloadPageCount == 0) {
-                       var pageSize = setDocumentPageSize(gd_page, prefix, width, height)
+                       var pageSize = setDocumentPageSize(gd_page, width, height)
 					   width = pageSize.width;
 					   height = pageSize.height;
                     } else {
                         // set correct width and height for document pages
-                        if (prefix == "") {
-                            var pageSize = setDocumentPageSize(gd_page, prefix, width, height)
-						    width = pageSize.width;
-						    height = pageSize.height;
-                        } else {
-                            // set correct width and height for thumbnails
-                            if (width > height && htmlData.angle == 0) {
-                                // change the width and height in places if page is landscape oriented
-                                width = $("#gd-page-1").innerHeight();
-                                height = $("#gd-page-1").innerWidth();								
-                            } else {
-                                // use first document page sezie to fix thumbnails size issue
-                                width = $("#gd-page-1").innerWidth();
-                                height = $("#gd-page-1").innerHeight();								
-                            }
-                        }
+                        var pageSize = setDocumentPageSize(gd_page, width, height)
+                        width = pageSize.width;
+                        height = pageSize.height;
                     }
                     // check if page is horizontally displayed
                     if (width > height || width >= $(window).width()) {
                         zoomValue = 0.79;
                     }
                     // set correct size
-                    gd_prefix_page.css('width', width);
-                    gd_prefix_page.css('height', height);
-                    gd_prefix_page.css('zoom', zoomValue);
-                    // render document in image mode
-                } else {
-                    gd_prefix_page.find('.gd-page-spinner').hide();
+                    gd_page.css('width', width);
+                    gd_page.css('height', height);
+                    gd_page.css('zoom', zoomValue);
+                } else { // render document in image mode
                     // check if page is horizontally displayed
                     if (width > height) {
                         zoomValue = 0.79;
                     }
                     // if current document if image file fix its zoom
                     if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
-                        if (prefix == "thumbnails-") {
-                            if (width > ($("#gd-thumbnails").width() * 2)) {
-                                zoomValue = 0.5;
-                            } else {
-                                zoomValue = 1.2;
-                            }
-                        } else {
-                            if (width > $(window).width()) {
-                                zoomValue = 0.79;
-                            }
+                        if (width > $(window).width()) {
+                            zoomValue = 0.79;
                         }
                     } else {
                         zoomValue = 1.2;
                     }
                     // set correct size
-                    gd_prefix_page.css('width', width);
-                    gd_prefix_page.css('height', height);
-                    gd_prefix_page.css('zoom', zoomValue);
+                    gd_page.css('width', width);
+                    gd_page.css('height', height);
+                    gd_page.css('zoom', zoomValue);
                     // append page image, in image mode append occurred after setting the size to avoid zero size usage
-                    gd_prefix_page.append('<div class="gd-wrapper">' +
+                    gd_page.append('<div class="gd-wrapper">' +
 											'<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + htmlData.pageImage + '" alt></image>' +
 										'</div>');
                 }
-                // set correct width and hight for OneNote format
+                // set correct width and high for OneNote format
                 if (documentName.substr((documentName.lastIndexOf('.') + 1)) == "one") {
                     if (htmlMode) {
                         $(".gd-wrapper").css("width", "initial");
@@ -914,9 +886,9 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                 }
                 // rotate page if it were rotated earlier
                 if (htmlData.angle != 0) {
-                    gd_prefix_page.css('animation', 'none');
-                    gd_prefix_page.css('transition-property', 'none');
-                    gd_prefix_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
+                    gd_page.css('animation', 'none');
+                    gd_page.css('transition-property', 'none');
+                    gd_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
                     if (htmlData.angle == 90 || htmlData.angle == 270) {
                         // set styles for HTML mode
                         if (htmlMode) {
@@ -925,13 +897,6 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                             } else {
                                 gd_page.addClass("gd-landscape");
                             }
-                            if (prefix == "thumbnails-") {
-                                if (gd_prefix_page.width() > gd_prefix_page.height()) {
-                                    gd_prefix_page.addClass("gd-thumbnails-landscape-rotated");
-                                } else {
-                                    gd_prefix_page.addClass("gd-thumbnails-landscape");
-                                }
-                            }
                         } else {
                             // set style for image mode
                             if (gd_page.width() > gd_page.height()) {
@@ -939,24 +904,80 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                             } else {
                                 gd_page.addClass("gd-landscape-image");
                             }
-                            if (prefix == "thumbnails-") {
-                                if (gd_prefix_page.width() > gd_prefix_page.height()) {
-                                    gd_prefix_page.addClass("gd-thumbnails-landscape-image-rotated");
-                                } else {
-                                    gd_prefix_page.addClass("gd-thumbnails-landscape-image");
-                                }
-                                gd_prefix_page.find("img").removeClass("gd-page-image");
-                            }
                         }
                     } else {
                         gd_page.removeClass("gd-landscape");
-                        gd_prefix_page.removeClass("gd-thumbnails-landscape");
                         gd_page.removeClass("gd-landscape-image");
-                        gd_prefix_page.removeClass("gd-thumbnails-landscape-image");
                     }
                 }
+
                 loadedPagesCount = loadedPagesCount + 1;
-                if(prefix != "thumbnails-"){
+                if (prefix == "thumbnails-") {
+                    // fix thumbnails only when any of document pages is loaded.
+                    // this is required to fix issue with thumbnails resolution
+                    isPageLoaded($('#gd-page-1')).then(function (element) {
+                        var gd_prefix_page = $('#gd-' + prefix + 'page-' + pageNumber);
+                        if (htmlMode) {
+                            gd_prefix_page.append('<div class="gd-wrapper">' + htmlData.pageHtml + '</div>');
+                            // set correct width and height for thumbnails
+                            if (width > height && htmlData.angle == 0) {
+                                // change the width and height in places if page is landscape oriented
+                                width = $("#gd-page-1").innerHeight();
+                                height = $("#gd-page-1").innerWidth();
+                            } else {
+                                // use first document page size to fix thumbnails size issue
+                                width = $("#gd-page-1").innerWidth();
+                                height = $("#gd-page-1").innerHeight();
+                            }
+                            gd_prefix_page.css('width', width);
+                            gd_prefix_page.css('height', height);
+                            gd_prefix_page.css('zoom', zoomValue);
+                        } else {
+                            // if current document if image file fix its zoom
+                            if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
+                                if (width > ($("#gd-thumbnails").width() * 2)) {
+                                    zoomValue = 0.5;
+                                } else {
+                                    zoomValue = 1.2;
+                                }
+                            }
+                            // set correct size
+                            gd_prefix_page.css('width', width);
+                            gd_prefix_page.css('height', height);
+                            gd_prefix_page.css('zoom', zoomValue);
+                            // append page image, in image mode append occurred after setting the size to avoid zero size usage
+                            gd_prefix_page.append('<div class="gd-wrapper">' +
+                                '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + htmlData.pageImage + '" alt></image>' +
+                                '</div>');
+                        }
+                        // rotate page if it were rotated earlier
+                        if (htmlData.angle != 0) {
+                            gd_prefix_page.css('animation', 'none');
+                            gd_prefix_page.css('transition-property', 'none');
+                            gd_prefix_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
+                            if (htmlData.angle == 90 || htmlData.angle == 270) {
+                                // set styles for HTML mode
+                                if (htmlMode) {
+                                    if (gd_prefix_page.width() > gd_prefix_page.height()) {
+                                        gd_prefix_page.addClass("gd-thumbnails-landscape-rotated");
+                                    } else {
+                                        gd_prefix_page.addClass("gd-thumbnails-landscape");
+                                    }
+                                } else {
+                                    if (gd_prefix_page.width() > gd_prefix_page.height()) {
+                                        gd_prefix_page.addClass("gd-thumbnails-landscape-image-rotated");
+                                    } else {
+                                        gd_prefix_page.addClass("gd-thumbnails-landscape-image");
+                                    }
+                                    gd_prefix_page.find("img").removeClass("gd-page-image");
+                                }
+                            } else {
+                                gd_prefix_page.removeClass("gd-thumbnails-landscape");
+                                gd_prefix_page.removeClass("gd-thumbnails-landscape-image");
+                            }
+                        }
+                    });
+                } else {
 					var pagesAttr = $('#gd-page-num').text().split('/');
 					var lastPageNumber = parseInt(pagesAttr[1]);
 					if(loadedPagesCount == lastPageNumber || preloadPageCount != 0){
@@ -986,11 +1007,10 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
 /**
 * Calculate document page width and height
 * @param {Object} gd_page = document page placeholder object;
-* @param {string} prefix - elements id prefix
 * @param {int} width - current page width
 * @param {int} height - current page height
 */
-function setDocumentPageSize(gd_page, prefix, width, height){
+function setDocumentPageSize(gd_page, width, height){
 	var pageSize = {
 		width: 0,
 		height: 0
@@ -1001,9 +1021,9 @@ function setDocumentPageSize(gd_page, prefix, width, height){
 	} else if(gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && /Edge/.test(navigator.userAgent)){
 		pageSize.width = gd_page.innerWidth() / 10;
 		pageSize.height = gd_page.innerHeight();
-		if(getDocumentFormat(documentGuid).format.search("Word") != -1 || prefix == "thumbnails-"){
+		if(getDocumentFormat(documentGuid).format.search("Word") != -1){
 			pageSize.width = gd_page.innerWidth();
-		}							
+		}
 	}
 	return pageSize;
 }

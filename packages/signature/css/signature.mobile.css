@@ -4,11 +4,11 @@
 		height: 100% !important;
 	}
 	
-	#gd-btn-signature-value, #gd-btn-download-value {
+	#gd-btn-download-value {
         top: 78px;
     }
 
-    #gd-btn-signature-value li, #gd-btn-download-value li{
+    #gd-btn-download-value li{
         font-size: 44px;
     }
 

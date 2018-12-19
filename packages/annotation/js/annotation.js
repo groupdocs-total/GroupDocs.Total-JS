@@ -1524,14 +1524,13 @@ function renderpage(documentName, gd_page, htmlData, prefix, width, height, data
         gd_prefix_page.append('<div class="gd-wrapper">' +
             '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + data + '" alt></image>' +
             '</div>');
-    } else {
-        var pagesAttr = $('#gd-page-num').text().split('/');
-        var lastPageNumber = parseInt(pagesAttr[1]);
-        if(loadedPagesCount == lastPageNumber){
-            $('#gd-btn-print').bind('click', printDocument);
-            $('#gd-btn-print').removeClass('disabled');
-            $('#gd-btn-download').removeClass('disabled');
-            loadedPagesCount = 0;
-        }
+    }
+    var pagesAttr = $('#gd-page-num').text().split('/');
+    var lastPageNumber = parseInt(pagesAttr[1]);
+    if(loadedPagesCount == lastPageNumber || preloadPageCount != 0) {
+        $('#gd-btn-print').bind('click', printDocument);
+        $('#gd-btn-print').removeClass('disabled');
+        $('#gd-btn-download').removeClass('disabled');
+        loadedPagesCount = 0;
     }
 }

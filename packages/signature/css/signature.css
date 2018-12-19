@@ -364,6 +364,32 @@ SIGNATURE IMAGE
 .gd-image-cancel > i {
     color: #ff0000 !important;
 }
+.gd-context-menu {
+    padding: 5px;
+    box-shadow: #00000052 0px 0px 5px;
+    background-color: #FFFFFF;
+    width: 55px;   
+    border-radius: 3px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: -45px;
+    cursor: default;
+}
+.gd-context-menu .fa-arrows-alt {
+    cursor: move;
+}
+.gd-context-menu i {
+    color: #5c737f;
+    margin: 4px;
+	width: 14px;
+	height: 14px;
+}
+.gd-delete-signature {
+    cursor: pointer;
+}
+
 /*
 ******************************************
 SIGNATURE IMAGE PAGE SELECTING STEP

@@ -65,17 +65,10 @@ $(document).ready(function(){
         }
     });
 
-    $('#gd-signature-val-container').on(userMouseClick, function(e){
-        if($(this).hasClass('open')){
-            $('#gd-btn-signature-value').parent().find('.gd-tooltip').css('display', 'none');
-        }else{
-            $('#gd-btn-signature-value').parent().find('.gd-tooltip').css('display', 'initial');
-        }
-    });
-
     //////////////////////////////////////////////////
     // Digital sign event
     //////////////////////////////////////////////////
+    // TODO: deprecated
     $('#qd-digital-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
@@ -90,6 +83,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Image sign event
     //////////////////////////////////////////////////
+    // TODO: deprecated
     $('#qd-image-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
@@ -104,6 +98,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Stamp sign event
     //////////////////////////////////////////////////
+    // TODO: deprecated
     $('#gd-stamp-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
@@ -118,6 +113,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Optical sign event
     //////////////////////////////////////////////////
+    // TODO: deprecated
     $('#qd-qr-sign, #qd-barcode-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
@@ -153,6 +149,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Text sign event
     //////////////////////////////////////////////////
+    // TODO: deprecated
     $('#qd-text-sign').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
@@ -422,7 +419,7 @@ $(document).ready(function(){
     // Export drawn Text signature - detect color change event
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, '#gd-text-border-color .bcPicker-color, #gd-text-background .bcPicker-color, #gd-text-font-color .bcPicker-color', function(){
-        var textProperties = $.fn.textGenerator.getProperties();       
+        var textProperties = $.fn.textGenerator.getProperties();
         switch($(this).parent().parent().attr("id")){
             case "gd-text-font-color":
                 textProperties.fontColor = $(this).css("background-color");
@@ -493,6 +490,20 @@ $(document).ready(function(){
 		signaturesList.splice($.inArray(signatureToRemove, signaturesList), 1);
 	});
 
+    //////////////////////////////////////////////////
+    // Header menu for mobile events
+    //////////////////////////////////////////////////
+    $('#gd-mobile-menu-open').on(userMouseClick, function (e) {
+        $('#gd-left-bar-wrapper').show();
+        $('#gd-mobile-menu-close').show();
+        $('#gd-mobile-menu-open').hide();
+    });
+
+    $('#gd-mobile-menu-close').on(userMouseClick, function (e) {
+        $('#gd-left-bar-wrapper').hide();
+        $('#gd-mobile-menu-open').show();
+        $('#gd-mobile-menu-close').hide();
+    });
 });
 
 /*
@@ -1686,34 +1697,41 @@ GROUPDOCS.SIGNATURE PLUGIN
                 downloadSigned: true
             };
 
+            $('#gd-header-logo').append(getHtmlHeaderForMobile());
+
             options = $.extend(defaults, options);
 
             getHtmlDownloadPanel();
-            $(gd_navbar).append(getHtmlSignaturePanel);
             $(gd_navbar).append(getHtmlSavePanel);
 
+            $(".wrapper").append(getHtmlLeftBarBase);
+
             if(options.textSignature){
-                $("#gd-btn-signature-value").append(getHtmlTextSignatureElement);
+                $("#gd-signature-tools").append(getHtmlTextSignatureElement);
             }
 
             if(options.imageSignature){
-                $("#gd-btn-signature-value").append(getHtmlImageSignatureElement);
+                $("#gd-signature-tools").append(getHtmlImageSignatureElement);
             }
 
             if(options.digitalSignature){
-                $("#gd-btn-signature-value").append(getHtmlDigitalSignatureElement);
+                $("#gd-signature-tools").append(getHtmlDigitalSignatureElement);
             }
 
             if(options.qrCodeSignature){
-                $("#gd-btn-signature-value").append(getHtmlQrcodeSignatureElement);
+                $("#gd-signature-tools").append(getHtmlQrcodeSignatureElement);
             }
 
             if(options.barCodeSignature){
-                $("#gd-btn-signature-value").append(getHtmlBarcodeSignatureElement);
+                $("#gd-signature-tools").append(getHtmlBarcodeSignatureElement);
             }
 
             if(options.stampSignature){
-                $("#gd-btn-signature-value").append(getHtmlStampSignatureElement);
+                $("#gd-signature-tools").append(getHtmlStampSignatureElement);
+            }
+
+            if(options.handSignature){
+                $("#gd-signature-tools").append(getHtmlHandSignatureElement);
             }
 
             if(options.downloadOriginal){
@@ -1748,22 +1766,29 @@ GROUPDOCS.SIGNATURE PLUGIN
     HTML MARKUP
     ******************************************************************
     */
-    function getHtmlSignaturePanel(){
-        return '<li class="gd-nav-toggle" id="gd-signature-val-container">'+
-            '<span id="gd-signature-value">' +
-            '<i class="fa fa-pencil-square-o"></i>'+
-            '<span class="gd-tooltip">Sign</span>'+
-            '</span>'+
-            '<span class="gd-nav-caret"></span>'+
-            '<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-signature-value">'+
-            // signature types will be here
-            '</ul>'+
-            '</li>';
+    function getHtmlHeaderForMobile() {
+        return '<div id="gd-mobile-menu" class="gd-mobile-menu">' +
+                    '<span id="gd-mobile-menu-close" class="gd-mobile-menu-close">' +
+                        '<i class="fas fa-times fa-lg fa-inverse"></i>' +
+                    '</span>' +
+                    '<span id="gd-mobile-menu-open" class="gd-mobile-menu-open">' +
+                        '<i class="fas fa-bars fa-lg fa-inverse"></i>' +
+                    '</span>' +
+                '</div>';
     }
 
-    function getHtmlDownloadPanel(){
+    function getHtmlLeftBarBase() {
+        return '<div id="gd-left-bar-wrapper" class="gd-left-bar-wrapper">' +
+            // signature tools
+            '<div class="gd-left-bar-tools-container">' +
+            '<ul id="gd-signature-tools">' +
+            '</ul>' +
+            '</div>' +
+            '</div>';
+    }
+
+    function getHtmlDownloadPanel() {
         var downloadBtn = $("#gd-btn-download");
-        var defaultHtml = downloadBtn.html();
         var downloadDropDown = '<li class="gd-nav-toggle" id="gd-download-val-container">'+
             '<span id="gd-download-value">' +
             '<i class="fa fa-download"></i>' +
@@ -1777,40 +1802,79 @@ GROUPDOCS.SIGNATURE PLUGIN
         downloadBtn.html(downloadDropDown);
     }
 
-    function getHtmlDownloadOriginalElement(){
+    function getHtmlDownloadOriginalElement() {
         return '<li id="gd-original-download">Download Original</li>';
     }
 
-    function getHtmlDownloadSignedElement(){
+    function getHtmlDownloadSignedElement() {
         return '<li id="gd-signed-download">Download Signed</li>';
     }
 
-    function getHtmlSavePanel(){
+    function getHtmlSavePanel() {
         return '<li id="gd-nav-save" class="gd-save-disabled"><i class="fa fa-floppy-o"></i><span class="gd-tooltip">Save</span></li>';
     }
 
-    function getHtmlTextSignatureElement(){
-        return '<li id="qd-text-sign">Text</li>';
+    function getHtmlTextSignatureElement() {
+        return '<li>' +
+                    '<button class="gd-tool gd-text-sign" id="gd-text-sign">' +
+                    '<i class="fas fa-font fa-lg fa-inverse"></i>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Text</span>' +
+                    '</button>' +
+                '</li>';
     }
 
-    function getHtmlImageSignatureElement(){
-        return '<li id="qd-image-sign">Image</li>';
+    function getHtmlImageSignatureElement() {
+        return '<li>' +
+                    '<button class="gd-tool gd-image-sign" id="gd-image-sign">' +
+                    '<i class="fas fa-image fa-lg fa-inverse"></i>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Image</span>' +
+                    '</button>' +
+                '</li>';
     }
 
-    function getHtmlDigitalSignatureElement(){
-        return '<li id="qd-digital-sign">Digital</li>';
+    function getHtmlDigitalSignatureElement() {
+        return '<li>' +
+                    '<button class="gd-tool gd-digital-sign" id="gd-digital-sign">' +
+                    '<i class="fas fa-fingerprint fa-lg fa-inverse"></i>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Digital</span>' +
+                    '</button>' +
+                '</li>';
     }
 
-    function getHtmlQrcodeSignatureElement(){
-        return '<li id="qd-qr-sign">QR-Code</li>';
+    function getHtmlQrcodeSignatureElement() {
+        return '<li>' +
+                    '<button class="gd-tool gd-qrcode-sign" id="gd-qrcode-sign">' +
+                    '<i class="fas fa-qrcode fa-lg fa-inverse"></i>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">QR code</span>' +
+                    '</button>' +
+                '</li>';
     }
 
-    function getHtmlBarcodeSignatureElement(){
-        return '<li id="qd-barcode-sign">Barcode</li>';
+    function getHtmlBarcodeSignatureElement() {
+        return '<li>' +
+                    '<button class="gd-tool gd-barcode-sign" id="gd-barcode-sign">' +
+                    '<i class="fas fa-barcode fa-lg fa-inverse"></i>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Barcode</span>' +
+                    '</button>' +
+                '</li>';
     }
 
-    function getHtmlStampSignatureElement(){
-        return '<li id="gd-stamp-sign">Stamp</li>';
+    function getHtmlStampSignatureElement() {
+        return '<li>' +
+                    '<button class="gd-tool gd-stamp-sign" id="gd-stamp-sign">' +
+                    '<i class="fas fa-stamp fa-lg fa-inverse"></i>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Stamp</span>' +
+                    '</button>' +
+                '</li>';
+    }
+
+    function getHtmlHandSignatureElement() {
+        return '<li>' +
+                    '<button class="gd-tool gd-hand-sign" id="gd-hand-sign">' +
+                    '<i class="fas fa-signature fa-lg fa-inverse"></i>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Signature</span>' +
+                    '</button>' +
+                '</li>';
     }
 
 })(jQuery);

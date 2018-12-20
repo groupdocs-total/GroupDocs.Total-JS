@@ -4,11 +4,11 @@
 		height: 100% !important;
 	}
 	
-	#gd-btn-signature-value, #gd-btn-download-value {
+	#gd-btn-download-value {
         top: 78px;
     }
 
-    #gd-btn-signature-value li, #gd-btn-download-value li{
+    #gd-btn-download-value li{
         font-size: 44px;
     }
 
@@ -472,5 +472,62 @@
 
     #csg-text-expansion {
         width: 182px !important;
+    }
+
+    .gd-left-bar-wrapper {
+        display: none;
+        top: 100px;
+        width: 100%;
+    }
+
+    #gd-header-logo {
+        background-image: unset !important;
+        width: 100px;
+    }
+
+    .gd-tool {
+        width: 100%;
+        text-align: left;
+        margin: 25px 0px 0px 10px;
+    }
+
+    .gd-left-bar-tools-container {
+        width: 100%;
+    }
+
+    .gd-tool > i {
+        font-size: 3em;
+    }
+
+    .gd-tool .gd-popupdiv-hover {
+        display: block;
+    }
+
+    .gd-tool-tooltip {
+        color: #08090a !important;
+        background-color: #fff !important;
+        left: 100px !important;
+        font-size: 24px;
+        top: 0px;
+    }
+
+    .gd-tool-tooltip::after {
+        display: none;
+    }
+
+    .gd-mobile-menu {
+        display: block;
+        position: absolute;
+        margin: 25px;
+        font-size: 3em;
+    }
+
+    .gd-mobile-menu-open {
+        display: block;
+        cursor: pointer;
+    }
+
+    .gd-mobile-menu-close {
+        cursor: pointer;
     }
 }

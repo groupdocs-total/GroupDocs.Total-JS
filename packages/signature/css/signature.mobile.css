@@ -503,7 +503,7 @@
         display: block;
     }
 
-    .gd-tool-tooltip {
+    .gd-tool-tooltip-mobile {
         color: #08090a !important;
         background-color: #fff !important;
         left: 100px !important;
@@ -581,4 +581,16 @@
 		-webkit-transform:rotate(180deg);
 		transform:rotate(180deg);
 	}
+
+    .gd-signature-context-panel {
+        left: 100px;
+    }
+
+    .gd-signature-context-panel-title {
+        font-size: 20px;
+    }
+
+    .gd-signature-list-title > i {
+        font-size: 30px;
+    }
 }

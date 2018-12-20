@@ -12,6 +12,15 @@ FIX DOCUMENT PAGE POSITION FOR IMAGE SIGNATURE
 #gd-header-logo {
     background-image: url('../images/logo.png') !important;
 }
+.gd-mobile-menu {
+    display: none;
+}
+.gd-mobile-menu-open {
+    display: none;
+}
+.gd-mobile-menu-close {
+    display: none;
+}
 /*
 ******************************************
 SIGNATURE TOOL BAR

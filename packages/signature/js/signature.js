@@ -417,7 +417,7 @@ $(document).ready(function(){
     // Export drawn Text signature - detect color change event
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, '#gd-text-border-color .bcPicker-color, #gd-text-background .bcPicker-color, #gd-text-font-color .bcPicker-color', function(){
-        var textProperties = $.fn.textGenerator.getProperties();       
+        var textProperties = $.fn.textGenerator.getProperties();
         switch($(this).parent().parent().attr("id")){
             case "gd-text-font-color":
                 textProperties.fontColor = $(this).css("background-color");
@@ -460,6 +460,20 @@ $(document).ready(function(){
         $(".gd-modal-dialog").removeClass("gd-signature-modal-dialog");
     });
 
+    //////////////////////////////////////////////////
+    // Header menu for mobile events
+    //////////////////////////////////////////////////
+    $('#gd-mobile-menu-open').on(userMouseClick, function (e) {
+        $('#gd-left-bar-wrapper').show();
+        $('#gd-mobile-menu-close').show();
+        $('#gd-mobile-menu-open').hide();
+    });
+
+    $('#gd-mobile-menu-close').on(userMouseClick, function (e) {
+        $('#gd-left-bar-wrapper').hide();
+        $('#gd-mobile-menu-open').show();
+        $('#gd-mobile-menu-close').hide();
+    });
 });
 
 /*
@@ -1635,6 +1649,8 @@ GROUPDOCS.SIGNATURE PLUGIN
                 downloadSigned: true
             };
 
+            $('#gd-header-logo').append(getHtmlHeaderForMobile());
+
             options = $.extend(defaults, options);
 
             getHtmlDownloadPanel();
@@ -1702,8 +1718,19 @@ GROUPDOCS.SIGNATURE PLUGIN
     HTML MARKUP
     ******************************************************************
     */
+    function getHtmlHeaderForMobile() {
+        return '<div id="gd-mobile-menu" class="gd-mobile-menu">' +
+                    '<span id="gd-mobile-menu-close" class="gd-mobile-menu-close">' +
+                        '<i class="fas fa-times fa-lg fa-inverse"></i>' +
+                    '</span>' +
+                    '<span id="gd-mobile-menu-open" class="gd-mobile-menu-open">' +
+                        '<i class="fas fa-bars fa-lg fa-inverse"></i>' +
+                    '</span>' +
+                '</div>';
+    }
+
     function getHtmlLeftBarBase() {
-        return '<div class="gd-left-bar-wrapper">' +
+        return '<div id="gd-left-bar-wrapper" class="gd-left-bar-wrapper">' +
             // signature tools
             '<div class="gd-left-bar-tools-container">' +
             '<ul id="gd-signature-tools">' +
@@ -1743,7 +1770,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-text-sign" id="gd-text-sign">' +
                     '<i class="fas fa-font fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip">text</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Text</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1752,7 +1779,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-image-sign" id="gd-image-sign">' +
                     '<i class="fas fa-image fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip">image</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Image</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1761,7 +1788,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-digital-sign" id="gd-digital-sign">' +
                     '<i class="fas fa-fingerprint fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip">digital</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Digital</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1770,7 +1797,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-qrcode-sign" id="gd-qrcode-sign">' +
                     '<i class="fas fa-qrcode fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip">QR-Code</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">QR code</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1779,7 +1806,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-barcode-sign" id="gd-barcode-sign">' +
                     '<i class="fas fa-barcode fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip">barcode</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Barcode</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1788,7 +1815,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-stamp-sign" id="gd-stamp-sign">' +
                     '<i class="fas fa-stamp fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip">stamp</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Stamp</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1797,7 +1824,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-hand-sign" id="gd-hand-sign">' +
                     '<i class="fas fa-signature fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip">hand</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip">Signature</span>' +
                     '</button>' +
                 '</li>';
     }

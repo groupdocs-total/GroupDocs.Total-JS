@@ -72,6 +72,35 @@ $(document).ready(function(){
     });
 
     //////////////////////////////////////////////////
+    // Open sign context panel
+    //////////////////////////////////////////////////
+    $('#gd-digital-sign, #gd-image-sign, #gd-stamp-sign, #gd-qrcode-sign, #gd-barcode-sign, #gd-text-sign, #gd-hand-sign').on(userMouseClick, function(e){
+        if(typeof documentGuid == "undefined" || documentGuid == ""){
+            printMessage("Please open document first");
+        } else {
+            var button = $(e.target);
+            var type = button.attr("signature-type");
+            if (type){
+                signature.signatureType = type;
+            }
+            var typeTitle = button.attr("signature-type-title");
+            if (button[0].className.includes("gd-tool-inactive")) {
+                $('#gd-signature-context-panel-title').html(typeTitle);
+                $('#gd-signature-context-panel').show();
+                $('.gd-tool-active').addClass("gd-tool-inactive");
+                $('.gd-tool-active').removeClass("gd-tool-active");
+                button.removeClass("gd-tool-inactive");
+                button.addClass("gd-tool-active");
+            } else {
+                $('#gd-signature-context-panel-title').html("");
+                $('#gd-signature-context-panel').hide();
+                button.removeClass("gd-tool-active");
+                button.addClass("gd-tool-inactive");
+            }
+        }
+    });
+
+    //////////////////////////////////////////////////
     // Digital sign event
     //////////////////////////////////////////////////
     // TODO: deprecated

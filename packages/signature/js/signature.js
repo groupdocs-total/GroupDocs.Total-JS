@@ -84,8 +84,8 @@ $(document).ready(function(){
                 signature.signatureType = type;
             }
             var typeTitle = button.attr("signature-type-title");
-        var gd = $('#gd-signature-context-panel');
-        if (button[0].className.includes("gd-tool-inactive")) {
+            var gd = $('#gd-signature-context-panel');
+            if (button[0].className.includes("gd-tool-inactive")) {
                 if (isMobile()) {
                     $('.gd-tool-tooltip-mobile').hide();
                 }

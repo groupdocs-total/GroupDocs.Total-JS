@@ -584,6 +584,7 @@
 
     .gd-signature-context-panel {
         left: 100px;
+        width: 250px;
     }
 
     .gd-signature-context-panel-title {
@@ -592,5 +593,33 @@
 
     .gd-signature-list-title > i {
         font-size: 30px;
+    }
+
+    .gd-signature-context-panel.text::after {
+        top: 50px;
+    }
+
+    .gd-signature-context-panel.image::after {
+        top: 115px;
+    }
+
+    .gd-signature-context-panel.digital::after {
+        top: 180px;
+    }
+
+    .gd-signature-context-panel.qrCode::after {
+        top: 245px;
+    }
+
+    .gd-signature-context-panel.barCode::after {
+        top: 315px;
+    }
+
+    .gd-signature-context-panel.stamp::after {
+        top: 355px;
+    }
+
+    .gd-signature-context-panel.hand::after {
+        top: 410px;
     }
 }

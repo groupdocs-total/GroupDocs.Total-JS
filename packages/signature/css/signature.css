@@ -476,12 +476,14 @@ SIGNATURE IMAGE
 }
 .gd-draggable-helper, .ui-wrapper {
     position: absolute !important;
+	border: 1px solid #3c97fe;
+	z-index: 999;
 }
 .gd-image-signed {
     top: 69px !important;
 }
 .gd-signature-image {
-    width: inherit;
+    width: 100% !important;
     height: inherit;
 }
 .gd-image-apply {
@@ -605,7 +607,7 @@ SIGNATURE IMAGE RESIZE HANDLES
 ******************************************
 */
 .ui-resizable-handle {
-    background-color: rgba(0,0,0,.75);
+    background-color: #679FFA;
     width: 8px;
     height: 8px;
 }

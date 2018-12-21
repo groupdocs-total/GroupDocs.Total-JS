@@ -472,9 +472,16 @@ SIGNATURE IMAGE
 .gd-context-menu i {
     color: #5c737f;
     margin: 4px;
-	width: 14px;
-	height: 14px;
+	width: 18px;
+	height: 18px;
 	font-size: 13px;
+	padding-top: 3px;
+}
+.gd-context-menu i.active{
+    background-color: #e7e7e7;
+}
+.gd-text-menu{
+	display: -webkit-inline-box;
 }
 .gd-delete-signature {
     cursor: pointer;
@@ -484,11 +491,11 @@ SIGNATURE IMAGE
 }
 .gd-text-color-picker{
 	position: relative;
-    width: 14px;
-    /* border-radius: 47px; */
+    width: 14px;    
     height: 14px;
     display: inline-block;
-    margin: 0 4px 0 4px;
+    top: 2px;
+    margin: 0px 4px 0 6px;
 }
 
 /*

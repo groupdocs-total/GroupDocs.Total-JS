@@ -10,7 +10,7 @@
 	var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';	
 	var properties = {};
 	
-	$.fn.textGenerator = function() {
+	$.fn.textGenerator = function() {		
 		$('#gd-panzoom').on("change", ".gd-fonts-select", function(e) {
 			$(e.target.parentElement.parentElement.parentElement).find("input").css("font-family", $(e.target).val());
 		});
@@ -52,7 +52,7 @@
 			}	
 		});
 		
-		$('#gd-panzoom').on(userMouseClick, ".bcPicker-color", function(e) {		
+		$('#gd-panzoom').on(userMouseClick, ".bcPicker-color", function(e) {
 			$(e.target.parentElement.parentElement.parentElement.parentElement.parentElement).find("input").css("color", $(e.target).css("background-color"));			
 		});
 		
@@ -60,7 +60,7 @@
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			if($(e.target).hasClass("down")){
-				$(".gd-text-menu").css("top", "unset");
+				$(".gd-text-menu").css("top", "unset");					
 			} else {
 				$(".gd-text-menu").css("top", "100px");				
 			}

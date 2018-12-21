@@ -622,4 +622,11 @@
     .gd-signature-context-panel.hand::after {
         top: 410px;
     }
+
+	.gd-context-menu i.active {
+		background-color: #959da5;
+		width: 38px;
+		height: 36px;
+		margin: 0 21px;
+	}
 }

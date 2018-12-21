@@ -80,16 +80,21 @@ $(document).ready(function(){
         } else {
             var button = $(this);
             var type = button.attr("signature-type");
-            if (type){
+            if (type) {
                 signature.signatureType = type;
             }
             var typeTitle = button.attr("signature-type-title");
-            if (button[0].className.includes("gd-tool-inactive")) {
+        var gd = $('#gd-signature-context-panel');
+        if (button[0].className.includes("gd-tool-inactive")) {
                 if (isMobile()) {
                     $('.gd-tool-tooltip-mobile').hide();
                 }
                 $('#gd-signature-context-panel-title').html(typeTitle);
-                $('#gd-signature-context-panel').show();
+                gd.show();
+                $.each($('.gd-tool'), function (index, elem) {
+                    var attribute = elem.attributes['signature-type'];
+                    gd.removeClass(attribute.value);
+                });
                 $('.gd-tool-active').addClass("gd-tool-inactive");
                 $('.gd-tool-active').removeClass("gd-tool-active");
                 button.removeClass("gd-tool-inactive");
@@ -99,10 +104,11 @@ $(document).ready(function(){
                     $('.gd-tool-tooltip-mobile').show();
                 }
                 $('#gd-signature-context-panel-title').html("");
-                $('#gd-signature-context-panel').hide();
+                gd.hide();
                 button.removeClass("gd-tool-active");
                 button.addClass("gd-tool-inactive");
             }
+            gd.toggleClass(type);
         }
     });
 

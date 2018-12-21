@@ -503,7 +503,7 @@
         display: block;
     }
 
-    .gd-tool-tooltip {
+    .gd-tool-tooltip-mobile {
         color: #08090a !important;
         background-color: #fff !important;
         left: 100px !important;
@@ -530,46 +530,46 @@
     .gd-mobile-menu-close {
         cursor: pointer;
     }
-	
-	.gd-text-menu {		
+
+	.gd-text-menu {
 		position: fixed;
 		bottom: 0;
 		left: 0;
 		width: 100vw;
-		height: 75px;		
+		height: 75px;
 	}
-	
-	.gd-blur{		   
+
+	.gd-blur{
 		width: 100vw;
 		height: 75px;
 		background-color: #3E4E5A;
 		filter: blur(8px);
 		opacity: 0.7;
-		-webkit-filter: blur(4px);   
-		position: absolute; 
+		-webkit-filter: blur(4px);
+		position: absolute;
 		z-index: -1;
 	}
 	.gd-fonts-select {
 		font-size: 31px;
 		margin: 14px 29px 0 13px;
 		background-color: #717c84;
-		color: white;		
+		color: white;
 	}
 	.gd-text-menu i {
 		font-size: 25px;
 		color: white;
 		margin: 0 27px;
 	}
-	
-	.gd-text-color-picker {	
+
+	.gd-text-color-picker {
 		width: 37px;
-		height: 36px;		
+		height: 36px;
 		top: 8px;
 		margin: 0px 4px 0 20px;
 	}
-	
+
 	.fa-arrow-up{
-		color: #dcdcdc;		
+		color: #dcdcdc;
 		-moz-transition: all 0.5s linear;
 		-webkit-transition: all 0.5s linear;
 		transition: all 0.5s linear;
@@ -581,4 +581,16 @@
 		-webkit-transform:rotate(180deg);
 		transform:rotate(180deg);
 	}
+
+    .gd-signature-context-panel {
+        left: 100px;
+    }
+
+    .gd-signature-context-panel-title {
+        font-size: 20px;
+    }
+
+    .gd-signature-list-title > i {
+        font-size: 30px;
+    }
 }

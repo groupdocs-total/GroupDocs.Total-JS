@@ -48,8 +48,11 @@ SIGNATURE TOOL BAR
 .gd-tool .gd-popupdiv-hover {
     display: none;
 }
-.gd-tool > i {
+.gd-tool-inactive > i {
     color: #959da5;
+}
+.gd-tool-active > i {
+    color: #414E59;
 }
 .gd-tool:hover .gd-popupdiv-hover {
     display: block;
@@ -98,12 +101,64 @@ SIGNATURE TOOL BAR
     border-right-color: #000000;
     margin-top: -5px;
 }
+.gd-signature-context-panel {
+    display: none;
+    background-color: #F3F3F3;
+    left: 53px;
+    width: 200px;
+    height: 100%;
+    position: absolute;
+}
+.gd-signature-context-panel::after {
+    right: 100%;
+    top: 50%;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border: 5px solid rgba(0, 0, 0, 0);
+    border-right-color: #F3F3F3;
+    margin-top: -5px;
+}
+.gd-signature-context-panel.text::after {
+    top: 30px;
+}
+.gd-signature-context-panel.image::after {
+    top: 75px;
+}
+.gd-signature-context-panel.digital::after {
+    top: 120px;
+}
+.gd-signature-context-panel.qrCode::after {
+    top: 165px;
+}
+.gd-signature-context-panel.barCode::after {
+    top: 210px;
+}
+.gd-signature-context-panel.stamp::after {
+    top: 255px;
+}
+.gd-signature-context-panel.hand::after {
+    top: 300px;
+}
+.gd-signature-list-title > i {
+    color: #676767;
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+}
+.gd-signature-context-panel-title {
+    color: #AAAAAA;
+    font-size: 14px;
+    margin-left: 6px;
+}
 /*
 ******************************************
 MODAL
 ******************************************
 */
-.gd-signature-modal-dialog {   
+.gd-signature-modal-dialog {
     width: 700px !important;
     height: 500px !important;
 }

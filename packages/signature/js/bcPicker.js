@@ -124,7 +124,7 @@ $(document).ready(function(){
 	**/
 	$.fn.bcPicker.defaults = {
         // default color
-        defaultColor : "000000",
+        defaultColor : "00CCFF",
 
         // default color set
         colors : [

@@ -1,0 +1,11 @@
+@media (max-width: 1024px) {
+	.bcPicker-palette.top{
+		top: -570px;
+		right: 18px;
+	}
+
+	.bcPicker-palette.down{
+		top: 33px;
+		right: 18px;
+	}
+}

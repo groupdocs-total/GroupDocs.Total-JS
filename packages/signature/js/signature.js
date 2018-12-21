@@ -1918,12 +1918,21 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlLeftBarBase() {
         return '<div id="gd-left-bar-wrapper" class="gd-left-bar-wrapper">' +
-            // signature tools
-            '<div class="gd-left-bar-tools-container">' +
-            '<ul id="gd-signature-tools">' +
-            '</ul>' +
-            '</div>' +
-            '</div>';
+                    // signature tools
+                    '<div class="gd-left-bar-tools-container">' +
+                        '<ul id="gd-signature-tools">' +
+                        '</ul>' +
+                    '</div>' +
+                    '<div id="gd-signature-context-panel" class="gd-signature-context-panel">' +
+                        '<div class="gd-signature-list-title">' +
+                        '<i class="fa fa-plus"></i>' +
+                        '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
+                        '</div>' +
+                        '</div>' +
+                        '<div id="gd-signature-list" class="gd-signature-list">' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
     }
 
     function getHtmlDownloadPanel() {
@@ -1955,7 +1964,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlTextSignatureElement() {
         return '<li>' +
-                    '<button class="gd-tool gd-text-sign" id="gd-text-sign">' +
+                    '<button class="gd-tool gd-tool-inactive gd-text-sign" id="gd-text-sign" signature-type="text" signature-type-title="Texts">' +
                     '<i class="fas fa-font fa-lg fa-inverse"></i>' +
                     '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Text</span>' +
                     '</button>' +
@@ -1964,7 +1973,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlImageSignatureElement() {
         return '<li>' +
-                    '<button class="gd-tool gd-image-sign" id="gd-image-sign">' +
+                    '<button class="gd-tool gd-tool-inactive gd-image-sign" id="gd-image-sign" signature-type="image" signature-type-title="Uploaded images">' +
                     '<i class="fas fa-image fa-lg fa-inverse"></i>' +
                     '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Image</span>' +
                     '</button>' +
@@ -1973,7 +1982,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlDigitalSignatureElement() {
         return '<li>' +
-                    '<button class="gd-tool gd-digital-sign" id="gd-digital-sign">' +
+                    '<button class="gd-tool gd-tool-inactive gd-digital-sign" id="gd-digital-sign" signature-type="digital" signature-type-title="Certificates">' +
                     '<i class="fas fa-fingerprint fa-lg fa-inverse"></i>' +
                     '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Digital</span>' +
                     '</button>' +
@@ -1982,7 +1991,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlQrcodeSignatureElement() {
         return '<li>' +
-                    '<button class="gd-tool gd-qrcode-sign" id="gd-qrcode-sign">' +
+                    '<button class="gd-tool gd-tool-inactive gd-qrcode-sign" id="gd-qrcode-sign" signature-type="qrCode" signature-type-title="QR codes">' +
                     '<i class="fas fa-qrcode fa-lg fa-inverse"></i>' +
                     '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">QR code</span>' +
                     '</button>' +
@@ -1991,7 +2000,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlBarcodeSignatureElement() {
         return '<li>' +
-                    '<button class="gd-tool gd-barcode-sign" id="gd-barcode-sign">' +
+                    '<button class="gd-tool gd-tool-inactive gd-barcode-sign" id="gd-barcode-sign" signature-type="barCode" signature-type-title="Bar codes">' +
                     '<i class="fas fa-barcode fa-lg fa-inverse"></i>' +
                     '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Barcode</span>' +
                     '</button>' +
@@ -2000,7 +2009,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlStampSignatureElement() {
         return '<li>' +
-                    '<button class="gd-tool gd-stamp-sign" id="gd-stamp-sign">' +
+                    '<button class="gd-tool gd-tool-inactive gd-stamp-sign" id="gd-stamp-sign" signature-type="stamp" signature-type-title="Stamps">' +
                     '<i class="fas fa-stamp fa-lg fa-inverse"></i>' +
                     '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Stamp</span>' +
                     '</button>' +
@@ -2009,7 +2018,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlHandSignatureElement() {
         return '<li>' +
-                    '<button class="gd-tool gd-hand-sign" id="gd-hand-sign">' +
+                    '<button class="gd-tool gd-tool-inactive gd-hand-sign" id="gd-hand-sign" signature-type="hand" signature-type-title="Signatures">' +
                     '<i class="fas fa-signature fa-lg fa-inverse"></i>' +
                     '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Signature</span>' +
                     '</button>' +

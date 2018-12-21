@@ -1521,7 +1521,7 @@ function insertImage(image, pageNumber) {
 							'<a id="gd-edit" class="gd-image-edit" href="#">' +
 								'<i class="fa fa-pencil" aria-hidden="true"></i>' +
 							'</a>' +
-							'<input>' +
+							'<image id="gd-image-signature-' + currentImage + '" class="gd-signature-image" src="data:image/png;base64,' + image + '" alt></image>' +
 							resizeHandles +
 						'</div>';
     $("#gd-image-signature-" + currentImage).css('background-color','transparent');

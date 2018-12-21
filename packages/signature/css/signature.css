@@ -454,7 +454,6 @@ SIGNATURE IMAGE
     padding: 5px;
     box-shadow: #00000052 0px 0px 5px;
     background-color: #FFFFFF;
-    width: 55px;   
     border-radius: 3px;
     position: absolute;
     left: 0;
@@ -462,6 +461,10 @@ SIGNATURE IMAGE
     margin: auto;
     top: -45px;
     cursor: default;
+	width: max-content;
+}
+.gd-text-context-menu {
+	left: -48px;
 }
 .gd-context-menu .fa-arrows-alt {
     cursor: move;
@@ -471,9 +474,21 @@ SIGNATURE IMAGE
     margin: 4px;
 	width: 14px;
 	height: 14px;
+	font-size: 13px;
 }
 .gd-delete-signature {
     cursor: pointer;
+}
+.gd-fonts-select {
+	border: none;
+}
+.gd-text-color-picker{
+	position: relative;
+    width: 14px;
+    /* border-radius: 47px; */
+    height: 14px;
+    display: inline-block;
+    margin: 0 4px 0 4px;
 }
 
 /*

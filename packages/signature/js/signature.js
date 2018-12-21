@@ -1557,11 +1557,7 @@ function insertImage(image, pageNumber) {
         // set restriction for image resizing to current document page
         containment: "#gd-page-" + pageNumber,
         // set image resize handles
-        handles: {
-            'n': '.ui-resizable-n',
-            'e': '.ui-resizable-e',
-            's': '.ui-resizable-s',
-            'w': '.ui-resizable-w',
+        handles: {           
             'ne': '.ui-resizable-ne',
             'se': '.ui-resizable-se',
             'sw': '.ui-resizable-sw',
@@ -1722,11 +1718,7 @@ function getFonts() {
  * Get HTML of the resize handles - used to add resize handles to the added signature image
  */
 function getHtmlResizeHandles(){
-    return '<div class="ui-resizable-handle ui-resizable-n"></div>'+
-        '<div class="ui-resizable-handle ui-resizable-e"></div>'+
-        '<div class="ui-resizable-handle ui-resizable-s"></div>'+
-        '<div class="ui-resizable-handle ui-resizable-w"></div>'+
-        '<div class="ui-resizable-handle ui-resizable-ne"></div>'+
+    return '<div class="ui-resizable-handle ui-resizable-ne"></div>'+
         '<div class="ui-resizable-handle ui-resizable-se"></div>'+
         '<div class="ui-resizable-handle ui-resizable-sw"></div>'+
         '<div class="ui-resizable-handle ui-resizable-nw"></div>';

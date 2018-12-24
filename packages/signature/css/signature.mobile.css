@@ -112,8 +112,12 @@
     .gd-signature-thumbnail-image {
     }
 
+    .gd-left-bar-spinner {
+        top: 20%;
+    }
+
     .gd-signature-thumbnail {
-        width: 230px;
+        width: 80%;
         margin: 10px;
     }
 
@@ -588,15 +592,20 @@
 	
     .gd-signature-context-panel {
         left: 100px;
-        width: 250px;
+        width: 100%;
     }
 
     .gd-signature-context-panel-title {
         font-size: 20px;
     }
 
+    .gd-signature-list {
+        width: 100%;
+    }
+
     .gd-signature-list-title > i {
         font-size: 30px;
+        right: 20%;
     }
 
     .gd-signature-context-panel.text::after {

@@ -153,6 +153,11 @@ SIGNATURE TOOL BAR
     font-size: 14px;
     margin-left: 6px;
 }
+.gd-left-bar-spinner {
+    left: 20%;
+    top: 50%;
+    position: absolute;
+}
 /*
 ******************************************
 MODAL

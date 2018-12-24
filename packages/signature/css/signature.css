@@ -105,7 +105,7 @@ SIGNATURE TOOL BAR
     display: none;
     background-color: #F3F3F3;
     left: 53px;
-    width: 200px;
+	width: 260px;
     height: 100%;
     position: absolute;
 }
@@ -151,7 +151,7 @@ SIGNATURE TOOL BAR
 .gd-signature-context-panel-title {
     color: #AAAAAA;
     font-size: 14px;
-    margin-left: 6px;
+	margin: 14px 0 0 11px;
 }
 .gd-left-bar-spinner {
     left: 20%;
@@ -336,12 +336,18 @@ BROWSE SIGNATURES SLIDE
     height: 53px;
     display: inline-block;
     cursor: pointer;
-    margin: 5px;
+    padding-top: 2px;
+    margin-right: 6px;  
+    border-style: solid;
+    border-width: 1px;
 }
-.gd-signature-thumbnail-image {
-    width: 47px;
-    height: 47px;
-    margin: 3px;
+.gd-signature-thumbnail label {
+    margin-left: 5px !important;
+    top: 0px !important;
+}
+.gd-signature-thumbnail > input {
+    width: 150px;
+    height: 150px;
 }
 .gd-signature-radio {
     opacity: 0;

@@ -523,6 +523,13 @@ $(document).ready(function(){
         $('#gd-mobile-menu-close').hide();
         $('#gd-signature-context-panel').hide();
     });
+	
+	//////////////////////////////////////////////////
+    // Close lightbox dialog event
+    //////////////////////////////////////////////////
+    $('.gd-lightbox-close').on(userMouseClick, function(){
+		toggleLightBox(false)
+	});
 });
 
 /*
@@ -1715,6 +1722,41 @@ function download (button){
     }
 }
 
+/**
+* Toggle modal dialog
+* @param {boolean} open - open/close value
+* @param {string} title - title to display in modal dialog (popup)
+* @param {string} header - header HTML content
+* @param {string} content - body HTML content
+*/
+function toggleLightBox(open, title, header, content) {
+    if (open) {
+        $('#gd-lightbox-title').text(title);
+        $('#lightBoxDialog')
+			.css('opacity', 0)
+			.fadeIn('fast')
+			.animate(
+				{ opacity: 1 },
+				{ queue: false, duration: 'fast' }
+			);
+        $('#lightBoxDialog').addClass('in');
+        $(".gd-lightbox-header").append(header);
+		$("#gd-lightbox-body").append(content);
+    } else {
+        $('#lightBoxDialog').removeClass('in');
+        $('#lightBoxDialog')
+			.css('opacity', 1)
+			.fadeIn('fast')
+			.animate(
+				{ opacity: 0 },
+				{ queue: false, duration: 'fast' }
+			)
+			.css('display', 'none');
+        $(".gd-lightbox-header").html('');
+		$("#gd-lightbox-body").html('');
+    }
+}
+
 /*
 ******************************************************************
 ******************************************************************
@@ -1780,6 +1822,8 @@ GROUPDOCS.SIGNATURE PLUGIN
             options = $.extend(defaults, options);
 
             getHtmlDownloadPanel();
+			this.append(getHtmlLightboxBox);
+			
             $(gd_navbar).append(getHtmlSavePanel);
 
             $(".wrapper").append(getHtmlLeftBarBase);
@@ -1965,6 +2009,31 @@ GROUPDOCS.SIGNATURE PLUGIN
                     '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Signature</span>' +
                     '</button>' +
                 '</li>';
+    }
+	
+	function getHtmlLightboxBox() {
+        return '<div class="gd-modal fade" id="lightBoxDialog">' +
+			      '<div class="gd-modal-dialog">' +
+			        '<div class="gd-modal-content" id="gd-lightbox-content">' +
+			            // header
+			            '<div class="gd-modal-header">' +
+							'<div class="gd-modal-close gd-modal-close-action gd-lightbox-close"><span>&times;</span></div>' +
+							'<h4 class="gd-modal-title" id="gd-lightbox-title"></h4>' +
+							'<div class=gd-lightbox-header>' +
+								// header custom HTMl will be here
+							'</div>'+
+			            '</div>' +
+			            // body
+			            '<div class="gd-modal-body" id="gd-lightbox-body">' +
+							// lightBox body content elements will be here
+						'</div>' +
+			            // footer
+			            '<div class="gd-modal-footer">' +
+			            // empty footer
+			            '</div>' +
+			        '</div><!-- /.modal-content -->' +
+			      '</div><!-- /.modal-dialog -->' +
+			    '</div>';
     }
 
 })(jQuery);

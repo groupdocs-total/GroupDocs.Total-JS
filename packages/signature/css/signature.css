@@ -215,6 +215,11 @@ MODAL
     height: 88px;
     cursor: pointer;    
 }
+
+.gd-lightbox-close {   
+    right: 0;   
+    left: 13px;   
+}
 /*
 ******************************************
 SIGNING MODAL FOOTER

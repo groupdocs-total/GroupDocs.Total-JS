@@ -74,7 +74,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Open sign context panel
     //////////////////////////////////////////////////
-    $('#gd-digital-sign, #gd-image-sign, #gd-stamp-sign, #gd-qrcode-sign, #gd-barcode-sign, #gd-text-sign, #gd-hand-sign').on(userMouseClick, function(e){
+    $('.gd-tool').on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
@@ -568,6 +568,9 @@ function loadSignaturesTree(dir, callback) {
             $.each(returnedData, function(index, elem){
                 // document name
                 var name = elem.name;
+                if (signature.signatureType == 'qrCode' || signature.signatureType == 'barCode') {
+                    name = elem.text;
+                }
                 // document guid
                 var guid = elem.guid;
                 // append signature
@@ -582,7 +585,7 @@ function loadSignaturesTree(dir, callback) {
                         imageBlock = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + elem.image + '" alt></image>';
                     }
 
-                    $('#gd-signature-list').append('<div class="gd-signature gd-signature-thumbnail">' +
+                    $('#gd-signature-list').append('<div item-id="' + index + '" id="gd-signature-' + index + '" class="gd-signature gd-signature-thumbnail">' +
                         imageBlock +
                         '<label for="gd-signature-' + index + '" class="gd-signature-name" data-guid="' + guid + '">' + name + '</label>' +
                         '<i class="fa fa-trash-o"></i>' +
@@ -1984,7 +1987,7 @@ GROUPDOCS.SIGNATURE PLUGIN
                     '</button>' +
                 '</li>';
     }
-	
+
 	function getHtmlLightboxBox() {
         return '<div class="gd-modal fade" id="lightBoxDialog">' +
 			      '<div class="gd-modal-dialog">' +

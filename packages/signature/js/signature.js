@@ -1918,6 +1918,9 @@ GROUPDOCS.SIGNATURE PLUGIN
                         '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
                         '</div>' +
                         '</div>' +
+
+                        '<div id="gd-left-bar-spinner" class="gd-left-bar-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading...</div>' +
+
                         '<div id="gd-signature-list" class="gd-signature-list">' +
                         '</div>' +
                     '</div>' +

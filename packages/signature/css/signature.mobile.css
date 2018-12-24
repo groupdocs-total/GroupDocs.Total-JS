@@ -98,26 +98,27 @@
         height: 70%;
     }
 
-    .gd-signature-thumbnail {
-        width: 407px;
-        height: 344px;
-    }
-
     .gd-signature-thumbnail > input {
         width: 375px;
         height: 294px;
     }
 
-    .gd-signature-radio + .gd-signature-name:before, .gd-signature-radio + .gd-all-pages-label:before {
+    .gd-signature-radio + .gd-all-pages-label:before {
         width: 42px;
         height: 42px;
         font-size: 37px;
     }
 
     .gd-signature-thumbnail-image {
-        width: 401px;
-        height: 341px;
-        margin-top: -69px;
+    }
+
+    .gd-signature-thumbnail {
+        width: 230px;
+        margin: 10px;
+    }
+
+    .gd-signature i {
+        margin-left: 148px;
     }
 
     #gd-signing-footer div {
@@ -322,7 +323,7 @@
 		margin-left: 14px;
 	}
 
-	.gd-signature-name, .gd-all-pages-label {		
+	.gd-all-pages-label {
 		font-size: 56px !important;
 	}
 	
@@ -351,10 +352,6 @@
     #gd-modal-signed {
         top: 127px !important;
         font-size: 45px !important;
-    }
-
-    .gd-signature-name {
-        font-size: 43px !important;
     }
 
     .gd-signature-information {

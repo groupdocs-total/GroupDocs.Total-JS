@@ -160,36 +160,19 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Optical sign event
     //////////////////////////////////////////////////
-    // TODO: deprecated
-    $('#qd-qr-sign, #qd-barcode-sign').on(userMouseClick, function(e){
+	$("#gd-new-signature").on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
             signature.signatureGuid = "";
-            if($(e.target).attr("id") == "qd-qr-sign"){
+            if($(".fa-plus").parent().parent().prop('className').indexOf("qrCode") != -1){
                 signature.signatureType = "qrCode";
-            } else {
+            } else if ($(".fa-plus").parent().parent().prop('className').indexOf("barCode") != -1) {
                 signature.signatureType = "barCode";
-            }
-
-            toggleModalDialog(true, "Optical Signature", getHtmlImageSign());
-            $(".gd-modal-dialog").addClass("gd-signature-modal-dialog");
-            loadSignaturesTree('', function(){
-                $('#modalDialog .gd-modal-title').text("Signing Document");
-                $("#gd-signature-select-step").remove();
-                if( $("#gd-signature-draw-step").length == 0){
-                    var drawStep = getHtmlDrawModal("optical");
-                    $(drawStep).insertBefore("#gd-signature-page-select-step");
-                }
-                // open draw signatures step
-                switchSlide(1, 0, "right");
-                // set currently active step pagination
-                if (!$($(".gd-pagination")[0]).hasClass("gd-pagination-active")) {
-                    $($(".gd-pagination")[0]).addClass("gd-pagination-active")
-                }
-                $("#gd-signing-footer").show();
-                $("#gd-draw-optical").opticalCodeGenerator();
-            });
+            } else {
+				return;
+			}               
+			$("#gd-signature-context-panel").opticalCodeGenerator();          
         }
     });
 
@@ -434,26 +417,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, 'button#csg-shape-add', function(){
         $(".gd-signature-select").removeClass("gd-signing-disabled");
-    });
-
-    //////////////////////////////////////////////////
-    // Export drawn Optical signature
-    //////////////////////////////////////////////////
-    $('.gd-modal-body').on('change', '.gd-qr-property', function(){
-        var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
-        opticalProperties.imageGuid = signature.signatureGuid;
-        saveDrawnOpticalCode(opticalProperties);
-    });
-
-    //////////////////////////////////////////////////
-    // Export drawn Optical signature - detect Color border change event
-    //////////////////////////////////////////////////
-    $('.gd-modal-body').on(userMouseClick, '#gd-qr-border-color .bcPicker-color', function(){
-        var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
-        opticalProperties.borderColor = $(this).css("background-color");
-        opticalProperties.imageGuid = signature.signatureGuid;
-        saveDrawnOpticalCode(opticalProperties);
-    });
+    });       
 
     //////////////////////////////////////////////////
     // Export drawn Text signature
@@ -921,47 +885,6 @@ function saveDrawnStamp(callback) {
     }).done(function(data){
         if(typeof callback == "function") {
             callback(data);
-        }
-    });
-}
-
-/**
- * Save drawn QR-Code signature
- * @param {Object} properties - Optical properties
- */
-function saveDrawnOpticalCode(properties) {
-    // current document guid is taken from the viewer.js globals
-    var data = {properties: properties, signatureType: signature.signatureType};
-    $('#gd-modal-spinner').show();
-    // sign the document
-    $.ajax({
-        type: 'POST',
-        url: getApplicationPath("saveOpticalCode"),
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function(returnedData) {
-            $('#gd-modal-spinner').hide();
-            if(returnedData.message != undefined){
-                // open error popup
-                printMessage(returnedData.message);
-                return;
-            }
-            $('#gd-modal-spinner').hide();
-            // set curent signature data
-            signature.signatureGuid = returnedData.imageGuid;
-            signature.imageHeight = returnedData.height;
-            signature.imageWidth = returnedData.width;
-            $("#gd-qr-preview-container").html("");
-            var prevewImage = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + returnedData.encodedImage + '" alt></image>';
-            $("#gd-qr-preview-container").append(prevewImage);
-            $(".gd-signature-select").removeClass("gd-signing-disabled");
-        },
-        error: function(xhr, status, error) {
-            var err = eval("(" + xhr.responseText + ")");
-            console.log(err.Message);
-            $('#gd-modal-spinner').hide();
-            // open error popup
-            printMessage(err.message);
         }
     });
 }
@@ -1925,9 +1848,9 @@ GROUPDOCS.SIGNATURE PLUGIN
                     '</div>' +
                     '<div id="gd-signature-context-panel" class="gd-signature-context-panel">' +
                         '<div class="gd-signature-list-title">' +
-                        '<i class="fa fa-plus"></i>' +
-                        '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
-                        '</div>' +
+							'<i class="fa fa-plus" id="gd-new-signature"></i>' +
+							'<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
+							'</div>' +
                         '</div>' +
                         '<div id="gd-signature-list" class="gd-signature-list">' +
                         '</div>' +

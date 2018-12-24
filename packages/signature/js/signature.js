@@ -157,7 +157,7 @@ $(document).ready(function(){
             loadSignaturesTree('', openSigningFirstStepModal);
         }
     });
-
+*/
     //////////////////////////////////////////////////
     // Optical sign event
     //////////////////////////////////////////////////
@@ -176,7 +176,7 @@ $(document).ready(function(){
 			$("#gd-signature-context-panel").opticalCodeGenerator();          
         }
     });
-
+/*
     //////////////////////////////////////////////////
     // Text sign event
     //////////////////////////////////////////////////

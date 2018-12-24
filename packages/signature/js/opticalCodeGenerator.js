@@ -25,8 +25,15 @@ $(document).ready(function () {
         $("#gd-add-optical-signature").remove();
     });
 	
+	//////////////////////////////////////////////////
+    // Add new optical code signature into the list
+    //////////////////////////////////////////////////  
+	$("body").on(userMouseClick, ".gd-add-optical", function () {
+        loadSignaturesTree('');
+    });
+	
 });
-
+ 
 (function( $ ) {
 
 	/**
@@ -36,15 +43,17 @@ $(document).ready(function () {
 		text : 'gd-qr-text'		
 	}
 
-	$.fn.opticalCodeGenerator = function() {  
-		var title = "";
-		if (signature.signatureType == "qrCode")
-		{
-			title = "QR Code";
-		} else {
-			title = "Bar Code";
+	$.fn.opticalCodeGenerator = function(e) {
+		if($(this).find("#gd-qr-text").length == 0){
+			var title = "";
+			if (signature.signatureType == "qrCode")
+			{
+				title = "QR Code";
+			} else {
+				title = "Bar Code";
+			}
+			$(this).prepend($.fn.opticalCodeGenerator.baseHtml(title));
 		}
-		$(this).prepend($.fn.opticalCodeGenerator.baseHtml(title));
 	}
 
 	$.extend(true, $.fn.opticalCodeGenerator, {

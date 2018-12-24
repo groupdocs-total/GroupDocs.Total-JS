@@ -153,6 +153,11 @@ SIGNATURE TOOL BAR
     font-size: 14px;
     margin-left: 6px;
 }
+.gd-left-bar-spinner {
+    left: 20%;
+    top: 50%;
+    position: absolute;
+}
 /*
 ******************************************
 MODAL
@@ -305,53 +310,50 @@ BROWSE SIGNATURES SLIDE
     background-color: #e5e5e5;  
 }
 .gd-signature i {
-    margin-left: 17px;
+    position: absolute;
+    margin-left: 108px;
+    margin-top: 15px;
+    color: #676767;
     cursor: pointer;
 }
 .gd-signature .fa-folder {
     margin-left: 17px;
 }
 .gd-signature .gd-signature-name {
-    margin-left: 14px;
+    margin: 3px;
+    font-size: 14px;
+    color: #AAAAAA;
+    position: absolute;
+    height: 50px;
+    width: 100px;
 }
 .gd-signature .fa-level-up {
     margin-left: 23px;
 }
 .gd-signature-thumbnail {
     background-color: #ffffff;
-    width: 152px;
-    height: 152px;
-    display: inline-block;   
+    width: 184px;
+    height: 53px;
+    display: inline-block;
     cursor: pointer;
-    padding-top: 2px;
-    margin-right: 6px;  
-    border-style: solid;
-    border-width: 1px;
-}
-.gd-signature-thumbnail label {
-    margin-left: 5px !important;
-    top: 0px !important;
-}
-.gd-signature-thumbnail > input {
-    width: 150px;
-    height: 150px;
+    margin: 5px;
 }
 .gd-signature-thumbnail-image {
-    width: 150px;
-    height: 150px;
-    margin-top: -35px;
+    width: 47px;
+    height: 47px;
+    margin: 3px;
 }
 .gd-signature-radio {
     opacity: 0;
     position: absolute;
 }
-.gd-signature-radio, .gd-signature-name, .gd-all-pages-label {
+.gd-signature-radio, .gd-all-pages-label {
     display: inline-block;
     vertical-align: middle;
     margin: 5px;
     cursor: pointer;
 }
-.gd-signature-name, .gd-all-pages-label{
+.gd-all-pages-label{
     position: relative;
     color: #0c0b0b !important;
     font-size: 16px !important;

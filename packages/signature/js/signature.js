@@ -86,6 +86,7 @@ $(document).ready(function(){
             var typeTitle = button.attr("signature-type-title");
             var gd = $('#gd-signature-context-panel');
             if (button[0].className.includes("gd-tool-inactive")) {
+                loadSignaturesTree('');
                 if (isMobile()) {
                     $('.gd-tool-tooltip-mobile').hide();
                 }
@@ -112,7 +113,7 @@ $(document).ready(function(){
         }
     });
 
-    //////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////
     // Digital sign event
     //////////////////////////////////////////////////
     // TODO: deprecated
@@ -209,7 +210,7 @@ $(document).ready(function(){
             loadSignaturesTree('', openSigningFirstStepModal);
         }
     });
-
+*/
     //////////////////////////////////////////////////
     // Open signatures browse button click
     //////////////////////////////////////////////////
@@ -571,10 +572,11 @@ FUNCTIONS
  * @param {object} callback - function that will be executed after ajax call
  */
 function loadSignaturesTree(dir, callback) {
+    $('#gd-signature-list').html("");
     var data = {path: dir, signatureType: signature.signatureType};
     currentDirectory = dir;
     // show loading spinner
-    $('#gd-modal-spinner').show();
+    $('#gd-left-bar-spinner').show();
     // get data
     $.ajax({
         type: 'POST',
@@ -589,46 +591,33 @@ function loadSignaturesTree(dir, callback) {
                 return;
             }
             // hide loading spinner
-            $('#gd-modal-spinner').hide();
+            $('#gd-left-bar-spinner').hide();
             // append files to tree list
-            var signatures = "";
             $.each(returnedData, function(index, elem){
                 // document name
                 var name = elem.name;
                 // document guid
                 var guid = elem.guid;
                 // append signature
-                var icon = elem.isDirectory? "fa-folder" : "fa-file-o";
                 if(elem.isDirectory){
-                    signatures = signatures + '<div class="gd-signature">'+
-                        '<i class="fa ' + icon + '"></i>'+
+                    $('#gd-signature-list').append('<div class="gd-signature">'+
+                        '<i class="fa fa-folder"></i>'+
                         '<div class="gd-signature-name" data-guid="' + guid + '">' + name + '</div>'+
-                        '</div>';
+                        '</div>');
                 } else {
-                    if(signature.signatureType == "image" || signature.signatureType == "stamp" || signature.signatureType == "text"){
-                        signatures = signatures + '<div class="gd-signature gd-signature-thumbnail">' +
-                            '<input id="gd-radio' + index + '" class="gd-signature-radio" name="gd-radio" type="radio">' +
-                            '<label for="gd-radio' + index + '" class="gd-signature-name" data-guid="' + guid + '"></label>' +
-                            '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + elem.image + '" alt></image>' +
-                            '</div>';
-                    } else {
-                        signatures = signatures + '<div class="gd-signature gd-digital-signature">' +
-                            '<input id="gd-radio' + index + '" class="gd-signature-radio" name="gd-radio" type="radio">' +
-                            '<label for="gd-radio' + index + '" class="gd-signature-name" data-guid="' + guid + '">' + name + '</label>' +
-                            '</div>';
+                    var imageBlock = name;
+                    if (signature.signatureType != "digital") {
+                        imageBlock = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + elem.image + '" alt></image>';
                     }
+
+                    $('#gd-signature-list').append('<div class="gd-signature gd-signature-thumbnail">' +
+                        imageBlock +
+                        '<label for="gd-signature-' + index + '" class="gd-signature-name" data-guid="' + guid + '">' + name + '</label>' +
+                        '<i class="fa fa-trash-o"></i>' +
+                        '</div>');
                 }
 
             });
-            // append go up element if current directory is not a root directory
-            var goUpHtml = "";
-            if(currentDirectory != ""){
-                goUpHtml = '<div class="gd-signature gd-go-up-signature">'+
-                    '<i class="fa fa-level-up"></i>'+
-                    '<i>...</i>'+
-                    '</div>';
-            }
-            $("#gd-signatures").html(goUpHtml + signatures);
             // check if document was changed
             if(currentDocumentGuid != documentGuid){
                 // if changed - drop signatures from previous signing
@@ -639,7 +628,7 @@ function loadSignaturesTree(dir, callback) {
         },
         error: function(xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
-            console.log(err.Message);
+            console.log(err.message);
             // open error popup
             toggleModalDialog(false, "");
             printMessage(err.message);
@@ -1750,9 +1739,9 @@ function getFonts() {
 		error: function(xhr, status, error) {
 			var err = eval("(" + xhr.responseText + ")");
 			console.log(err.Message);
-			$('#gd-modal-spinner').hide();
+			//$('#gd-modal-spinner').hide();
 			// open error popup
-			printMessage(err.message);
+			//printMessage(err.message);
 		}
     });
 }
@@ -1929,6 +1918,9 @@ GROUPDOCS.SIGNATURE PLUGIN
                         '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
                         '</div>' +
                         '</div>' +
+
+                        '<div id="gd-left-bar-spinner" class="gd-left-bar-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading...</div>' +
+
                         '<div id="gd-signature-list" class="gd-signature-list">' +
                         '</div>' +
                     '</div>' +

@@ -78,19 +78,13 @@
 			var font = $(this).find('#' + paramValues.font).val();
 			var fontSize = parseInt($(this).find('#' + paramValues.fontSize).val());
 			properties = {
-				text: text,
-				borderColor: borderColor,
-				borderStyle: borderStyle,
-				borderWidth: borderWidth,
-				backgroundColor: backgroundColor,
+				text: text,			
 				fontColor: fontColor,
 				bold: bold,
 				italic: italic,
 				underline: underline,
 				font: font,
-				fontSize: fontSize,
-				width: paramValues.width,
-				height: paramValues.height
+				fontSize: fontSize				
 			};
 			return properties;
 		}	

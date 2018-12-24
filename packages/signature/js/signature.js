@@ -78,6 +78,7 @@ $(document).ready(function(){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
+			$("#gd-add-optical-signature").remove();
             var button = $(this);
             var type = button.attr("signature-type");
             if (type) {
@@ -105,7 +106,7 @@ $(document).ready(function(){
                     $('.gd-tool-tooltip-mobile').show();
                 }
                 $('#gd-signature-context-panel-title').html("");
-                gd.hide();
+                gd.hide();				
                 button.removeClass("gd-tool-active");
                 button.addClass("gd-tool-inactive");
             }

@@ -110,15 +110,29 @@
     }
 
     .gd-signature-thumbnail-image {
+        width: 94px;
+        height: 94px;
+    }
+
+    .gd-signature .gd-signature-name {
+        width: Calc(100% - 150px);
+        font-size: 32px;
+    }
+
+    .gd-left-bar-spinner {
+        top: 20%;
     }
 
     .gd-signature-thumbnail {
-        width: 230px;
-        margin: 10px;
+        width: 85%;
+        margin: 20px;
+        height: 100px;
     }
 
     .gd-signature i {
-        margin-left: 148px;
+        font-size: 32px;
+        right: 20px;
+        top: 25px;
     }
 
     #gd-signing-footer div {
@@ -485,7 +499,7 @@
     .gd-tool {
         width: 100%;
         text-align: left;
-        margin: 25px 0px 0px 10px;
+        margin: 65px 0px 0px 10px;
     }
 
     .gd-left-bar-tools-container {
@@ -588,42 +602,53 @@
 	
     .gd-signature-context-panel {
         left: 100px;
-        width: 250px;
+        width: 100%;
     }
 
     .gd-signature-context-panel-title {
-        font-size: 20px;
+        font-size: 32px;
+        margin: 20px;
+    }
+
+    .gd-signature-list {
+        width: 100%;
     }
 
     .gd-signature-list-title > i {
         font-size: 30px;
+        right: 15%;
+    }
+
+    .gd-signature-context-panel::after {
+        border: 10px solid rgba(0, 0, 0, 0);
+        border-right-color: #F3F3F3;
     }
 
     .gd-signature-context-panel.text::after {
-        top: 50px;
+        top: 90px;
     }
 
     .gd-signature-context-panel.image::after {
-        top: 115px;
+        top: 195px;
     }
 
     .gd-signature-context-panel.digital::after {
-        top: 180px;
+        top: 300px;
     }
 
     .gd-signature-context-panel.qrCode::after {
-        top: 245px;
+        top: 410px;
     }
 
     .gd-signature-context-panel.barCode::after {
-        top: 315px;
+        top: 520px;
     }
 
     .gd-signature-context-panel.stamp::after {
-        top: 355px;
+        top: 630px;
     }
 
     .gd-signature-context-panel.hand::after {
-        top: 410px;
+        top: 730px;
     }
 }

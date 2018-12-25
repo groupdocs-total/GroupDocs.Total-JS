@@ -142,6 +142,14 @@ SIGNATURE TOOL BAR
 .gd-signature-context-panel.hand::after {
     top: 300px;
 }
+.gd-signature-list-wrapper {
+    display: flex;
+    height: 100%;
+}
+.gd-signature-list-scroll {
+    overflow-x: hidden;
+    overflow-y: auto !important;
+}
 .gd-signature-list-title > i {
     color: #676767;
     position: absolute;
@@ -331,6 +339,7 @@ BROWSE SIGNATURES SLIDE
     position: absolute;
     height: 50px;
     width: 146px;
+    cursor: pointer;
 }
 .gd-signature .fa-level-up {
     margin-left: 23px;

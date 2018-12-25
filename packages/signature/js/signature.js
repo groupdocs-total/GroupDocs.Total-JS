@@ -1790,6 +1790,7 @@ GROUPDOCS.SIGNATURE PLUGIN
                 qrCodeSignature: true,
                 barCodeSignature: true,
                 stampSignature: true,
+                handSignature: true,
                 downloadOriginal: true,
                 downloadSigned: true,
 				defaultDocument: "",

@@ -38,6 +38,7 @@ var signature = {
     documentType: "",
 	deleted: false
 }
+var draggableSignaturePosition={};
 var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
 // new UI feature both variables
 var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-trash-alt fa-sm gd-delete-signature"];
@@ -93,12 +94,7 @@ $(document).ready(function(){
                 }
                 $('#gd-signature-context-panel-title').html(typeTitle);
                 gd.show();
-                $.each($('.gd-tool'), function (index, elem) {
-                    var attribute = elem.attributes['signature-type'];
-                    gd.removeClass(attribute.value);
-                });
-                $('.gd-tool-active').addClass("gd-tool-inactive");
-                $('.gd-tool-active').removeClass("gd-tool-active");
+                inactiveAll();
                 button.removeClass("gd-tool-inactive");
                 button.addClass("gd-tool-active");
             } else {
@@ -106,7 +102,7 @@ $(document).ready(function(){
                     $('.gd-tool-tooltip-mobile').show();
                 }
                 $('#gd-signature-context-panel-title').html("");
-                gd.hide();				
+                gd.hide();
                 button.removeClass("gd-tool-active");
                 button.addClass("gd-tool-inactive");
             }
@@ -173,8 +169,8 @@ $(document).ready(function(){
                 signature.signatureType = "barCode";
             } else {
 				return;
-			}               
-			$("#gd-signature-context-panel").opticalCodeGenerator();          
+			}
+			$("#gd-signature-context-panel").opticalCodeGenerator();
         }
     });
 /*
@@ -318,7 +314,7 @@ $(document).ready(function(){
             $(this).css("background-color", "#3e4e5a");
         } else {
             $(".gd-signature-select").removeClass("gd-signing-disabled");
-        }		
+        }
     });
 
     //////////////////////////////////////////////////
@@ -419,7 +415,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, 'button#csg-shape-add', function(){
         $(".gd-signature-select").removeClass("gd-signing-disabled");
-    });       
+    });
 
     //////////////////////////////////////////////////
     // Export drawn Text signature
@@ -479,7 +475,7 @@ $(document).ready(function(){
     $('#gd-btn-upload').on(userMouseClick, function (e) {
         $(".gd-modal-dialog").removeClass("gd-signature-modal-dialog");
     });
-	
+
 	//////////////////////////////////////////////////
     //Signature click event
     //////////////////////////////////////////////////
@@ -489,7 +485,7 @@ $(document).ready(function(){
 		}
 		$(e.target.parentElement).find(".gd-context-menu").removeClass("hidden");
 	});
-	
+
 	//////////////////////////////////////////////////
     // Delete signature click event
     //////////////////////////////////////////////////
@@ -522,14 +518,23 @@ $(document).ready(function(){
         $('#gd-mobile-menu-open').show();
         $('#gd-mobile-menu-close').hide();
         $('#gd-signature-context-panel').hide();
+        inactiveAll();
     });
-	
+
 	//////////////////////////////////////////////////
     // Close lightbox dialog event
     //////////////////////////////////////////////////
     $('.gd-lightbox-close').on(userMouseClick, function(){
 		toggleLightBox(false)
 	});
+
+    //////////////////////////////////////////////////
+    // Choose signature event by click
+    //////////////////////////////////////////////////
+    $('#gd-signature-list').on(userMouseClick, '.gd-signature-item', function (e) {
+        var sign = $(this);
+        selectSignature(sign);
+    });
 });
 
 /*
@@ -537,6 +542,34 @@ $(document).ready(function(){
 FUNCTIONS
 ******************************************************************
 */
+
+/**
+ * Select signature from list
+ * @param sign
+ */
+function selectSignature(sign) {
+    signature.signatureGuid = sign.attr("data-guid");
+    loadSignatureImage();
+    $('#gd-signature-context-panel').hide();
+    if (isMobile()) {
+        $('#gd-left-bar-wrapper').hide();
+        $('#gd-mobile-menu-open').show();
+        $('#gd-mobile-menu-close').hide();
+    }
+    inactiveAll();
+}
+
+/**
+ * Inactive all menu items in left bar
+ */
+function inactiveAll() {
+    $.each($('.gd-tool'), function (index, elem) {
+        var attribute = elem.attributes['signature-type'];
+        $('#gd-signature-context-panel').removeClass(attribute.value);
+    });
+    $('.gd-tool-active').addClass("gd-tool-inactive");
+    $('.gd-tool-active').removeClass("gd-tool-active");
+}
 
 /**
  * Load file tree
@@ -585,14 +618,31 @@ function loadSignaturesTree(dir, callback) {
                         imageBlock = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + elem.image + '" alt></image>';
                     }
 
-                    $('#gd-signature-list').append('<div item-id="' + index + '" id="gd-signature-' + index + '" class="gd-signature gd-signature-thumbnail">' +
+                    $('#gd-signature-list').append(
+                        '<div data-guid="' + guid + '" id="gd-signature-item-' + index + '" class="gd-signature-item gd-signature gd-signature-thumbnail ui-draggable ui-draggable-handle">' +
                         imageBlock +
-                        '<label for="gd-signature-' + index + '" class="gd-signature-name" data-guid="' + guid + '">' + name + '</label>' +
+                        '<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
                         '<i class="fa fa-trash-o"></i>' +
                         '</div>');
+
+                    if (!isMobile()) {
+                        $('#gd-signature-item-' + index).draggable({
+                            start: function() {
+                                $('#gd-signature-list').removeClass("gd-signature-list-scroll");
+                            },
+                            stop: function () {
+                                var sign = $(this);
+                                draggableSignaturePosition.left = sign.position().left - sign[0].offsetWidth;
+                                draggableSignaturePosition.top = sign.position().top - sign[0].offsetHeight;
+                                selectSignature(sign);
+                                $('#gd-signature-list').addClass("gd-signature-list-scroll");
+                            }
+                        });
+                    }
                 }
 
             });
+
             // check if document was changed
             if(currentDocumentGuid != documentGuid){
                 // if changed - drop signatures from previous signing
@@ -1404,11 +1454,22 @@ function setAdditionalInformation(){
 }
 
 /**
+ * Get current page number
+ * @returns {number}
+ */
+function getCurrentPageNumber() {
+    var pagesAttr = $('#gd-page-num').text().split('/');
+    var currentPageNumber = parseInt(pagesAttr[0]);
+    return currentPageNumber;
+}
+
+/**
  * Get selected signature image stream
  */
 function loadSignatureImage() {
-	// current document guid is taken from the viewer.js globals
-	var data = { guid: signature.signatureGuid, page: 1, password: "" };
+    var currentPageNumber = getCurrentPageNumber();
+    // current document guid is taken from the viewer.js globals
+	var data = { guid: signature.signatureGuid, page: currentPageNumber, password: "" };
 	$('#gd-modal-spinner').show();
 	// load signature image from the storage
 	$.ajax({
@@ -1425,27 +1486,16 @@ function loadSignatureImage() {
 			}
 			// when ajax is done insert loaded image into the document page
 			toggleModalDialog(false, "");
-			var signatureGuid = "";
-			var signatureType = "";
-			var width = 0;
-			var height = 0;
-			// check if image should be added to all pages
 			// insert image over the selected document page
-			for (n = 0; n < pagesDiapason.length; n++){
-				signature.pageNumber = pagesDiapason[n];
-				 if(typeof(signature.signatureGuid) != "undefined"){
-					signatureType = signature.signatureType;
-					signatureGuid = signature.signatureGuid;
-					width = signature.imageWidth;
-					height = signature.imageHeight;
-				}
-				signature.deleted = false;
-				signature.signatureGuid = signatureGuid;
-				signature.signatureType = signatureType;
-				signature.imageWidth = width;
-				signature.imageHeight = height;
-				insertImage(returnedData.pageImage, pagesDiapason[n]);
-			}
+            signature.pageNumber = currentPageNumber;
+            signature.deleted = false;
+            if(typeof(signature.signatureGuid) == "undefined"){
+                signature.signatureGuid = "";
+                signature.signatureType = "";
+                signature.imageWidth = 0;
+                signature.imageHeight = 0;
+            }
+            insertImage(returnedData.pageImage, currentPageNumber);
 		},
 		error: function(xhr, status, error) {
 			var err = eval("(" + xhr.responseText + ")");
@@ -1475,8 +1525,13 @@ function insertImage(image, pageNumber) {
 	// new UI
 	var contextMenu = getContextMenu("gd-image-signature-" + currentImage, signature.signatureType);
 	signature.id = currentImage;
+    var style = "";
+    if (draggableSignaturePosition && draggableSignaturePosition.left && draggableSignaturePosition.top) {
+        style = 'left: ' + draggableSignaturePosition.left + 'px; top: ' + draggableSignaturePosition.top + 'px;';
+        draggableSignaturePosition = {};
+    }
     // prepare signature image HTML
-    var signatureHtml = '<div id="gd-draggable-helper-' + currentImage + '"  class="gd-draggable-helper gd-signature">' +
+    var signatureHtml = '<div id="gd-draggable-helper-' + currentImage + '"  class="gd-draggable-helper gd-signature" style="'+ style+'">' +
 							contextMenu +
 							'<a id="gd-apply" class="gd-image-apply" href="#">' +
 								'<i class="fa fa-check-circle" aria-hidden="true"></i>' +
@@ -1893,7 +1948,9 @@ GROUPDOCS.SIGNATURE PLUGIN
 
                         '<div id="gd-left-bar-spinner" class="gd-left-bar-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading...</div>' +
 
-                        '<div id="gd-signature-list" class="gd-signature-list">' +
+                        '<div id="gd-signature-list-wrapper" class="gd-signature-list-wrapper">' +
+                            '<div id="gd-signature-list" class="gd-signature-list gd-signature-list-scroll">' +
+                            '</div>' +
                         '</div>' +
                     '</div>' +
                 '</div>';
@@ -1988,7 +2045,7 @@ GROUPDOCS.SIGNATURE PLUGIN
                     '</button>' +
                 '</li>';
     }
-
+	
 	function getHtmlLightboxBox() {
         return '<div class="gd-modal fade" id="lightBoxDialog">' +
 			      '<div class="gd-modal-dialog">' +

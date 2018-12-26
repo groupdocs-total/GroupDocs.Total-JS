@@ -531,7 +531,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Choose signature event by click
     //////////////////////////////////////////////////
-    $('#gd-signature-list').on(userMouseClick, '.gd-signature-item', function (e) {
+    $('#gd-signature-list').on(userMouseClick, '#gd-signature-clickable', function (e) {
         var sign = $(this);
         selectSignature(sign);
     });
@@ -542,6 +542,16 @@ $(document).ready(function(){
 FUNCTIONS
 ******************************************************************
 */
+
+function fadeLeftBar(on) {
+    if (on) {
+        $('#gd-left-bar-fade').show();
+        $('#gd-left-bar-spinner').show();
+    } else {
+        $('#gd-left-bar-fade').hide();
+        $('#gd-left-bar-spinner').hide();
+    }
+}
 
 /**
  * Select signature from list
@@ -571,21 +581,13 @@ function inactiveAll() {
     $('.gd-tool-active').removeClass("gd-tool-active");
 }
 
-/**
- * Load file tree
- * @param {string} dir - files location directory
- * @param {object} callback - function that will be executed after ajax call
- */
-function loadSignaturesTree(dir, callback) {
-    $('#gd-signature-list').html("");
-    var data = {path: dir, signatureType: signature.signatureType};
-    currentDirectory = dir;
+function deleteSignatureFile(guid) {
+    var data = {guid: guid, signatureType: signature.signatureType};
     // show loading spinner
-    $('#gd-left-bar-spinner').show();
-    // get data
+    fadeLeftBar(true);
     $.ajax({
         type: 'POST',
-        url: getApplicationPath('loadFileTree'),
+        url: getApplicationPath('deleteSignatureFile'),
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function(returnedData) {
@@ -596,7 +598,47 @@ function loadSignaturesTree(dir, callback) {
                 return;
             }
             // hide loading spinner
-            $('#gd-left-bar-spinner').hide();
+            fadeLeftBar(false);
+            loadSignaturesTree('');
+        },
+        error: function(xhr, status, error) {
+            // hide loading spinner
+            fadeLeftBar(false);
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.message);
+            // open error popup
+            toggleModalDialog(false, "");
+            printMessage(err.message);
+        }
+    });
+}
+
+/**
+ * Load file tree
+ * @param {string} dir - files location directory
+ * @param {object} callback - function that will be executed after ajax call
+ */
+function loadSignaturesTree(dir, callback) {
+    $('#gd-signature-list').html("");
+    var data = {path: dir, signatureType: signature.signatureType};
+    currentDirectory = dir;
+    // show loading spinner
+    fadeLeftBar(true);
+    // get data
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('loadFileTree'),
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(returnedData) {
+            // hide loading spinner
+            fadeLeftBar(false);
+            // open error popup
+            if(returnedData.message != undefined){
+                toggleModalDialog(false, "");
+                printMessage(returnedData.message);
+                return;
+            }
             // append files to tree list
             $.each(returnedData, function(index, elem){
                 // document name
@@ -620,8 +662,10 @@ function loadSignaturesTree(dir, callback) {
 
                     $('#gd-signature-list').append(
                         '<div data-guid="' + guid + '" id="gd-signature-item-' + index + '" class="gd-signature-item gd-signature gd-signature-thumbnail ui-draggable ui-draggable-handle">' +
+                        '<div data-guid="' + guid + '" id="gd-signature-clickable">' +
                         imageBlock +
                         '<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
+                        '</div>' +
                         '<i class="fa fa-trash-o"></i>' +
                         '</div>');
 
@@ -639,6 +683,11 @@ function loadSignaturesTree(dir, callback) {
                             }
                         });
                     }
+                    $('#gd-signature-item-' + index).on(userMouseClick, '.fa-trash-o', function () {
+                        var sign = $(this);
+                        signature.signatureGuid = sign.attr("data-guid");
+                        deleteSignatureFile(guid);
+                    });
                 }
 
             });
@@ -652,6 +701,8 @@ function loadSignaturesTree(dir, callback) {
             }
         },
         error: function(xhr, status, error) {
+            // hide loading spinner
+            fadeLeftBar(false);
             var err = eval("(" + xhr.responseText + ")");
             console.log(err.message);
             // open error popup
@@ -810,9 +861,9 @@ function sign() {
             }
         },
         error: function(xhr, status, error) {
+            $('#gd-modal-spinner').hide();
             var err = eval("(" + xhr.responseText + ")");
             console.log(err.Message);
-            $('#gd-modal-spinner').hide();
             // open error popup
             printMessage(err.message);
         }
@@ -1470,7 +1521,7 @@ function loadSignatureImage() {
     var currentPageNumber = getCurrentPageNumber();
     // current document guid is taken from the viewer.js globals
 	var data = { guid: signature.signatureGuid, page: currentPageNumber, password: "" };
-	$('#gd-modal-spinner').show();
+	fadeAll(true);
 	// load signature image from the storage
 	$.ajax({
 		type: 'POST',
@@ -1478,6 +1529,7 @@ function loadSignatureImage() {
 		data: JSON.stringify(data),
 		contentType: 'application/json',
 		success: function(returnedData) {
+		    fadeAll(false);
 			if(returnedData.message != undefined){
 			    toggleModalDialog(false, "");
 				// open error popup
@@ -1498,6 +1550,7 @@ function loadSignatureImage() {
             insertImage(returnedData.pageImage, currentPageNumber);
 		},
 		error: function(xhr, status, error) {
+		    fadeAll(false);
 			var err = eval("(" + xhr.responseText + ")");
 			console.log(err.Message);
 			toggleModalDialog(false, "");
@@ -1726,9 +1779,8 @@ function getFonts() {
 			}
 		},
 		error: function(xhr, status, error) {
-			var err = eval("(" + xhr.responseText + ")");
-			console.log(err.Message);
-			//$('#gd-modal-spinner').hide();
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.Message);
 			// open error popup
 			//printMessage(err.message);
 		}
@@ -1946,7 +1998,9 @@ GROUPDOCS.SIGNATURE PLUGIN
 							'</div>' +
                         '</div>' +
 
+                        '<div id="gd-left-bar-fade" class="gd-left-bar-fade">' +
                         '<div id="gd-left-bar-spinner" class="gd-left-bar-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading...</div>' +
+                        '</div>' +
 
                         '<div id="gd-signature-list-wrapper" class="gd-signature-list-wrapper">' +
                             '<div id="gd-signature-list" class="gd-signature-list gd-signature-list-scroll">' +

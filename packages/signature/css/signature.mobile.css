@@ -123,6 +123,11 @@
         top: 20%;
     }
 
+    .gd-left-bar-fade {
+        top: 100px;
+        right: 0;
+    }
+
     .gd-signature-thumbnail {
         width: 85%;
         margin: 20px;

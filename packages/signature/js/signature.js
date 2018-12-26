@@ -535,6 +535,11 @@ $(document).ready(function(){
         var sign = $(this);
         selectSignature(sign);
     });
+
+    $('#gd-new-signature').on(userMouseClick, function (e) {
+        // TODO logic depending on signature.signatureType
+        toggleLightBox(true, "", "", "");
+    });
 });
 
 /*
@@ -2107,7 +2112,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 	
 	function getHtmlLightboxBox() {
         return '<div class="gd-modal fade" id="lightBoxDialog">' +
-			      '<div class="gd-modal-dialog">' +
+			      '<div class="gd-modal-dialog gd-modal-dialog-lightbox">' +
 			        '<div class="gd-modal-content" id="gd-lightbox-content">' +
 			            // header
 			            '<div class="gd-modal-header">' +
@@ -2127,6 +2132,9 @@ GROUPDOCS.SIGNATURE PLUGIN
 			            '</div>' +
 			        '</div><!-- /.modal-content -->' +
 			      '</div><!-- /.modal-dialog -->' +
+                    '<div class="gd-mobile-portrait">' +
+                        '<div class="gd-mobile-turn-image"></div>' +
+                    '</div>' +
 			    '</div>';
     }
 

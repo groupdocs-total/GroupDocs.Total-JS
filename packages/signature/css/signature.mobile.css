@@ -650,6 +650,10 @@
         top: 730px;
     }
 
+    .gd-signature-clickable {
+        width: Calc(100% - 70px);
+    }
+
 	.gd-context-menu i.active {
 		background-color: #959da5;
 		width: 38px;

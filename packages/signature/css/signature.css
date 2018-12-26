@@ -242,6 +242,10 @@ MODAL
     right: 0;   
     left: 13px;   
 }
+
+.gd-signature-clickable {
+    width: Calc(100% - 30px);
+}
 /*
 ******************************************
 SIGNING MODAL FOOTER

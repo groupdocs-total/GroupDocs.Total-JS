@@ -662,7 +662,7 @@ function loadSignaturesTree(dir, callback) {
 
                     $('#gd-signature-list').append(
                         '<div data-guid="' + guid + '" id="gd-signature-item-' + index + '" class="gd-signature-item gd-signature gd-signature-thumbnail ui-draggable ui-draggable-handle">' +
-                        '<div data-guid="' + guid + '" id="gd-signature-clickable">' +
+                        '<div data-guid="' + guid + '" id="gd-signature-clickable" class="gd-signature-clickable">' +
                         imageBlock +
                         '<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
                         '</div>' +
@@ -683,7 +683,12 @@ function loadSignaturesTree(dir, callback) {
                             }
                         });
                     }
-                    $('#gd-signature-item-' + index).on(userMouseClick, '.fa-trash-o', function () {
+                    $('#gd-signature-item-' + index).on(userMouseClick, '.fa-trash-o', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!confirm("Do you want to delete?")){
+                            return false;
+                        }
                         var sign = $(this);
                         signature.signatureGuid = sign.attr("data-guid");
                         deleteSignatureFile(guid);

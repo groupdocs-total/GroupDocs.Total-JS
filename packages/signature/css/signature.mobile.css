@@ -656,4 +656,8 @@
     .gd-signature-context-panel.hand::after {
         top: 730px;
     }
+
+    .gd-signature-clickable {
+        width: Calc(100% - 70px);
+    }
 }

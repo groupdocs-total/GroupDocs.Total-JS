@@ -22,19 +22,33 @@
 }
 
 #csg-params-header {
-    text-align: center;
+    right: 85px;
+    top: 12px;
+    position: inherit;
+}
+
+#csg-params-header > i {
+	color: white;
+    font-size: 21px;
+    position: absolute;
+    top: 2px;
+    right: -47px;
+	cursor: pointer;
 }
 
 #csg-params-header > button {
     background-color: #2e84b9;
     color: #ffffff;
-    text-transform: uppercase;
-    font-size: 10px;
+    width: 82px;
+    height: 22px;   
     border: 0;
-    margin-bottom: 10px;
-    padding: 7px 10px;
+    border-radius: 3px;
+    margin-left: 5px;   
+    cursor: pointer;
 }
-
+#csg-params-header > button i {
+    margin-right: 10px;
+}
 #csg-params-container {
     position: absolute;
     width: 250px;
@@ -133,9 +147,30 @@
     padding: 5px 20px;
 }
 
-.csg-preview {
+.csg-shape {
+    position: inherit; 
+    border-radius: 50%;
+    border: 1px solid #333;
+    width: 100%;
+    height: 100%;
+	text-align: center;
+    display: table;
+}
+
+.csg-bouding-box {
+	border: 1px solid #679FFA;
+    width: 150px;
+    height: 150px;
+    top: 36%;
+    left: 37%;
     position: absolute;
-    top: 50px;
+}
+
+.csg-text {    
+    width: 100%;
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .bcPicker-palette {

@@ -240,13 +240,8 @@ MODAL
 
 .gd-lightbox-close {   
     right: 0;   
-    left: 13px; 
-    width: fit-content;	
-}
-
-#gd-lightbox-body {
-	background-color: rgba(0, 0, 0, 0);
-	background-image: url(../images/stampBackground.png) !important;
+    left: 13px;
+    top: 0;
 }
 
 .gd-signature-clickable {

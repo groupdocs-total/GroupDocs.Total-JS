@@ -226,7 +226,13 @@ MODAL
 
 .gd-lightbox-close {   
     right: 0;   
-    left: 13px;   
+    left: 13px; 
+    width: fit-content;	
+}
+
+#gd-lightbox-body {
+	background-color: rgba(0, 0, 0, 0);
+	background-image: url(../images/stampBackground.png) !important;
 }
 /*
 ******************************************
@@ -403,6 +409,13 @@ DRAW IMAGE SLIDE
     top: -8px !important;
     left: 38px;
 }
+
+.gd-lightbox-header {
+    position: absolute;
+    width: 100%;
+    top: 0;
+}
+
 /*
 ******************************************
 ADDITIONAL SIGNATURE INFORMATION SLIDE

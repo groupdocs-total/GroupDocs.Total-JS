@@ -57,9 +57,12 @@ $(document).ready(function(){
 		fgColor : '#csg-fg-color-',
 		strokeColor : '#csg-stroke-color-'
 	}
-
+	var stampGeneratorHtml = {header: "", body: ""};
+	
 	$.fn.stampGenerator = function () {
-		$(this).append($.fn.stampGenerator.baseHtml());
+		stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();
+		stampGeneratorHtml.body = $.fn.stampGenerator.canvasHtml();
+		return stampGeneratorHtml;
 	}
 
 	$.extend(true, $.fn.stampGenerator, {
@@ -133,20 +136,23 @@ $(document).ready(function(){
 			});
 		},
 
-		baseHtml : function(){
-			var html = '<div id="csg-container">' +
-				'<div id="csg-params-container">' +
-					'<div id="csg-params-header">' +
-						'<button id="csg-shape-add">Add shape</button>' +
-					'</div>' +
-				'</div>' +
-				'<div id="csg-preview-container"></div>' +
-			'</div>';
+		headerHtml : function(){
+			var html = '<div id="csg-params-header">' +
+						'<button id="csg-shape-add"><i class="fas fa-plus"></i>Circle</button>' +
+						'<button id="csg-text-add"><i class="fas fa-plus"></i>Text</button>' +
+						'<i class="fas fa-check"></i>'+
+					'</div>';				
 			return html;
-		},
+		},		
 
 		canvasHtml : function(num){
-			var html = '<canvas id="csg-stamp-' + num + '" class="csg-preview" width="250" height="250"></canvas>';
+			var resizeHandles = getHtmlResizeHandles();
+			var html = '<div class="csg-bouding-box" id="csg-shape-' + signature.id + '">'+
+						'<div id="csg-stamp-' + num + '" class="csg-shape" width="250" height="250">'+
+							'<div contenteditable="true" class="csg-text">APPROVED</div>'+
+						'</div>'+
+						resizeHandles +
+					'</div>';			
 			return html;
 		},
 
@@ -224,6 +230,22 @@ $(document).ready(function(){
 
 })(jQuery);
 
+function makeResizable(element){
+	// enable rotation, dragging and resizing features for current image
+    element.resizable({
+        // set restriction for image resizing to current document page        
+        // set image resize handles
+        handles: {           
+            'ne': '.ui-resizable-ne',
+            'se': '.ui-resizable-se',
+            'sw': '.ui-resizable-sw',
+            'nw': '.ui-resizable-nw'
+        }		 
+    }).draggable({
+        // set restriction for image dragging area to current document page
+        containment: $(element).parent()        
+    });
+}
 /**
 * Extend canvas functions
 **/

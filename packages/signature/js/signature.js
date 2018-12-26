@@ -173,6 +173,24 @@ $(document).ready(function(){
 			$("#gd-signature-context-panel").opticalCodeGenerator();
         }
     });
+	
+	//////////////////////////////////////////////////
+    // Add new stamp signature
+    //////////////////////////////////////////////////
+	$("#gd-new-signature").on(userMouseClick, function(e){
+        if(typeof documentGuid == "undefined" || documentGuid == ""){
+            printMessage("Please open document first");
+        } else {
+            signature.signatureGuid = "";
+            if($(".fa-plus").parent().parent().hasClass("stamp")){
+                signature.signatureType = "stamp";            
+            } else {
+				return;
+			}
+			var html = $.fn.stampGenerator();
+			toggleLightBox(true, "Draw stamp", html.header, html.body);
+        }
+    });
 /*
     //////////////////////////////////////////////////
     // Text sign event
@@ -1800,6 +1818,9 @@ function toggleLightBox(open, title, header, content) {
         $('#lightBoxDialog').addClass('in');
         $(".gd-lightbox-header").append(header);
 		$("#gd-lightbox-body").append(content);
+		if(signature.signatureType == "stamp"){
+			makeResizable($("#csg-shape-" + signature.id));
+		}
     } else {
         $('#lightBoxDialog').removeClass('in');
         $('#lightBoxDialog')

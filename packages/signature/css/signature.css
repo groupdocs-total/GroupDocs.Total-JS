@@ -162,9 +162,23 @@ SIGNATURE TOOL BAR
     margin: 7px 0 0 12px;
 }
 .gd-left-bar-spinner {
-    left: 20%;
+    left: 30%;
     top: 50%;
     position: absolute;
+}
+.gd-left-bar-fade {
+    position: fixed;
+    margin: auto;
+    display: none;
+    overflow: hidden;
+    top: 50px;
+    right: Calc(100% - 315px);
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+    background-color: rgba(255,255,255,0.5);
 }
 /*
 ******************************************
@@ -233,6 +247,10 @@ MODAL
 #gd-lightbox-body {
 	background-color: rgba(0, 0, 0, 0);
 	background-image: url(../images/stampBackground.png) !important;
+}
+
+.gd-signature-clickable {
+    width: Calc(100% - 30px);
 }
 /*
 ******************************************

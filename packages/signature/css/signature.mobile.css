@@ -661,3 +661,32 @@
         width: Calc(100% - 70px);
     }
 }
+@media screen and (orientation: landscape) {
+    .gd-modal-dialog-lightbox {
+        display: block;
+    }
+    .gd-mobile-portrait {
+        display: none;
+    }
+}
+@media screen and (orientation: portrait) {
+    .gd-modal-dialog-lightbox {
+        display: none;
+    }
+    .gd-mobile-portrait {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: block;
+    }
+    .gd-mobile-turn-image {
+        background-image: url('../images/noun_landscape orientation.png') !important;
+        position: fixed;
+        left: Calc((100% - 215px)/2);
+        top: Calc((100% - 215px)/2);
+        width: 215px;
+        height: 215px;
+    }
+}

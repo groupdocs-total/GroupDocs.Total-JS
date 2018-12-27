@@ -7,19 +7,19 @@
  */
 
 $(document).ready(function(){
-
+	var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';	
 	// Add Shape
-    $('body').on('click', 'button#csg-shape-add', function(){
+    $('body').on(userMouseClick, 'button#csg-shape-add', function(){
 		$.fn.stampGenerator.addShape($(this));
 	});
 
 	// Remove Shape
-    $('body').on('click', 'button.csg-shape-remove', function(){
+    $('body').on(userMouseClick, 'button.csg-shape-remove', function(){
 		$.fn.stampGenerator.removeShape($(this));
 	});
 
 	// Toggle Shape
-    $('body').on('click', 'button.csg-params-toggle', function(){
+    $('body').on(userMouseClick, 'button.csg-params-toggle', function(){
 		$.fn.stampGenerator.toggleShape($(this));
 	});
 
@@ -28,10 +28,31 @@ $(document).ready(function(){
 		$.fn.stampGenerator.drawShape();
 	});
 
+	$('body').on(userMouseClick, '.fa-fill-drip', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		$(".csg-background-color").find(".bcPicker-picker").click();		
+	});
+	
+	$('body').on(userMouseClick, '.fa-square', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		$(".csg-border-color").find(".bcPicker-picker").click();		
+	});
+	
 	// Pick a color
-	$('body').on('click', '.bcPicker-color', function(){
+	$('body').on(userMouseClick, '.bcPicker-color', function(){
 		$.fn.bcPicker.pickColor($(this));
-		$.fn.stampGenerator.drawShape();
+		var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");
+		if($(this).parent().parent().hasClass("csg-border-color")){
+			$(this).parent().parent().parent().parent().find(".csg-shape").css("border-color", color);
+		} else {
+			$(this).parent().parent().parent().parent().find(".csg-shape").css("background-color", color);
+		}
+	});
+	
+	$('body').on(userMouseClick, ".csg-border-width", function(e){
+		
 	});
 });
 
@@ -145,14 +166,16 @@ $(document).ready(function(){
 			return html;
 		},		
 
-		canvasHtml : function(num){
+		canvasHtml : function(){
 			var resizeHandles = getHtmlResizeHandles();
-			var html = '<div class="csg-bouding-box" id="csg-shape-' + signature.id + '">'+
-						'<div id="csg-stamp-' + num + '" class="csg-shape" width="250" height="250">'+
+			var html = '<div class="csg-bouding-box" id="csg-shape-' + canvasCount + '" data-id="' + canvasCount + '">'+
+						getStampContextMenu() +
+						'<div id="csg-stamp-' + canvasCount + '" class="csg-shape">'+
 							'<div contenteditable="true" class="csg-text">APPROVED</div>'+
 						'</div>'+
-						resizeHandles +
-					'</div>';			
+						resizeHandles +						
+					'</div>';	
+			canvasCount++;					
 			return html;
 		},
 
@@ -245,6 +268,22 @@ function makeResizable(element){
         // set restriction for image dragging area to current document page
         containment: $(element).parent()        
     });
+}
+
+function getStampContextMenu(){
+	var html = '<div class="gd-context-menu csg-params">'+
+	'<i class="fas fa-arrows-alt fa-sm" data-id="gd-image-signature-2"></i>'+
+	'<div class="csg-background-color"></div><i class="fas fa-fill-drip"></i>'+
+	'<div class="csg-border-width"></div>'+
+	'<select>';
+	for(i = 1; i <= 10; i++){
+		html = html + '<option value="' + i + '">' + i + 'px</option>';
+	}
+	html = html + '</select>'+	
+			'<div class="csg-border-color"></div><i class="far fa-square"></i>'+
+			'<i class="fas fa-trash-alt fa-sm gd-delete-signature" data-id="gd-image-signature-2"></i>'+
+			'</div>';
+	return html;
 }
 /**
 * Extend canvas functions

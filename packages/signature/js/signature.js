@@ -189,6 +189,9 @@ $(document).ready(function(){
 			}
 			var html = $.fn.stampGenerator();
 			toggleLightBox(true, "Draw stamp", html.header, html.body);
+			$.fn.bcPicker.defaults.defaultColor = "000000";
+			$(".csg-background-color").bcPicker();
+			$(".csg-border-color").bcPicker();
         }
     });
 /*
@@ -1630,7 +1633,11 @@ function insertImage(image, pageNumber) {
     // add signature to the selected page
     $(signatureHtml).insertBefore($("#gd-page-" + pageNumber).find(".gd-wrapper")).delay(1000);
 	// new UI
-	$(".gd-text-color-picker").bcPicker();
+	if(signature.signatureType == "text"){
+		if($(".gd-text-color-picker").find(".bcPicker-picker").length == 0){
+			$(".gd-text-color-picker").bcPicker();
+		}
+	}
 	// new UI
 	var defaultFont = $("#gd-draggable-helper-" + currentImage).find(".gd-fonts-select").val();
 	// new UI

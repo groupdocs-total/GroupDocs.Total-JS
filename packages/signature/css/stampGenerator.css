@@ -58,11 +58,12 @@
 }
 
 .csg-params {
-    background-color: #f7f7f7;
-    padding: 15px 20px;
-    margin-bottom: 10px;
-    position: relative;
-    border: 1px solid #ddd;
+   
+}
+
+.csg-params i {
+    margin-left: 9px;
+	cursor: pointer;
 }
 
 .csg-params h2 {
@@ -90,7 +91,7 @@
 }
 
 .csg-params > div {
-    display: none;
+	display: -webkit-inline-box;
 }
 
 .csg-params input[type="number"] {
@@ -165,6 +166,12 @@
     left: 37%;
     position: absolute;
 }
+.csg-border-width {
+	background-image: url(../images/stampBorderWidth.png);
+	width: 18px !important;
+    height: 12px !important;
+	margin-left: 5px;
+}
 
 .csg-text {    
     width: 100%;
@@ -172,7 +179,9 @@
     display: table-cell;
     vertical-align: middle;
 }
-
+.fa-fill-drip > div{
+    visibility: hidden; 
+}
 .bcPicker-palette {
     top: 25px;
 }

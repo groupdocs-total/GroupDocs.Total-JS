@@ -562,9 +562,10 @@ SIGNATURE IMAGE
     left: 0;
     right: 0;
     margin: auto;
-    top: -45px;
+    top: -44px;
     cursor: default;
-	width: max-content;
+    width: max-content;   
+    
 }
 .gd-text-context-menu {
 	left: -48px;
@@ -573,12 +574,13 @@ SIGNATURE IMAGE
     cursor: move;
 }
 .gd-context-menu i {
-    color: #5c737f;
-    margin: 4px;
-	width: 18px;
-	height: 18px;
-	font-size: 13px;
-	padding-top: 3px;
+    color: #5c737f;  
+    width: 18px;
+    height: 18px;
+    font-size: 13px;
+    padding-top: 4px;  
+    display: inline-block;
+    position: initial;
 }
 .gd-context-menu i.active{
     background-color: #e7e7e7;

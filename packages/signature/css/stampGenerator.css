@@ -132,7 +132,10 @@
     background: none;
     border: 0;
 }
-
+.csg-preview{
+	width: 100%;
+	height: 100%;
+}
 #csg-preview-container {
     position: absolute;
     left: 250px;
@@ -159,29 +162,76 @@
 }
 
 .csg-bouding-box {
-	border: 1px solid #679FFA;
-    width: 150px;
-    height: 150px;
-    top: 36%;
-    left: 37%;
+	border: 1px solid #679FFA;   
+    top: Calc(100% - 323px);
+    left: Calc(100% - 446px);
     position: absolute;
+	z-index: 10;
 }
 .csg-border-width {
 	background-image: url(../images/stampBorderWidth.png);
-	width: 18px !important;
+    width: 18px !important;
     height: 12px !important;
-	margin-left: 5px;
+    margin-left: 5px;
+    margin-right: 5;
+    position: relative;
 }
-
+.csg-border-width  select {
+    position: absolute;
+	width: 27px;
+    border: 0;
+    margin-left: 2px;
+    top: -2px;
+    background-color: rgba(0,0,0,0);  
+    cursor: pointer;
+}
 .csg-text {    
     width: 100%;
     height: 100%;
     display: table-cell;
     vertical-align: middle;
 }
+.csg-text-input {
+	position: absolute;
+    top: 32px;
+    left: 4px;
+    display: none;
+}
+.csg-text-input input {
+	margin-right: 10px;
+	height: 26px;
+}
+.csg-insert-text {
+	display: -webkit-inline-box;
+    width: 27px;
+    height: 27px;
+    background-color: #3787F5;
+    position: absolute;
+	left: 176px;
+}
+.csg-insert-text i {
+    color: white;
+    position: absolute;
+    top: 22%;
+    left: 24%;
+}
+.csg-rounded-text {
+	position: relative;
+	width: 400px;
+	border-radius: 50%;
+	transform: rotate(-50deg);
+}
+.csg-rounded-text span {
+	font: 19px Monaco, MonoSpace;
+    height: 97px;
+    position: absolute;
+    left: 89px;
+    top: -4px;
+    transform-origin: bottom center;
+}
 .fa-fill-drip > div{
     visibility: hidden; 
 }
 .bcPicker-palette {
-    top: 25px;
+	top: -137px !important;
 }

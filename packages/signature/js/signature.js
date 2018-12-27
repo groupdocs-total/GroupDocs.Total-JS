@@ -178,6 +178,8 @@ $(document).ready(function(){
     // Add new stamp signature
     //////////////////////////////////////////////////
 	$("#gd-new-signature").on(userMouseClick, function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
@@ -187,11 +189,13 @@ $(document).ready(function(){
             } else {
 				return;
 			}
-			var html = $.fn.stampGenerator();
-			toggleLightBox(true, "Draw stamp", html.header, html.body);
+			var html = $.fn.stampGenerator.addInitialShape();
+			toggleLightBox(true, "Draw stamp", html.header);
+			$.fn.stampGenerator.drawShape();	
 			$.fn.bcPicker.defaults.defaultColor = "000000";
 			$(".csg-background-color").bcPicker();
-			$(".csg-border-color").bcPicker();
+			$(".csg-border-color").bcPicker();				
+			makeResizable();			
         }
     });
 /*
@@ -555,6 +559,11 @@ $(document).ready(function(){
     $('#gd-signature-list').on(userMouseClick, '#gd-signature-clickable', function (e) {
         var sign = $(this);
         selectSignature(sign);
+    });
+
+    $('#gd-new-signature').on(userMouseClick, function (e) {
+        // TODO logic depending on signature.signatureType
+        toggleLightBox(true, "", "", "");
     });
 });
 
@@ -1882,9 +1891,7 @@ function toggleLightBox(open, title, header, content) {
         $('#lightBoxDialog').addClass('in');
         $(".gd-lightbox-header").append(header);
 		$("#gd-lightbox-body").append(content);
-		if(signature.signatureType == "stamp"){
-			makeResizable($("#csg-shape-" + signature.id));
-		}
+		
     } else {
         $('#lightBoxDialog').removeClass('in');
         $('#lightBoxDialog')
@@ -2135,7 +2142,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 	
 	function getHtmlLightboxBox() {
         return '<div class="gd-modal fade" id="lightBoxDialog">' +
-			      '<div class="gd-modal-dialog">' +
+			      '<div class="gd-modal-dialog gd-modal-dialog-lightbox">' +
 			        '<div class="gd-modal-content" id="gd-lightbox-content">' +
 			            // header
 			            '<div class="gd-modal-header">' +
@@ -2155,6 +2162,9 @@ GROUPDOCS.SIGNATURE PLUGIN
 			            '</div>' +
 			        '</div><!-- /.modal-content -->' +
 			      '</div><!-- /.modal-dialog -->' +
+                    '<div class="gd-mobile-portrait">' +
+                        '<div class="gd-mobile-turn-image"></div>' +
+                    '</div>' +
 			    '</div>';
     }
 

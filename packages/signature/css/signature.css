@@ -238,10 +238,9 @@ MODAL
     cursor: pointer;    
 }
 
-.gd-lightbox-close {   
-    right: 0;   
-    left: 13px; 
-    width: fit-content;	
+.gd-lightbox-close {    
+    left: 13px;
+    top: 14px;
 }
 
 #gd-lightbox-body {

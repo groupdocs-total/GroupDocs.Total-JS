@@ -5,35 +5,48 @@
  * @author Alexandr Bobkov
  * @version 0.4.0
  */
+ 
+ var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';
+var paramValues = {
+	width: 150,
+	height: 150,
+	left: 0, 
+	top: 0, 
+	zIndex: 0,		
+	bgColor: "",
+	strokeColor: "", 
+	strokeWidth: ""
+}
 
 $(document).ready(function(){
-	var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';	
-	// Add Shape
-    $('body').on(userMouseClick, 'button#csg-shape-add', function(){
-		$.fn.stampGenerator.addShape($(this));
-	});
+	
+	
+	// Click on Shape
+    $('body').on(userMouseClick, '.csg-bouding-box', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();	
+		if(e.target.tagName == "CANVAS"){
+			$(".bcPicker-palette").css("display", "none");
+			var clickedElementId = $(e.target).data("id");
+			$("#gd-lightbox-body").find(".csg-params").each(function(index, shape){
+				$(shape).hide();	
+				$(shape).parent().find(".ui-resizable-handle").hide();
+				$(shape).parent().css("border", "none");
+			});
+			$("#csg-shape-" + clickedElementId).find(".csg-params").show();
+			$("#csg-shape-" + clickedElementId).find(".ui-resizable-handle").show();
+			$("#csg-shape-" + clickedElementId).css("border", "1px solid #679FFA");
+		}
+	});	
 
-	// Remove Shape
-    $('body').on(userMouseClick, 'button.csg-shape-remove', function(){
-		$.fn.stampGenerator.removeShape($(this));
-	});
-
-	// Toggle Shape
-    $('body').on(userMouseClick, 'button.csg-params-toggle', function(){
-		$.fn.stampGenerator.toggleShape($(this));
-	});
-
-	// Preview/Draw Shapes
-	$('body').bind('#csg-params-container input', function(){
-		$.fn.stampGenerator.drawShape();
-	});
-
+	//Open background color palit
 	$('body').on(userMouseClick, '.fa-fill-drip', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
 		$(".csg-background-color").find(".bcPicker-picker").click();		
 	});
 	
+	// open border color palit
 	$('body').on(userMouseClick, '.fa-square', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -42,17 +55,105 @@ $(document).ready(function(){
 	
 	// Pick a color
 	$('body').on(userMouseClick, '.bcPicker-color', function(){
-		$.fn.bcPicker.pickColor($(this));
-		var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");
-		if($(this).parent().parent().hasClass("csg-border-color")){
-			$(this).parent().parent().parent().parent().find(".csg-shape").css("border-color", color);
+		$.fn.bcPicker.pickColor($(this));		
+		var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");		
+		paramValues.width = $(this).parent().parent().parent().parent()[0].offsetWidth;
+		paramValues.height = $(this).parent().parent().parent().parent()[0].offsetHeight;     
+		paramValues.left = $(this).parent().parent().parent().parent()[0].offsetLeft;
+		paramValues.top = $(this).parent().parent().parent().parent()[0].offsetTop;		
+		paramValues.zIndex = $($(this).parent().parent().parent().parent()[0]).css("z-index");		
+		if($(this).parent().parent().hasClass("csg-border-color")){				
+			$(this).parent().parent().parent().parent().remove();	
+			paramValues.strokeColor = color;			
+			$.fn.stampGenerator.addShape();
+			$.fn.bcPicker.defaults.defaultColor = "000000";
+			$(".csg-background-color").bcPicker();
+			$(".csg-border-color").bcPicker();				
 		} else {
-			$(this).parent().parent().parent().parent().find(".csg-shape").css("background-color", color);
-		}
+			$(this).parent().parent().parent().parent().remove();	
+			paramValues.bgColor = color;			
+			$.fn.stampGenerator.addShape();
+			$.fn.bcPicker.defaults.defaultColor = "000000";
+			$(".csg-background-color").bcPicker();
+			$(".csg-border-color").bcPicker();			
+		}		
+		makeResizable();
 	});
 	
-	$('body').on(userMouseClick, ".csg-border-width", function(e){
-		
+	// change border width
+	$('body').on("change", ".csg-border-width select", function(){
+		paramValues.strokeWidth = $(this).val();
+		paramValues.width = $(this).parent().parent().parent()[0].offsetWidth;
+		paramValues.height = $(this).parent().parent().parent()[0].offsetHeight;     
+		paramValues.left = $(this).parent().parent().parent()[0].offsetLeft;
+		paramValues.top = $(this).parent().parent().parent()[0].offsetTop;		
+		paramValues.zIndex = $($(this).parent().parent().parent()[0]).css("z-index");		
+		$(this).parent().parent().parent().remove();		
+		$.fn.stampGenerator.addShape();
+		$.fn.bcPicker.defaults.defaultColor = "000000";
+		$(".csg-background-color").bcPicker();
+		$(".csg-border-color").bcPicker();	
+		makeResizable();
+	});
+	
+	//Delete shape
+	$('body').on(userMouseClick, '.csg-delete-shape', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		$(this).parent().parent().remove();		
+	});
+	
+	// Add new shape
+	$('body').on(userMouseClick, '#csg-shape-add', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();		
+		if($("#gd-lightbox-body").find(".csg-bouding-box").length > 0){			
+			$.each($("#gd-lightbox-body").find(".csg-bouding-box"), function(index, shape){			
+				$(shape).find(".csg-params").hide();
+				$(shape).find(".ui-resizable-handle").hide();
+				$(shape).css("border", "none");
+			});						
+			paramValues.left = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetLeft - ($.fn.stampGenerator.getSizeMagnifier() / 2);
+			paramValues.top = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetTop - ($.fn.stampGenerator.getSizeMagnifier() / 2);
+			paramValues.width = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetWidth;
+			paramValues.height = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetHeight;
+			paramValues.zIndex =  $($("#gd-lightbox-body").find(".csg-bouding-box")[0]).css("z-index") - 1;				
+			
+		} 
+		shape = $.fn.stampGenerator.addShape();
+		var count = $.fn.stampGenerator.getCanvasCount() - 1;
+		if(paramValues.width != 0){
+			$("#csg-shape-" + count).css("width", paramValues.width + $.fn.stampGenerator.getSizeMagnifier());
+			$("#csg-shape-" + count).css("height", paramValues.width + $.fn.stampGenerator.getSizeMagnifier());			
+			$("#csg-shape-" + count).css("left", paramValues.left);
+			$("#csg-shape-" + count).css("top", paramValues.top);
+			$("#csg-shape-" + count).css("z-index", paramValues.zIndex);
+		}
+		makeResizable();
+		$.fn.bcPicker.defaults.defaultColor = "000000";
+		$(".csg-background-color").bcPicker();
+		$(".csg-border-color").bcPicker();	
+	});
+	
+	// Add text
+	$('body').on(userMouseClick, '#csg-text-add', function(e){
+		$(".csg-text-input").css("display", "flex");
+	});
+	
+	// Insert text
+	$('body').on(userMouseClick, '.csg-insert-text', function(e){
+		var text = $(".csg-text-input input").val();
+		var count = $.fn.stampGenerator.getCanvasCount() - 1;
+		$("#csg-stamp-" + count).find(".csg-text").text(text);
+		$("#csg-stamp-" + count).find(".csg-text").addClass("csg-rounded-text");
+		$(function() {
+			$("#csg-stamp-" + count).find(".csg-text").lettering();
+			var angle = 290;
+			for(i = 0; i < $(".csg-rounded-text").find("span").length; i++){
+				angle = angle + 24;
+				$($(".csg-rounded-text").find("span")[i]).css("transform", "rotate(" + angle + "deg)")
+			}
+		});			
 	});
 });
 
@@ -63,42 +164,32 @@ $(document).ready(function(){
 	/**
 	* Create private variables.
 	**/
-	var canvasCount = 0;
-	var xCoord = 125;
-	var yCoord = 125;
+	var canvasCount = 0;	
 	var textPadding = 15;
-	var paramValues = {
-		radius : '#csg-radius',
-		text : '#csg-text',
-		textExpansion : '#csg-text-expansion',
-		textRepeat : '#csg-text-repeat',
-		textSize : '#csg-text-size',
-		textFont : '#csg-text-font',
-		bgColor : '#csg-bg-color-',
-		fgColor : '#csg-fg-color-',
-		strokeColor : '#csg-stroke-color-'
-	}
+	
+	var sizeMagnifier = 40;
 	var stampGeneratorHtml = {header: "", body: ""};
 	
-	$.fn.stampGenerator = function () {
-		stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();
-		stampGeneratorHtml.body = $.fn.stampGenerator.canvasHtml();
-		return stampGeneratorHtml;
+	$.fn.stampGenerator = function () {		
 	}
 
 	$.extend(true, $.fn.stampGenerator, {
 
-		getCanvasId : function(elem){
-			return elem.attr('id').replace('csg-params-', '');
+		getCanvasCount : function(){
+			return canvasCount;
 		},
 
-		addShape : function(elem){
-			canvasCount++;
-			elem.parent().parent().append($.fn.stampGenerator.shapeHtml(canvasCount));
-			$(paramValues.bgColor + canvasCount).bcPicker({defaultColor: 'FFFFFF'});
-			$(paramValues.strokeColor + canvasCount).bcPicker();
-			$(paramValues.fgColor + canvasCount).bcPicker();
-			$.fn.stampGenerator.drawShape();
+		getSizeMagnifier : function(){
+			return sizeMagnifier;
+		},
+		
+		addInitialShape : function(){
+			stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();				
+			return stampGeneratorHtml;
+		},		
+		
+		addShape : function(){		
+			$.fn.stampGenerator.drawShape();			
 		},
 
 		removeShape : function(elem){
@@ -118,181 +209,91 @@ $(document).ready(function(){
 			elem.text(text == 'Edit' ? 'Close' : 'Edit');
 		},
 
-		drawShape : function(){
-			// clear all canvas containers
-			$('.csg-preview').each(function(){
-				$(this).remove();
-			});
-			// draw canvas
+		drawShape : function(text){
 			var i = 1;
-			$('.csg-params').each(function(){
-				// get canvas id
-				var canvasId = $.fn.stampGenerator.getCanvasId($(this));
-				// get shape params
-				var radius = $(this).find(paramValues.radius).val();
-				var text = $(this).find(paramValues.text).val();
-				var textExpansion = $(this).find(paramValues.textExpansion).val();
-				var textRepeat = $(this).find(paramValues.textRepeat).val();
-				var textSize = $(this).find(paramValues.textSize).val();
-				var textFont = $(this).find(paramValues.textFont).val();
-				var bgColor = $(paramValues.bgColor + canvasId).children().css('background-color');
-				var strokeColor = $(paramValues.strokeColor + canvasId).children().css('background-color');
-				var fgColor = $(paramValues.fgColor + canvasId).children().css('background-color');
-				// append canvas container
-				$('#csg-preview-container').prepend($.fn.stampGenerator.canvasHtml(canvasId));
-				// get canvas container
-				var c = document.getElementById('csg-stamp-' + canvasId);
-				var ctx = c.getContext('2d');
-				// draw canvas
-				ctx.drawCircle(radius, xCoord, yCoord, bgColor, strokeColor);
-                if(i == 1){
-                    ctx.fillStyle = fgColor;
-                    ctx.font = textSize + 'px ' + textFont;
-                    ctx.textAlign = 'center';
-                    ctx.fillText(text, xCoord, yCoord + textSize/2);
-                    i++;
-                }else{
-                    ctx.drawTextCircle(text, parseInt(radius) - parseInt(textPadding), xCoord, yCoord, 0, fgColor, textExpansion, textRepeat, textSize, textFont);
-                }
-			});
+			// get canvas id
+			var canvasId = canvasCount;
+			// get shape params
+			var radius = (paramValues.width / 2) - 10;
+			text = (typeof text == "undefined") ? "" : text;
+			var textExpansion = 0.173;
+			var textRepeat = 0;
+			var textSize = 14;
+			var textFont = "Arial";
+			var bgColor = (paramValues.bgColor == "") ? "rgb(255, 255, 255)" : paramValues.bgColor;
+			var strokeColor = (paramValues.strokeColor == "") ? "rgb(51, 51, 51)" : paramValues.strokeColor;
+			var strokeWidth = (paramValues.strokeWidth == "") ? 1 : paramValues.strokeWidth;
+			var fgColor = "rgb(51, 51, 51)";
+			// append canvas container
+			$('#gd-lightbox-body').prepend($.fn.stampGenerator.canvasHtml(canvasId));
+			// get canvas container
+			var c = document.getElementById('csg-stamp-' + canvasId);
+			var ctx = c.getContext('2d');
+			// draw canvas
+			ctx.drawCircle(radius, paramValues.width / 2, paramValues.height / 2, bgColor, strokeColor, strokeWidth);
+			if(i == 1) {
+				ctx.fillStyle = fgColor;
+				ctx.font = textSize + 'px ' + textFont;
+				ctx.textAlign = 'center';
+				ctx.fillText(text, paramValues.width / 2, paramValues.height / 2 + textSize/2);
+				i++;
+			} else {
+				ctx.drawTextCircle(text, parseInt(radius) - parseInt(textPadding), paramValues.width / 2, paramValues.height / 2, 0, fgColor, textExpansion, textRepeat, textSize, textFont);
+			}				
 		},
 
 		headerHtml : function(){
 			var html = '<div id="csg-params-header">' +
 						'<button id="csg-shape-add"><i class="fas fa-plus"></i>Circle</button>' +
 						'<button id="csg-text-add"><i class="fas fa-plus"></i>Text</button>' +
+						'<div class="csg-text-input"><input type="text"><div class="csg-insert-text"><i class="fas fa-plus"></i></div></div>'+
 						'<i class="fas fa-check"></i>'+
 					'</div>';				
 			return html;
-		},		
+		},	
 
 		canvasHtml : function(){
-			var resizeHandles = getHtmlResizeHandles();
-			var html = '<div class="csg-bouding-box" id="csg-shape-' + canvasCount + '" data-id="' + canvasCount + '">'+
+			var resizeHandles = getHtmlResizeHandles();	
+			var position = (paramValues.left != 0) ? "left:" + paramValues.left + "px; top:" + paramValues.top + "px" : "";
+			var html = '<div class="csg-bouding-box" id="csg-shape-' + canvasCount + '" data-id="' + canvasCount + '" style="width: ' + paramValues.width + 'px; height: ' + paramValues.height + 'px; ' + position + '">'+
 						getStampContextMenu() +
-						'<div id="csg-stamp-' + canvasCount + '" class="csg-shape">'+
-							'<div contenteditable="true" class="csg-text">APPROVED</div>'+
-						'</div>'+
+						'<canvas id="csg-stamp-' + canvasCount + '" class="csg-preview" width="' + paramValues.width + '" height="' + paramValues.height + '" data-id="' + canvasCount + '"></canvas>'+
 						resizeHandles +						
 					'</div>';	
-			canvasCount++;					
+			canvasCount++;	
+		
 			return html;
-		},
-
-		shapeHtml : function(num){
-			var html = '<div class="csg-params" id="csg-params-' + num + '">'+
-				'<h2>Shape #' + num + '</h2>' +
-				'<button class="csg-params-toggle">Edit</button>' +
-				'<button class="csg-shape-remove">X</button>' +
-				'<div>' +
-					'<h3>Circle Properties</h3>' +
-					'<table>' +
-						'<thead>' +
-							'<tr>' +
-								'<td>radius</td>' +
-								'<td>bg</td>' +
-								'<td>stroke</td>' +
-							'</tr>' +
-						'</thead>' +
-						'<tbody>' +
-							'<tr>' +
-								'<td><input type="number" id="csg-radius" value="50"/></td>' +
-								'<td><div class="csg-color-picker" id="csg-bg-color-' + num + '"></div></td>' +
-								'<td><div class="csg-color-picker" id="csg-stroke-color-' + num + '"></div></td>' +
-							'</tr>' +
-						'</tbody>' +
-					'</table>' +
-					'<h3>Text Properties</h3>' +
-					'<table>' +
-						'<thead>' +
-							'<tr>' +
-								'<td>text</td>' +
-							'</tr>' +
-						'</thead>' +
-						'<tbody>' +
-							'<tr>' +
-								'<td><input type="text" id="csg-text" value="this is my text + "/></td>' +
-							'</tr>' +
-						'</tbody>' +
-					'</table>' +
-					'<table>' +
-						'<thead>' +
-							'<tr>' +
-								'<td>color</td>' +
-								'<td>expansion</td>' +
-								'<td>repeat</td>' +
-							'</tr>' +
-						'</thead>' +
-						'<tbody>' +
-							'<tr>' +
-								'<td><div class="csg-color-picker" id="csg-fg-color-' + num + '"></div></td>' +
-								'<td><input type="number" id="csg-text-expansion" value="0.173" step="0.001"/></td>' +
-								'<td><input type="number" id="csg-text-repeat" value="1"/></td>' +
-							'</tr>' +
-						'</tbody>' +
-					'</table>' +
-					'<table>' +
-						'<thead>' +
-							'<tr>' +
-								'<td>size</td>' +
-								'<td>font</td>' +
-							'</tr>' +
-						'</thead>' +
-						'<tbody>' +
-							'<tr>' +
-								'<td><input type="number" id="csg-text-size" value="10"/></td>' +
-								'<td><input type="text" id="csg-text-font" value="Verdana"/></td>' +
-							'</tr>' +
-						'</tbody>' +
-					'</table>' +
-				'</div>' +
-			'</div>';
-			return html;
-		}
+		}		
 	});
 
 })(jQuery);
-
-function makeResizable(element){
-	// enable rotation, dragging and resizing features for current image
-    element.resizable({
-        // set restriction for image resizing to current document page        
-        // set image resize handles
-        handles: {           
-            'ne': '.ui-resizable-ne',
-            'se': '.ui-resizable-se',
-            'sw': '.ui-resizable-sw',
-            'nw': '.ui-resizable-nw'
-        }		 
-    }).draggable({
-        // set restriction for image dragging area to current document page
-        containment: $(element).parent()        
-    });
-}
 
 function getStampContextMenu(){
 	var html = '<div class="gd-context-menu csg-params">'+
 	'<i class="fas fa-arrows-alt fa-sm" data-id="gd-image-signature-2"></i>'+
 	'<div class="csg-background-color"></div><i class="fas fa-fill-drip"></i>'+
-	'<div class="csg-border-width"></div>'+
+	'<div class="csg-border-width">'+
 	'<select>';
 	for(i = 1; i <= 10; i++){
 		html = html + '<option value="' + i + '">' + i + 'px</option>';
 	}
 	html = html + '</select>'+	
+			'</div>'+
 			'<div class="csg-border-color"></div><i class="far fa-square"></i>'+
-			'<i class="fas fa-trash-alt fa-sm gd-delete-signature" data-id="gd-image-signature-2"></i>'+
+			'<i class="fas fa-trash-alt fa-sm csg-delete-shape"></i>'+
 			'</div>';
 	return html;
 }
+
 /**
 * Extend canvas functions
 **/
-CanvasRenderingContext2D.prototype.drawCircle = function(radius, x, y, bgColor, strokeColor){
+CanvasRenderingContext2D.prototype.drawCircle = function(radius, x, y, bgColor, strokeColor, strokeWidth){
 	this.beginPath();
 	this.arc(x, y, radius, 0, 2 * Math.PI);
+	this.lineWidth = strokeWidth
 	this.strokeStyle = strokeColor;
-	this.stroke();
+	this.stroke();	
 	this.fillStyle = bgColor;
 	this.fill();
 	this.closePath();
@@ -322,4 +323,35 @@ CanvasRenderingContext2D.prototype.drawImageCircle = function(imageSrc, radius, 
 	baseImage.onload = function(){
 		this.drawImage(baseImage, parseInt(x) - parseInt(radius), parseInt(y) - parseInt(radius), parseInt(radius) * 2, parseInt(radius) * 2);
 	}
+}
+
+/**
+* Extend canvas functions
+**/
+function makeResizable(){	
+	var canvasCount = $.fn.stampGenerator.getCanvasCount();
+	var element = $("#csg-shape-" + (canvasCount - 1));
+	// enable rotation, dragging and resizing features for current image
+	element.resizable({
+		// set restriction for image resizing to current document page        
+		// set image resize handles
+		handles: {           
+			'ne': '.ui-resizable-ne',
+			'se': '.ui-resizable-se',
+			'sw': '.ui-resizable-sw',
+			'nw': '.ui-resizable-nw'
+		},
+		aspectRatio: 1 / 1,
+		stop: function(event, image) {                      
+			paramValues.width = Math.ceil(image.size.width);
+			paramValues.height = Math.ceil(image.size.height);	   
+        },
+	}).draggable({
+		// set restriction for image dragging area to current document page
+		containment: $(element).parent(),
+		stop : function(event, image) {			
+            paramValues.left = image.position.left;
+            paramValues.top = image.position.top;
+		}
+	});
 }

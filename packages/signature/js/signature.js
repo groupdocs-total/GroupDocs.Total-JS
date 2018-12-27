@@ -423,6 +423,7 @@ $(document).ready(function(){
     $('.gd-modal-body').on(userMouseClick, '#bcPaint-export', function(){
         var drawnImage = $.fn.bcPaint.export();
         saveDrawnImage(drawnImage);
+        toggleLightBox(false);
     });
 
     //////////////////////////////////////////////////
@@ -557,11 +558,37 @@ $(document).ready(function(){
         selectSignature(sign);
     });
 
+    //////////////////////////////////////////////////
+    // Create new signature
+    //////////////////////////////////////////////////
     $('#gd-new-signature').on(userMouseClick, function (e) {
-        // TODO logic depending on signature.signatureType
-        toggleLightBox(true, "", "", "");
+        if ("hand" == signature.signatureType) {
+            toggleLightBox(true, "Draw signature", getDrawSignHeader(), getDrawSignContent());
+            $("#gd-draw-image").bcPaint();
+        } else {
+            // TODO logic depending on signature.signatureType
+            //toggleLightBox(true, "", "", "");
+        }
     });
 });
+
+/**
+ * Get html for lightbox header to create new image
+ * @returns {string}
+ */
+function getDrawSignHeader() {
+    return "";
+}
+
+/**
+ * Get html for lightbox content to create new image
+ * @returns {string}
+ */
+function getDrawSignContent() {
+    return '<div id="gd-draw-image">' +
+        // draw area will be here
+        '</div>';
+}
 
 /*
 ******************************************************************
@@ -922,12 +949,7 @@ function saveDrawnImage(image) {
                 printMessage(returnedData.message);
                 return;
             }
-            // set curent signature data
-            signature.signatureGuid = returnedData.guid;
-            signature.imageHeight = $("#bcPaintCanvas")[0].height;
-            signature.imageWidth = $("#bcPaintCanvas")[0].width;
-            imageSaved = true;
-            // load signatuers from storage
+            // load signatures from storage
             loadSignaturesTree('');
         },
         error: function(xhr, status, error) {
@@ -2177,7 +2199,7 @@ GROUPDOCS.SIGNATURE PLUGIN
 							'</div>'+
 			            '</div>' +
 			            // body
-			            '<div class="gd-modal-body" id="gd-lightbox-body">' +
+			            '<div class="gd-modal-body gd-lightbox-body" id="gd-lightbox-body">' +
 							// lightBox body content elements will be here
 						'</div>' +
 			            // footer

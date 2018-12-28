@@ -265,6 +265,9 @@
 	.gd-file-name {
 		width: 80%;
 	}
+	#gd-modal-error {
+		margin: 0;
+	}
 	/*
 	******************************************
 	PAGES

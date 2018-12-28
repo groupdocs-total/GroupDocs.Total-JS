@@ -164,20 +164,6 @@
         font-size: 34px !important;
     }
 
-    #gd-draw-image, #gd-draw-stamp, #gd-draw-optical, #gd-draw-text {
-        top: calc(100% - 87%);
-    }
-
-    #gd-draw-stamp, #gd-draw-image {
-        width: 95%;
-        height: 43%;
-    }
-
-    #gd-draw-optical, #gd-draw-text {
-        width: 97%;
-		height: 24%;
-    }
-
     #gd-text-params-container {
         width: 94% !important;
         height: 51% !important;
@@ -509,6 +495,8 @@
 
     .gd-left-bar-tools-container {
         width: 100%;
+        overflow-x: hidden;
+        overflow-y: auto !important;
     }
 
     .gd-tool > i {
@@ -622,6 +610,10 @@
     .gd-signature-list-title > i {
         font-size: 30px;
         right: 15%;
+    }
+
+    .gd-signature-list-wrapper {
+        height: Calc(100% - 50px);
     }
 
     .gd-signature-context-panel::after {

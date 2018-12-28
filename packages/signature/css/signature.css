@@ -144,7 +144,7 @@ SIGNATURE TOOL BAR
 }
 .gd-signature-list-wrapper {
     display: flex;
-    height: 100%;
+    height: Calc(100% - 20px);
 }
 .gd-signature-list-scroll {
     overflow-x: hidden;
@@ -421,7 +421,6 @@ BROWSE SIGNATURES SLIDE
 DRAW IMAGE SLIDE
 ******************************************
 */
-#gd-draw-image, #gd-draw-stamp, #gd-draw-optical, #gd-draw-text {margin-top: 20px;}
 .csg-preview{
     top: -8px !important;
     left: 38px;
@@ -706,4 +705,7 @@ TEMPORARY USED ELEMENTS EXCEL DOCUMENTS IMAGE SIGNING FIX
     width: 200px;
     top: 44px;
     left: 19px;
+}
+.gd-lightbox-body {
+    padding: 0 !important;
 }

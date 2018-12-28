@@ -977,22 +977,21 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
                             }
                         }
                     });
-                } else {
-					var pagesAttr = $('#gd-page-num').text().split('/');
-					var lastPageNumber = parseInt(pagesAttr[1]);
-					if(loadedPagesCount == lastPageNumber || preloadPageCount != 0){
-						$('#gd-btn-zoom-value > li').bind("click", function(){setZoomLevel.apply(this);});
-						$('#gd-btn-zoom-value').removeClass("disabled");
-						$('#gd-btn-zoom-in').bind('click', zoomIn);
-						$('#gd-btn-zoom-out').bind('click', zoomOut);
-						$('#gd-btn-zoom-in').removeClass('disabled');
-						$('#gd-btn-zoom-out').removeClass('disabled');
-						$('#gd-btn-print').bind('click', printDocument);
-						$('#gd-btn-print').removeClass('disabled');						
-						$('#gd-btn-download').removeClass('disabled');
-						loadedPagesCount = 0;
-					}
-				}				
+                }
+                var pagesAttr = $('#gd-page-num').text().split('/');
+                var lastPageNumber = parseInt(pagesAttr[1]);
+                if(loadedPagesCount == lastPageNumber || preloadPageCount != 0){
+                    $('#gd-btn-zoom-value > li').bind("click", function(){setZoomLevel.apply(this);});
+                    $('#gd-btn-zoom-value').removeClass("disabled");
+                    $('#gd-btn-zoom-in').bind('click', zoomIn);
+                    $('#gd-btn-zoom-out').bind('click', zoomOut);
+                    $('#gd-btn-zoom-in').removeClass('disabled');
+                    $('#gd-btn-zoom-out').removeClass('disabled');
+                    $('#gd-btn-print').bind('click', printDocument);
+                    $('#gd-btn-print').removeClass('disabled');
+                    $('#gd-btn-download').removeClass('disabled');
+                    loadedPagesCount = 0;
+				}
             },
             error: function (xhr, status, error) {
                 fadeAll(false);

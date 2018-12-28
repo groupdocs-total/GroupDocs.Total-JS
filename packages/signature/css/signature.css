@@ -238,9 +238,14 @@ MODAL
     cursor: pointer;    
 }
 
-.gd-lightbox-close {   
-    right: 0;   
+.gd-lightbox-close {    
     left: 13px;
+    top: 14px;
+}
+
+#gd-lightbox-body {
+	background-color: rgba(0, 0, 0, 0);
+	background-image: url(../images/stampBackground.png) !important;
 }
 
 .gd-signature-clickable {
@@ -420,6 +425,13 @@ DRAW IMAGE SLIDE
     top: -8px !important;
     left: 38px;
 }
+
+.gd-lightbox-header {
+    position: absolute;
+    width: 100%;
+    top: 0;
+}
+
 /*
 ******************************************
 ADDITIONAL SIGNATURE INFORMATION SLIDE
@@ -550,9 +562,10 @@ SIGNATURE IMAGE
     left: 0;
     right: 0;
     margin: auto;
-    top: -45px;
+    top: -44px;
     cursor: default;
-	width: max-content;
+    width: max-content;   
+    
 }
 .gd-text-context-menu {
 	left: -48px;
@@ -561,12 +574,13 @@ SIGNATURE IMAGE
     cursor: move;
 }
 .gd-context-menu i {
-    color: #5c737f;
-    margin: 4px;
-	width: 18px;
-	height: 18px;
-	font-size: 13px;
-	padding-top: 3px;
+    color: #5c737f;  
+    width: 18px;
+    height: 18px;
+    font-size: 13px;
+    padding-top: 4px;  
+    display: inline-block;
+    position: initial;
 }
 .gd-context-menu i.active{
     background-color: #e7e7e7;

@@ -22,19 +22,33 @@
 }
 
 #csg-params-header {
-    text-align: center;
+    right: 85px;
+    top: 12px;
+    position: inherit;
+}
+
+#csg-params-header > i {
+	color: white;
+    font-size: 21px;
+    position: absolute;
+    top: 2px;
+    right: -47px;
+	cursor: pointer;
 }
 
 #csg-params-header > button {
     background-color: #2e84b9;
     color: #ffffff;
-    text-transform: uppercase;
-    font-size: 10px;
+    width: 82px;
+    height: 22px;   
     border: 0;
-    margin-bottom: 10px;
-    padding: 7px 10px;
+    border-radius: 3px;
+    margin-left: 5px;   
+    cursor: pointer;
 }
-
+#csg-params-header > button i {
+    margin-right: 10px;
+}
 #csg-params-container {
     position: absolute;
     width: 250px;
@@ -44,11 +58,12 @@
 }
 
 .csg-params {
-    background-color: #f7f7f7;
-    padding: 15px 20px;
-    margin-bottom: 10px;
-    position: relative;
-    border: 1px solid #ddd;
+   
+}
+
+.csg-params i {
+    margin-left: 9px;
+	cursor: pointer;
 }
 
 .csg-params h2 {
@@ -76,7 +91,7 @@
 }
 
 .csg-params > div {
-    display: none;
+	display: -webkit-inline-box;
 }
 
 .csg-params input[type="number"] {
@@ -117,7 +132,10 @@
     background: none;
     border: 0;
 }
-
+.csg-preview{
+	width: 100%;
+	height: 100%;
+}
 #csg-preview-container {
     position: absolute;
     left: 250px;
@@ -133,11 +151,87 @@
     padding: 5px 20px;
 }
 
-.csg-preview {
-    position: absolute;
-    top: 50px;
+.csg-shape {
+    position: inherit; 
+    border-radius: 50%;
+    border: 1px solid #333;
+    width: 100%;
+    height: 100%;
+	text-align: center;
+    display: table;
 }
 
+.csg-bouding-box {
+	border: 1px solid #679FFA;   
+    top: Calc(100% - 323px);
+    left: Calc(100% - 446px);
+    position: absolute;
+	z-index: 10;
+}
+.csg-border-width {
+	background-image: url(../images/stampBorderWidth.png);
+    width: 18px !important;
+    height: 12px !important;
+    margin-left: 5px;
+    margin-right: 5;
+    position: relative;
+}
+.csg-border-width  select {
+    position: absolute;
+	width: 27px;
+    border: 0;
+    margin-left: 2px;
+    top: -2px;
+    background-color: rgba(0,0,0,0);  
+    cursor: pointer;
+}
+.csg-text {    
+    width: 100%;
+    height: 100%;
+    display: table-cell;
+    vertical-align: middle;
+}
+.csg-text-input {
+	position: absolute;
+    top: 32px;
+    left: 4px;
+    display: none;
+}
+.csg-text-input input {
+	margin-right: 10px;
+	height: 26px;
+}
+.csg-insert-text {
+	display: -webkit-inline-box;
+    width: 27px;
+    height: 27px;
+    background-color: #3787F5;
+    position: absolute;
+	left: 176px;
+}
+.csg-insert-text i {
+    color: white;
+    position: absolute;
+    top: 22%;
+    left: 24%;
+}
+.csg-rounded-text {
+	position: relative;
+	width: 400px;
+	border-radius: 50%;
+	transform: rotate(-50deg);
+}
+.csg-rounded-text span {
+	font: 19px Monaco, MonoSpace;
+    height: 97px;
+    position: absolute;
+    left: 89px;
+    top: -4px;
+    transform-origin: bottom center;
+}
+.fa-fill-drip > div{
+    visibility: hidden; 
+}
 .bcPicker-palette {
-    top: 25px;
+	top: -137px !important;
 }

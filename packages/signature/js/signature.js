@@ -139,26 +139,12 @@ $(document).ready(function(){
             loadSignaturesTree('', openSigningFirstStepModal);
         }
     });
-
-    //////////////////////////////////////////////////
-    // Stamp sign event
-    //////////////////////////////////////////////////
-    // TODO: deprecated
-    $('#gd-stamp-sign').on(userMouseClick, function(e){
-        if(typeof documentGuid == "undefined" || documentGuid == ""){
-            printMessage("Please open document first");
-        } else {
-            signature.signatureType = "stamp";
-            toggleModalDialog(true, 'Stamp Signature', getHtmlImageSign());
-            $(".gd-modal-dialog").addClass("gd-signature-modal-dialog");
-            loadSignaturesTree('', openSigningFirstStepModal);
-        }
-    });
+    
 */
     //////////////////////////////////////////////////
     // Optical sign event
     //////////////////////////////////////////////////
-	$("#gd-new-signature").on(userMouseClick, function(e){
+	/* $("#gd-new-signature").on(userMouseClick, function(e){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
@@ -172,7 +158,8 @@ $(document).ready(function(){
 			}
 			$("#gd-signature-context-panel").opticalCodeGenerator();
         }
-    });
+    }); */
+	
 /*
     //////////////////////////////////////////////////
     // Text sign event
@@ -541,13 +528,25 @@ $(document).ready(function(){
     // Create new signature
     //////////////////////////////////////////////////
     $('#gd-new-signature').on(userMouseClick, function (e) {
-        if ("hand" == signature.signatureType) {
-            toggleLightBox(true, "Draw signature", getDrawSignHeader(), getDrawSignContent());
-            $("#gd-draw-image").bcPaint();
-        } else {
-            // TODO logic depending on signature.signatureType
-            //toggleLightBox(true, "", "", "");
-        }
+		switch (signature.signatureType){
+			case "hand":
+				toggleLightBox(true, "Draw signature", getDrawSignHeader(), getDrawSignContent());
+				$("#gd-draw-image").bcPaint();
+				break;
+			case "stamp":
+				var html = $.fn.stampGenerator.addInitialShape();
+				toggleLightBox(true, "Draw stamp", html.header);
+				$.fn.stampGenerator.drawShape(0);	
+				$.fn.bcPicker.defaults.defaultColor = "000000";
+				$(".csg-background-color").bcPicker();
+				$(".csg-border-color").bcPicker();				
+				makeResizable(0);
+				break;
+			case "barCode":
+			case "qrCode":
+				$("#gd-signature-context-panel").opticalCodeGenerator();
+				break;
+		}        
     });
 });
 
@@ -947,40 +946,28 @@ function saveDrawnImage(image) {
 function saveDrawnStamp(callback) {
     $('#gd-modal-spinner').show();
     //get drawn stamp data
-    stampData = getStampData();
+    stampData = $.fn.stampGenerator.getStampData();
     // initiate image
     var image = "";
     // draw empty canvas - required to resize and crop stamp for its real size
     var cropedCanvas = "<canvas id='gd-croped-stamp' width='" + stampData[stampData.length - 1].width + "' height='" + stampData[stampData.length - 1].height + "'></canvas>";
     // combine all stamp lines to one image
-    $("#csg-preview-container").append(cropedCanvas);
+    $("#gd-lightbox-body").append(cropedCanvas);
     var ctxCroped = $("#gd-croped-stamp")[0].getContext("2d");
     // get drawn stamp padding from canvas border
-    var initialLeft = getRealStampSize($(".csg-preview")[0]).left;
-    var initialTop = getRealStampSize($(".csg-preview")[0]).top;
+    var biggestWidth = stampData[stampData.length - 1].width;   
     // combine stamp lines
     $(".csg-preview").each(function(index, shape){
         // calculate stamp real size and paddings
-        var newLeft = 0;
-        var newTop = 0;
-        var currentLeft = getRealStampSize(shape).left;
-        var currentTop = getRealStampSize(shape).top
+        var offset = 0;         
         if(index != 0){
-            newLeft = currentLeft - initialLeft;
-            newTop = currentTop - initialTop;
+            offset = biggestWidth - stampData[index - 1].width;            
         }
         // crop canvas empty pixels
-        ctxCroped.drawImage(
-            shape,
-            getRealStampSize(shape).left,
-            getRealStampSize(shape).top,
-            getRealStampSize(shape).width,
-            getRealStampSize(shape).height,
-            newLeft,
-            newTop,
-            getRealStampSize(shape).width,
-            getRealStampSize(shape).height
-        );
+		if(offset != 0){
+			offset = offset / 2;
+		}
+        ctxCroped.drawImage(shape, offset, offset);	
         // remove old canvases
         $(shape).remove();
     });
@@ -1062,85 +1049,6 @@ function saveDrawnText(properties, callback) {
             callback(data);
         }
     });
-}
-
-/**
- * Get drawn stamp data
- */
-function getStampData(){
-    // get shape data
-    var stampData = [];
-   $(".csg-params").each(function(index, shape){
-        var currentShapeId = $(shape).attr("id").replace ( /[^\d.]/g, '' );
-        var stampShape = {};
-        stampShape.text = $(shape).find("#csg-text").val();
-        stampShape.fontSize = $(shape).find("#csg-text-size").val();
-        stampShape.textRepeat = $(shape).find("#csg-text-repeat").val();
-        stampShape.textExpansion = $(shape).find("#csg-text-expansion").val();
-        stampShape.font = $(shape).find("#csg-text-font").val();
-        stampShape.textColor = $("#csg-fg-color-" + currentShapeId).children().css('background-color');
-        stampShape.radius = $(shape).find("#csg-radius").val();
-        stampShape.strokeColor = $("#csg-stroke-color-" + currentShapeId).children().css('background-color');
-        stampShape.backgroundColor = $("#csg-bg-color-" + currentShapeId).children().css('background-color');
-        stampShape.width = getRealStampSize($(".csg-preview")[0]).width;
-        stampShape.height = getRealStampSize($(".csg-preview")[0]).height;
-        stampData.push(stampShape);
-        stampShape = null;
-    });
-   return stampData;
-}
-
-/**
- * Get real size of the canvas content
- * @param {String} stampCanvas - Canvas element
- */
-function getRealStampSize(stampCanvas) {
-    var ctx = stampCanvas.getContext('2d'),
-        copy = document.createElement('canvas').getContext('2d'),
-        pixels = ctx.getImageData(0, 0, stampCanvas.width, stampCanvas.height),
-        l = pixels.data.length,
-        i,
-        bound = {
-            top: null,
-            left: null,
-            right: null,
-            bottom: null
-        },
-        x, y;
-
-    for (i = 0; i < l; i += 4) {
-        if (pixels.data[i+3] !== 0) {
-            x = (i / 4) % stampCanvas.width;
-            y = ~~((i / 4) / stampCanvas.width);
-
-            if (bound.top === null) {
-                bound.top = y;
-            }
-
-            if (bound.left === null) {
-                bound.left = x;
-            } else if (x < bound.left) {
-                bound.left = x;
-            }
-
-            if (bound.right === null) {
-                bound.right = x;
-            } else if (bound.right < x) {
-                bound.right = x;
-            }
-
-            if (bound.bottom === null) {
-                bound.bottom = y;
-            } else if (bound.bottom < y) {
-                bound.bottom = y;
-            }
-        }
-    }
-    var trimHeight = bound.bottom - bound.top,
-        trimWidth = bound.right - bound.left,
-        trimmed = ctx.getImageData(bound.left, bound.top, trimWidth, trimHeight);
-    var result = {height: trimHeight, width: trimWidth, left: bound.left, top: bound.top};
-    return result;
 }
 
 /**
@@ -1634,7 +1542,11 @@ function insertImage(image, pageNumber) {
     // add signature to the selected page
     $(signatureHtml).insertBefore($("#gd-page-" + pageNumber).find(".gd-wrapper")).delay(1000);
 	// new UI
-	$(".gd-text-color-picker").bcPicker();
+	if(signature.signatureType == "text"){
+		if($(".gd-text-color-picker").find(".bcPicker-picker").length == 0){
+			$(".gd-text-color-picker").bcPicker();
+		}
+	}
 	// new UI
 	var defaultFont = $("#gd-draggable-helper-" + currentImage).find(".gd-fonts-select").val();
 	// new UI
@@ -1884,6 +1796,7 @@ function toggleLightBox(open, title, header, content) {
         $('#lightBoxDialog').addClass('in');
         $(".gd-lightbox-header").append(header);
 		$("#gd-lightbox-body").append(content);
+		
     } else {
         $('#lightBoxDialog').removeClass('in');
         $('#lightBoxDialog')

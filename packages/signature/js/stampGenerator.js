@@ -15,14 +15,14 @@ var paramValues = {
 	left: 0, 
 	top: 0, 
 	zIndex: 10,		
-	bgColor: "rgb(255, 255, 255)",
+	backgroundColor: "rgb(255, 255, 255)",
 	strokeColor: "rgb(51, 51, 51)", 
 	strokeWidth: 1,
 	textExpansion: 0.173,
 	textRepeat: 1,
 	fontSize: 10,
-	textFont: "Arial",
-	fgColor: "rgb(51, 51, 51)",
+	font: "Arial",
+	textColor: "rgb(51, 51, 51)",
 	radius: 75
 }
  var stampData = [];
@@ -89,7 +89,7 @@ $(document).ready(function(){
 			$(".csg-border-color").bcPicker();				
 		} else {
 			$(this).parent().parent().parent().parent().remove();	
-			properties[0].bgColor = color;			
+			properties[0].backgroundColor = color;			
 			$.fn.stampGenerator.drawShape(properties[0].id);
 			$.fn.bcPicker.defaults.defaultColor = "000000";
 			$(".csg-background-color").bcPicker();
@@ -252,7 +252,7 @@ $(document).ready(function(){
 			// get shape params
 			properties[0].radius = (properties[0].width / 2) - 10;			
 			isCircle = (typeof isCircle == "undefined") ? false : isCircle;			
-			var bgColor = (properties[0].bgColor == "") ? "rgb(255, 255, 255)" : properties[0].bgColor;
+			var backgroundColor = (properties[0].backgroundColor == "") ? "rgb(255, 255, 255)" : properties[0].backgroundColor;
 			properties[0].strokeColor = (properties[0].strokeColor == "") ? "rgb(51, 51, 51)" : properties[0].strokeColor;
 			properties[0].strokeWidth = (properties[0].strokeWidth == "") ? 1 : properties[0].strokeWidth;	
 			properties[0].fontSize = (properties[0].fontSize == "") ? 10 : properties[0].fontSize;				
@@ -268,10 +268,10 @@ $(document).ready(function(){
 			var c = document.getElementById('csg-stamp-' + canvasId);
 			var ctx = c.getContext('2d');
 			// draw canvas
-			ctx.drawCircle(properties[0].radius, properties[0].width / 2, properties[0].height / 2, bgColor, properties[0].strokeColor, properties[0].strokeWidth);
+			ctx.drawCircle(properties[0].radius, properties[0].width / 2, properties[0].height / 2, backgroundColor, properties[0].strokeColor, properties[0].strokeWidth);
 			if(!isCircle) {
-				ctx.fillStyle = properties[0].fgColor;
-				ctx.font = properties[0].fontSize + 'px ' + properties[0].textFont;
+				ctx.fillStyle = properties[0].textColor;
+				ctx.font = properties[0].fontSize + 'px ' + properties[0].font;
 				ctx.textAlign = 'center';
 				ctx.fillText(properties[0].text, properties[0].width / 2, properties[0].height / 2 + properties[0].fontSize/2);				
 			} else {
@@ -279,11 +279,11 @@ $(document).ready(function(){
 				parseInt(properties[0].radius) - parseInt(textPadding), properties[0].width / 2, 
 				properties[0].height / 2, 
 				0, 
-				properties[0].fgColor, 
+				properties[0].textColor, 
 				properties[0].textExpansion,
 				properties[0].textRepeat,
 				properties[0].fontSize, 
-				properties[0].textFont);
+				properties[0].font);
 			}				
 		},
 
@@ -331,23 +331,23 @@ function getStampContextMenu(){
 /**
 * Extend canvas functions
 **/
-CanvasRenderingContext2D.prototype.drawCircle = function(radius, x, y, bgColor, strokeColor, strokeWidth){
+CanvasRenderingContext2D.prototype.drawCircle = function(radius, x, y, backgroundColor, strokeColor, strokeWidth){
 	this.beginPath();
 	this.arc(x, y, radius, 0, 2 * Math.PI);
 	this.lineWidth = strokeWidth
 	this.strokeStyle = strokeColor;
 	this.stroke();	
-	this.fillStyle = bgColor;
+	this.fillStyle = backgroundColor;
 	this.fill();
 	this.closePath();
 }
 
-CanvasRenderingContext2D.prototype.drawTextCircle = function(text, radius, x, y, sAngle, fgColor, textExpansion, textRepeat, fontSize, textFont){
+CanvasRenderingContext2D.prototype.drawTextCircle = function(text, radius, x, y, sAngle, textColor, textExpansion, textRepeat, fontSize, font){
 	 this.save();
 	 this.translate(x, y);
 	 this.rotate(Math.PI / 2);
-	 this.fillStyle = fgColor;
-	 this.font = fontSize + 'px ' + textFont;
+	 this.fillStyle = textColor;
+	 this.font = fontSize + 'px ' + font;
 
 	 for(var i = 0; i < textRepeat; i++){
 		 for(var j = 0; j < text.length; j++){
@@ -415,14 +415,15 @@ function cleanProperties(){
 		left: 0, 
 		top: 0, 
 		zIndex: 10,		
-		bgColor: "",
-		strokeColor: "", 
-		strokeWidth: "",
+		backgroundColor: "rgb(255, 255, 255)",
+		strokeColor: "rgb(51, 51, 51)", 
+		strokeWidth: 1,
 		textExpansion: 0.173,
 		textRepeat: 1,
-		fontSize: 14,
-		textFont: "Arial",
-		fgColor: "rgb(51, 51, 51)"
+		fontSize: 10,
+		font: "Arial",
+		textColor: "rgb(51, 51, 51)",
+		radius: 75
 	}
 }
 

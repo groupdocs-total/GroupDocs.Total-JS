@@ -6,18 +6,27 @@
  * @version 0.4.0
  */
  
- var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';
+var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';
 var paramValues = {
+	id: 0,
+	text: "",
 	width: 150,
 	height: 150,
 	left: 0, 
 	top: 0, 
-	zIndex: 0,		
-	bgColor: "",
-	strokeColor: "", 
-	strokeWidth: ""
+	zIndex: 10,		
+	bgColor: "rgb(255, 255, 255)",
+	strokeColor: "rgb(51, 51, 51)", 
+	strokeWidth: 1,
+	textExpansion: 0.173,
+	textRepeat: 1,
+	fontSize: 10,
+	textFont: "Arial",
+	fgColor: "rgb(51, 51, 51)",
+	radius: 75
 }
-
+ var stampData = [];
+ 
 $(document).ready(function(){
 	
 	
@@ -46,6 +55,13 @@ $(document).ready(function(){
 		$(".csg-background-color").find(".bcPicker-picker").click();		
 	});
 	
+	//Save stamp
+	$('body').on(userMouseClick, '.fa-check', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		saveDrawnStamp(applyStamp);			
+	});
+	
 	// open border color palit
 	$('body').on(userMouseClick, '.fa-square', function(e){
 		e.preventDefault();
@@ -56,57 +72,64 @@ $(document).ready(function(){
 	// Pick a color
 	$('body').on(userMouseClick, '.bcPicker-color', function(){
 		$.fn.bcPicker.pickColor($(this));		
-		var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");		
-		paramValues.width = $(this).parent().parent().parent().parent()[0].offsetWidth;
-		paramValues.height = $(this).parent().parent().parent().parent()[0].offsetHeight;     
-		paramValues.left = $(this).parent().parent().parent().parent()[0].offsetLeft;
-		paramValues.top = $(this).parent().parent().parent().parent()[0].offsetTop;		
-		paramValues.zIndex = $($(this).parent().parent().parent().parent()[0]).css("z-index");		
+		var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");	
+		var canvasId = $($(this).parent().parent().parent().parent()[0]).data("id");		
+		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });
+		properties[0].width = $(this).parent().parent().parent().parent()[0].offsetWidth;
+		properties[0].height = $(this).parent().parent().parent().parent()[0].offsetHeight;     
+		properties[0].left = $(this).parent().parent().parent().parent()[0].offsetLeft;
+		properties[0].top = $(this).parent().parent().parent().parent()[0].offsetTop;		
+					
 		if($(this).parent().parent().hasClass("csg-border-color")){				
 			$(this).parent().parent().parent().parent().remove();	
-			paramValues.strokeColor = color;			
-			$.fn.stampGenerator.addShape();
+			properties[0].strokeColor = color;			
+			$.fn.stampGenerator.drawShape(properties[0].id);
 			$.fn.bcPicker.defaults.defaultColor = "000000";
 			$(".csg-background-color").bcPicker();
 			$(".csg-border-color").bcPicker();				
 		} else {
 			$(this).parent().parent().parent().parent().remove();	
-			paramValues.bgColor = color;			
-			$.fn.stampGenerator.addShape();
+			properties[0].bgColor = color;			
+			$.fn.stampGenerator.drawShape(properties[0].id);
 			$.fn.bcPicker.defaults.defaultColor = "000000";
 			$(".csg-background-color").bcPicker();
 			$(".csg-border-color").bcPicker();			
 		}		
-		makeResizable();
+		makeResizable(properties[0].id);
 	});
 	
 	// change border width
 	$('body').on("change", ".csg-border-width select", function(){
-		paramValues.strokeWidth = $(this).val();
-		paramValues.width = $(this).parent().parent().parent()[0].offsetWidth;
-		paramValues.height = $(this).parent().parent().parent()[0].offsetHeight;     
-		paramValues.left = $(this).parent().parent().parent()[0].offsetLeft;
-		paramValues.top = $(this).parent().parent().parent()[0].offsetTop;		
-		paramValues.zIndex = $($(this).parent().parent().parent()[0]).css("z-index");		
+		var canvasId = $($(this).parent().parent().parent()[0]).data("id");		
+		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });		
+		properties[0].strokeWidth = $(this).val();
+		properties[0].width = $(this).parent().parent().parent()[0].offsetWidth;
+		properties[0].height = $(this).parent().parent().parent()[0].offsetHeight;     
+		properties[0].left = $(this).parent().parent().parent()[0].offsetLeft;
+		properties[0].top = $(this).parent().parent().parent()[0].offsetTop;		
+		
 		$(this).parent().parent().parent().remove();		
-		$.fn.stampGenerator.addShape();
+		$.fn.stampGenerator.drawShape(properties[0].id);
 		$.fn.bcPicker.defaults.defaultColor = "000000";
 		$(".csg-background-color").bcPicker();
 		$(".csg-border-color").bcPicker();	
-		makeResizable();
+		makeResizable(properties[0].id);
 	});
 	
 	//Delete shape
 	$('body').on(userMouseClick, '.csg-delete-shape', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
+		var propertiesToDelete = $.grep(stampData, function(e){ return e.id == $($(this).parent().parent()[0]).data("id"); });
+		stampData.splice( $.inArray(propertiesToDelete, stampData), 1 );
 		$(this).parent().parent().remove();		
 	});
 	
 	// Add new shape
 	$('body').on(userMouseClick, '#csg-shape-add', function(e){
 		e.preventDefault();
-		e.stopImmediatePropagation();		
+		e.stopImmediatePropagation();
+		cleanProperties();
 		if($("#gd-lightbox-body").find(".csg-bouding-box").length > 0){			
 			$.each($("#gd-lightbox-body").find(".csg-bouding-box"), function(index, shape){			
 				$(shape).find(".csg-params").hide();
@@ -115,12 +138,13 @@ $(document).ready(function(){
 			});						
 			paramValues.left = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetLeft - ($.fn.stampGenerator.getSizeMagnifier() / 2);
 			paramValues.top = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetTop - ($.fn.stampGenerator.getSizeMagnifier() / 2);
-			paramValues.width = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetWidth;
-			paramValues.height = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetHeight;
-			paramValues.zIndex =  $($("#gd-lightbox-body").find(".csg-bouding-box")[0]).css("z-index") - 1;				
-			
+			paramValues.width = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetWidth + $.fn.stampGenerator.getSizeMagnifier();
+			paramValues.height = $("#gd-lightbox-body").find(".csg-bouding-box")[0].offsetHeight + $.fn.stampGenerator.getSizeMagnifier();
+			paramValues.zIndex =  $($("#gd-lightbox-body").find(".csg-bouding-box")[0]).css("z-index") - 1;		
+			paramValues.id =  $($("#gd-lightbox-body").find(".csg-bouding-box")[0]).data("id") + 1;				
 		} 
-		shape = $.fn.stampGenerator.addShape();
+		stampData.push(paramValues);
+		shape = $.fn.stampGenerator.drawShape(paramValues.id);
 		var count = $.fn.stampGenerator.getCanvasCount() - 1;
 		if(paramValues.width != 0){
 			$("#csg-shape-" + count).css("width", paramValues.width + $.fn.stampGenerator.getSizeMagnifier());
@@ -129,7 +153,7 @@ $(document).ready(function(){
 			$("#csg-shape-" + count).css("top", paramValues.top);
 			$("#csg-shape-" + count).css("z-index", paramValues.zIndex);
 		}
-		makeResizable();
+		makeResizable(paramValues.id);
 		$.fn.bcPicker.defaults.defaultColor = "000000";
 		$(".csg-background-color").bcPicker();
 		$(".csg-border-color").bcPicker();	
@@ -142,18 +166,34 @@ $(document).ready(function(){
 	
 	// Insert text
 	$('body').on(userMouseClick, '.csg-insert-text', function(e){
-		var text = $(".csg-text-input input").val();
-		var count = $.fn.stampGenerator.getCanvasCount() - 1;
-		$("#csg-stamp-" + count).find(".csg-text").text(text);
-		$("#csg-stamp-" + count).find(".csg-text").addClass("csg-rounded-text");
-		$(function() {
-			$("#csg-stamp-" + count).find(".csg-text").lettering();
-			var angle = 290;
-			for(i = 0; i < $(".csg-rounded-text").find("span").length; i++){
-				angle = angle + 24;
-				$($(".csg-rounded-text").find("span")[i]).css("transform", "rotate(" + angle + "deg)")
+		var canvasId = 0;		
+		$(".csg-bouding-box").each(function(index, shape){
+			if($(shape).css("border").search("none") == -1){
+				canvasId = $(shape).data("id");
 			}
-		});			
+		});				
+		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });
+		properties[0].width = $("#csg-shape-" + canvasId)[0].offsetWidth;
+		properties[0].height = $("#csg-shape-" + canvasId)[0].offsetHeight;     
+		properties[0].left = $("#csg-shape-" + canvasId)[0].offsetLeft;
+		properties[0].top = $("#csg-shape-" + canvasId)[0].offsetTop;		
+		
+		properties[0].text = $(".csg-text-input input").val();		
+		$(".csg-text-input input").val("");
+		var isCircle = true;		
+		$.each($(".csg-bouding-box"), function(index, element){
+			var lastShape = $(".csg-bouding-box")[$(".csg-bouding-box").length - 1];
+			if($(lastShape).is($("#csg-shape-" + canvasId))){
+				isCircle = false;
+			}
+		});		
+		$("#csg-shape-" + canvasId).remove();	
+		$.fn.stampGenerator.drawShape(properties[0].id, isCircle);	
+		$.fn.bcPicker.defaults.defaultColor = "000000";
+		$(".csg-background-color").bcPicker();
+		$(".csg-border-color").bcPicker();	
+		makeResizable(properties[0].id);	
+		$(".csg-text-input").css("display", "none");
 	});
 });
 
@@ -183,62 +223,67 @@ $(document).ready(function(){
 			return sizeMagnifier;
 		},
 		
+		getStampData : function(){
+			return stampData;
+		},
+		
 		addInitialShape : function(){
+			stampData = [];
 			stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();				
 			return stampGeneratorHtml;
-		},		
+		},	
 		
-		addShape : function(){		
-			$.fn.stampGenerator.drawShape();			
-		},
-
-		removeShape : function(elem){
-			elem.parent().fadeOut(300, function(){
-				// get canvas id
-				var canvasId = $.fn.stampGenerator.getCanvasId($(this));
-				// remove canvas
-				$('#csg-stamp-' + canvasId).remove();
-				// remove canvas params container
-				$(this).remove();
-			});
-		},
-
-		toggleShape : function(elem){
-			elem.next().next().toggle('fast');
-			var text = elem.text();
-			elem.text(text == 'Edit' ? 'Close' : 'Edit');
-		},
-
-		drawShape : function(text){
-			var i = 1;
-			// get canvas id
-			var canvasId = canvasCount;
+		drawShape : function(canvasId, isCircle){
+			var previouseElement = "";			
+			// get canvas id			
+			var properties = $.grep(stampData, function(e){ return e.id == canvasId; });
+			if(properties.length == 0){	
+				cleanProperties();
+				stampData.push(paramValues);
+			}
+			properties = $.grep(stampData, function(e){ return e.id == canvasId; });
+			if($(".csg-bouding-box ").length > 1){				
+				$.each($(".csg-bouding-box "), function(index, stamp){
+					if($(stamp).data("id") == (properties[0].id + 1)){
+						previouseElement = $(".csg-bouding-box ")[index];
+					}
+				});
+			}
 			// get shape params
-			var radius = (paramValues.width / 2) - 10;
-			text = (typeof text == "undefined") ? "" : text;
-			var textExpansion = 0.173;
-			var textRepeat = 0;
-			var textSize = 14;
-			var textFont = "Arial";
-			var bgColor = (paramValues.bgColor == "") ? "rgb(255, 255, 255)" : paramValues.bgColor;
-			var strokeColor = (paramValues.strokeColor == "") ? "rgb(51, 51, 51)" : paramValues.strokeColor;
-			var strokeWidth = (paramValues.strokeWidth == "") ? 1 : paramValues.strokeWidth;
-			var fgColor = "rgb(51, 51, 51)";
-			// append canvas container
-			$('#gd-lightbox-body').prepend($.fn.stampGenerator.canvasHtml(canvasId));
+			properties[0].radius = (properties[0].width / 2) - 10;			
+			isCircle = (typeof isCircle == "undefined") ? false : isCircle;			
+			var bgColor = (properties[0].bgColor == "") ? "rgb(255, 255, 255)" : properties[0].bgColor;
+			properties[0].strokeColor = (properties[0].strokeColor == "") ? "rgb(51, 51, 51)" : properties[0].strokeColor;
+			properties[0].strokeWidth = (properties[0].strokeWidth == "") ? 1 : properties[0].strokeWidth;	
+			properties[0].fontSize = (properties[0].fontSize == "") ? 10 : properties[0].fontSize;				
+			// append canvas container	
+			if(previouseElement != ""){
+				$($.fn.stampGenerator.canvasHtml(properties[0])).insertAfter($(previouseElement));
+			} else if(canvasId < $(".csg-bouding-box ").data("id") && $(".csg-bouding-box ").length == 1){
+				$("#gd-lightbox-body").append($.fn.stampGenerator.canvasHtml(properties[0]));
+			} else {
+				$("#gd-lightbox-body").prepend($.fn.stampGenerator.canvasHtml(properties[0]));
+			}			
 			// get canvas container
 			var c = document.getElementById('csg-stamp-' + canvasId);
 			var ctx = c.getContext('2d');
 			// draw canvas
-			ctx.drawCircle(radius, paramValues.width / 2, paramValues.height / 2, bgColor, strokeColor, strokeWidth);
-			if(i == 1) {
-				ctx.fillStyle = fgColor;
-				ctx.font = textSize + 'px ' + textFont;
+			ctx.drawCircle(properties[0].radius, properties[0].width / 2, properties[0].height / 2, bgColor, properties[0].strokeColor, properties[0].strokeWidth);
+			if(!isCircle) {
+				ctx.fillStyle = properties[0].fgColor;
+				ctx.font = properties[0].fontSize + 'px ' + properties[0].textFont;
 				ctx.textAlign = 'center';
-				ctx.fillText(text, paramValues.width / 2, paramValues.height / 2 + textSize/2);
-				i++;
+				ctx.fillText(properties[0].text, properties[0].width / 2, properties[0].height / 2 + properties[0].fontSize/2);				
 			} else {
-				ctx.drawTextCircle(text, parseInt(radius) - parseInt(textPadding), paramValues.width / 2, paramValues.height / 2, 0, fgColor, textExpansion, textRepeat, textSize, textFont);
+				ctx.drawTextCircle(properties[0].text, 
+				parseInt(properties[0].radius) - parseInt(textPadding), properties[0].width / 2, 
+				properties[0].height / 2, 
+				0, 
+				properties[0].fgColor, 
+				properties[0].textExpansion,
+				properties[0].textRepeat,
+				properties[0].fontSize, 
+				properties[0].textFont);
 			}				
 		},
 
@@ -252,16 +297,14 @@ $(document).ready(function(){
 			return html;
 		},	
 
-		canvasHtml : function(){
+		canvasHtml : function(properties){
 			var resizeHandles = getHtmlResizeHandles();	
-			var position = (paramValues.left != 0) ? "left:" + paramValues.left + "px; top:" + paramValues.top + "px" : "";
-			var html = '<div class="csg-bouding-box" id="csg-shape-' + canvasCount + '" data-id="' + canvasCount + '" style="width: ' + paramValues.width + 'px; height: ' + paramValues.height + 'px; ' + position + '">'+
+			var position = (properties.left != 0) ? "left:" + properties.left + "px; top:" + properties.top + "px" : "";
+			var html = '<div class="csg-bouding-box" id="csg-shape-' + properties.id + '" data-id="' + properties.id + '" style="width: ' + properties.width + 'px; height: ' + properties.height + 'px; ' + position + '">'+
 						getStampContextMenu() +
-						'<canvas id="csg-stamp-' + canvasCount + '" class="csg-preview" width="' + paramValues.width + '" height="' + paramValues.height + '" data-id="' + canvasCount + '"></canvas>'+
+						'<canvas id="csg-stamp-' + properties.id + '" class="csg-preview" width="' + properties.width + '" height="' + properties.height + '" data-id="' + properties.id + '"></canvas>'+
 						resizeHandles +						
-					'</div>';	
-			canvasCount++;	
-		
+					'</div>';		
 			return html;
 		}		
 	});
@@ -270,7 +313,7 @@ $(document).ready(function(){
 
 function getStampContextMenu(){
 	var html = '<div class="gd-context-menu csg-params">'+
-	'<i class="fas fa-arrows-alt fa-sm" data-id="gd-image-signature-2"></i>'+
+	'<i class="fas fa-arrows-alt fa-sm"></i>'+
 	'<div class="csg-background-color"></div><i class="fas fa-fill-drip"></i>'+
 	'<div class="csg-border-width">'+
 	'<select>';
@@ -299,12 +342,12 @@ CanvasRenderingContext2D.prototype.drawCircle = function(radius, x, y, bgColor, 
 	this.closePath();
 }
 
-CanvasRenderingContext2D.prototype.drawTextCircle = function(text, radius, x, y, sAngle, fgColor, textExpansion, textRepeat, textSize, textFont){
+CanvasRenderingContext2D.prototype.drawTextCircle = function(text, radius, x, y, sAngle, fgColor, textExpansion, textRepeat, fontSize, textFont){
 	 this.save();
 	 this.translate(x, y);
 	 this.rotate(Math.PI / 2);
 	 this.fillStyle = fgColor;
-	 this.font = textSize + 'px ' + textFont;
+	 this.font = fontSize + 'px ' + textFont;
 
 	 for(var i = 0; i < textRepeat; i++){
 		 for(var j = 0; j < text.length; j++){
@@ -328,9 +371,9 @@ CanvasRenderingContext2D.prototype.drawImageCircle = function(imageSrc, radius, 
 /**
 * Extend canvas functions
 **/
-function makeResizable(){	
-	var canvasCount = $.fn.stampGenerator.getCanvasCount();
-	var element = $("#csg-shape-" + (canvasCount - 1));
+function makeResizable(canvasId){		
+	var element = $("#csg-shape-" + canvasId);
+	var properties = $.grep(stampData, function(e){ return e.id == canvasId; });
 	// enable rotation, dragging and resizing features for current image
 	element.resizable({
 		// set restriction for image resizing to current document page        
@@ -343,15 +386,46 @@ function makeResizable(){
 		},
 		aspectRatio: 1 / 1,
 		stop: function(event, image) {                      
-			paramValues.width = Math.ceil(image.size.width);
-			paramValues.height = Math.ceil(image.size.height);	   
+			properties[0].width = Math.ceil(image.size.width);
+			properties[0].height = Math.ceil(image.size.height);
+			$("#csg-shape-" + canvasId).remove();	
+			$.fn.stampGenerator.drawShape(properties[0].id);
+			makeResizable(canvasId);
+			$.fn.bcPicker.defaults.defaultColor = "000000";
+			$(".csg-background-color").bcPicker();
+			$(".csg-border-color").bcPicker();	
         },
 	}).draggable({
 		// set restriction for image dragging area to current document page
 		containment: $(element).parent(),
 		stop : function(event, image) {			
-            paramValues.left = image.position.left;
-            paramValues.top = image.position.top;
+            properties[0].left = image.position.left;
+            properties[0].top = image.position.top;
 		}
 	});
+}
+
+function cleanProperties(){
+	paramValues = null;
+	paramValues = {
+		id: 0,
+		text: "",
+		width: 150,
+		height: 150,
+		left: 0, 
+		top: 0, 
+		zIndex: 10,		
+		bgColor: "",
+		strokeColor: "", 
+		strokeWidth: "",
+		textExpansion: 0.173,
+		textRepeat: 1,
+		fontSize: 14,
+		textFont: "Arial",
+		fgColor: "rgb(51, 51, 51)"
+	}
+}
+
+function applyStamp(){
+	toggleLightBox(false, "", "");	
 }

@@ -73,47 +73,83 @@ $(document).ready(function(){
 	$('body').on(userMouseClick, '.bcPicker-color', function(){
 		$.fn.bcPicker.pickColor($(this));		
 		var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");	
-		var canvasId = $($(this).parent().parent().parent().parent()[0]).data("id");		
+		var mainElement = $($(this).parent().parent().parent().parent()[0]);
+		if(!$(mainElement).hasClass("csg-bouding-box")){
+			mainElement = $($(this).parent().parent().parent().parent().parent()[0]);
+		}
+		var canvasId = $(mainElement).data("id");		
 		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });
-		properties[0].width = $(this).parent().parent().parent().parent()[0].offsetWidth;
-		properties[0].height = $(this).parent().parent().parent().parent()[0].offsetHeight;     
-		properties[0].left = $(this).parent().parent().parent().parent()[0].offsetLeft;
-		properties[0].top = $(this).parent().parent().parent().parent()[0].offsetTop;		
-					
-		if($(this).parent().parent().hasClass("csg-border-color")){				
-			$(this).parent().parent().parent().parent().remove();	
-			properties[0].strokeColor = color;			
-			$.fn.stampGenerator.drawShape(properties[0].id);
-			$.fn.bcPicker.defaults.defaultColor = "000000";
-			$(".csg-background-color").bcPicker();
-			$(".csg-border-color").bcPicker();				
+		setSizeProperties(properties[0], mainElement[0]);			
+		if($(this).parent().parent().hasClass("csg-border-color")){
+			properties[0].strokeColor = color;							
+		} else if ($(this).parent().parent().hasClass("csg-background-color")){
+			properties[0].backgroundColor = color;					
 		} else {
-			$(this).parent().parent().parent().parent().remove();	
-			properties[0].backgroundColor = color;			
-			$.fn.stampGenerator.drawShape(properties[0].id);
-			$.fn.bcPicker.defaults.defaultColor = "000000";
-			$(".csg-background-color").bcPicker();
-			$(".csg-border-color").bcPicker();			
-		}		
-		makeResizable(properties[0].id);
+			properties[0].textColor = color;		
+		}	
+		var isCircle = true;		
+		$.each($(".csg-bouding-box"), function(index, element){
+			var lastShape = $(".csg-bouding-box")[$(".csg-bouding-box").length - 1];
+			if($(lastShape).is($("#csg-shape-" + canvasId))){
+				isCircle = false;
+			}
+		});	
+		$(mainElement).remove();
+		$.fn.stampGenerator.drawShape(properties[0].id, isCircle);
+		$(".csg-text-menu .font").val(properties[0].font);
+		$(".csg-text-menu .gd-font-size-select").val(properties[0].fontSize);
 	});
 	
 	// change border width
 	$('body').on("change", ".csg-border-width select", function(){
 		var canvasId = $($(this).parent().parent().parent()[0]).data("id");		
 		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });		
-		properties[0].strokeWidth = $(this).val();
-		properties[0].width = $(this).parent().parent().parent()[0].offsetWidth;
-		properties[0].height = $(this).parent().parent().parent()[0].offsetHeight;     
-		properties[0].left = $(this).parent().parent().parent()[0].offsetLeft;
-		properties[0].top = $(this).parent().parent().parent()[0].offsetTop;		
-		
+		properties[0].strokeWidth = $(this).val();			
+		setSizeProperties(properties[0], $(this).parent().parent().parent()[0]);
 		$(this).parent().parent().parent().remove();		
-		$.fn.stampGenerator.drawShape(properties[0].id);
-		$.fn.bcPicker.defaults.defaultColor = "000000";
-		$(".csg-background-color").bcPicker();
-		$(".csg-border-color").bcPicker();	
-		makeResizable(properties[0].id);
+		$.fn.stampGenerator.drawShape(properties[0].id);		
+		$(".csg-text-menu .font").val(properties[0].font);
+		$(".csg-text-menu .gd-font-size-select").val(properties[0].fontSize);
+	});
+	
+	// change font
+	$('body').on("change", ".csg-text-menu .font", function(){
+		var canvasId = $($(this).parent().parent().parent()[0]).data("id");		
+		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });		
+		properties[0].font = $(this).val();
+		var element =  $(this).parent().parent().parent()[0];
+		setSizeProperties(properties[0], element);		
+		var isCircle = true;		
+		$.each($(".csg-bouding-box"), function(index, element){
+			var lastShape = $(".csg-bouding-box")[$(".csg-bouding-box").length - 1];
+			if($(lastShape).is($("#csg-shape-" + canvasId))){
+				isCircle = false;
+			}
+		});	
+		$(this).parent().parent().parent().remove();
+		$.fn.stampGenerator.drawShape(properties[0].id, isCircle);		
+		$(".csg-text-menu .font").val(properties[0].font);
+		$(".csg-text-menu .gd-font-size-select").val(properties[0].fontSize);
+	});
+	
+	// change font size
+	$('body').on("change", ".csg-text-menu .gd-font-size-select", function(){
+		var canvasId = $($(this).parent().parent().parent()[0]).data("id");		
+		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });		
+		properties[0].fontSize = $(this).val();
+		var element =  $(this).parent().parent().parent()[0];
+		setSizeProperties(properties[0], element);			
+		var isCircle = true;		
+		$.each($(".csg-bouding-box"), function(index, element){
+			var lastShape = $(".csg-bouding-box")[$(".csg-bouding-box").length - 1];
+			if($(lastShape).is($("#csg-shape-" + canvasId))){
+				isCircle = false;
+			}
+		});	
+		$(this).parent().parent().parent().remove();
+		$.fn.stampGenerator.drawShape(properties[0].id, isCircle);		
+		$(".csg-text-menu .gd-font-size-select").val(properties[0].fontSize);
+		$(".csg-text-menu .font").val(properties[0].font);
 	});
 	
 	//Delete shape
@@ -152,11 +188,7 @@ $(document).ready(function(){
 			$("#csg-shape-" + count).css("left", paramValues.left);
 			$("#csg-shape-" + count).css("top", paramValues.top);
 			$("#csg-shape-" + count).css("z-index", paramValues.zIndex);
-		}
-		makeResizable(paramValues.id);
-		$.fn.bcPicker.defaults.defaultColor = "000000";
-		$(".csg-background-color").bcPicker();
-		$(".csg-border-color").bcPicker();	
+		}		
 	});
 	
 	// Add text
@@ -173,11 +205,7 @@ $(document).ready(function(){
 			}
 		});				
 		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });
-		properties[0].width = $("#csg-shape-" + canvasId)[0].offsetWidth;
-		properties[0].height = $("#csg-shape-" + canvasId)[0].offsetHeight;     
-		properties[0].left = $("#csg-shape-" + canvasId)[0].offsetLeft;
-		properties[0].top = $("#csg-shape-" + canvasId)[0].offsetTop;		
-		
+		setSizeProperties(properties[0], $("#csg-shape-" + canvasId)[0]);	
 		properties[0].text = $(".csg-text-input input").val();		
 		$(".csg-text-input input").val("");
 		var isCircle = true;		
@@ -188,11 +216,7 @@ $(document).ready(function(){
 			}
 		});		
 		$("#csg-shape-" + canvasId).remove();	
-		$.fn.stampGenerator.drawShape(properties[0].id, isCircle);	
-		$.fn.bcPicker.defaults.defaultColor = "000000";
-		$(".csg-background-color").bcPicker();
-		$(".csg-border-color").bcPicker();	
-		makeResizable(properties[0].id);	
+		$.fn.stampGenerator.drawShape(properties[0].id, isCircle);		
 		$(".csg-text-input").css("display", "none");
 	});
 });
@@ -256,6 +280,8 @@ $(document).ready(function(){
 			properties[0].strokeColor = (properties[0].strokeColor == "") ? "rgb(51, 51, 51)" : properties[0].strokeColor;
 			properties[0].strokeWidth = (properties[0].strokeWidth == "") ? 1 : properties[0].strokeWidth;	
 			properties[0].fontSize = (properties[0].fontSize == "") ? 10 : properties[0].fontSize;				
+			properties[0].textColor = (properties[0].textColor == "") ? "rgb(51, 51, 51)" : properties[0].textColor;
+			properties[0].font = (properties[0].font == "") ? "Arial" : properties[0].font;
 			// append canvas container	
 			if(previouseElement != ""){
 				$($.fn.stampGenerator.canvasHtml(properties[0])).insertAfter($(previouseElement));
@@ -264,6 +290,13 @@ $(document).ready(function(){
 			} else {
 				$("#gd-lightbox-body").prepend($.fn.stampGenerator.canvasHtml(properties[0]));
 			}			
+			
+			
+			setColors(properties[0], canvasId) 
+			
+			
+			
+			makeResizable(properties[0].id);
 			// get canvas container
 			var c = document.getElementById('csg-stamp-' + canvasId);
 			var ctx = c.getContext('2d');
@@ -312,18 +345,28 @@ $(document).ready(function(){
 })(jQuery);
 
 function getStampContextMenu(){
+	
+	
+	
 	var html = '<div class="gd-context-menu csg-params">'+
-	'<i class="fas fa-arrows-alt fa-sm"></i>'+
-	'<div class="csg-background-color"></div><i class="fas fa-fill-drip"></i>'+
-	'<div class="csg-border-width">'+
-	'<select>';
+					'<i class="fas fa-arrows-alt fa-sm"></i>'+
+					'<div class="csg-background-color"></div>'+
+					'<i class="fas fa-fill-drip"></i>'+
+					'<div class="csg-border-width">'+
+					'<select>';
 	for(i = 1; i <= 10; i++){
 		html = html + '<option value="' + i + '">' + i + 'px</option>';
 	}
 	html = html + '</select>'+	
 			'</div>'+
-			'<div class="csg-border-color"></div><i class="far fa-square"></i>'+
-			'<i class="fas fa-trash-alt fa-sm csg-delete-shape"></i>'+
+			'<div class="csg-border-color"></div>'+
+			'<i class="far fa-square"></i>'+
+			'<i class="fas fa-trash-alt fa-sm csg-delete-shape"></i>'+		
+		'<div class="csg-text-menu">';	
+		$.each(textContextMenuButtons, function(index, button){
+			html = html + button;
+		});
+		html = html + '</div>'+
 			'</div>';
 	return html;
 }
@@ -389,11 +432,7 @@ function makeResizable(canvasId){
 			properties[0].width = Math.ceil(image.size.width);
 			properties[0].height = Math.ceil(image.size.height);
 			$("#csg-shape-" + canvasId).remove();	
-			$.fn.stampGenerator.drawShape(properties[0].id);
-			makeResizable(canvasId);
-			$.fn.bcPicker.defaults.defaultColor = "000000";
-			$(".csg-background-color").bcPicker();
-			$(".csg-border-color").bcPicker();	
+			$.fn.stampGenerator.drawShape(properties[0].id);					
         },
 	}).draggable({
 		// set restriction for image dragging area to current document page
@@ -401,6 +440,8 @@ function makeResizable(canvasId){
 		stop : function(event, image) {			
             properties[0].left = image.position.left;
             properties[0].top = image.position.top;
+			$("#csg-shape-" + canvasId).remove();	
+			$.fn.stampGenerator.drawShape(properties[0].id);	
 		}
 	});
 }
@@ -429,4 +470,21 @@ function cleanProperties(){
 
 function applyStamp(){
 	toggleLightBox(false, "", "");	
+}
+
+function setSizeProperties(properties, element){
+		properties.width = element.offsetWidth;
+		properties.height = element.offsetHeight;     
+		properties.left = element.offsetLeft;
+		properties.top = element.offsetTop;	
+}
+
+function setColors(properties, canvasId) {
+	$.fn.bcPicker.defaults.defaultColor = "000000";
+	$("#csg-stamp-" + canvasId).parent().find(".csg-background-color").bcPicker();
+	$("#csg-stamp-" + canvasId).parent().find(".csg-background-color").find('.bcPicker-picker').css("background-color", properties.backgroundColor);
+	$("#csg-stamp-" + canvasId).parent().find(".csg-text-menu .gd-text-color-picker").bcPicker();
+	$("#csg-stamp-" + canvasId).parent().find(".csg-text-menu .gd-text-color-picker").find('.bcPicker-picker').css("background-color", properties.textColor);
+	$("#csg-stamp-" + canvasId).parent().find(".csg-border-color").bcPicker();	
+	$("#csg-stamp-" + canvasId).parent().find(".csg-border-color").find('.bcPicker-picker').css("background-color", properties.strokeColor);;		
 }

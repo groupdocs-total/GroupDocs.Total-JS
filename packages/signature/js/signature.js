@@ -537,10 +537,6 @@ $(document).ready(function(){
 				var html = $.fn.stampGenerator.addInitialShape();
 				toggleLightBox(true, "Draw stamp", html.header);
 				$.fn.stampGenerator.drawShape(0);
-				$.fn.bcPicker.defaults.defaultColor = "000000";
-				$(".csg-background-color").bcPicker();
-				$(".csg-border-color").bcPicker();
-				makeResizable(0);
 				break;
 			case "barCode":
 			case "qrCode":
@@ -1672,7 +1668,7 @@ function hideAllContextMenu(){
  * @param {array} fonts - array of available fonts
  */
 function getHtmlFontsSelect(fonts){
-	var fontsSelect = '<select class="gd-fonts-select">';
+	var fontsSelect = '<select class="gd-fonts-select font">';
 	$.each(fonts, function(index, font){
 		fontsSelect = fontsSelect + '<option value="' + font + '">' + font + '</option>';
 	});
@@ -1687,7 +1683,7 @@ function getHtmlFontsSelect(fonts){
 function getHtmlFontSizeSelect(){
 	var fontSizes = '<select class="gd-fonts-select gd-font-size-select">';
 	for(var i = 8; i <= 20; i++){
-		if(i == 16){
+		if(i == 10){
 			fontSizes = fontSizes + '<option value="' + i + '" selected="selected">' + i + 'px</option>';
 		} else {
 			fontSizes = fontSizes + '<option value="' + i + '">' + i + 'px</option>';
@@ -1796,9 +1792,7 @@ function toggleLightBox(open, title, header, content) {
         $('#lightBoxDialog').addClass('in');
         $(".gd-lightbox-header").append(header);
 		$("#gd-lightbox-body").append(content);
-		if(signature.signatureType == "stamp"){
-			makeResizable($("#csg-shape-" + signature.id));
-		}
+		
     } else {
         $('#lightBoxDialog').removeClass('in');
         $('#lightBoxDialog')

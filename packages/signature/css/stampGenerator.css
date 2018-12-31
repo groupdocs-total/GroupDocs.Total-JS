@@ -1,32 +1,8 @@
-#csg-container {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: #ffffff;
-    position: relative;
-    width: 100%;
-    height: 335px;
-}
-
-#csg-container input {
-    border: 1px solid #dcdcdc;
-    padding: 5px;
-    color: #9c9c9c;
-    font-weight: 300;
-}
-
-#csg-container input[type="file"] {
-    border: 0;
-}
-
-#csg-container input:focus, button:focus {
-    outline: none;
-}
-
 #csg-params-header {
     right: 85px;
     top: 12px;
     position: inherit;
 }
-
 #csg-params-header > i {
 	color: white;
     font-size: 21px;
@@ -35,7 +11,6 @@
     right: -47px;
 	cursor: pointer;
 }
-
 #csg-params-header > button {
     background-color: #2e84b9;
     color: #ffffff;
@@ -49,115 +24,17 @@
 #csg-params-header > button i {
     margin-right: 10px;
 }
-#csg-params-container {
-    position: absolute;
-    width: 250px;
-    height: calc(100% - 20px);
-    padding: 10px;
-    overflow: scroll;
-}
-
 .csg-params {
-   
+	display: -webkit-inline-box;
 }
-
 .csg-params i {
     margin-left: 9px;
 	cursor: pointer;
 }
-
-.csg-params h2 {
-    text-transform: uppercase;
-    font-weight: 400;
-    font-size: 13px;
-    margin: 0;
-    margin-left: -5px;
-    text-align: left;
+.csg-preview {
+	width: 100%;
+	height: 100%;
 }
-
-.csg-params h3 {
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 300;
-    font-size: 12px;
-    margin: 0;
-    margin-top: 15px;
-}
-
-.csg-params thead td {
-    font-size: 12px;
-    font-weight: 300;
-    color: #adadad;
-}
-
-.csg-params > div {
-	display: -webkit-inline-box;
-}
-
-.csg-params input[type="number"] {
-    width: 60px;
-}
-
-.csg-params input[type="text"] {
-    width: 185px;
-}
-
-.csg-params #csg-text-font {
-    width: 120px;
-}
-
-.csg-params .jscolor {
-    width: 70px;
-}
-
-.csg-params .csg-color-picker {
-    width: 55px;
-    height: 23px;
-    border: 1px solid #dcdcdc;
-}
-
-.csg-params .csg-params-toggle {
-    position: absolute;
-    top: 15px;
-    right: 50px;
-}
-
-.csg-params .csg-shape-remove {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-}
-
-.csg-params button {
-    background: none;
-    border: 0;
-}
-
-#csg-preview-container {
-    position: absolute;
-    left: 250px;
-    width: calc(100% - 320px);
-    height: 100%;
-}
-
-#csg-footer-container {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 20px;
-    padding: 5px 20px;
-}
-
-.csg-shape {
-    position: inherit; 
-    border-radius: 50%;
-    border: 1px solid #333;
-    width: 100%;
-    height: 100%;
-	text-align: center;
-    display: table;
-}
-
 .csg-bouding-box {
 	border: 1px solid #679FFA;
     width: 150px;
@@ -172,16 +49,74 @@
     height: 12px !important;
 	margin-left: 5px;
 }
-
-.csg-text {    
-    width: 100%;
-    height: 100%;
-    display: table-cell;
-    vertical-align: middle;
+.csg-border-width  select {
+    position: absolute;
+	width: 27px;
+    border: 0;
+    margin-left: 2px;
+    top: -2px;
+    background-color: rgba(0,0,0,0);  
+    cursor: pointer;
+}
+.csg-text-input {
+	position: absolute;
+    top: 32px;
+    left: 4px;
+    display: none;
+}
+.csg-text-input input {
+	margin-right: 10px;
+	height: 26px;
+}
+.csg-insert-text {
+	display: -webkit-inline-box;
+    width: 27px;
+    height: 27px;
+    background-color: #3787F5;
+    position: absolute;
+	left: 176px;
+}
+.csg-insert-text i {
+    color: white;
+    position: absolute;
+    top: 22%;
+    left: 24%;
 }
 .fa-fill-drip > div{
     visibility: hidden; 
 }
 .bcPicker-palette {
     top: 25px;
+}
+.csg-text-menu {
+	position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 75px;
+    background-color: #3E4E5A;
+}
+.csg-text-menu select {
+    font-size: 25px;
+    width: 310px;
+    margin: 20px 29px 0 13px;
+    background-color: #3e4e5a;
+    color: white;
+	cursor: pointer;
+}
+.csg-text-menu .gd-font-size-select {
+	width: 88px;
+}
+.csg-text-menu i {
+    font-size: 20px;
+    color: white;
+    margin: 0 12px;
+}
+.csg-text-menu .gd-text-color-picker {
+    position: relative;
+    width: 26px;
+    height: 26px;
+    display: inline-block;
+    top: 6px;
+    margin: 0px 4px 0 11px;
 }

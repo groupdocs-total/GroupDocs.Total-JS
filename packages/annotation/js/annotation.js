@@ -1101,7 +1101,7 @@ GROUPDOCS.ANNOTATION PLUGIN
     ******************************************************************
     */
     var methods = {
-        init: function (options) {
+        init: function (options) {			
             // set defaults
             var defaults = {
                 textAnnotation: true,
@@ -1118,9 +1118,33 @@ GROUPDOCS.ANNOTATION PLUGIN
                 textUnderlineAnnotation: true,
                 distanceAnnotation: true,
                 downloadOriginal: true,
-                downloadAnnotated: true
+                downloadAnnotated: true,
+				defaultDocument: "",
+				preloadPageCount: 0,
+				pageSelector: true,
+				download: true,
+				upload: true,
+				print: true,
+				browse: true,
+				rewrite: true,
+				applicationPath: "http://localhost:8080/annotation"
             };
-
+			$('#element').viewer({
+					applicationPath: options.applicationPath,
+                    defaultDocument: options.defaultDocument,
+                    htmlMode: false,
+                    preloadPageCount: options.preloadPageCount,
+                    zoom : false,
+                    pageSelector: options.pageSelector,
+                    search: false,
+                    thumbnails: false,
+                    rotate: false,
+                    download: options.download,
+                    upload: options.upload,
+                    print: options.print,
+                    browse: options.browse,
+                    rewrite: options.rewrite
+			});
             options = $.extend(defaults, options);
 
             getHtmlDownloadPanel();

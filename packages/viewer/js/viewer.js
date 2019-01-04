@@ -1548,6 +1548,9 @@ function uploadDocument(file, index, url) {
 * Print current document
 */
 function printDocument() {
+	if($(this).find("li").length > 0){
+		return;
+	}
     // get current document content
     var documentContainer = $("#gd-panzoom");
     // force each document page to be printed as a new page

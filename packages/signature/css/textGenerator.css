@@ -1,24 +1,3 @@
-#gd-text-container {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-#gd-text-container input {
-    border: 1px solid #dcdcdc;
-    padding: 5px;
-    color: #9c9c9c;
-    margin-bottom: 10px;
-    margin-right: 10px;
-}
-
-#gd-text-container input:focus, button:focus {
-    outline: none;
-}
-
-#gd-text-params-header {
-}
-
-#gd-text-params-container {}
-
 .gd-text-params {
     padding: 15px 20px;
     margin-bottom: 10px;
@@ -150,14 +129,6 @@ input[type="checkbox"]:checked ~ .gd-text-helper::after {
     transform: rotate(-45deg) scale(1);
 }
 
-#gd-text-border-width-label{
-    width: 67px !important;
-}
-
-#gd-text-border-table td, #gd-text-table td {
-    text-align: left;
-}
-
 .gd-text-color {
     margin-right: 11px;
     width: 88px;
@@ -165,18 +136,6 @@ input[type="checkbox"]:checked ~ .gd-text-helper::after {
 
 .gd-text-background-color {
     width: 107px;
-}
-
-#gd-text-underline {
-    margin-left: 19px;
-}
-
-#gd-text-border-width-div {
-    width: 94px;
-}
-
-#gd-text-border-style-line div {
-    margin-bottom: 12px;
 }
 
 .gd-border-style-wrapper {
@@ -197,10 +156,6 @@ input[type="checkbox"]:checked ~ .gd-text-helper::after {
     width: 100%;
 }
 
-#gd-text-font {
-    width: 120px;
-}
-
 .gd-text-preview {
     position: absolute;
     top: 50px;
@@ -208,4 +163,9 @@ input[type="checkbox"]:checked ~ .gd-text-helper::after {
 
 .bcPicker-palette {
     top: 25px;
+}
+
+.gd-text {
+    width: 100%;
+    height: 100%;
 }

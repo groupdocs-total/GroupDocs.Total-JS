@@ -114,7 +114,7 @@
         height: 94px;
     }
 
-    .gd-signature .gd-signature-name {
+    .gd-signature-item .gd-signature-name {
         width: Calc(100% - 150px);
         font-size: 32px;
     }
@@ -134,7 +134,7 @@
         height: 100px;
     }
 
-    .gd-signature i {
+    .gd-signature-item i {
         font-size: 32px;
         right: 20px;
         top: 25px;

@@ -1555,8 +1555,8 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
     if(preloadPageCount === 0 && pageData.data){
         renderpage(documentName, gd_page, null, prefix, width, height, pageData.data);
     }else{
-        if (!gd_prefix_page.hasClass('loaded')) {
-            gd_prefix_page.addClass('loaded');
+        if (!gd_page.hasClass('loaded')) {
+            gd_page.addClass('loaded');
             // get document description
             var data = { guid: documentGuid, page: pageNumber, password: password };
             $.ajax({

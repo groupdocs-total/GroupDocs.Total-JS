@@ -364,6 +364,9 @@ BROWSE SIGNATURES SLIDE
     width: 146px;
     cursor: pointer;
 }
+.gd-save-signature {
+    cursor: pointer;
+}
 .gd-signature .fa-level-up {
     margin-left: 23px;
 }

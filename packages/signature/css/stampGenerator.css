@@ -86,9 +86,6 @@
 .fa-fill-drip > div{
     visibility: hidden; 
 }
-.bcPicker-palette {
-	top: -137px !important;
-}
 .csg-text-menu {
 	position: fixed;
     bottom: 0;

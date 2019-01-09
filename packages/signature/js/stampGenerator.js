@@ -73,7 +73,7 @@ $(document).ready(function(){
 	});
 	
 	// Pick a color
-	$('body').on(userMouseClick, '.bcPicker-color', function(){
+	$('body').on(userMouseClick, '.csg-color', function(){
 		$.fn.bcPicker.pickColor($(this));		
 		var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");	
 		var mainElement = $($(this).parent().parent().parent().parent()[0]);
@@ -557,8 +557,11 @@ function setColors(properties, canvasId) {
 	$("#csg-stamp-" + canvasId).parent().find(".csg-background-color").find('.bcPicker-picker').css("background-color", properties.backgroundColor);
 	$("#csg-stamp-" + canvasId).parent().find(".csg-text-menu .gd-text-color-picker").bcPicker();
 	$("#csg-stamp-" + canvasId).parent().find(".csg-text-menu .gd-text-color-picker").find('.bcPicker-picker').css("background-color", properties.textColor);
-	$("#csg-stamp-" + canvasId).parent().find(".csg-border-color").bcPicker();
-	$("#csg-stamp-" + canvasId).parent().find(".csg-border-color").find('.bcPicker-picker').css("background-color", properties.strokeColor);;
+	$("#csg-stamp-" + canvasId).parent().find(".csg-border-color").bcPicker();	
+	$("#csg-stamp-" + canvasId).parent().find(".csg-border-color").find('.bcPicker-picker').css("background-color", properties.strokeColor);
+	$("#gd-lightbox-body").find(".bcPicker-color").each(function(index, color){
+		$(color).addClass("csg-color");
+	});
 }
 
 function setShapeProperties(properties){

@@ -584,7 +584,9 @@ function sign() {
             url = getApplicationPath('signDigital')
             signaturesList.push(signature);
             break;
-        case "image": url = getApplicationPath('signImage')
+        case "image":
+		case "hand":		
+			url = getApplicationPath('signImage')
             break;
         case "stamp": url = getApplicationPath('signStamp')
             break;

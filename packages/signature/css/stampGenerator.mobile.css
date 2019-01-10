@@ -1,0 +1,45 @@
+@media (max-width: 1024px) {
+	#csg-params-header > button {		
+		width: 169px;
+		height: 45px;
+		margin-top: 15px;
+	}
+	
+	#csg-params-header > i {
+		font-size: 30px;		
+		top: 21px;
+	}
+	
+	.csg-text-input {		
+		top: 72px;
+		left: 20px;		
+	}
+	
+	.csg-text-input input {		
+		width: 262px;
+	}
+	
+	.csg-insert-text {
+		left: 262px;
+	}
+	
+	.bcPicker-palette {
+		top: -102px !important;
+		width: 381px !important;
+	}
+
+	.bcPicker-palette > .bcPicker-color {
+		width: 42px !important;
+		height: 24px !important;
+	}
+	
+	.csg-border-width {
+        width: 18px !important;
+		height: 16px !important;
+		margin-left: 8px;
+	}
+	
+	.csg-border-width select {
+        width: 21px;
+	}
+}

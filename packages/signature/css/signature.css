@@ -238,7 +238,7 @@ MODAL
     cursor: pointer;    
 }
 
-.gd-lightbox-close {    
+.gd-lightbox-close {
     left: 13px;
     top: 14px;
 }
@@ -345,7 +345,7 @@ BROWSE SIGNATURES SLIDE
     border-color: #cccccc;
     background-color: #e5e5e5;  
 }
-.gd-signature i {
+.gd-signature-item i {
     position: absolute;
     right: 10px;
     top: 16px;
@@ -355,7 +355,7 @@ BROWSE SIGNATURES SLIDE
 .gd-signature .fa-folder {
     margin-left: 17px;
 }
-.gd-signature .gd-signature-name {
+.gd-signature-item .gd-signature-name {
 	margin: 3px;
     font-size: 14px;
     color: #AAAAAA;
@@ -564,21 +564,22 @@ SIGNATURE IMAGE
     margin: auto;
     top: -44px;
     cursor: default;
-    width: max-content;   
-    
+    width: max-content;
 }
 .gd-text-context-menu {
 	left: -48px;
+    /* TODO remove*/
+    width: 300px;
 }
 .gd-context-menu .fa-arrows-alt {
     cursor: move;
 }
 .gd-context-menu i {
-    color: #5c737f;  
+    color: #5c737f;
     width: 18px;
     height: 18px;
     font-size: 13px;
-    padding-top: 4px;  
+    padding-top: 4px;
     display: inline-block;
     position: initial;
 }

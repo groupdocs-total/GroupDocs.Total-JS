@@ -7,86 +7,233 @@
  */
 
 (function( $ ) {
-	var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';	
+    var paramValues = {
+        text : 'gd-text',
+        fontColor : 'gd-text-font-color',
+        bold : 'gd-text-bold',
+        italic : 'gd-text-italic',
+        underline : 'gd-text-underline',
+        font : 'gd-text-font',
+        fontSize : 'gd-text-font-size',
+        parentName : ''
+    };
+    var menuButtons = [getHtmlFontsSelect(null, paramValues.font),
+        getHtmlFontSizeSelect(paramValues.fontSize),
+        '<i id="gd-text-bold" class="fas fa-bold"></i>',
+        '<i id="' + paramValues.italic + '" class="fas fa-italic"></i>',
+        '<i id="' + paramValues.underline + '" class="fas fa-underline"></i>',
+        '<div id="' + paramValues.fontColor + '" class="gd-text-color-picker"></div>'];
 	var properties = {};
+	var firstCall = true;
 	
-	$.fn.textGenerator = function() {		
-		$('#gd-panzoom').on("change", ".gd-fonts-select", function(e) {
-			$(e.target.parentElement.parentElement.parentElement).find("input").css("font-family", $(e.target).val());
-		});
-		
-		$('#gd-panzoom').on("change", ".gd-font-size-select", function(e) {
-			$(e.target.parentElement.parentElement.parentElement).find("input").css("font-size", $(e.target).val());
-		});
-		
-		$('#gd-panzoom').on(userMouseClick, ".fa-bold", function(e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			$(e.target.parentElement.parentElement.parentElement).find(".fa-bold").toggleClass("active");
-			if($(e.target.parentElement.parentElement.parentElement).find("input").css("font-weight") == "400") {			
-				$(e.target.parentElement.parentElement.parentElement).find("input").css("font-weight", "bold");
-			} else {
-				$(e.target.parentElement.parentElement.parentElement).find("input").css("font-weight", "unset");				
-			}			
-		});
-		
-		$('#gd-panzoom').on(userMouseClick, ".fa-italic", function(e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			$(e.target.parentElement.parentElement.parentElement).find(".fa-italic").toggleClass("active");
-			if($(e.target.parentElement.parentElement.parentElement).find("input").css("font-style") != "italic") {			
-				$(e.target.parentElement.parentElement.parentElement).find("input").css("font-style", "italic");
-			} else {
-				$(e.target.parentElement.parentElement.parentElement).find("input").css("font-style", "unset");
-			}	
-		});
-		
-		$('#gd-panzoom').on(userMouseClick, ".fa-underline", function(e) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			$(e.target.parentElement.parentElement.parentElement).find(".fa-underline").toggleClass("active");
-			if($(e.target.parentElement.parentElement.parentElement).find("input").css("text-decoration").indexOf("underline") == -1) {			
-				$(e.target.parentElement.parentElement.parentElement).find("input").css("text-decoration", "underline");
-			} else {
-				$(e.target.parentElement.parentElement.parentElement).find("input").css("text-decoration", "unset");
-			}	
-		});
-		
-		$('#gd-panzoom').on(userMouseClick, ".bcPicker-color", function(e) {
-			$(e.target.parentElement.parentElement.parentElement.parentElement.parentElement).find("input").css("color", $(e.target).css("background-color"));			
-		});
-		
-		$('#gd-panzoom').on(userMouseClick, ".fa-arrow-up", function(e) {	
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			if($(e.target).hasClass("down")){
-				$(".gd-text-menu").css("top", "unset");					
-			} else {
-				$(".gd-text-menu").css("top", "100px");				
-			}
-			$(e.target).toggleClass("down");
-		});
-	}
+	$.fn.textGenerator = function() {
+    };
 
 	$.extend(true, $.fn.textGenerator, {
-        getProperties : function(){
-			var text = $(this).find('#' + paramValues.text).val();			
-			var fontColor = $('#' + paramValues.fontColor).children().css('background-color');
-			var bold = $(this).find('#' + paramValues.bold).is(':checked') ? true : false;
-			var italic = $(this).find('#' + paramValues.italic).is(':checked') ? true : false;
-			var underline = $(this).find('#' + paramValues.underline).is(':checked') ? true : false;
-			var font = $(this).find('#' + paramValues.font).val();
-			var fontSize = parseInt($(this).find('#' + paramValues.fontSize).val());
-			properties = {
-				text: text,			
-				fontColor: fontColor,
-				bold: bold,
-				italic: italic,
-				underline: underline,
-				font: font,
-				fontSize: fontSize				
-			};
+	    create: function(parentName) {
+	        properties = {};
+            if (firstCall) {
+                loadFonts();
+                firstCall = false;
+            }
+
+            paramValues.parentName = parentName;
+            $('#' + paramValues.parentName).find('.gd-draw-text').append(baseHtml());
+
+            $('#' + parentName).find("#" + paramValues.fontColor).bcPicker();
+
+            $('#' + parentName).on("change", "#" + paramValues.font, function(e) {
+                var val = $(this).val();
+                $('#' + parentName).find('#' + paramValues.text).css("font-family", val);
+                properties.font = val;
+                saveTextSignatureIntoFile().delay(500);
+            });
+
+            $('#' + parentName).on("change", "#" + paramValues.fontSize, function(e) {
+                var val = $(this).val();
+                $('#' + parentName).find('#' + paramValues.text).css("font-size", val);
+                properties.fontSize = val;
+                saveTextSignatureIntoFile().delay(500);
+            });
+
+            $('#' + parentName).on(userMouseClick, "#" + paramValues.bold, function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('#' + parentName).find('#' + paramValues.bold).toggleClass("active");
+                if($('#' + parentName).find('#' + paramValues.text).css("font-weight") == "400") {
+                    $('#' + parentName).find('#' + paramValues.text).css("font-weight", "bold");
+                    properties.bold = true;
+                } else {
+                    $('#' + parentName).find('#' + paramValues.text).css("font-weight", "unset");
+                    properties.bold = false;
+                }
+                saveTextSignatureIntoFile().delay(500);
+            });
+
+            $('#' + parentName).on(userMouseClick, "#" + paramValues.italic, function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('#' + parentName).find('#' + paramValues.italic).toggleClass("active");
+                if($('#' + parentName).find('#' + paramValues.text).css("font-style") != "italic") {
+                    $('#' + parentName).find('#' + paramValues.text).css("font-style", "italic");
+                    properties.italic = true;
+                } else {
+                    $('#' + parentName).find('#' + paramValues.text).css("font-style", "unset");
+                    properties.italic = false;
+                }
+                saveTextSignatureIntoFile().delay(500);
+            });
+
+            $('#' + parentName).on(userMouseClick, "#" + paramValues.underline, function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('#' + parentName).find('#' + paramValues.underline).toggleClass("active");
+                if($('#' + parentName).find('#' + paramValues.text).css("text-decoration").indexOf("underline") == -1) {
+                    $('#' + parentName).find('#' + paramValues.text).css("text-decoration", "underline");
+                    properties.underline = true;
+                } else {
+                    $('#' + parentName).find('#' + paramValues.text).css("text-decoration", "unset");
+                    properties.underline = false;
+                }
+                saveTextSignatureIntoFile().delay(500);
+            });
+
+            $('#' + parentName).on(userMouseClick, ".bcPicker-color", function(e) {
+                $.fn.bcPicker.pickColor($(this));
+                var css = $(this).css("background-color");
+                $('#' + parentName).find('#' + paramValues.text).css("color", css);
+                properties.fontColor = css;
+                saveTextSignatureIntoFile().delay(500);
+            });
+
+            $('#' + parentName).on(userMouseClick, ".fa-arrow-up", function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                if($(this).hasClass("down")){
+                    $('#' + parentName).find(".gd-text-menu").css("top", "unset");
+                } else {
+                    $('#' + parentName).find(".gd-text-menu").css("top", "100px");
+                }
+                $(this).toggleClass("down");
+            });
+            $('#' + parentName).on("keyup input", '#' + paramValues.text, $.debounce(500, function(e){
+                saveTextSignatureIntoFile();
+                })
+            );
+            initProps();
+            initTextCss();
+        },
+
+	    init : function (parent, props, text, imageGuid) {
+	        if (! parent) {
+	            return;
+            }
+            paramValues.parentName = parent;
+            if (props) {
+                properties = props;
+
+                $('#' + paramValues.parentName).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color", props.fontColor);
+                if (props.underline) {
+                    $('#' + paramValues.parentName).find('#' + paramValues.underline).toggleClass("active");
+                }
+                if (props.italic) {
+                    $('#' + paramValues.parentName).find('#' + paramValues.italic).toggleClass("active");
+                }
+                if (props.bold) {
+                    $('#' + paramValues.parentName).find('#' + paramValues.bold).toggleClass("active");
+                }
+                $('#' + paramValues.parentName).find("#" + paramValues.fontSize).val(props.fontSize);
+                $('#' + paramValues.parentName).find("#" + paramValues.font).val(props.font);
+
+                initTextCss();
+            } else {
+                initProps();
+                properties.text = text;
+                properties.imageGuid = imageGuid;
+            }
+        },
+
+        getProperties : function() {
+            var text = $('#' + paramValues.parentName).find('#' + paramValues.text);
+            properties.text = text.val();
+            properties.width = text.width();
+            properties.height = text.height();
 			return properties;
-		}	
-	});	
+		},
+
+		getMenu : function () {
+            var menuHtml = '<div class="gd-text-menu">';
+            if (isMobile()) {
+                menuHtml = menuHtml + '<div class="gd-blur"></div>';
+            }
+            $.each(menuButtons, function(index, button){
+                menuHtml = menuHtml + button;
+            });
+            if(isMobile()){
+                menuHtml = menuHtml + '<i class="fas fa-arrow-up"></i>';
+            }
+            menuHtml = menuHtml + '</div>';
+            return menuHtml;
+        }
+	});
+
+    function saveTextSignatureIntoFile() {
+        saveDrawnText($.fn.textGenerator.getProperties(),
+            function (data) {
+                $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value = data;
+            });
+    }
+
+    function baseHtml() {
+        var html = '<textarea id="' + paramValues.text + '" class="gd-text">' +
+            '</textarea>';
+        return html;
+    };
+
+	function initProps() {
+        var text = $('#' + paramValues.parentName).find('#' + paramValues.text);
+        properties.width = text.width();
+        properties.height = text.height();
+
+        properties.underline = $('#' + paramValues.parentName).find('#' + paramValues.underline)[0].className.indexOf("active") > 0;
+        properties.italic = $('#' + paramValues.parentName).find('#' + paramValues.italic)[0].className.indexOf("active") > 0;
+        properties.bold = $('#' + paramValues.parentName).find('#' + paramValues.bold)[0].className.indexOf("active") > 0;
+        properties.fontColor = $('#' + paramValues.parentName).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color");
+        properties.font = $('#' + paramValues.parentName).find("#" + paramValues.font).val();
+        properties.fontSize = $('#' + paramValues.parentName).find("#" + paramValues.fontSize).val();
+
+    }
+
+    function initTextCss() {
+        var textField = $('#' + paramValues.parentName).find('#' + paramValues.text);
+        textField.val(properties.text);
+        textField.css("text-decoration", properties.underline ? "underline" : "unset");
+        textField.css("font-style", properties.italic ? "italic" : "unset");
+        textField.css("font-weight", properties.bold ? "bold" : "unset");
+        textField.css("color", properties.fontColor);
+        textField.css("font-family", properties.font);
+        textField.css("font-size", properties.fontSize);
+    }
+
+    //////////////////////////////////////////////////
+    // Get supported fonts
+    //////////////////////////////////////////////////
+    function loadFonts() {
+        getFonts(function(returnedData) {
+            var fonts = $.fn.cssFonts();
+            var resultFonts = [];
+            $.each(fonts, function(index, font){
+                var existedFont = $.inArray(font, returnedData);
+                if (existedFont != -1) {
+                    resultFonts.push(font);
+                }
+            });
+            var fontsSelect = getHtmlFontsSelect(resultFonts, paramValues.font);
+
+            menuButtons[0] = fontsSelect;
+
+            refreshFontsContextMenu(paramValues.parentName, fontsSelect);
+        });
+    }
+
 })(jQuery);

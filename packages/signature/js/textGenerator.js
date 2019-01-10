@@ -156,8 +156,8 @@
         getProperties : function() {
             var text = $('#' + paramValues.parentName).find('#' + paramValues.text);
             properties.text = text.val();
-            properties.width = text.width();
-            properties.height = text.height();
+            properties.width = Math.round(text.width());
+            properties.height = Math.round(text.height());
 			return properties;
 		},
 

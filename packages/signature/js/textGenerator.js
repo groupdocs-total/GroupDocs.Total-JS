@@ -17,13 +17,14 @@
         fontSize : 'gd-text-font-size',
         parentName : ''
     };
-    var textContextMenuButtons = [getHtmlFontsSelect(),
-        getHtmlFontSizeSelect(),
+    var menuButtons = [getHtmlFontsSelect(null, paramValues.font),
+        getHtmlFontSizeSelect(paramValues.fontSize),
         '<i id="gd-text-bold" class="fas fa-bold"></i>',
         '<i id="' + paramValues.italic + '" class="fas fa-italic"></i>',
         '<i id="' + paramValues.underline + '" class="fas fa-underline"></i>',
         '<div id="' + paramValues.fontColor + '" class="gd-text-color-picker"></div>'];
 	var properties = {};
+	var firstCall = true;
 	
 	$.fn.textGenerator = function() {
     };
@@ -31,8 +32,9 @@
 	$.extend(true, $.fn.textGenerator, {
 	    create: function(parentName) {
 	        properties = {};
-            if (parentName && parentName.endsWith('0')) {
-                getFonts();
+            if (firstCall) {
+                loadFonts();
+                firstCall = false;
             }
 
             paramValues.parentName = parentName;
@@ -44,12 +46,14 @@
                 var val = $(this).val();
                 $('#' + parentName).find('#' + paramValues.text).css("font-family", val);
                 properties.font = val;
+                saveTextSignatureIntoFile().delay(500);
             });
 
             $('#' + parentName).on("change", "#" + paramValues.fontSize, function(e) {
                 var val = $(this).val();
                 $('#' + parentName).find('#' + paramValues.text).css("font-size", val);
                 properties.fontSize = val;
+                saveTextSignatureIntoFile().delay(500);
             });
 
             $('#' + parentName).on(userMouseClick, "#" + paramValues.bold, function(e) {
@@ -63,6 +67,7 @@
                     $('#' + parentName).find('#' + paramValues.text).css("font-weight", "unset");
                     properties.bold = false;
                 }
+                saveTextSignatureIntoFile().delay(500);
             });
 
             $('#' + parentName).on(userMouseClick, "#" + paramValues.italic, function(e) {
@@ -76,6 +81,7 @@
                     $('#' + parentName).find('#' + paramValues.text).css("font-style", "unset");
                     properties.italic = false;
                 }
+                saveTextSignatureIntoFile().delay(500);
             });
 
             $('#' + parentName).on(userMouseClick, "#" + paramValues.underline, function(e) {
@@ -89,12 +95,15 @@
                     $('#' + parentName).find('#' + paramValues.text).css("text-decoration", "unset");
                     properties.underline = false;
                 }
+                saveTextSignatureIntoFile().delay(500);
             });
 
             $('#' + parentName).on(userMouseClick, ".bcPicker-color", function(e) {
+                $.fn.bcPicker.pickColor($(this));
                 var css = $(this).css("background-color");
                 $('#' + parentName).find('#' + paramValues.text).css("color", css);
                 properties.fontColor = css;
+                saveTextSignatureIntoFile().delay(500);
             });
 
             $('#' + parentName).on(userMouseClick, ".fa-arrow-up", function(e) {
@@ -107,6 +116,10 @@
                 }
                 $(this).toggleClass("down");
             });
+            $('#' + parentName).on("keyup input", '#' + paramValues.text, $.debounce(500, function(e){
+                saveTextSignatureIntoFile();
+                })
+            );
             initProps();
             initTextCss();
         },
@@ -153,7 +166,7 @@
             if (isMobile()) {
                 menuHtml = menuHtml + '<div class="gd-blur"></div>';
             }
-            $.each(textContextMenuButtons, function(index, button){
+            $.each(menuButtons, function(index, button){
                 menuHtml = menuHtml + button;
             });
             if(isMobile()){
@@ -163,6 +176,13 @@
             return menuHtml;
         }
 	});
+
+    function saveTextSignatureIntoFile() {
+        saveDrawnText($.fn.textGenerator.getProperties(),
+            function (data) {
+                $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value = data;
+            });
+    }
 
     function baseHtml() {
         var html = '<textarea id="' + paramValues.text + '" class="gd-text">' +
@@ -198,62 +218,22 @@
     //////////////////////////////////////////////////
     // Get supported fonts
     //////////////////////////////////////////////////
-    function getFonts() {
-        $.ajax({
-            type: 'GET',
-            url: getApplicationPath("getFonts"),
-            contentType: 'application/json',
-            success: function(returnedData) {
-                var fonts = $.fn.cssFonts();
-                var resultFonts = [];
-                $.each(fonts, function(index, font){
-                    var existedFont = $.inArray(font, returnedData);
-                    if (existedFont != -1) {
-                        resultFonts.push(font);
-                    }
-                });
-                var fontsSelect = getHtmlFontsSelect(resultFonts);
+    function loadFonts() {
+        getFonts(function(returnedData) {
+            var fonts = $.fn.cssFonts();
+            var resultFonts = [];
+            $.each(fonts, function(index, font){
+                var existedFont = $.inArray(font, returnedData);
+                if (existedFont != -1) {
+                    resultFonts.push(font);
+                }
+            });
+            var fontsSelect = getHtmlFontsSelect(resultFonts, paramValues.font);
 
-                textContextMenuButtons[0] = fontsSelect;
+            menuButtons[0] = fontsSelect;
 
-                refreshFontsContextMenu(paramValues.parentName, fontsSelect);
-            },
-            error: function(xhr, status, error) {
-                var err = eval("(" + xhr.responseText + ")");
-                console.log(err.Message);
-            }
+            refreshFontsContextMenu(paramValues.parentName, fontsSelect);
         });
     }
 
-    /**
-     * Prepare fonts select HTML
-     * @param {array} fonts - array of available fonts
-     */
-    function getHtmlFontsSelect(fonts) {
-        if (! fonts) {
-            fonts = $.fn.cssFonts();
-        }
-        var fontsSelect = '<select id="' + paramValues.font + '" class="gd-fonts-select">';
-        $.each(fonts, function(index, font){
-            fontsSelect = fontsSelect + '<option value="' + font + '">' + font + '</option>';
-        });
-        fontsSelect = fontsSelect + '</select>';
-        return fontsSelect;
-    }
-
-    /**
-     * Prepare font sizes select HTML
-     */
-    function getHtmlFontSizeSelect(){
-        var fontSizes = '<select id="' + paramValues.fontSize + '" class="gd-fonts-select gd-font-size-select">';
-        for(var i = 8; i <= 20; i++){
-            if(i == 16){
-                fontSizes = fontSizes + '<option value="' + i + '" selected="selected">' + i + 'px</option>';
-            } else {
-                fontSizes = fontSizes + '<option value="' + i + '">' + i + 'px</option>';
-            }
-        }
-        fontSizes = fontSizes + '</select>';
-        return fontSizes;
-    }
 })(jQuery);

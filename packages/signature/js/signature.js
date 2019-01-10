@@ -39,7 +39,8 @@ var signature = {
 var draggableSignaturePosition={};
 var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
 // new UI feature both variables
-var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-trash-alt fa-sm gd-delete-signature", "fas fa-save fa-sm gd-save-signature"];
+var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-trash-alt fa-sm gd-delete-signature"];
+var textContextMenuButtons = ['<i class="fas fa-bold"></i>', '<i class="fas fa-italic"></i>', '<i class="fas fa-underline"></i>', '<div class="gd-text-color-picker"></div>'];
 
 $(document).ready(function(){
 
@@ -48,10 +49,43 @@ $(document).ready(function(){
     NAV BAR CONTROLS
     ******************************************************************
     */
+    //////////////////////////////////////////////////
+    // Get supported fonts
+    //////////////////////////////////////////////////
+    getFonts(function (returnedData) {
+        var fontSize = getHtmlFontSizeSelect();
+        if($.inArray(fontSize, textContextMenuButtons) == -1){
+            var fonts = $.fn.cssFonts();
+            var resultFonts = [];
+            $.each(fonts, function(index, font){
+                var existedFont = $.inArray(font, returnedData);
+                if (existedFont != -1) {
+                    resultFonts.push(font);
+                }
+            });
+            var fontsSlect = getHtmlFontsSelect(resultFonts);
+
+            textContextMenuButtons.splice(0, 0, fontsSlect);
+            textContextMenuButtons.splice(1, 0, getHtmlFontSizeSelect());
+            fonts = null;
+            resultFonts = null;
+        }
+    });
 	//////////////////////////////////////////////////
     // Disable default download event
     //////////////////////////////////////////////////
     $('#gd-btn-download').off(userMouseClick);
+
+    //////////////////////////////////////////////////
+    // Sign document
+    //////////////////////////////////////////////////
+    $("#gd-nav-save").on(userMouseClick, function(){
+        if (documentGuid && signaturesList.length > 0){
+            sign();
+        } else {
+            printMessage("Please open document and add signature");
+        }
+    });
 
     //////////////////////////////////////////////////
     // Fix for tooltips of the dropdowns
@@ -182,22 +216,6 @@ $(document).ready(function(){
             $.fn.textGenerator.init(id, null, text, guid);
         }
 	});
-
-    //////////////////////////////////////////////////
-    // Save text signature click event
-    //////////////////////////////////////////////////
-    $('#gd-panzoom').on(userMouseClick, '.gd-save-signature', function(e){
-        if ('text' == signature.signatureType) {
-            var element = $(this).parent().parent().find('.gd-draw-text')[0];
-            saveDrawnText($.fn.textGenerator.getProperties(),
-                function(data) {
-                    element.attributes['image-guid'].value = data;
-                    // add current signature object into the list of signatures
-                    signaturesList.push(signature);
-                    enableSign();
-                });
-        }
-    });
 
 	//////////////////////////////////////////////////
     // Delete signature click event
@@ -758,12 +776,17 @@ function saveDrawnText(properties, callback) {
                 return;
             }
             $('#gd-modal-spinner').hide();
+            if (!signature.signatureGuid) {
+                // add current signature object into the list of signatures
+                signaturesList.push(signature);
+            }
             // set current signature data
             signature.signatureGuid = returnedData.imageGuid;
             signature.imageHeight = returnedData.height;
             signature.imageWidth = returnedData.width;
-
-            loadSignaturesTree('');
+            if ($('#gd-signature-context-panel')[0].style.display != 'none') {
+                loadSignaturesTree('');
+            }
         },
         error: function(xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -777,18 +800,6 @@ function saveDrawnText(properties, callback) {
             callback(data.imageGuid);
         }
     });
-}
-
-/**
- * Open modal on signature upload step
- */
-function openSigningFirstStepModal(){
-    var browseSignatures = ($("#gd-signatures").children().length > 0) ? true: false;
-    switchSlide(0, "", "right");
-    // show or hide the browse button, depends on signature availability in the storage
-    if(!browseSignatures){
-        $(".gd-browse-signatures").hide();
-    }
 }
 
 /**
@@ -815,36 +826,6 @@ function getHtmlDigitalSign() {
                 '</div>'+
                 '<div id="gd-finish-step" class="gd-slide" data-index="4">'+
                     // Signing results will be here
-                '</div>'+
-                footer+
-            '</section>';
-}
-
-/**
- * Generate HTML content of the Image sign modal
- */
-function getHtmlImageSign() {
-    // prepare signing steps HTML
-    var uploadStep = getHtmlSignatureUploadModal();
-    var signaturesSelectStep = getHtmlSignaturesSelectModal();
-    var drawStep = "";
-    if(signature.signatureType == "qrCode" || signature.signatureType == "barCode"){
-        drawStep = getHtmlDrawModal("optical");
-    } else {
-        drawStep = getHtmlDrawModal(signature.signatureType);
-    }
-    var signaturePageSelectStep = getHtmlPagesSelectModal();
-    var footer = getHtmlSigningModalFooter(2);
-    // generate signing modal HTML
-    return '<section id="gd-sign-section"  data-type="image">' +
-                '<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>'+
-                '<div id="gd-upload-step" class="gd-slide" data-index="0">'+
-                    uploadStep+
-                '</div>'+
-                signaturesSelectStep+
-                drawStep+
-                '<div id="gd-signature-page-select-step" class="gd-slide" data-index="2" data-last="true">'+
-                    signaturePageSelectStep+
                 '</div>'+
                 footer+
             '</section>';
@@ -1106,16 +1087,6 @@ function loadSignatureImage() {
 	});
 }
 
-function enableSign() {
-    // enable save button on the dashboard
-    if($("#gd-nav-save").hasClass("gd-save-disabled")) {
-        $("#gd-nav-save").removeClass("gd-save-disabled");
-        $("#gd-nav-save").on(userMouseClick, function(){
-            sign();
-        });
-    }
-}
-
 function insertText(properties) {
     hideAllContextMenu();
     var currentPageNumber = getCurrentPageNumber();
@@ -1203,9 +1174,8 @@ function insertText(properties) {
 
     if (properties) {
         $.fn.textGenerator.init("gd-draggable-helper-" + signatureImageIndex, properties);
-        // add current signature object into the list of signatures
+        // add new signature object into the list of signatures
         signaturesList.push(signature);
-        enableSign();
     }
     // increase signature index
     signatureImageIndex = signatureImageIndex + 1;
@@ -1237,15 +1207,6 @@ function insertImage(image) {
     // prepare signature image HTML
     var signatureHtml = '<div id="gd-draggable-helper-' + currentImage + '"  class="gd-draggable-helper gd-signature" style="'+ style+'">' +
 							contextMenu +
-							'<a id="gd-apply" class="gd-image-apply" href="#">' +
-								'<i class="fa fa-check-circle" aria-hidden="true"></i>' +
-							'</a>' +
-							'<a id="gd-cancel" class="gd-image-apply gd-image-cancel" href="#">' +
-								'<i class="fa fa-ban" aria-hidden="true"></i>' +
-							'</a>' +
-							'<a id="gd-edit" class="gd-image-edit" href="#">' +
-								'<i class="fa fa-pencil" aria-hidden="true"></i>' +
-							'</a>' +
 							'<image id="gd-image-signature-' + currentImage + '" class="gd-signature-image" src="data:image/png;base64,' + image + '" alt></image>' +
 							resizeHandles +
 						'</div>';
@@ -1356,6 +1317,59 @@ function hideAllContextMenu(){
 			$(element).addClass("hidden");
 		}
 	});
+}
+
+/**
+ * Prepare fonts select HTML
+ * @param {array} fonts - array of available fonts
+ */
+function getHtmlFontsSelect(fonts, id){
+    if (! fonts) {
+        fonts = $.fn.cssFonts();
+    }
+    var fontsSelect = id ? '<select id="' + id + '" class="gd-fonts-select">' : '<select class="gd-fonts-select font">';
+    $.each(fonts, function(index, font){
+        fontsSelect = fontsSelect + '<option value="' + font + '">' + font + '</option>';
+    });
+    fontsSelect = fontsSelect + '</select>';
+    return fontsSelect;
+}
+
+
+/**
+ * Prepare font sizes select HTML
+ */
+function getHtmlFontSizeSelect(id){
+    var fontSizes = id ? '<select id="' + id + '" class="gd-fonts-select gd-font-size-select">' : '<select class="gd-fonts-select gd-font-size-select">';
+    for(var i = 8; i <= 20; i++){
+        if(i == 10){
+            fontSizes = fontSizes + '<option value="' + i + '" selected="selected">' + i + 'px</option>';
+        } else {
+            fontSizes = fontSizes + '<option value="' + i + '">' + i + 'px</option>';
+        }
+    }
+    fontSizes = fontSizes + '</select>';
+    return fontSizes;
+}
+
+function getFonts(callback) {
+    // sign the document
+    $.ajax({
+        type: 'GET',
+        url: getApplicationPath("getFonts"),
+        contentType: 'application/json',
+        success: function(returnedData) {
+            if(typeof callback == "function") {
+                callback(returnedData);
+            }
+        },
+        error: function(xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.Message);
+            // open error popup
+            //printMessage(err.message);
+        }
+    });
 }
 
 /**
@@ -1632,7 +1646,7 @@ GROUPDOCS.SIGNATURE PLUGIN
     }
 
     function getHtmlSavePanel() {
-        return '<li id="gd-nav-save" class="gd-save-disabled"><i class="fa fa-floppy-o"></i><span class="gd-tooltip">Save</span></li>';
+        return '<li id="gd-nav-save"><i class="fa fa-floppy-o"></i><span class="gd-tooltip">Save</span></li>';
     }
 
     function getHtmlTextSignatureElement() {

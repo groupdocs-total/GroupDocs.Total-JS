@@ -46,14 +46,14 @@
                 var val = $(this).val();
                 $('#' + parentName).find('#' + paramValues.text).css("font-family", val);
                 properties.font = val;
-                saveTextSignatureIntoFile().delay(500);
+                setTimeout(saveTextSignatureIntoFile, 500);
             });
 
             $('#' + parentName).on("change", "#" + paramValues.fontSize, function(e) {
                 var val = $(this).val();
                 $('#' + parentName).find('#' + paramValues.text).css("font-size", val);
                 properties.fontSize = val;
-                saveTextSignatureIntoFile().delay(500);
+                setTimeout(saveTextSignatureIntoFile, 500);
             });
 
             $('#' + parentName).on(userMouseClick, "#" + paramValues.bold, function(e) {
@@ -67,7 +67,7 @@
                     $('#' + parentName).find('#' + paramValues.text).css("font-weight", "unset");
                     properties.bold = false;
                 }
-                saveTextSignatureIntoFile().delay(500);
+                setTimeout(saveTextSignatureIntoFile, 500);
             });
 
             $('#' + parentName).on(userMouseClick, "#" + paramValues.italic, function(e) {
@@ -81,7 +81,7 @@
                     $('#' + parentName).find('#' + paramValues.text).css("font-style", "unset");
                     properties.italic = false;
                 }
-                saveTextSignatureIntoFile().delay(500);
+                setTimeout(saveTextSignatureIntoFile, 500);
             });
 
             $('#' + parentName).on(userMouseClick, "#" + paramValues.underline, function(e) {
@@ -95,7 +95,7 @@
                     $('#' + parentName).find('#' + paramValues.text).css("text-decoration", "unset");
                     properties.underline = false;
                 }
-                saveTextSignatureIntoFile().delay(500);
+                setTimeout(saveTextSignatureIntoFile, 500);
             });
 
             $('#' + parentName).on(userMouseClick, ".bcPicker-color", function(e) {
@@ -103,7 +103,7 @@
                 var css = $(this).css("background-color");
                 $('#' + parentName).find('#' + paramValues.text).css("color", css);
                 properties.fontColor = css;
-                saveTextSignatureIntoFile().delay(500);
+                setTimeout(saveTextSignatureIntoFile, 500);
             });
 
             $('#' + parentName).on(userMouseClick, ".fa-arrow-up", function(e) {
@@ -178,10 +178,13 @@
 	});
 
     function saveTextSignatureIntoFile() {
-        saveDrawnText($.fn.textGenerator.getProperties(),
-            function (data) {
-                $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value = data;
-            });
+        var props = $.fn.textGenerator.getProperties();
+        if (props.text) {
+            saveDrawnText(props,
+                function (data) {
+                    $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value = data;
+                });
+        }
     }
 
     function baseHtml() {

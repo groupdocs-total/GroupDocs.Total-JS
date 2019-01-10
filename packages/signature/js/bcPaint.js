@@ -135,7 +135,7 @@ $(document).ready(function(){
 	$.extend(true, $.fn.bcPaint, {
 
 		refreshPositions : function() {
-            if ($('#gd-lightbox-body').width() != 0) {
+            if (paintCanvas && $('#gd-lightbox-body').width() != 0) {
                 paintCanvas.attributes['width'].value = $('#gd-lightbox-body').width();
                 paintCanvas.attributes['height'].value =$('#gd-lightbox-body').height();
             }

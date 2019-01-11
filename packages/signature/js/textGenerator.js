@@ -141,7 +141,7 @@
                 $('#' + paramValues.parentName).find("#" + paramValues.font).val(props.font);
 
                 initTextCss();
-                properties.id = paramValues.parentName.substring(parentName.lastIndexOf('-') + 1);
+                properties.id = paramValues.parentName.substring(paramValues.parentName.lastIndexOf('-') + 1);
             } else {
                 initProps();
                 properties.text = text;

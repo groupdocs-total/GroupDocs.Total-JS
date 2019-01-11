@@ -34,24 +34,17 @@
     <body>
         <div id="element"></div>
         <script type="text/javascript">
-            var host = !window.location.hostname ? 'localhost' : window.location.hostname;
-            $('#element').viewer({
-                applicationPath: 'http://' + host + ':8080/signature/',
+            var host = !window.location.hostname ? 'localhost' : window.location.hostname;           
+            $('#element').signature({
+				applicationPath: 'http://' + host + ':8080/signature/',
 			    defaultDocument: '',
-			    htmlMode: false,
-			    preloadPageCount: 0,
-			    rewrite: true,
-			    zoom: false,
-			    pageSelector: true,
-			    search: false,
-			    thumbnails: false,
-			    rotate: false,
-			    download: true,
+				preloadPageCount: 0,
+				rewrite: true,
+				pageSelector: true,
+				download: true,
 			    upload: true,
 			    print: true,
-			    browse: true
-            });
-            $('#element').signature({
+			    browse: true,
                 textSignature: true,
                 imageSignature: true,
                 digitalSignature: true,

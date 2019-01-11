@@ -37,7 +37,6 @@ var signature = {
 };
 var draggableSignaturePosition={};
 var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
-// new UI feature both variables
 var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-trash-alt fa-sm gd-delete-signature"];
 var mergedFonts = [];
 
@@ -1180,11 +1179,15 @@ function insertImage(image) {
     $("#gd-draggable-helper-" + currentImage).draggable({
         // set restriction for image dragging area to current document page
         containment: "#gd-page-" + pageNumber,
+        create: function () {
+            // initiate image positioning coordinates
+            var signaturePos = $(this).position();
+            updateSignatureProperties(signatureToEdit, null, null, Math.round(signaturePos.left),  Math.round(signaturePos.top));
+        },
         // action fired when dragging stoped
         stop: function () {
-            var signatureImage = $(this);
-            var signaturePos = signatureImage.position();
-            // get image positioning coordinates after dragging
+            var signaturePos = $(this).position();
+            // get image positioning coordinates after dragging			
 			updateSignatureProperties(signatureToEdit, null, null, Math.round(signaturePos.left),  Math.round(signaturePos.top));
         }
     }).resizable({

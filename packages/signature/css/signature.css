@@ -226,16 +226,10 @@ MODAL
     width: max-content;
 
 }
-#gd-signature-upload-input{
+#gd-signature-upload-input {
     opacity: 0;
-    position: absolute;
-    cursor: pointer;
-    width: inherit;
-    height: 88px;
-}
-#gd-signature-upload-input::-webkit-file-upload-button{
-    height: 88px;
-    cursor: pointer;    
+    filter:alpha(opacity=0);
+    display: none;
 }
 
 .gd-lightbox-close {

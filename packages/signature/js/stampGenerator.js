@@ -28,11 +28,17 @@ var paramValues = {
 	italic: false,
 	underline: false
 }
- var stampData = [];
- 
+var stampData = [];
+var textContextMenuButtons = [
+	getHtmlFontsSelect(mergedFonts),
+	getHtmlFontSizeSelect(),
+	'<i class="fas fa-bold"></i>',
+	'<i class="fas fa-italic"></i>',
+	'<i class="fas fa-underline"></i>',
+	'<div class="gd-text-color-picker"></div>'];
+
 $(document).ready(function(){
-	
-	
+
 	// Click on Shape
     $('body').on(userMouseClick, '.csg-bouding-box', function(e){
 		e.preventDefault();
@@ -397,7 +403,12 @@ $(document).ready(function(){
 						resizeHandles +						
 					'</div>';		
 			return html;
-		}		
+		},
+
+		refreshFonts() {
+			var htmlFontsSelect = getHtmlFontsSelect(mergedFonts);
+			textContextMenuButtons[0] = htmlFontsSelect;
+		},
 	});
 
 })(jQuery);

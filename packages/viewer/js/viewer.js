@@ -735,6 +735,7 @@ function loadDocument(callback) {
             console.log(err.Message);
             // open error popup
             printMessage(err.message);
+            documentGuid = '';
         }
     }).done(function (data) {
         // return POST data

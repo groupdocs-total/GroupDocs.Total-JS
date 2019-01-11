@@ -137,46 +137,16 @@ $(document).ready(function(){
     });
 
     //////////////////////////////////////////////////
-    // signature or directory click event from signature tree
-    //////////////////////////////////////////////////
-    $('.gd-modal-body').on(userMouseClick, '.gd-signature-name', function(e){
-        var isDir = $(this).parent().find('.fa-folder').hasClass('fa-folder');
-        if(isDir){
-            // if directory -> browse
-            if(currentDirectory.length > 0) {
-                currentDirectory = currentDirectory + '/' + $(this).text();
-            } else {
-                currentDirectory = $(this).text();
-            }
-            $('#gd-signatures').html(loadSignaturesTree(currentDirectory, ""));
-        } else {
-            $(".gd-signature-select").removeClass("gd-signing-disabled");
-        }
-    });
-
-    //////////////////////////////////////////////////
-    // Go to parent directory event from signature tree
-    //////////////////////////////////////////////////
-    $('.gd-modal-body').on(userMouseClick, '.gd-go-up-signature', function(e){
-        if(currentDirectory.length > 0 && currentDirectory.indexOf('/') == -1){
-            currentDirectory = "";
-        }else{
-            currentDirectory = currentDirectory.replace(/\/[^\/]+\/?$/, "");
-        }
-        $('#gd-signatures').html(loadSignaturesTree(currentDirectory, ""));
-    });
-
-    //////////////////////////////////////////////////
     // Upload signature event
     //////////////////////////////////////////////////
-    $(".gd-modal-body").on('change', '#gd-signature-upload-input', function(e) {
+    $('#gd-signature-upload-input').on('change', function(e) {
         var uploadFiles = $(this).get(0).files;
         // upload file one by one
         for (var i = 0; i < uploadFiles.length; i++) {
             // upload local file
             uploadSignature(uploadFiles[i], i, "");
         }
-        $(".gd-browse-signatures").show();
+        loadSignaturesTree('');
     });
 
     //////////////////////////////////////////////////
@@ -299,9 +269,28 @@ $(document).ready(function(){
             case "text":
                 insertText();
 				break;
+            case "image":
+                openUploadSignatures();
+                break;
 		}
     });
 });
+
+/*
+******************************************************************
+FUNCTIONS
+******************************************************************
+*/
+
+/**
+* Open window for upload signatures
+*/
+function openUploadSignatures() {
+    $('#gd-signature-upload-input').show();
+    $('#gd-signature-upload-input').focus();
+    $('#gd-signature-upload-input').click();
+    $('#gd-signature-upload-input').hide();
+}
 
 /**
  * Get html for lightbox header to create new image
@@ -321,12 +310,10 @@ function getDrawSignContent() {
         '</div>';
 }
 
-/*
-******************************************************************
-FUNCTIONS
-******************************************************************
-*/
-
+/**
+ * Fade left bar menu
+ * @param on
+ */
 function fadeLeftBar(on) {
     if (on) {
         $('#gd-left-bar-fade').show();
@@ -365,6 +352,10 @@ function inactiveAll() {
     $('.gd-tool-active').removeClass("gd-tool-active");
 }
 
+/**
+ * Delete saved signature
+ * @param guid
+ */
 function deleteSignatureFile(guid) {
     var data = {guid: guid, signatureType: signature.signatureType};
     // show loading spinner
@@ -848,28 +839,6 @@ function getHtmlDigitalSign() {
                 '</div>'+
                 footer+
             '</section>';
-}
-
-/**
- * Get HTML content for signature upload/browser modal
- **/
-function getHtmlSignatureUploadModal(){
-    var uploadButton = "";
-    if(signature.signatureType != "stamp" && signature.signatureType != "text") {
-        uploadButton = '<div class="gd-upload-signatures gd-modal-buttons">' +
-                            '<input id="gd-signature-upload-input" type="file" multiple><i class="fa fa-upload"></i>Upload' +
-                        '</div>';
-    }
-    var browseButton =  '<div class="gd-browse-signatures gd-modal-buttons">'+
-                            '<i class="fa fa-folder-open"></i>Open'+
-                        '</div>';
-    var drawImage = "";
-    if (signature.signatureType != "digital"){
-        drawImage = '<div class="gd-draw-signatures gd-modal-buttons">'+
-                        '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>New'+
-                    '</div>';
-    }
-    return uploadButton + browseButton + drawImage;
 }
 
 /**
@@ -1600,6 +1569,7 @@ GROUPDOCS.SIGNATURE PLUGIN
                     '<div id="gd-signature-context-panel" class="gd-signature-context-panel">' +
                         '<div class="gd-signature-list-title">' +
 							'<i class="fa fa-plus" id="gd-new-signature"></i>' +
+                            '<input id="gd-signature-upload-input" type="file" multiple >' +
 							'<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
 							'</div>' +
                         '</div>' +

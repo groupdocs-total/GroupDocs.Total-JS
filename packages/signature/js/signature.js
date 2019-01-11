@@ -39,7 +39,7 @@ var draggableSignaturePosition={};
 var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
 // new UI feature both variables
 var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-trash-alt fa-sm gd-delete-signature"];
-var textContextMenuButtons = ['<i class="fas fa-bold"></i>', '<i class="fas fa-italic"></i>', '<i class="fas fa-underline"></i>', '<div class="gd-text-color-picker"></div>'];
+var mergedFonts = [];
 
 $(document).ready(function(){
 
@@ -51,25 +51,7 @@ $(document).ready(function(){
     //////////////////////////////////////////////////
     // Get supported fonts
     //////////////////////////////////////////////////
-    getFonts(function (returnedData) {
-        var fontSize = getHtmlFontSizeSelect();
-        if($.inArray(fontSize, textContextMenuButtons) == -1){
-            var fonts = $.fn.cssFonts();
-            var resultFonts = [];
-            $.each(fonts, function(index, font){
-                var existedFont = $.inArray(font, returnedData);
-                if (existedFont != -1) {
-                    resultFonts.push(font);
-                }
-            });
-            var fontsSlect = getHtmlFontsSelect(resultFonts);
-
-            textContextMenuButtons.splice(0, 0, fontsSlect);
-            textContextMenuButtons.splice(1, 0, getHtmlFontSizeSelect());
-            fonts = null;
-            resultFonts = null;
-        }
-    });
+    getFonts();
 	//////////////////////////////////////////////////
     // Disable default download event
     //////////////////////////////////////////////////
@@ -1270,11 +1252,6 @@ function getContextMenu(signatureId){
 	return menuHtml;
 }
 
-function refreshFontsContextMenu(parent, fontsHtml) {
-    $("#" + parent).find("#gd-text-font").remove();
-    $(fontsHtml).insertBefore($("#" + parent).find("#gd-text-font-size"));
-}
-
 /**
  * Hide all context menu 
  */
@@ -1291,7 +1268,7 @@ function hideAllContextMenu(){
  * @param {array} fonts - array of available fonts
  */
 function getHtmlFontsSelect(fonts, id){
-    if (! fonts) {
+    if (!fonts || fonts.length == 0) {
         fonts = $.fn.cssFonts();
     }
     var fontsSelect = id ? '<select id="' + id + '" class="gd-fonts-select">' : '<select class="gd-fonts-select font">';
@@ -1319,22 +1296,26 @@ function getHtmlFontSizeSelect(id){
     return fontSizes;
 }
 
-function getFonts(callback) {
-    // sign the document
+function getFonts() {
     $.ajax({
         type: 'GET',
         url: getApplicationPath("getFonts"),
         contentType: 'application/json',
         success: function(returnedData) {
-            if(typeof callback == "function") {
-                callback(returnedData);
-            }
+            mergedFonts = [];
+            var fonts = $.fn.cssFonts();
+            $.each(fonts, function(index, font){
+                var existedFont = $.inArray(font, returnedData);
+                if (existedFont != -1) {
+                    mergedFonts.push(font);
+                }
+            });
+            $.fn.stampGenerator.refreshFonts();
+            $.fn.textGenerator.refreshFonts();
         },
         error: function(xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
             console.log(err.Message);
-            // open error popup
-            //printMessage(err.message);
         }
     });
 }

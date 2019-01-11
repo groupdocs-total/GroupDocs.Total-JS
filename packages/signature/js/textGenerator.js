@@ -17,25 +17,20 @@
         fontSize : 'gd-text-font-size',
         parentName : ''
     };
-    var menuButtons = [getHtmlFontsSelect(null, paramValues.font),
+    var menuButtons = [getHtmlFontsSelect(mergedFonts, paramValues.font),
         getHtmlFontSizeSelect(paramValues.fontSize),
         '<i id="gd-text-bold" class="fas fa-bold"></i>',
         '<i id="' + paramValues.italic + '" class="fas fa-italic"></i>',
         '<i id="' + paramValues.underline + '" class="fas fa-underline"></i>',
         '<div id="' + paramValues.fontColor + '" class="gd-text-color-picker"></div>'];
 	var properties = {};
-	var firstCall = true;
-	
+
 	$.fn.textGenerator = function() {
     };
 
 	$.extend(true, $.fn.textGenerator, {
 	    create: function(parentName) {
 	        properties = {};
-            if (firstCall) {
-                loadFonts();
-                firstCall = false;
-            }
 
             paramValues.parentName = parentName;
             $('#' + paramValues.parentName).find('.gd-draw-text').append(baseHtml());
@@ -153,6 +148,16 @@
             }
         },
 
+        refreshFonts() {
+            var htmlFontsSelect = getHtmlFontsSelect(mergedFonts, paramValues.font);
+            menuButtons[0] = htmlFontsSelect;
+            $.each($("#" + paramValues.font), function (index, elem) {
+                    $(htmlFontsSelect).insertBefore($(elem).parent().find("#" + paramValues.fontSize)[0]);
+                    $(elem).remove();
+                }
+            );
+        },
+
         getProperties : function() {
             var text = $('#' + paramValues.parentName).find('#' + paramValues.text);
             properties.text = text.val();
@@ -216,27 +221,6 @@
         textField.css("color", properties.fontColor);
         textField.css("font-family", properties.font);
         textField.css("font-size", properties.fontSize);
-    }
-
-    //////////////////////////////////////////////////
-    // Get supported fonts
-    //////////////////////////////////////////////////
-    function loadFonts() {
-        getFonts(function(returnedData) {
-            var fonts = $.fn.cssFonts();
-            var resultFonts = [];
-            $.each(fonts, function(index, font){
-                var existedFont = $.inArray(font, returnedData);
-                if (existedFont != -1) {
-                    resultFonts.push(font);
-                }
-            });
-            var fontsSelect = getHtmlFontsSelect(resultFonts, paramValues.font);
-
-            menuButtons[0] = fontsSelect;
-
-            refreshFontsContextMenu(paramValues.parentName, fontsSelect);
-        });
     }
 
 })(jQuery);

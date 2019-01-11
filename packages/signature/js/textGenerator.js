@@ -141,6 +141,7 @@
                 $('#' + paramValues.parentName).find("#" + paramValues.font).val(props.font);
 
                 initTextCss();
+                properties.id = paramValues.parentName.substring(parentName.lastIndexOf('-') + 1);
             } else {
                 initProps();
                 properties.text = text;
@@ -163,6 +164,9 @@
             properties.text = text.val();
             properties.width = Math.round(text.width());
             properties.height = Math.round(text.height());
+            if (!properties.imageGuid) {
+                properties.imageGuid = $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value;
+            }
 			return properties;
 		},
 
@@ -185,10 +189,15 @@
     function saveTextSignatureIntoFile() {
         var props = $.fn.textGenerator.getProperties();
         if (props.text) {
-            saveDrawnText(props,
-                function (data) {
-                    $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value = data;
-                });
+            var guid = $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value;
+            if (props.imageGuid || guid) {
+                saveDrawnText(props);
+            } else {
+                saveDrawnText(props,
+                    function (data) {
+                        $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value = data.imageGuid;
+                    });
+            }
         }
     }
 
@@ -200,6 +209,8 @@
 
 	function initProps() {
         var text = $('#' + paramValues.parentName).find('#' + paramValues.text);
+        properties.id = paramValues.parentName.substring(paramValues.parentName.lastIndexOf('-') + 1);
+
         properties.width = text.width();
         properties.height = text.height();
 

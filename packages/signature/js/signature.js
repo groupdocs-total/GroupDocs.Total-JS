@@ -33,7 +33,6 @@ var signature = {
     date: "",
     pageNumber: 0,
     angle: 0,
-    documentType: "",
 	deleted: false
 };
 var draggableSignaturePosition={};
@@ -580,39 +579,22 @@ function sign() {
     }
     $('#gd-modal-spinner').show();
     currentDocumentGuid = documentGuid;
-    var url = "";
     var signatureType = "";
     // check signature type: digital, image etc.
     if(signaturesList.length > 0){
         signatureType = signaturesList[0].signatureType;
     } else {
         signatureType = signature.signatureType;
-        signature.documentType = getDocumentFormat(documentGuid).format;
     }
+	var documentType = getDocumentFormat(documentGuid).format;
     // get signing action URL, depends from signature type
-    switch (signatureType){
-        case "digital":
-            url = getApplicationPath('signDigital')
-            signaturesList.push(signature);
-            break;
-        case "image":
-		case "hand":		
-			url = getApplicationPath('signImage')
-            break;
-        case "stamp": url = getApplicationPath('signStamp')
-            break;
-        case "qrCode": url = getApplicationPath('signOptical')
-            break;
-        case "barCode": url = getApplicationPath('signOptical')
-            break;
-        case "text": url = getApplicationPath('signText')
-            break;
-    }
+	var url = getApplicationPath('sign')
     // current document guid is taken from the viewer.js globals
     var data = {
         guid: documentGuid,
         password: password,
-        signaturesData: signaturesList
+        signaturesData: signaturesList,
+		documentType: documentType
     };
     // sign the document
     $.ajax({
@@ -1115,8 +1097,6 @@ function insertText(properties) {
     var contextMenu = getContextMenu("gd-text-signature-" + signatureImageIndex);
     signature.id = signatureImageIndex;
     // set document format
-    // TODO: remove doc type from sign
-    signature.documentType = getDocumentFormat(documentGuid).format;
     var style = "";
     if (draggableSignaturePosition && draggableSignaturePosition.left && draggableSignaturePosition.top) {
         style = 'left: ' + draggableSignaturePosition.left + 'px; top: ' + draggableSignaturePosition.top + 'px;';
@@ -1208,8 +1188,6 @@ function insertText(properties) {
 function insertImage(image) {
     var pageNumber = getCurrentPageNumber();
 	hideAllContextMenu();
-    // set document format
-    signature.documentType = getDocumentFormat(documentGuid).format;
     // add current signature object into the list of signatures
     signaturesList.push(signature);
     // prepare index which will be used for specific image HTMl elements naming

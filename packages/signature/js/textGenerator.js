@@ -35,6 +35,8 @@
             paramValues.parentName = parentName;
             $('#' + paramValues.parentName).find('.gd-draw-text').append(baseHtml());
 
+            $('#' + parentName).find("#" + paramValues.text).focus();
+
             $('#' + parentName).find("#" + paramValues.fontColor).bcPicker();
 
             $('#' + parentName).on("change", "#" + paramValues.font, function(e) {
@@ -149,7 +151,7 @@
             }
         },
 
-        refreshFonts() {
+        refreshFonts : function() {
             var htmlFontsSelect = getHtmlFontsSelect(mergedFonts, paramValues.font);
             menuButtons[0] = htmlFontsSelect;
             $.each($("#" + paramValues.font), function (index, elem) {

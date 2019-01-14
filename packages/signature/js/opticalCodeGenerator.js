@@ -29,6 +29,7 @@ $(document).ready(function () {
     // Add new optical code signature into the list
     //////////////////////////////////////////////////  
 	$("body").on(userMouseClick, ".gd-add-optical", function () {
+		$("#gd-add-optical-signature").remove();
         loadSignaturesTree('');
     });
 	
@@ -71,7 +72,7 @@ $(document).ready(function () {
 						'</div>'+
 						'<div id="gd-qr-container">' +							
 							'<div id="gd-qr-preview-container"></div>' +
-							'<input type="text" id="gd-qr-text" class="gd-qr-property" value="this is my text "/>' +	
+							'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="this is my text "/>' +	
 							'<div class="gd-add-optical"><i class="fas fa-plus"></i></div>'+
 						'</div></div>';
 			return html;

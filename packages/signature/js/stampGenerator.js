@@ -261,13 +261,14 @@ $(document).ready(function(){
 	// Add text
 	$('body').on(userMouseClick, '#csg-text-add', function(e){
 		$(".csg-text-input").css("display", "flex");
+		$(".csg-text-input input").focus();
 	});
 	
 	// Insert text
 	$('body').on(userMouseClick, '.csg-insert-text', function(e){
 		var canvasId = 0;		
 		$(".csg-bouding-box").each(function(index, shape){
-			if($(shape).css("border").search("none") == -1){
+			if($(shape).css("border-top-width") != "0px"){
 				canvasId = $(shape).data("id");
 			}
 		});				

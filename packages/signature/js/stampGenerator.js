@@ -261,6 +261,7 @@ $(document).ready(function(){
 	// Add text
 	$('body').on(userMouseClick, '#csg-text-add', function(e){
 		$(".csg-text-input").css("display", "flex");
+		$(".csg-text-input input").focus();
 	});
 	
 	// Insert text

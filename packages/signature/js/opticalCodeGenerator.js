@@ -13,7 +13,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////  
     $("body").on("keyup input", "#gd-qr-text", $.debounce(500, function(e){
 			var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
-			opticalProperties.imageGuid = signature.signatureGuid;		
+			opticalProperties.imageGuid = "";		
 			saveDrawnOpticalCode(opticalProperties);
 		})
 	);
@@ -29,8 +29,11 @@ $(document).ready(function () {
     // Add new optical code signature into the list
     //////////////////////////////////////////////////  
 	$("body").on(userMouseClick, ".gd-add-optical", function () {
-		$("#gd-add-optical-signature").remove();
-        loadSignaturesTree('');
+		var opticalProperties = $.fn.opticalCodeGenerator.getProperties();			
+		opticalProperties.imageGuid = signature.signatureGuid;
+		opticalProperties.temp = false;
+		saveDrawnOpticalCode(opticalProperties);
+		$("#gd-add-optical-signature").remove();  
     });
 	
 });
@@ -45,7 +48,7 @@ $(document).ready(function () {
 	}
 
 	$.fn.opticalCodeGenerator = function(e) {
-		if($(this).find("#gd-qr-text").length == 0){
+		if($(this).find("#gd-qr-text").length == 0 && $(this)[0] == $("#gd-signature-context-panel")[0]){
 			var title = "";
 			if (signature.signatureType == "qrCode")
 			{
@@ -61,7 +64,7 @@ $(document).ready(function () {
 
         getProperties : function(){
 			var text = $(this).find('#' + paramValues.text).val();			
-			var properties = {text: text};
+			var properties = {text: text, temp: true};
 			return properties;
 		},
 
@@ -107,7 +110,8 @@ function saveDrawnOpticalCode(properties) {
 			signature.imageWidth = returnedData.width;
 			$("#gd-qr-preview-container").html("");
 			var prevewImage = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + returnedData.encodedImage + '" alt></image>';
-			$("#gd-qr-preview-container").append(prevewImage);				
+			$("#gd-qr-preview-container").append(prevewImage);	
+			loadSignaturesTree('');
 		},
 		error: function(xhr, status, error) {
 			var err = eval("(" + xhr.responseText + ")");

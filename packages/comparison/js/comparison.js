@@ -777,7 +777,7 @@ function appendHtmlContent(pageNumber, path) {
 
                 // append page image, in image mode append occurred after setting the size to avoid zero size usage
                 gd_page.append('<div class="gd-wrapper">' +
-                    '<image class="gd-page-image" src="data:image/png;base64,' + htmlData.pageImage + '" alt></image>' +
+                    '<image class="gd-page-image" src="data:image/png;base64,' + htmlData.data + '" alt></image>' +
                     '</div>');
             },
             error: function (xhr, status, error) {

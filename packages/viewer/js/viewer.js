@@ -781,13 +781,13 @@ function generatePagesTemplate(data, totalPageNumber, prefix) {
         if (preloadPageCount > 0) {
             for (var i = 0; i < counter; i++) {
                 // render page
-                appendHtmlContent(i + 1, documentGuid, prefix, data[i].width, data[i].height);
+                appendHtmlContent(i + 1, documentGuid, prefix, data[i]);
             }
 
         } else {
             // get all pages
             for (var i = 0; i < totalPageNumber; i++) {
-                appendHtmlContent(i + 1, documentGuid, prefix, data[i].width, data[i].height);
+                appendHtmlContent(i + 1, documentGuid, prefix, data[i]);
             }
         }
     }
@@ -801,7 +801,7 @@ function generatePagesTemplate(data, totalPageNumber, prefix) {
 * @param {int} width - current page width
 * @param {int} height - current page height
 */
-function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
+function appendHtmlContent(pageNumber, documentName, prefix, pageData) {
     // set empty for undefined of null
     prefix = prefix || '';
     // initialize data
@@ -810,198 +810,219 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
     if (!gd_page.hasClass('loaded')) {
         gd_page.addClass('loaded');
         // get document description
-        var data = { guid: documentGuid, page: pageNumber, password: password };
-        $.ajax({
-            type: 'POST',
-            url: getApplicationPath('loadDocumentPage'),
-            data: JSON.stringify(data),
-            global: false,
-            contentType: "application/json",
-            success: function (htmlData) {
-                // only for the first page
-                if (loadedPagesCount == 0) {
-                    fadeAll(false);
-                }
-                if (htmlData.error != undefined) {
-                    // open error popup
-                    printMessage(htmlData.error);
-                    return;
-                }
-                // remove spinner
-                gd_page.find('.gd-page-spinner').hide();
-                // fix zoom in/out scaling
-                var zoomValue = 1;
-                // append page content in HTML mode
-                if (htmlMode) {
-                    // append page
-                    gd_page.append('<div class="gd-wrapper">' + htmlData.pageHtml + '</div>');
-                    // fix to avoid using the spinner DIV size
-                    if (preloadPageCount == 0) {
-                       var pageSize = setDocumentPageSize(gd_page, width, height)
-					   width = pageSize.width;
-					   height = pageSize.height;
-                    } else {
-                        // set correct width and height for document pages
-                        var pageSize = setDocumentPageSize(gd_page, width, height)
-                        width = pageSize.width;
-                        height = pageSize.height;
-                    }
-                    // check if page is horizontally displayed
-                    if (width > height || width >= $(window).width()) {
-                        zoomValue = 0.79;
-                    }
-                    // set correct size
-                    gd_page.css('width', width);
-                    gd_page.css('height', height);
-                    gd_page.css('zoom', zoomValue);
-                } else { // render document in image mode
-                    // check if page is horizontally displayed
-                    if (width > height) {
-                        zoomValue = 0.79;
-                    }
-                    // if current document if image file fix its zoom
-                    if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
-                        if (width > $(window).width()) {
-                            zoomValue = 0.79;
-                        }
-                    } else {
-                        zoomValue = 1.2;
-                    }
-                    // set correct size
-                    gd_page.css('width', width);
-                    gd_page.css('height', height);
-                    gd_page.css('zoom', zoomValue);
-                    // append page image, in image mode append occurred after setting the size to avoid zero size usage
-                    gd_page.append('<div class="gd-wrapper">' +
-											'<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + htmlData.pageImage + '" alt></image>' +
-										'</div>');
-                }
-                // set correct width and high for OneNote format
-                if (documentName.substr((documentName.lastIndexOf('.') + 1)) == "one") {
-                    if (htmlMode) {
-                        $(".gd-wrapper").css("width", "initial");
-                    } else {
-                        $(".gd-wrapper").css("width", "inherit");
-                    }
-                }
-                // rotate page if it were rotated earlier
-                if (htmlData.angle != 0) {
-                    gd_page.css('animation', 'none');
-                    gd_page.css('transition-property', 'none');
-                    gd_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
-                    if (htmlData.angle == 90 || htmlData.angle == 270) {
-                        // set styles for HTML mode
-                        if (htmlMode) {
-                            if (gd_page.width() > gd_page.height()) {
-                                gd_page.addClass("gd-landscape-rotated");
-                            } else {
-                                gd_page.addClass("gd-landscape");
-                            }
-                        } else {
-                            // set style for image mode
-                            if (gd_page.width() > gd_page.height()) {
-                                gd_page.addClass("gd-landscape-image-rotated");
-                            } else {
-                                gd_page.addClass("gd-landscape-image");
-                            }
-                        }
-                    } else {
-                        gd_page.removeClass("gd-landscape");
-                        gd_page.removeClass("gd-landscape-image");
-                    }
-                }
-
-                loadedPagesCount = loadedPagesCount + 1;
-                if (prefix == "thumbnails-") {
-                    // fix thumbnails only when any of document pages is loaded.
-                    // this is required to fix issue with thumbnails resolution
-                    isPageLoaded($('#gd-page-1')).then(function (element) {
-                        var gd_prefix_page = $('#gd-' + prefix + 'page-' + pageNumber);
-                        if (htmlMode) {
-                            gd_prefix_page.append('<div class="gd-wrapper">' + htmlData.pageHtml + '</div>');
-                            // set correct width and height for thumbnails
-                            if (width > height && htmlData.angle == 0) {
-                                // change the width and height in places if page is landscape oriented
-                                width = $("#gd-page-1").innerHeight();
-                                height = $("#gd-page-1").innerWidth();
-                            } else {
-                                // use first document page size to fix thumbnails size issue
-                                width = $("#gd-page-1").innerWidth();
-                                height = $("#gd-page-1").innerHeight();
-                            }
-                            gd_prefix_page.css('width', width);
-                            gd_prefix_page.css('height', height);
-                            gd_prefix_page.css('zoom', zoomValue);
-                        } else {
-                            // if current document if image file fix its zoom
-                            if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
-                                if (width > ($("#gd-thumbnails").width() * 2)) {
-                                    zoomValue = 0.5;
-                                } else {
-                                    zoomValue = 1.2;
-                                }
-                            }
-                            // set correct size
-                            gd_prefix_page.css('width', width);
-                            gd_prefix_page.css('height', height);
-                            gd_prefix_page.css('zoom', zoomValue);
-                            // append page image, in image mode append occurred after setting the size to avoid zero size usage
-                            gd_prefix_page.append('<div class="gd-wrapper">' +
-                                '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + htmlData.pageImage + '" alt></image>' +
-                                '</div>');
-                        }
-                        // rotate page if it were rotated earlier
-                        if (htmlData.angle != 0) {
-                            gd_prefix_page.css('animation', 'none');
-                            gd_prefix_page.css('transition-property', 'none');
-                            gd_prefix_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
-                            if (htmlData.angle == 90 || htmlData.angle == 270) {
-                                // set styles for HTML mode
-                                if (htmlMode) {
-                                    if (gd_prefix_page.width() > gd_prefix_page.height()) {
-                                        gd_prefix_page.addClass("gd-thumbnails-landscape-rotated");
-                                    } else {
-                                        gd_prefix_page.addClass("gd-thumbnails-landscape");
-                                    }
-                                } else {
-                                    if (gd_prefix_page.width() > gd_prefix_page.height()) {
-                                        gd_prefix_page.addClass("gd-thumbnails-landscape-image-rotated");
-                                    } else {
-                                        gd_prefix_page.addClass("gd-thumbnails-landscape-image");
-                                    }
-                                    gd_prefix_page.find("img").removeClass("gd-page-image");
-                                }
-                            } else {
-                                gd_prefix_page.removeClass("gd-thumbnails-landscape");
-                                gd_prefix_page.removeClass("gd-thumbnails-landscape-image");
-                            }
-                        }
-                    });
-                }
-                var pagesAttr = $('#gd-page-num').text().split('/');
-                var lastPageNumber = parseInt(pagesAttr[1]);
-                if(loadedPagesCount == lastPageNumber || preloadPageCount != 0){
-                    $('#gd-btn-zoom-value > li').bind("click", function(){setZoomLevel.apply(this);});
-                    $('#gd-btn-zoom-value').removeClass("disabled");
-                    $('#gd-btn-zoom-in').bind('click', zoomIn);
-                    $('#gd-btn-zoom-out').bind('click', zoomOut);
-                    $('#gd-btn-zoom-in').removeClass('disabled');
-                    $('#gd-btn-zoom-out').removeClass('disabled');
-                    $('#gd-btn-print').bind('click', printDocument);
-                    $('#gd-btn-print').removeClass('disabled');
-                    $('#gd-btn-download').removeClass('disabled');
-                    loadedPagesCount = 0;
+		if(pageData.data == null){
+			var data = { guid: documentGuid, page: pageNumber, password: password };
+			$.ajax({
+				type: 'POST',
+				url: getApplicationPath('loadDocumentPage'),
+				data: JSON.stringify(data),
+				global: false,
+				contentType: "application/json",
+				success: function (htmlData) {
+					// only for the first page
+					if (loadedPagesCount == 0) {
+						fadeAll(false);
+					}
+					if (htmlData.error != undefined) {
+						// open error popup
+						printMessage(htmlData.error);
+						return;
+					}
+					renderPage(gd_page, htmlData, prefix, documentName, pageNumber)
+				},
+				error: function (xhr, status, error) {
+					fadeAll(false);
+					var err = eval("(" + xhr.responseText + ")");               
+					// open error popup
+					printMessage(err ? err.message : 'Error occurred while loading');
 				}
-            },
-            error: function (xhr, status, error) {
-                fadeAll(false);
-                var err = eval("(" + xhr.responseText + ")");               
-                // open error popup
-                printMessage(err ? err.message : 'Error occurred while loading');
-            }
-        });
+			});
+		} else {
+			renderPage(gd_page, pageData, prefix, documentName, pageNumber);
+		}
+		fadeAll(false);
     }
 }
+
+/**
+* Render current document page
+* @param {Object} gd_page - current page jQuery object
+* @param {Object} pageData - document page
+* @param {string} prefix - elements id prefix
+* @param {string} documentName - current document name
+* @param {int} pageNumber - current page number
+*/
+function renderPage(gd_page, pageData, prefix, documentName, pageNumber){
+	// remove spinner
+	gd_page.find('.gd-page-spinner').hide();
+	var width = pageData.width;
+	var height = pageData.height;
+	// fix zoom in/out scaling
+	var zoomValue = 1;
+	// append page content in HTML mode
+	if (htmlMode) {
+		// append page
+		gd_page.append('<div class="gd-wrapper">' + pageData.data + '</div>');
+		// fix to avoid using the spinner DIV size
+		if (preloadPageCount == 0) {
+		   var pageSize = setDocumentPageSize(gd_page, width, height)
+		   width = pageSize.width;
+		   height = pageSize.height;
+		} else {
+			// set correct width and height for document pages
+			var pageSize = setDocumentPageSize(gd_page, width, height)
+			width = pageSize.width;
+			height = pageSize.height;
+		}
+		// check if page is horizontally displayed
+		if (width > height || width >= $(window).width()) {
+			zoomValue = 0.79;
+		}
+		// set correct size
+		gd_page.css('width', width);
+		gd_page.css('height', height);
+		gd_page.css('zoom', zoomValue);
+	} else { // render document in image mode
+		// check if page is horizontally displayed
+		if (width > height) {
+			zoomValue = 0.79;
+		}
+		// if current document if image file fix its zoom
+		if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
+			if (width > $(window).width()) {
+				zoomValue = 0.79;
+			}
+		} else {
+			zoomValue = 1.2;
+		}
+		// set correct size
+		gd_page.css('width', width);
+		gd_page.css('height', height);
+		gd_page.css('zoom', zoomValue);
+		// append page image, in image mode append occurred after setting the size to avoid zero size usage
+		gd_page.append('<div class="gd-wrapper">' +
+								'<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + pageData.data + '" alt></image>' +
+							'</div>');
+	}
+	// set correct width and high for OneNote format
+	if (documentName.substr((documentName.lastIndexOf('.') + 1)) == "one") {
+		if (htmlMode) {
+			$(".gd-wrapper").css("width", "initial");
+		} else {
+			$(".gd-wrapper").css("width", "inherit");
+		}
+	}
+	// rotate page if it were rotated earlier
+	if (pageData.angle != 0) {
+		gd_page.css('animation', 'none');
+		gd_page.css('transition-property', 'none');
+		gd_page.css('transform', 'rotate(' + pageData.angle + 'deg)');
+		if (pageData.angle == 90 || pageData.angle == 270) {
+			// set styles for HTML mode
+			if (htmlMode) {
+				if (gd_page.width() > gd_page.height()) {
+					gd_page.addClass("gd-landscape-rotated");
+				} else {
+					gd_page.addClass("gd-landscape");
+				}
+			} else {
+				// set style for image mode
+				if (gd_page.width() > gd_page.height()) {
+					gd_page.addClass("gd-landscape-image-rotated");
+				} else {
+					gd_page.addClass("gd-landscape-image");
+				}
+			}
+		} else {
+			gd_page.removeClass("gd-landscape");
+			gd_page.removeClass("gd-landscape-image");
+		}
+	}
+
+	loadedPagesCount = loadedPagesCount + 1;
+	if (prefix == "thumbnails-") {
+		// fix thumbnails only when any of document pages is loaded.
+		// this is required to fix issue with thumbnails resolution
+		isPageLoaded($('#gd-page-1')).then(function (element) {
+			var gd_prefix_page = $('#gd-' + prefix + 'page-' + pageNumber);
+			if (htmlMode) {
+				gd_prefix_page.append('<div class="gd-wrapper">' + pageData.data + '</div>');
+				// set correct width and height for thumbnails
+				if (width > height && pageData.angle == 0) {
+					// change the width and height in places if page is landscape oriented
+					width = $("#gd-page-1").innerHeight();
+					height = $("#gd-page-1").innerWidth();
+				} else {
+					// use first document page size to fix thumbnails size issue
+					width = $("#gd-page-1").innerWidth();
+					height = $("#gd-page-1").innerHeight();
+				}
+				gd_prefix_page.css('width', width);
+				gd_prefix_page.css('height', height);
+				gd_prefix_page.css('zoom', zoomValue);
+			} else {
+				// if current document if image file fix its zoom
+				if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
+					if (width > ($("#gd-thumbnails").width() * 2)) {
+						zoomValue = 0.5;
+					} else {
+						zoomValue = 1.2;
+					}
+				}
+				// set correct size
+				gd_prefix_page.css('width', width);
+				gd_prefix_page.css('height', height);
+				gd_prefix_page.css('zoom', zoomValue);
+				// append page image, in image mode append occurred after setting the size to avoid zero size usage
+				gd_prefix_page.append('<div class="gd-wrapper">' +
+					'<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + pageData.data + '" alt></image>' +
+					'</div>');
+			}
+			// rotate page if it were rotated earlier
+			if (pageData.angle != 0) {
+				gd_prefix_page.css('animation', 'none');
+				gd_prefix_page.css('transition-property', 'none');
+				gd_prefix_page.css('transform', 'rotate(' + pageData.angle + 'deg)');
+				if (pageData.angle == 90 || pageData.angle == 270) {
+					// set styles for HTML mode
+					if (htmlMode) {
+						if (gd_prefix_page.width() > gd_prefix_page.height()) {
+							gd_prefix_page.addClass("gd-thumbnails-landscape-rotated");
+						} else {
+							gd_prefix_page.addClass("gd-thumbnails-landscape");
+						}
+					} else {
+						if (gd_prefix_page.width() > gd_prefix_page.height()) {
+							gd_prefix_page.addClass("gd-thumbnails-landscape-image-rotated");
+						} else {
+							gd_prefix_page.addClass("gd-thumbnails-landscape-image");
+						}
+						gd_prefix_page.find("img").removeClass("gd-page-image");
+					}
+				} else {
+					gd_prefix_page.removeClass("gd-thumbnails-landscape");
+					gd_prefix_page.removeClass("gd-thumbnails-landscape-image");
+				}
+			}
+		});
+	}
+	var pagesAttr = $('#gd-page-num').text().split('/');
+	var lastPageNumber = parseInt(pagesAttr[1]);
+	if(loadedPagesCount == lastPageNumber || preloadPageCount != 0){
+		$('#gd-btn-zoom-value > li').bind("click", function(){setZoomLevel.apply(this);});
+		$('#gd-btn-zoom-value').removeClass("disabled");
+		$('#gd-btn-zoom-in').bind('click', zoomIn);
+		$('#gd-btn-zoom-out').bind('click', zoomOut);
+		$('#gd-btn-zoom-in').removeClass('disabled');
+		$('#gd-btn-zoom-out').removeClass('disabled');
+		$('#gd-btn-print').bind('click', printDocument);
+		$('#gd-btn-print').removeClass('disabled');
+		$('#gd-btn-download').removeClass('disabled');
+		loadedPagesCount = 0;
+	}
+}
+
+
 
 /**
 * Calculate document page width and height

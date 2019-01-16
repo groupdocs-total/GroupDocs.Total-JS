@@ -1427,7 +1427,7 @@ function loadSignatureImage() {
 				signature.signatureType = signatureType;
 				signature.imageWidth = width;
 				signature.imageHeight = height;
-				insertImage(returnedData.pageImage, pagesDiapason[n]);
+				insertImage(returnedData.data, pagesDiapason[n]);
 			}
 		},
 		error: function(xhr, status, error) {

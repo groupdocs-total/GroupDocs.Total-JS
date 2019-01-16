@@ -851,8 +851,8 @@ function appendHtmlContent(pageNumber, documentName) {
 
 function renderThumbnails(pageNumber, pageData) {
     var gd_page = $('#gd-page-' + pageNumber);
-    var width = gd_page.width();
-    var height = gd_page.height();
+    var width = pageData.width;
+    var height = pageData.height;
     var zoomValue = gd_page[0].style.zoom;
     // fix thumbnails only when any of document pages is loaded.
     // this is required to fix issue with thumbnails resolution
@@ -863,8 +863,14 @@ function renderThumbnails(pageNumber, pageData) {
             // set correct width and height for thumbnails
             if (width > height && pageData.angle == 0) {
                 // change the width and height in places if page is landscape oriented
-                width = $("#gd-page-1").innerHeight();
-                height = $("#gd-page-1").innerWidth();
+                var tmp = width;
+                width = height;
+                height = tmp;
+                zoomValue = 0.6;
+                if(getDocumentFormat(documentGuid).format != "Microsoft PowerPoint"){
+                    width = $("#gd-page-1").innerHeight();
+                    height = $("#gd-page-1").innerWidth();
+                }
             } else {
                 // use first document page size to fix thumbnails size issue
                 width = $("#gd-page-1").innerWidth();

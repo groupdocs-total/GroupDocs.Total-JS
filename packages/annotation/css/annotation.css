@@ -197,7 +197,7 @@ ANNOTATIONS COMMENTS BAR
 }
 
 .gd-annotations-comments-wrapper{
-    display: flex;
+    display: flex;	
     flex-flow: column;
     margin-right: -400px;
     width: 400px;

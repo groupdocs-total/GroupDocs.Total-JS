@@ -207,17 +207,17 @@ $(document).ready(function () {
                 // check if next page number is not bigger than total page number
                 if (currentPageNumber + 1 <= lastPageNumber) {
                     if (prevPage) {
-                        // load previous page
+                        // load previous page 						
                         // to set correct page size we use global array documentData which contains all info about current document
-                        appendHtmlContent(currentPageNumber, documentGuid, '', documentData.pages[currentPageNumber - 1].width, documentData.pages[currentPageNumber - 1].height);
+                        appendHtmlContent(currentPageNumber, documentGuid, '', documentData.pages[currentPageNumber - 1]);
                     } else {
                         // load next page
-                        appendHtmlContent(currentPageNumber + 1, documentGuid, '', documentData.pages[currentPageNumber].width, documentData.pages[currentPageNumber].height);
+                        appendHtmlContent(currentPageNumber + 1, documentGuid, '', documentData.pages[currentPageNumber]);
                     }
                 } else {
                     // load last page if to jump to it via last page button
-                    appendHtmlContent(currentPageNumber, documentGuid, '', documentData.pages[currentPageNumber - 1].width, documentData.pages[currentPageNumber - 1].height);
-                    appendHtmlContent(currentPageNumber - 1, documentGuid, '', documentData.pages[currentPageNumber - 2].width, documentData.pages[currentPageNumber - 2].height);
+                    appendHtmlContent(currentPageNumber, documentGuid, '', documentData.pages[currentPageNumber - 1]);
+                    appendHtmlContent(currentPageNumber - 1, documentGuid, '', documentData.pages[currentPageNumber - 2]);
                 }
             }
         }
@@ -232,48 +232,51 @@ $(document).ready(function () {
         // get current page number
         var currentPageNumber = parseInt(pagesAttr[0]);
         // get last page number
-        var lastPageNumber = parseInt(pagesAttr[1]);
-        // get zoom value
-        var zoomValue = getZoomValue() / 100;
+        var lastPageNumber = parseInt(pagesAttr[1]);        
         var pagePosition = 0;
         // get scroll direction
         var scrollDown = true;
         var currentScroll = $(this).scrollTop();
-        if (currentScroll > previousScroll) {
-            pagePosition = currentPageNumber + 1;
-        } else {
-            pagePosition = currentPageNumber - 1;
+        if (currentScroll < previousScroll) {
             scrollDown = false;
-        }
+        } 
         // set scroll direction
         previousScroll = currentScroll;
-        // check if page is visible in the view port more than 50%
-        if ($('#gd-page-' + pagePosition).isOnScreen(0.5, 0.5)) {
-            if ((currentPageNumber > 0) && (currentPageNumber <= lastPageNumber)) {
-                // change current page value
-                if (pagePosition != currentPageNumber) {
-                    // set current page number
-                    setNavigationPageValues(pagePosition, lastPageNumber);
-                }
-                // load next page
-                // to set correct page size we use global array documentData which contains all info about current document
-                if (preloadPageCount > 0) {
-                    // if scroll down load next page
-                    if (scrollDown) {
-                        if (pagePosition + 1 <= lastPageNumber) {
-                            appendHtmlContent(pagePosition + 1, documentGuid, '', documentData.pages[pagePosition].width, documentData.pages[pagePosition].height);
-                        } else if (pagePosition == lastPageNumber) {
-                            appendHtmlContent(pagePosition, documentGuid, '', documentData.pages[pagePosition - 1].width, documentData.pages[pagePosition - 1].height);
-                        }
-                    } else {
-                        // if scroll up load previous page
-                        if (currentPageNumber - 1 >= 1) {
-                            appendHtmlContent(currentPageNumber - 1, documentGuid, '', documentData.pages[pagePosition - 1].width, documentData.pages[pagePosition - 1].height);
-                        }
-                    }
-                }
-            }
-        }
+		var zoom = parseInt($("#gd-zoom-value").html()) / 100;
+		var delta = 0.5;
+		if(zoom < 1){
+			delta = 1;
+		}
+		for(i = 1; i <= lastPageNumber; i++){
+			// check if page is visible in the view port more than 50%
+			if ($('#gd-page-' + i).isOnScreen(delta, delta)) {				
+				// change current page value
+				if (i != currentPageNumber) {
+					// set current page number					
+					setNavigationPageValues(i, lastPageNumber);
+				}
+				// load next page
+				// to set correct page size we use global array documentData which contains all info about current document
+				if (preloadPageCount > 0) {
+					// if scroll down load next page
+					if (scrollDown) {
+						if (i + 1 <= lastPageNumber) {
+							appendHtmlContent(i + 1, documentGuid, '', documentData.pages[i]);
+						} else if (i == lastPageNumber) {
+							appendHtmlContent(i, documentGuid, '', documentData.pages[i - 1]);
+						}
+					} else {
+						// if scroll up load previous page
+						if (currentPageNumber - 1 >= 1) {
+							appendHtmlContent(currentPageNumber - 1, documentGuid, '', documentData.pages[i - 1]);
+						}
+					}
+				}				
+			}
+		}
+		if($(this).scrollTop() == 0 && !scrollDown){
+			setNavigationPageValues(1, lastPageNumber);
+		}
     });
 
     //////////////////////////////////////////////////
@@ -388,14 +391,14 @@ $(document).ready(function () {
         var lastPageNumber = parseInt(pagesAttr[1]);
 
         if (page == lastPageNumber) {
-            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 2].width, documentData.pages[page - 2].height);
-            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 1].width, documentData.pages[page - 1].height);
+            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 2]);
+            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 1]);
         } else {
-            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 1].width, documentData.pages[page - 1].height);
-            appendHtmlContent(page + 1, documentGuid, "", documentData.pages[page].width, documentData.pages[page].height);
+            appendHtmlContent(page, documentGuid, "", documentData.pages[page - 1]);
+            appendHtmlContent(page + 1, documentGuid, "", documentData.pages[page]);
         }
         // set navigation to current page
-        setNavigationPageValues(page, lastPageNumber);
+        setNavigationPageValues(page, lastPageNumber);	
         scrollToPage(page);
     });
 
@@ -805,8 +808,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, pageData) {
     // set empty for undefined of null
     prefix = prefix || '';
     // initialize data
-    var gd_page = $('#gd-page-' + pageNumber);
-
+    var gd_page = $('#gd-page-' + pageNumber);	
     if (!gd_page.hasClass('loaded')) {
         gd_page.addClass('loaded');
         // get document description
@@ -835,6 +837,7 @@ function appendHtmlContent(pageNumber, documentName, prefix, pageData) {
 					var err = eval("(" + xhr.responseText + ")");               
 					// open error popup
 					printMessage(err ? err.message : 'Error occurred while loading');
+
 				}
 			});
 		} else {
@@ -853,8 +856,9 @@ function appendHtmlContent(pageNumber, documentName, prefix, pageData) {
 * @param {int} pageNumber - current page number
 */
 function renderPage(gd_page, pageData, prefix, documentName, pageNumber){
-	// remove spinner
+	 // remove spinner
 	gd_page.find('.gd-page-spinner').hide();
+	var pageSizeThumbnails = {width: pageData.width, height: pageData.height};
 	var width = pageData.width;
 	var height = pageData.height;
 	// fix zoom in/out scaling
@@ -948,17 +952,22 @@ function renderPage(gd_page, pageData, prefix, documentName, pageNumber){
 			if (htmlMode) {
 				gd_prefix_page.append('<div class="gd-wrapper">' + pageData.data + '</div>');
 				// set correct width and height for thumbnails
-				if (width > height && pageData.angle == 0) {
+				if (pageSizeThumbnails.width > pageSizeThumbnails.height && pageData.angle == 0) {
 					// change the width and height in places if page is landscape oriented
-					width = $("#gd-page-1").innerHeight();
-					height = $("#gd-page-1").innerWidth();
+					pageSizeThumbnails.width = pageSizeThumbnails.height;
+					pageSizeThumbnails.height = pageSizeThumbnails.width;
+					zoomValue = 0.6;
+					if(getDocumentFormat(documentGuid).format != "Microsoft PowerPoint"){
+						pageSizeThumbnails.width = $("#gd-page-1").innerHeight();
+						pageSizeThumbnails.height = $("#gd-page-1").innerWidth();
+					}
 				} else {
 					// use first document page size to fix thumbnails size issue
-					width = $("#gd-page-1").innerWidth();
-					height = $("#gd-page-1").innerHeight();
+					pageSizeThumbnails.width = pageSizeThumbnails.width;
+					pageSizeThumbnails.height = pageSizeThumbnails.height;
 				}
-				gd_prefix_page.css('width', width);
-				gd_prefix_page.css('height', height);
+				gd_prefix_page.css('width', pageSizeThumbnails.width);
+				gd_prefix_page.css('height', pageSizeThumbnails.height);
 				gd_prefix_page.css('zoom', zoomValue);
 			} else {
 				// if current document if image file fix its zoom
@@ -970,8 +979,8 @@ function renderPage(gd_page, pageData, prefix, documentName, pageNumber){
 					}
 				}
 				// set correct size
-				gd_prefix_page.css('width', width);
-				gd_prefix_page.css('height', height);
+				gd_prefix_page.css('width', pageSizeThumbnails.width);
+				gd_prefix_page.css('height', pageSizeThumbnails.height);
 				gd_prefix_page.css('zoom', zoomValue);
 				// append page image, in image mode append occurred after setting the size to avoid zero size usage
 				gd_prefix_page.append('<div class="gd-wrapper">' +
@@ -1021,8 +1030,6 @@ function renderPage(gd_page, pageData, prefix, documentName, pageNumber){
 		loadedPagesCount = 0;
 	}
 }
-
-
 
 /**
 * Calculate document page width and height
@@ -1321,7 +1328,7 @@ function scrollToPage(pageNumber) {
     if (typeof zoomValue == 'undefined') {
         zoomValue = 100;
     } else {
-        zoomValue = zoomValue * 100;
+        zoomValue = $("#gd-page-1").css("zoom") * 100;
     }
     // scroll
     $('#gd-pages').scrollTo('#gd-page-' + pageNumber, {
@@ -2090,9 +2097,9 @@ $.fn.scrollTo = function (target, options, callback) {
     if (typeof options == 'function' && arguments.length == 2) { callback = options; options = target; }
     var settings = $.extend({
         scrollTarget: target,
-        offsetTop: 50,
+        offsetTop: 100,
         duration: 500,
-        zoom: 100,
+        zoom: options.zoom,
         easing: 'swing'
     }, options);
     return this.each(function () {
@@ -2102,7 +2109,7 @@ $.fn.scrollTo = function (target, options, callback) {
 		}
         var scrollTarget = (typeof settings.scrollTarget == "number") ? settings.scrollTarget : $(settings.scrollTarget);
         if (typeof settings.scrollTarget != "number") {
-            var scrollYTop = scrollTarget.offset().top * settings.zoom / 100;
+            var scrollYTop = scrollTarget.offset().top * (settings.zoom / 100);
         }
         var scrollY = (typeof scrollTarget == "number") ? scrollTarget : scrollYTop + scrollPane.scrollTop() - parseInt(settings.offsetTop);
         scrollPane.animate({ scrollTop: scrollY }, parseInt(settings.duration), settings.easing, function () {
@@ -2133,19 +2140,19 @@ $.fn.isOnScreen = function (x, y) {
     };
     viewport.right = viewport.left + win.width();
     viewport.bottom = viewport.top + win.height();
-
-    var height = this.outerHeight();
-    var width = this.outerWidth();
+	var zoom = parseInt($("#gd-zoom-value").html()) / 100;
+    var height = this.outerHeight() * zoom;
+    var width = this.outerWidth() * zoom;
 
     if (!width || !height) {
         return false;
     }
 
     var bounds = this.offset();
-    bounds.right = bounds.left + width;
-    bounds.bottom = bounds.top + height;
+    bounds.right = (bounds.left * zoom) + width;
+    bounds.bottom = (bounds.top * zoom) + height;
 
-    var visible = (!(viewport.right < bounds.left || viewport.left > bounds.right || viewport.bottom < bounds.top || viewport.top > bounds.bottom));
+    var visible = (!(viewport.right < (bounds.left * zoom) || viewport.left > bounds.right || viewport.bottom < (bounds.top * zoom) || viewport.top > bounds.bottom));
 
     if (!visible) {
         return false;
@@ -2153,9 +2160,9 @@ $.fn.isOnScreen = function (x, y) {
 
     var deltas = {
         top: Math.min(1, (bounds.bottom - viewport.top) / height),
-        bottom: Math.min(1, (viewport.bottom - bounds.top) / height),
+        bottom: Math.min(1, (viewport.bottom - (bounds.top * zoom)) / height),
         left: Math.min(1, (bounds.right - viewport.left) / width),
-        right: Math.min(1, (viewport.right - bounds.left) / width)
+        right: Math.min(1, (viewport.right - (bounds.left * zoom)) / width)
     };
 
     return (deltas.left * deltas.right) >= x && (deltas.top * deltas.bottom) >= y;

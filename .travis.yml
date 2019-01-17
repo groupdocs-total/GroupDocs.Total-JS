@@ -19,5 +19,5 @@ before_script:
   - fluxbox >/dev/null 2>&1 &
   - mkdir DocumentSamples
   - mkdir Licenses
-  - docker run -p -d 8080:8080 -v `pwd`/DocumentSamples:/home/groupdocs/app/DocumentSamples -v `pwd`/Licenses:/home/groupdocs/app/Licenses groupdocs/total-for-java-spring
+  - docker run -d -p 8080:8080 -v `pwd`/DocumentSamples:/home/groupdocs/app/DocumentSamples -v `pwd`/Licenses:/home/groupdocs/app/Licenses groupdocs/total-for-java-spring
   - while ! curl http://localhost:8080 ; do sleep 1 ; done

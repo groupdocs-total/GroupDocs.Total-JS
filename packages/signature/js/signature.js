@@ -1402,7 +1402,7 @@ function loadSignatureImage() {
 				signature.signatureType = signatureType;
 				signature.imageWidth = width;
 				signature.imageHeight = height;
-				insertImage(returnedData.pageImage, pagesDiapason[n]);
+				insertImage(returnedData.data, pagesDiapason[n]);
 			}
 		},
 		error: function(xhr, status, error) {
@@ -1585,9 +1585,35 @@ GROUPDOCS.SIGNATURE PLUGIN
                 digitalSignature: true,
                 qrCodeSignature: true,
                 barCodeSignature: true,
-                stampSignature: true,                
+                stampSignature: true,
+                downloadOriginal: true,
+                downloadSigned: true,
+				defaultDocument: "",
+				preloadPageCount: 0,
+				pageSelector: true,
+				download: true,
+				upload: true,
+				print: true,
+				browse: true,
+				rewrite: true,
+				applicationPath: "http://localhost:8080/signature"
             };
-
+			$('#element').viewer({
+					applicationPath: options.applicationPath,
+                    defaultDocument: options.defaultDocument,
+                    htmlMode: false,
+                    preloadPageCount: options.preloadPageCount,
+                    zoom : false,
+                    pageSelector: options.pageSelector,
+                    search: false,
+                    thumbnails: false,
+                    rotate: false,
+                    download: options.download,
+                    upload: options.upload,
+                    print: options.print,
+                    browse: options.browse,
+                    rewrite: options.rewrite
+			});
             options = $.extend(defaults, options);
            
             $(gd_navbar).append(getHtmlSignaturePanel);

@@ -805,7 +805,7 @@ function generatePagesTemplate(data) {
             }
         }
     });
-    if (preloadPageCount != 0) {
+    if (thumbnails && preloadPageCount != 0) {
         loadThumbnails();
     }
 }

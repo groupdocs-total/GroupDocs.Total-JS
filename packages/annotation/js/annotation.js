@@ -140,8 +140,7 @@ $(document).ready(function () {
                 documentGuid = $(this).attr('data-guid');
                 toggleModalDialog(false, '');
                 loadDocument(function (data) {
-                    // Generate thumbnails
-                    generatePagesTemplate(data, data.length);
+                    generatePagesTemplate(data);
                 });
             }
         }

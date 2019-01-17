@@ -21,8 +21,9 @@ jobs:
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-Java-Spring
         - cd GroupDocs.Total-for-Java-Spring
         - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-Java-Spring $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
-        - mvn -B clean spring-boot:run &
-        - while ! curl http://localhost:8080 ; do sleep 1 ; done
+        - mvn -q clean spring-boot:run &
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 2; echo "waiting to back-end..."; ; done
+        - cd ..
         - npm test
     - stage: Test with GroupDocs.Total-for-Java-DropWizard
       dist: trusty
@@ -32,6 +33,7 @@ jobs:
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-Java-DropWizard
         - cd GroupDocs.Total-for-Java-DropWizard
         - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-Java-DropWizard $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
-        - mvn -B clean compile exec:java &
-        - while ! curl http://localhost:8080 ; do sleep 1 ; done
+        - mvn -q clean compile exec:java &
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 2 ; echo "waiting to back-end..."; done
+        - cd ..
         - npm test

@@ -24,6 +24,7 @@ jobs:
         - mvn -q clean spring-boot:run &
         - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 2; echo "waiting to back-end..."; ; done
         - cd ..
+        - npm install
         - npm test
     - stage: Test with GroupDocs.Total-for-Java-DropWizard
       dist: trusty
@@ -36,4 +37,5 @@ jobs:
         - mvn -q clean compile exec:java &
         - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 2 ; echo "waiting to back-end..."; done
         - cd ..
+        - npm install
         - npm test

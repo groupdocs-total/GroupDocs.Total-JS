@@ -26,8 +26,6 @@ jobs:
         - cd ..
         - npm install
         - npm test
-      on:
-        tags : false
     - stage: Test with GroupDocs.Total-for-Java-DropWizard
       dist: trusty
       language: java
@@ -41,8 +39,6 @@ jobs:
         - cd ..
         - npm install
         - npm test
-      on:
-        tags : false
     - stage: Release fix
       dist: trusty
       language: java

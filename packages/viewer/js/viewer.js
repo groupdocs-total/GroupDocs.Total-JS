@@ -25,6 +25,7 @@ var loadedPagesCount = 0;
 var map = {};
 var htmlMode = false;
 var thumbnails = false;
+var saveRotateState = true;
 // add supported formats
 map['folder'] = { 'format': '', 'icon': 'fa-folder' };
 map['pdf'] = { 'format': 'Portable Document Format', 'icon': 'fa-file-pdf-o' };
@@ -1355,63 +1356,82 @@ function rotatePages(angle) {
     // Prepare pages numbers array
     var pages = [];
     pages[0] = currentPageNumber;
-    // Prepare ajax data
-    var data = { guid: documentGuid, angle: angle, pages: pages, password: password };
-    $.ajax({
-        type: 'POST',
-        url: getApplicationPath('rotateDocumentPages'),
-        data: JSON.stringify(data),
-        contentType: "application/json",
-        success: function (returnedData) {
-            if (returnedData.message != undefined) {
-                // open error popup
-                printMessage(returnedData.message);
-                return;
-            }
-            $.each(returnedData, function (index, elem) {
-                // Rotate the page
-                $('#gd-page-' + elem.pageNumber).css('animation', 'none');
-                $('#gd-page-' + elem.pageNumber).css('transition-property', 'none');
-                $('#gd-page-' + elem.pageNumber).css('transform', 'rotate(' + elem.angle + 'deg)');
-                // set correct styles when page has landscape orientation
-                if (elem.angle == 90 || elem.angle == 270) {
-                    if (htmlMode) {
-                        if ($('#gd-page-' + elem.pageNumber).width() > $('#gd-page-' + elem.pageNumber).height()) {
-                            $('#gd-page-' + elem.pageNumber).addClass("gd-landscape-rotated");
-                            $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape-rotated");
+    if (saveRotateState) {
+        // Prepare ajax data
+        var data = { guid: documentGuid, angle: angle, pages: pages, password: password };
+        $.ajax({
+            type: 'POST',
+            url: getApplicationPath('rotateDocumentPages'),
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function (returnedData) {
+                if (returnedData.message != undefined) {
+                    // open error popup
+                    printMessage(returnedData.message);
+                    return;
+                }
+                $.each(returnedData, function (index, elem) {
+                    // Rotate the page
+                    rotatePage(elem.pageNumber, elem.angle);
+                    // set correct styles when page has landscape orientation
+                    if (elem.angle == 90 || elem.angle == 270) {
+                        if (htmlMode) {
+                            if ($('#gd-page-' + elem.pageNumber).width() > $('#gd-page-' + elem.pageNumber).height()) {
+                                $('#gd-page-' + elem.pageNumber).addClass("gd-landscape-rotated");
+                                $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape-rotated");
+                            } else {
+                                $('#gd-page-' + elem.pageNumber).addClass("gd-landscape");
+                                $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape");
+                            }
                         } else {
-                            $('#gd-page-' + elem.pageNumber).addClass("gd-landscape");
-                            $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape");
+                            if ($('#gd-page-' + elem.pageNumber).width() > $('#gd-page-' + elem.pageNumber).height()) {
+                                $('#gd-page-' + elem.pageNumber).addClass("gd-landscape-image-rotated");
+                                $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape-image-rotated");
+                            } else {
+                                $('#gd-page-' + elem.pageNumber).addClass("gd-landscape-image");
+                                $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape-image");
+                            }
+                            $('#gd-thumbnails-page-' + elem.pageNumber).find("img").removeClass("gd-page-image");
                         }
                     } else {
-                        if ($('#gd-page-' + elem.pageNumber).width() > $('#gd-page-' + elem.pageNumber).height()) {
-                            $('#gd-page-' + elem.pageNumber).addClass("gd-landscape-image-rotated");
-                            $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape-image-rotated");
-                        } else {
-                            $('#gd-page-' + elem.pageNumber).addClass("gd-landscape-image");
-                            $('#gd-thumbnails-page-' + elem.pageNumber).addClass("gd-thumbnails-landscape-image");
-                        }
-                        $('#gd-thumbnails-page-' + elem.pageNumber).find("img").removeClass("gd-page-image");
+                        $('#gd-page-' + elem.pageNumber).removeClass("gd-landscape");
+                        $('#gd-thumbnails-page-' + elem.pageNumber).removeClass("gd-thumbnails-landscape");
+                        $('#gd-page-' + elem.pageNumber).removeClass("gd-landscape-image");
+                        $('#gd-thumbnails-page-' + elem.pageNumber).removeClass("gd-thumbnails-landscape-image");
                     }
-                } else {
-                    $('#gd-page-' + elem.pageNumber).removeClass("gd-landscape");
-                    $('#gd-thumbnails-page-' + elem.pageNumber).removeClass("gd-thumbnails-landscape");
-                    $('#gd-page-' + elem.pageNumber).removeClass("gd-landscape-image");
-                    $('#gd-thumbnails-page-' + elem.pageNumber).removeClass("gd-thumbnails-landscape-image");
-                }
-                // rotate page thumbnail
-                $('#gd-thumbnails-page-' + elem.pageNumber).css('animation', 'none');
-                $('#gd-thumbnails-page-' + elem.pageNumber).css('transition-property', 'none');
-                $('#gd-thumbnails-page-' + elem.pageNumber).css('transform', 'rotate(' + elem.angle + 'deg)');
-            });
-        },
-        error: function (xhr, status, error) {
-            var err = eval("(" + xhr.responseText + ")");
-            console.log(err.Message);
-            // open error popup
-            printMessage(err.message);
+                    // rotate page thumbnail
+                    rotateThumbnail(currentPageNumber, elem.angle)
+                });
+            },
+            error: function (xhr, status, error) {
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err.Message);
+                // open error popup
+                printMessage(err.message);
+            }
+        });
+    } else {
+        documentData.pages[currentPageNumber - 1].angle = parseInt(documentData.pages[currentPageNumber - 1].angle) + parseInt(angle);
+        if (documentData.pages[currentPageNumber - 1].angle > 360) {
+            documentData.pages[currentPageNumber - 1].angle = 90;
+        } else if (documentData.pages[currentPageNumber - 1].angle < -360) {
+            documentData.pages[currentPageNumber - 1].angle = -90;
         }
-    });
+        rotatePage(currentPageNumber, documentData.pages[currentPageNumber - 1].angle);
+        rotateThumbnail(currentPageNumber, documentData.pages[currentPageNumber - 1].angle);
+    }
+}
+
+function rotatePage(currentPageNumber, angle) {
+    $('#gd-page-' + currentPageNumber).css('animation', 'none');
+    $('#gd-page-' + currentPageNumber).css('transition-property', 'none');
+    $('#gd-page-' + currentPageNumber).css('transform', 'rotate(' + angle + 'deg)');
+}
+
+function rotateThumbnail(currentPageNumber, angle) {
+    $('#gd-thumbnails-page-' + currentPageNumber).css('animation', 'none');
+    $('#gd-thumbnails-page-' + currentPageNumber).css('transition-property', 'none');
+    $('#gd-thumbnails-page-' + currentPageNumber).css('transform', 'rotate(' + angle + 'deg)');
 }
 
 /**
@@ -1863,7 +1883,8 @@ GROUPDOCS.VIEWER PLUGIN
                 defaultDocument: null,
                 browse: true,               
                 rewrite: true,
-				htmlMode: true
+                htmlMode: true,
+                saveRotateState: true
             };
             options = $.extend(defaults, options);
 
@@ -1873,6 +1894,7 @@ GROUPDOCS.VIEWER PLUGIN
             rewrite = options.rewrite;
 			htmlMode = options.htmlMode;
             thumbnails = options.thumbnails;
+            saveRotateState = options.saveRotateState;
             // assembly html base
             this.append(getHtmlBase);
             this.append(getHtmlModalDialog);

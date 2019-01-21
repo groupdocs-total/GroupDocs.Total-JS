@@ -17,7 +17,7 @@ jobs:
       filter_secrets : false
       script: 
         - mkdir /c/repo
-        - cp ../GroupDocs.Total-JS /c/repo
+        - cp -r ../GroupDocs.Total-JS /c/repo
         - cd /c/repo
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC

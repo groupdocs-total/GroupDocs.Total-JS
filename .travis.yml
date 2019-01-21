@@ -16,6 +16,7 @@ jobs:
       language: sh
       filter_secrets : false
       script: 
+        - pwd
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
         - cd GroupDocs.Total-for-NET-MVC

@@ -24,9 +24,9 @@ jobs:
         - cd GroupDocs.Total-for-NET-MVC
         - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
         - nuget restore
-        - msbuild GroupDocs.Total MVC.sln
+        - msbuild.exe GroupDocs.Total MVC.sln
         - cd src
-        - xsp4.exe &
+        - ./xsp4.exe &
         - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5; echo "waiting to back-end..."; done
         - npm test
     - stage: Test with GroupDocs.Total-for-Java-Spring

@@ -18,8 +18,7 @@ jobs:
   include:
     - stage: Test with GroupDocs.Total-for-.NET-MVC
       os: windows
-      language: node_js
-      node_js: "7"
+      language: sh
       script: 
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
         - cd GroupDocs.Total-for-NET-MVC

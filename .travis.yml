@@ -13,10 +13,12 @@ jobs:
   include:
     - stage: Test with GroupDocs.Total-for-.NET-MVC
       os: windows
-      language: sh
+      language: shell
       filter_secrets : false
       script: 
-        - pwd
+        - mkdir c:\repo
+        - cd ..\GroupDocs.Total-JS c:\repo
+        - cd c:\repo
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
         - cd GroupDocs.Total-for-NET-MVC

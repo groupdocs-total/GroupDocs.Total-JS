@@ -7,10 +7,6 @@ addons:
      - google-chrome-stable fluxbox
 before_script:
   - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3
-  - fluxbox >/dev/null 2>&1 &
 jobs:
   include:
     - stage: Test with GroupDocs.Total-for-.NET-MVC
@@ -28,6 +24,10 @@ jobs:
       language: java
       jdk : oraclejdk8
       script: 
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3
+        - fluxbox >/dev/null 2>&1 &
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-Java-Spring
         - cd GroupDocs.Total-for-Java-Spring
@@ -42,6 +42,10 @@ jobs:
       language: java
       jdk : oraclejdk8
       script: 
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3
+        - fluxbox >/dev/null 2>&1 &
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-Java-DropWizard
         - cd GroupDocs.Total-for-Java-DropWizard

@@ -12,6 +12,7 @@ jobs:
     - stage: Test with GroupDocs.Total-for-.NET-MVC
       os: windows
       language: sh
+      filter_secrets : false
       script: 
         - cinst nodejs.install -y
         - npm install -g testcafe

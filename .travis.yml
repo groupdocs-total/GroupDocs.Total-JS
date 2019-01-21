@@ -16,6 +16,14 @@ before_script:
   - fluxbox >/dev/null 2>&1 &
 jobs:
   include:
+    - stage: Test with GroupDocs.Total-for-.NET-MVC
+      os: windows
+      language: node_js
+      script: 
+        - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
+        - cd GroupDocs.Total-for-NET-MVC
+        - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
+        - nuget restore
     - stage: Test with GroupDocs.Total-for-Java-Spring
       dist: trusty
       language: java
@@ -49,7 +57,12 @@ jobs:
       script: 
         - echo "releasing fix skip"
         - gem install travis -v 1.8.9
-        - npm whoami
+        - lerna version patch --yes
+        - lerna publish --yes
+        - echo "y" | travis --version
+        - travis login --org --github-token $GH_TOKEN
+        - travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard
+        - travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Spring | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Spring
     - stage: Release minor update
       dist: trusty
       language: ruby
@@ -57,3 +70,5 @@ jobs:
       script: 
         - echo "releasing minor update skip"
         - npm whoami
+        - lerna version minor --yes
+        - lerna publish --yes

@@ -26,6 +26,7 @@ var map = {};
 var htmlMode = false;
 var thumbnails = false;
 var saveRotateState = true;
+var enableRightClick = true;
 // add supported formats
 map['folder'] = { 'format': '', 'icon': 'fa-folder' };
 map['pdf'] = { 'format': 'Portable Document Format', 'icon': 'fa-file-pdf-o' };
@@ -99,7 +100,11 @@ $(document).ready(function () {
     NAV BAR CONTROLS
     ******************************************************************
     */
-
+	if (!enableRightClick){
+		$(document).bind("contextmenu", function (e) {
+			e.preventDefault();       
+		});
+	}
     //////////////////////////////////////////////////
     // Toggle navigation dropdown menus
     //////////////////////////////////////////////////
@@ -1884,7 +1889,8 @@ GROUPDOCS.VIEWER PLUGIN
                 browse: true,               
                 rewrite: true,
                 htmlMode: true,
-                saveRotateState: true
+                saveRotateState: true,
+				enableRightClick: true
             };
             options = $.extend(defaults, options);
 
@@ -1895,6 +1901,7 @@ GROUPDOCS.VIEWER PLUGIN
 			htmlMode = options.htmlMode;
             thumbnails = options.thumbnails;
             saveRotateState = options.saveRotateState;
+			enableRightClick = options.enableRightClick;
             // assembly html base
             this.append(getHtmlBase);
             this.append(getHtmlModalDialog);

@@ -13,7 +13,7 @@ jobs:
       os: windows
       language: sh
       script: 
-        - choco install nodejs.install --version 11.6.0
+        - choco install nodejs.install -y --version 11.6.0
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
         - cd GroupDocs.Total-for-NET-MVC

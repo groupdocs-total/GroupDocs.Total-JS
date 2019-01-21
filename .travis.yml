@@ -15,6 +15,7 @@ jobs:
       filter_secrets : false
       script: 
         - cinst nodejs.install -y
+        - RefreshEnv
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
         - cd GroupDocs.Total-for-NET-MVC

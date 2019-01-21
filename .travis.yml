@@ -7,6 +7,8 @@ addons:
      - google-chrome-stable fluxbox
 before_script:
   - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nodejs.install -y; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nuget.commandline -y; fi
 jobs:
   include:
     - stage: Test with GroupDocs.Total-for-.NET-MVC
@@ -14,8 +16,6 @@ jobs:
       language: sh
       filter_secrets : false
       script: 
-        - cinst nodejs.install -y
-        - RefreshEnv
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
         - cd GroupDocs.Total-for-NET-MVC

@@ -1,4 +1,6 @@
 addons:
+  hosts:
+    - localhost
   firefox: latest
   apt:
     sources:

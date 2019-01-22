@@ -31,8 +31,9 @@ jobs:
         - cat /c/Windows/System32/drivers/etc/hosts
         - netsh advfirewall set currentprofile state off
         - ./xsp4.exe --port 8080 --address 127.0.0.1 &
+        - sleep 10
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
-        - npm test
+        - testcafe firefox tests -a ./node_modules/.bin/gulp
     - stage: Test with GroupDocs.Total-for-Java-Spring
       dist: trusty
       language: java

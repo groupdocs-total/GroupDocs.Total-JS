@@ -35,7 +35,7 @@ jobs:
         - ./xsp4.exe --port 8080 --address 127.0.0.1 &
         - sleep 10
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
-        - testcafe chrome:headless tests -a ./node_modules/.bin/gulp
+        - testcafe chrome:headless tests -a "./node_modules/.bin/gulp"
     - stage: Test with GroupDocs.Total-for-Java-Spring
       dist: trusty
       language: java

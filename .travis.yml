@@ -18,6 +18,7 @@ jobs:
       node_js: "10"
       filter_secrets : false
       script: 
+        - pwd
         - mkdir /c/repo
         - cp -r ../GroupDocs.Total-JS /c/repo
         - cd /c/repo

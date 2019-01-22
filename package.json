@@ -5,6 +5,7 @@
   "main": "index.html",
   "scripts": {
     "test": "testcafe chrome,firefox tests -a ./node_modules/.bin/gulp",
+    "test:ciwin": "testcafe chrome:headless tests -a ./node_modules/.bin/gulp",
     "start": "./node_modules/.bin/gulp browser-sync"
   },
   "repository": {

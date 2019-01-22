@@ -36,7 +36,7 @@ jobs:
         - sleep 10
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
         - npm install
-        - "testcafe chrome:headless tests -a \"./node_modules/.bin/gulp\""
+        - npm run test:ciwin
     - stage: Test with GroupDocs.Total-for-Java-Spring
       dist: trusty
       language: java

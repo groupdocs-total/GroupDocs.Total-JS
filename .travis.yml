@@ -26,7 +26,7 @@ jobs:
         - nuget restore
         - "cd \"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/\""
         - ls
-        - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/msbuild.exe\" GroupDocs.Total MVC.sln"
+        - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/msbuild.exe GroupDocs.Total MVC.sln\""
         - cd /c/repo/src
         - ./xsp4.exe &
         - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5; echo "waiting to back-end..."; done

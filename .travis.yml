@@ -33,7 +33,7 @@ jobs:
         - cd src
         - cat /c/Windows/System32/drivers/etc/hosts
         - netsh advfirewall set currentprofile state off
-        - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" /path:C:\repo\ /port:8080 &"
+        - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" /path:/c/repo /port:8080 &"
         - sleep 10
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
         - npm install gulp-cli -g

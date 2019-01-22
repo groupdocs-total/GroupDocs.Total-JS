@@ -30,6 +30,7 @@ jobs:
         - cd src
         - cat /c/Windows/System32/drivers/etc/hosts
         - ./xsp4.exe --port 8080 --address 127.0.0.1 &
+        - cd /c/repo
         - npm test
     - stage: Test with GroupDocs.Total-for-Java-Spring
       dist: trusty

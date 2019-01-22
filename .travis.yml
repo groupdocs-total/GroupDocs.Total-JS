@@ -18,7 +18,6 @@ jobs:
       node_js: "10"
       filter_secrets : false
       script: 
-        - pwd
         - mkdir /c/repo
         - cp -r ../GroupDocs.Total-JS /c/repo
         - cd /c/repo
@@ -30,8 +29,9 @@ jobs:
         - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"GroupDocs.Total MVC.sln\""
         - cd src
         - cat /c/Windows/System32/drivers/etc/hosts
+        - netsh advfirewall set currentprofile state off
         - ./xsp4.exe --port 8080 --address 127.0.0.1 &
-        - cd /c/repo
+        - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
         - npm test
     - stage: Test with GroupDocs.Total-for-Java-Spring
       dist: trusty

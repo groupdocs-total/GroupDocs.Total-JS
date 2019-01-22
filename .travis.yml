@@ -10,6 +10,8 @@ addons:
 before_script:
   - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nuget.commandline -y; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst firefox -y; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst googlechrome -y; fi
 jobs:
   include:
     - stage: Test with GroupDocs.Total-for-.NET-MVC
@@ -33,7 +35,7 @@ jobs:
         - ./xsp4.exe --port 8080 --address 127.0.0.1 &
         - sleep 10
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
-        - testcafe edge tests -a ./node_modules/.bin/gulp
+        - testcafe firefox,chrome tests -a ./node_modules/.bin/gulp
     - stage: Test with GroupDocs.Total-for-Java-Spring
       dist: trusty
       language: java

@@ -10,7 +10,7 @@ addons:
 before_script:
   - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nuget.commandline -y; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst firefox -y; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst ie11 -y; fi
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst googlechrome -y; fi
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst iisexpress -y; fi
 jobs:
@@ -38,7 +38,7 @@ jobs:
         - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
         - npm install gulp-cli -g
-        - testcafe chrome:headless tests -a gulp
+        - testcafe chrome:headless,ie tests -a gulp
     - stage: Test with GroupDocs.Total-for-Java-Spring
       dist: trusty
       language: java

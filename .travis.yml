@@ -10,7 +10,6 @@ addons:
 before_script:
   - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nuget.commandline -y; fi
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst ie11 -y; fi
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst googlechrome -y; fi
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst iisexpress -y; fi
 jobs:

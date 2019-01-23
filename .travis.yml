@@ -38,8 +38,8 @@ jobs:
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
         - npm install gulp-cli -g
         - testcafe chrome:headless tests -a gulp
-        - "taskkill /IM iisexpress.exe"
-    - stage: Test with GroupDocs.Total-for-Java
+        - "taskkill //IM iisexpress.exe"
+    - stage: Test
       dist: trusty
       language: java
       jdk : oraclejdk8

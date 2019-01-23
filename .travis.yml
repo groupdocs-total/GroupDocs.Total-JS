@@ -33,8 +33,9 @@ jobs:
         - cd src
         - cat /c/Windows/System32/drivers/etc/hosts
         - netsh advfirewall set currentprofile state off
+        - netsh http add urlacl url=http://*:8080/ user=Everyone
         - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" /path:/c/repo /port:8080 &"
-        - sleep 10
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
         - npm install gulp-cli -g
         - testcafe chrome:headless tests -a gulp

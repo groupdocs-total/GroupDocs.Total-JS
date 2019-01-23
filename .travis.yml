@@ -21,7 +21,7 @@ jobs:
       filter_secrets : false
       script: 
         - mkdir /c/repo
-        - mv -r ../GroupDocs.Total-JS /c/repo
+        - mv ../GroupDocs.Total-JS /c/repo
         - cd /c/repo
         - npm install -g testcafe
         - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
@@ -39,11 +39,10 @@ jobs:
         - npm install gulp-cli -g
         - testcafe chrome:headless tests -a gulp
         - "taskkill //F //IM iisexpress.exe"
-    - stage: Test
+    - stage: Test Spring
       dist: trusty
       language: java
       jdk : oraclejdk8
-      name: Spring
       script: 
         - "export DISPLAY=:99.0"
         - "sh -e /etc/init.d/xvfb start"
@@ -58,7 +57,10 @@ jobs:
         - cd ..
         - npm install
         - npm test
-      name: DropWizard
+      - stage: Test DropWizard
+      dist: trusty
+      language: java
+      jdk : oraclejdk8
       script: 
         - "export DISPLAY=:99.0"
         - "sh -e /etc/init.d/xvfb start"

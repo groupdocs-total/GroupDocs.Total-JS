@@ -57,7 +57,7 @@ jobs:
         - cd ..
         - npm install
         - npm test
-      - stage: Test DropWizard
+    - stage: Test DropWizard
       dist: trusty
       language: java
       jdk : oraclejdk8

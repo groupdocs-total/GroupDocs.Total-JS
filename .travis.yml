@@ -38,8 +38,9 @@ jobs:
         - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
         - cd /c/Users/travis/build/groupdocs-total/GroupDocs.Total-JS
         - npm install gulp-cli -g
-        - testcafe chrome:headless,ie tests -a gulp
-    - stage: Test with GroupDocs.Total-for-Java-Spring
+        - testcafe chrome:headless tests -a gulp
+        - "taskkill /IM iisexpress.exe"
+    - stage: Test with GroupDocs.Total-for-Java
       dist: trusty
       language: java
       jdk : oraclejdk8
@@ -57,10 +58,6 @@ jobs:
         - cd ..
         - npm install
         - npm test
-    - stage: Test with GroupDocs.Total-for-Java-DropWizard
-      dist: trusty
-      language: java
-      jdk : oraclejdk8
       script: 
         - "export DISPLAY=:99.0"
         - "sh -e /etc/init.d/xvfb start"
@@ -81,7 +78,6 @@ jobs:
       if: type = push AND branch = add-release-automation AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
         - echo "releasing fix skip"
-
         - gem install travis -v 1.8.9
         - lerna version patch --yes
         - lerna publish --yes

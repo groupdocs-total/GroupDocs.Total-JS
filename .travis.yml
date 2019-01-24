@@ -15,8 +15,7 @@ before_script:
 os:
   - windows
   - linux
-language: 
-  - java
+language: java
 env :
   - BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
   - BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
@@ -26,16 +25,12 @@ matrix:
   exclude: 
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
       os : windows
-      language: java
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-Spring
       os : windows
-      language: java
     - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
       os : linux
-      language: java
     - env: BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
       os : linux
-      language: java
   include:
     - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
       node_js: "10"

@@ -1,12 +1,3 @@
-addons:
-  hosts:
-    - localhost
-  firefox: latest
-  apt:
-    sources:
-     - google-chrome
-    packages:
-     - google-chrome-stable fluxbox
 before_script:
   - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nuget.commandline -y; fi
@@ -86,6 +77,15 @@ matrix:
           - "taskkill //F //IM node.exe"
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
       os: linux
+      addons:
+        hosts:
+          - localhost
+        firefox: latest
+        apt:
+          sources:
+          - google-chrome
+          packages:
+          - google-chrome-stable fluxbox
       language: java
       script: 
         - "export DISPLAY=:99.0"
@@ -96,13 +96,22 @@ matrix:
         - git clone https://github.com/groupdocs-total/$BACKEND_REPO
         - cd $BACKEND_REPO
         - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/$BACKEND_REPO $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
-        - mvn -q clean spring-boot:run &
+        - mvn -q clean compile exec:java &
         - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5; echo "waiting to back-end..."; done
         - cd ..
         - npm install
         - npm test
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-Spring
       os: linux
+      addons:
+        hosts:
+          - localhost
+        firefox: latest
+        apt:
+          sources:
+          - google-chrome
+          packages:
+          - google-chrome-stable fluxbox
       language: java
       script: 
         - "export DISPLAY=:99.0"

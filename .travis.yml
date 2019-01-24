@@ -16,8 +16,6 @@ node_js: "10"
 os:
   - windows
   - linux
-language: 
-  - java
 env :
   - BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
   - BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln

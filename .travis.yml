@@ -57,7 +57,7 @@ jobs:
         - cd GroupDocs.Total-for-NET-WebForms
         - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-NET-WebForms $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
         - nuget restore
-        - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"GroupDocs.Total WebForms.sln\""
+        - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"GroupDocs.Total.WebForms.sln\""
         - cd src
         - cat /c/Windows/System32/drivers/etc/hosts
         - netsh advfirewall set currentprofile state off

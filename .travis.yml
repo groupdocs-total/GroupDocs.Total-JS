@@ -119,7 +119,7 @@ matrix:
         - sleep 3
         - fluxbox >/dev/null 2>&1 &
         - npm install -g testcafe
-        - git clone https://github.com/groupdocs-total/GroupDocs.$BACKEND_REPO
+        - git clone https://github.com/groupdocs-total/$BACKEND_REPO
         - cd $BACKEND_REPO
         - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/$BACKEND_REPO $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
         - mvn -q clean compile exec:java &

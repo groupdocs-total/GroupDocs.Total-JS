@@ -39,9 +39,10 @@ jobs:
         - cd ../../GroupDocs.Total-JS
         - npm install gulp-cli -g
         - gulp &
+        - while ! curl -s http://localhost:3000  > /dev/null ; do sleep 5 ; echo "waiting for front-end..."; done
         - testcafe chrome:headless tests
         - "taskkill //F //IM iisexpress.exe"
-        - "taskkill //F //IM gulp"
+        - "taskkill //F //IM node.exe"
     - stage: Test Spring
       dist: trusty
       language: java

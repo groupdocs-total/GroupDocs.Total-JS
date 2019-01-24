@@ -26,12 +26,14 @@ env :
   - BACKEND_REPO=GroupDocs.Total-for-Java-Spring
 matrix:
   exclude: 
-    - node_js: "10"
+    - env: BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
       os : windows
-      language: java
-    - node_js: "10"
-      os: linux
-      language: node_js
+    - env: BACKEND_REPO=GroupDocs.Total-for-Java-Spring
+      os : windows
+    - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
+      os : linux
+    - env: BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
+      os : linux
   include:
     - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
       node_js: "10"

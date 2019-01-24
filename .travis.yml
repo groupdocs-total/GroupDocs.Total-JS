@@ -25,12 +25,7 @@ env :
   - BACKEND_REPO=GroupDocs.Total-for-Java-Spring
 matrix:
   exclude: 
-    - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
-      os : windows
-      language: java
-    - env: BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
-      os : windows
-      language: java
+    - language: java
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
       os : windows
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-Spring

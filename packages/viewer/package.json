@@ -1,6 +1,6 @@
 {
   "name": "@groupdocs.examples.jquery/viewer",
-  "version": "0.6.2",
+  "version": "0.8.0",
   "description": "Common resources used by other GroupDocs jQuery plugins",
   "main": "index.js",
   "scripts": {

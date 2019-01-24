@@ -1612,7 +1612,8 @@ GROUPDOCS.SIGNATURE PLUGIN
                     upload: options.upload,
                     print: options.print,
                     browse: options.browse,
-                    rewrite: options.rewrite
+                    rewrite: options.rewrite,
+					saveRotateState: false
 			});
             options = $.extend(defaults, options);
            

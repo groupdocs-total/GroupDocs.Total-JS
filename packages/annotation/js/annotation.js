@@ -124,8 +124,7 @@ $(document).ready(function () {
                 documentGuid = $(this).attr('data-guid');
                 toggleModalDialog(false, '');
                 loadDocument(function (data) {
-                    // Generate thumbnails
-                    generatePagesTemplate(data, data.length);
+                    generatePagesTemplate(data);
                 });
             }
         }
@@ -1177,7 +1176,8 @@ GROUPDOCS.ANNOTATION PLUGIN
                     upload: options.upload,
                     print: options.print,
                     browse: options.browse,
-                    rewrite: options.rewrite
+                    rewrite: options.rewrite,
+					saveRotateState: false
 			});
             options = $.extend(defaults, options);
             

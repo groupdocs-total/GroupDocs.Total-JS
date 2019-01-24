@@ -8,7 +8,7 @@ os:
   - windows
   - linux
 env :
-  - BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
+  - BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION="GroupDocs.Total MVC.sln"
   - BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
   - BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
   - BACKEND_REPO=GroupDocs.Total-for-Java-Spring
@@ -16,10 +16,10 @@ matrix:
   exclude: 
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-Spring
-    - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
+    - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION="GroupDocs.Total MVC.sln"
     - env: BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
   include:
-    - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
+    - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION="GroupDocs.Total MVC.sln"
       node_js: "10"
       os: windows
       language: node_js

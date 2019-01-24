@@ -30,7 +30,6 @@ matrix:
     - language: java
       jdk : oraclejdk8
       script : "echo DropWizard"
-
 jobs:
   include:
     - stage: Release fix
@@ -39,7 +38,6 @@ jobs:
       if: type = push AND branch = master AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
         - echo "releasing fix skip"
-
     - stage: Release minor update
       dist: trusty
       language: ruby

@@ -18,16 +18,21 @@ os:
 language: 
   - node_js
   - java
-node_js: "10"
 env :
   - BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
   - BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
   - BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
   - BACKEND_REPO=GroupDocs.Total-for-Java-Spring
 matrix:
+  exclude: 
+    - os : windows
+      language: java
+    - os: linux
+      language: node_js
   include:
     - os: windows
       language: node_js
+      node_js: "10"
       env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
       script: 
           - mkdir /c/repo
@@ -55,6 +60,7 @@ matrix:
           - "taskkill //F //IM node.exe"
     - os: windows
       language: node_js
+      node_js: "10"
       env: BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
       script: 
           - mkdir /c/repo
@@ -100,6 +106,7 @@ matrix:
     - os: linux
       language: java
       env: BACKEND_REPO=GroupDocs.Total-for-Java-Spring
+      script: 
         - "export DISPLAY=:99.0"
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3

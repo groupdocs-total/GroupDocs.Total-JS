@@ -1,7 +1,134 @@
+addons:
+  hosts:
+    - localhost
+  firefox: latest
+  apt:
+    sources:
+     - google-chrome
+    packages:
+     - google-chrome-stable fluxbox
+before_script:
+  - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nuget.commandline -y; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst googlechrome -y; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst iisexpress -y; fi
 jobs:
   include:
-    - stage: test
-      script: echo 1
-      script: echo 2
-    - stage: deploy
-      script: deploy
+    - stage: Test with GroupDocs.Total-for-.NET-MVC
+      os: windows
+      language: node_js
+      node_js: "10"
+      filter_secrets : false
+      script: 
+        - mkdir /c/repo
+        - mv ../GroupDocs.Total-JS /c/repo
+        - cd /c/repo
+        - npm install -g testcafe
+        - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC
+        - cd GroupDocs.Total-for-NET-MVC
+        - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-NET-MVC $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
+        - nuget restore
+        - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"GroupDocs.Total MVC.sln\""
+        - cd src
+        - cat /c/Windows/System32/drivers/etc/hosts
+        - netsh advfirewall set currentprofile state off
+        - netsh http add urlacl url=http://*:8080/ user=Everyone
+        - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" -path:. -port:8080 &"
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
+        - ls && pwd
+        - cd ../../GroupDocs.Total-JS
+        - npm install gulp-cli -g
+        - gulp &
+        - while ! curl -s http://localhost:3000  > /dev/null ; do sleep 5 ; echo "waiting for front-end..."; done
+        - testcafe chrome:headless tests
+        - "taskkill //F //IM iisexpress.exe"
+        - "taskkill //F //IM node.exe"
+    - stage: Test with GroupDocs.Total-for-.NET-WebForms
+      os: windows
+      language: node_js
+      node_js: "10"
+      filter_secrets : false
+      script: 
+        - mkdir /c/repo
+        - mv ../GroupDocs.Total-JS /c/repo
+        - cd /c/repo
+        - npm install -g testcafe
+        - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-NET-WebForms
+        - cd GroupDocs.Total-for-NET-WebForms
+        - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-NET-WebForms $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
+        - nuget restore
+        - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"GroupDocs.Total WebForms.sln\""
+        - cd src
+        - cat /c/Windows/System32/drivers/etc/hosts
+        - netsh advfirewall set currentprofile state off
+        - netsh http add urlacl url=http://*:8080/ user=Everyone
+        - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" -path:. -port:8080 &"
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
+        - ls && pwd
+        - cd ../../GroupDocs.Total-JS
+        - npm install gulp-cli -g
+        - gulp &
+        - while ! curl -s http://localhost:3000  > /dev/null ; do sleep 5 ; echo "waiting for front-end..."; done
+        - testcafe chrome:headless tests
+        - "taskkill //F //IM iisexpress.exe"
+        - "taskkill //F //IM node.exe"
+    - stage: Test Spring
+      dist: trusty
+      language: java
+      jdk : oraclejdk8
+      script: 
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3
+        - fluxbox >/dev/null 2>&1 &
+        - npm install -g testcafe
+        - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-Java-Spring
+        - cd GroupDocs.Total-for-Java-Spring
+        - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-Java-Spring $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
+        - mvn -q clean spring-boot:run &
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5; echo "waiting to back-end..."; done
+        - cd ..
+        - npm install
+        - npm test
+    - stage: Test DropWizard
+      dist: trusty
+      language: java
+      jdk : oraclejdk8
+      script: 
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3
+        - fluxbox >/dev/null 2>&1 &
+        - npm install -g testcafe
+        - git clone https://github.com/groupdocs-total/GroupDocs.Total-for-Java-DropWizard
+        - cd GroupDocs.Total-for-Java-DropWizard
+        - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/GroupDocs.Total-for-Java-DropWizard $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
+        - mvn -q clean compile exec:java &
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting to back-end..."; done
+        - cd ..
+        - npm install
+        - npm test
+    - stage: Release fix
+      dist: trusty
+      language: ruby
+      if: type = push AND branch = master AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
+      script: 
+        - echo "releasing fix skip"
+        - gem install travis -v 1.8.9
+        - lerna version patch --yes
+        - lerna publish --yes
+        - echo "y" | travis --version
+        - travis login --org --github-token $GH_TOKEN
+        - travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard
+        - travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Spring | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Spring
+    - stage: Release minor update
+      dist: trusty
+      language: ruby
+      if: type = push AND branch = master AND commit_message =~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
+      script: 
+        - echo "releasing minor update skip"
+        - npm install -g npx
+        - npx lerna init
+        - npm whoami
+        - lerna version minor --yes
+        - lerna publish --yes

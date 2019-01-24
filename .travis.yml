@@ -38,8 +38,10 @@ jobs:
         - ls && pwd
         - cd ../../GroupDocs.Total-JS
         - npm install gulp-cli -g
-        - testcafe chrome:headless tests -a gulp
+        - gulp &
+        - testcafe chrome:headless tests
         - "taskkill //F //IM iisexpress.exe"
+        - "taskkill //F //IM gulp"
     - stage: Test Spring
       dist: trusty
       language: java

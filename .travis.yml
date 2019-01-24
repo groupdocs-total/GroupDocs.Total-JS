@@ -36,7 +36,7 @@ jobs:
         - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" -path:. -port:8080 &"
         - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
         - ls && pwd
-        - cd ../..
+        - cd ../../GroupDocs.Total-JS
         - npm install gulp-cli -g
         - testcafe chrome:headless tests -a gulp
         - "taskkill //F //IM iisexpress.exe"

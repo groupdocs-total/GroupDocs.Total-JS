@@ -18,21 +18,17 @@ os:
 language: 
   - node_js
   - java
+node_js: "10"
 env :
-  - BACKEND_REPO=GroupDocs.Total-for-NET-MVC
-  - BACKEND_REPO=GroupDocs.Total-for-NET-WebForms
+  - BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
+  - BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
   - BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
   - BACKEND_REPO=GroupDocs.Total-for-Java-Spring
-  - SOLUTION=GroupDocs.Total MVC.sln
-  - SOLUTION=GroupDocs.Total.WebForms.sln
 matrix:
   include:
     - os: windows
       language: node_js
-      node_js: "10"
-      env: 
-        - BACKEND_REPO=GroupDocs.Total-for-NET-MVC
-        - SOLUTION=GroupDocs.Total MVC.sln
+      env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
       script: 
           - mkdir /c/repo
           - mv ../GroupDocs.Total-JS /c/repo
@@ -59,10 +55,7 @@ matrix:
           - "taskkill //F //IM node.exe"
     - os: windows
       language: node_js
-      node_js: "10"
-      env: 
-        - BACKEND_REPO=GroupDocs.Total-for-NET-WebForms
-        - SOLUTION=GroupDocs.Total.WebForms.sln
+      env: BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
       script: 
           - mkdir /c/repo
           - mv ../GroupDocs.Total-JS /c/repo

@@ -22,7 +22,7 @@ matrix:
     - env: BACKEND_REPO=GroupDocs.Total-for-NET-MVC SOLUTION=GroupDocs.Total MVC.sln
       node_js: "10"
       os: windows
-      language: node_js
+      language: shell
       script: 
         - mkdir /c/repo
         - mv ../GroupDocs.Total-JS /c/repo
@@ -50,7 +50,7 @@ matrix:
     - env: BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
       node_js: "10"
       os: windows
-      language: node_js
+      language: shell
       script: 
         - mkdir /c/repo
         - mv ../GroupDocs.Total-JS /c/repo

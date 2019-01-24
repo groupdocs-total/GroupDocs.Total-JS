@@ -24,57 +24,57 @@ matrix:
       os: windows
       language: node_js
       script: 
-          - mkdir /c/repo
-          - mv ../GroupDocs.Total-JS /c/repo
-          - cd /c/repo
-          - npm install -g testcafe
-          - git clone https://github.com/groupdocs-total/$BACKEND_REPO
-          - cd $BACKEND_REPO
-          - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/$BACKEND_REPO $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
-          - nuget restore
-          - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"$SOLUTION\""
-          - cd src
-          - cat /c/Windows/System32/drivers/etc/hosts
-          - netsh advfirewall set currentprofile state off
-          - netsh http add urlacl url=http://*:8080/ user=Everyone
-          - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" -path:. -port:8080 &"
-          - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
-          - ls && pwd
-          - cd ../../GroupDocs.Total-JS
-          - npm install gulp-cli -g
-          - gulp &
-          - while ! curl -s http://localhost:3000  > /dev/null ; do sleep 5 ; echo "waiting for front-end..."; done
-          - testcafe chrome:headless tests
-          - "taskkill //F //IM iisexpress.exe"
-          - "taskkill //F //IM node.exe"
+        - mkdir /c/repo
+        - mv ../GroupDocs.Total-JS /c/repo
+        - cd /c/repo
+        - npm install -g testcafe
+        - git clone https://github.com/groupdocs-total/$BACKEND_REPO
+        - cd $BACKEND_REPO
+        - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/$BACKEND_REPO $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
+        - nuget restore
+        - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"$SOLUTION\""
+        - cd src
+        - cat /c/Windows/System32/drivers/etc/hosts
+        - netsh advfirewall set currentprofile state off
+        - netsh http add urlacl url=http://*:8080/ user=Everyone
+        - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" -path:. -port:8080 &"
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
+        - ls && pwd
+        - cd ../../GroupDocs.Total-JS
+        - npm install gulp-cli -g
+        - gulp &
+        - while ! curl -s http://localhost:3000  > /dev/null ; do sleep 5 ; echo "waiting for front-end..."; done
+        - testcafe chrome:headless tests
+        - "taskkill //F //IM iisexpress.exe"
+        - "taskkill //F //IM node.exe"
     - env: BACKEND_REPO=GroupDocs.Total-for-NET-WebForms SOLUTION=GroupDocs.Total.WebForms.sln
       node_js: "10"
       os: windows
       language: node_js
       script: 
-          - mkdir /c/repo
-          - mv ../GroupDocs.Total-JS /c/repo
-          - cd /c/repo
-          - npm install -g testcafe
-          - git clone https://github.com/groupdocs-total/$BACKEND_REPO
-          - cd $BACKEND_REPO
-          - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/$BACKEND_REPO $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
-          - nuget restore
-          - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"$SOLUTION\""
-          - cd src
-          - cat /c/Windows/System32/drivers/etc/hosts
-          - netsh advfirewall set currentprofile state off
-          - netsh http add urlacl url=http://*:8080/ user=Everyone
-          - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" -path:. -port:8080 &"
-          - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
-          - ls && pwd
-          - cd ../../GroupDocs.Total-JS
-          - npm install gulp-cli -g
-          - gulp &
-          - while ! curl -s http://localhost:3000  > /dev/null ; do sleep 5 ; echo "waiting for front-end..."; done
-          - testcafe chrome:headless tests
-          - "taskkill //F //IM iisexpress.exe"
-          - "taskkill //F //IM node.exe"
+        - mkdir /c/repo
+        - mv ../GroupDocs.Total-JS /c/repo
+        - cd /c/repo
+        - npm install -g testcafe
+        - git clone https://github.com/groupdocs-total/$BACKEND_REPO
+        - cd $BACKEND_REPO
+        - if git ls-remote --exit-code --heads https://github.com/groupdocs-total/$BACKEND_REPO $TRAVIS_BRANCH; then echo "testing with Branch"; git checkout $TRAVIS_BRANCH; else echo "testing with  Master"; fi
+        - nuget restore
+        - "\"/c/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/bin/MSBuild.exe\" \"$SOLUTION\""
+        - cd src
+        - cat /c/Windows/System32/drivers/etc/hosts
+        - netsh advfirewall set currentprofile state off
+        - netsh http add urlacl url=http://*:8080/ user=Everyone
+        - "\"/c/Program Files (x86)/IIS Express/iisexpress.exe\" -path:. -port:8080 &"
+        - while ! curl -s http://localhost:8080  > /dev/null ; do sleep 5 ; echo "waiting for back-end..."; done
+        - ls && pwd
+        - cd ../../GroupDocs.Total-JS
+        - npm install gulp-cli -g
+        - gulp &
+        - while ! curl -s http://localhost:3000  > /dev/null ; do sleep 5 ; echo "waiting for front-end..."; done
+        - testcafe chrome:headless tests
+        - "taskkill //F //IM iisexpress.exe"
+        - "taskkill //F //IM node.exe"
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
       os: linux
       addons:

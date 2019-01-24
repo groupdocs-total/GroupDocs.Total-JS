@@ -18,21 +18,11 @@ matrix:
       os: windows
       node_js: "10"
       filter_secrets : false
-      before_script:
-        - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-        - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nuget.commandline -y; fi
-        - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst googlechrome -y; fi
-        - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst iisexpress -y; fi
       script : "echo MVC"
     - language: node_js
       os: windows
       node_js: "10"
       filter_secrets : false
-      before_script:
-        - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-        - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst nuget.commandline -y; fi
-        - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst googlechrome -y; fi
-        - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then cinst iisexpress -y; fi
       script : "echo WEBFORMS"
     - language: java
       jdk : oraclejdk8
@@ -46,13 +36,13 @@ jobs:
     - stage: Release fix
       dist: trusty
       language: ruby
-      if: type = push AND branch = add-release-automation AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
+      if: type = push AND branch = master AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
         - echo "releasing fix skip"
 
     - stage: Release minor update
       dist: trusty
       language: ruby
-      if: type = push AND branch = add-release-automation AND commit_message =~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
+      if: type = push AND branch = master AND commit_message =~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
         - echo "releasing minor update skip"

@@ -136,13 +136,16 @@ matrix:
       if: type = push AND branch = master AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
         - echo "releasing fix skip"
+        - npm install -g npx
+        - npx lerna init
+        - npm whoami
         - gem install travis -v 1.8.9
         - lerna version patch --yes
         - lerna publish --yes
         - echo "y" | travis --version
         - travis login --org --github-token $GH_TOKEN
-        - travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard
-        - travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Spring | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Spring
+        - "travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard"
+        - "travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Spring | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Spring"
     - stage: Release minor update
       dist: trusty
       os: linux

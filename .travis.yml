@@ -133,7 +133,7 @@ matrix:
       dist: trusty
       os: linux
       language: ruby
-      if: type = push AND branch = add-release-automation AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
+      if: type = push AND branch = master AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
         - echo "releasing fix skip"
         - gem install travis -v 1.8.9
@@ -147,7 +147,7 @@ matrix:
       dist: trusty
       os: linux
       language: ruby
-      if: type = push AND branch = add-release-automation AND commit_message =~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
+      if: type = push AND branch = master AND commit_message =~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
         - echo "releasing minor update skip"
         - npm install -g npx

@@ -4,7 +4,8 @@
   "description": "Simple, elegant and modern UI engine re-written in JavaScript from scratch which can be easily integrated into any platform such as Java, .NET, etc.\r Simple and flexible configuration makes integration process quite easy and intuitive.",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "testcafe chrome,firefox tests -a ./node_modules/.bin/gulp",
+    "test:ciwin": "testcafe chrome:headless tests -a ./node_modules/.bin/gulp",
     "start": "./node_modules/.bin/gulp browser-sync"
   },
   "repository": {
@@ -16,7 +17,8 @@
   "devDependencies": {
     "browser-sync": "^2.26.3",
     "bs-console-qrcode": "^1.0.2",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
+    "gulp-webserver": "^0.9.1",
     "lerna": "^3.4.3"
   },
   "publishConfig": {

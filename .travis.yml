@@ -139,13 +139,8 @@ matrix:
         - npm install -g npx
         - npx lerna init
         - npm whoami
-        - gem install travis -v 1.8.9
-        - lerna version patch --yes
-        - lerna publish --yes
-        - echo "y" | travis --version
-        - travis login --org --github-token $GH_TOKEN
-        - "travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Dropwizard"
-        - "travis restart $(travis show master --repo groupdocs-total/GroupDocs.Total-for-Java-Spring | grep Build | sed 's/^Build #\([0-9]\{1,\}\).*/\1/') --repo groupdocs-total/GroupDocs.Total-for-Java-Spring"
+        - npx lerna version patch --yes
+        - npx lerna publish --yes
     - stage: Release minor update
       dist: trusty
       os: linux
@@ -156,5 +151,5 @@ matrix:
         - npm install -g npx
         - npx lerna init
         - npm whoami
-        - lerna version minor --yes
-        - lerna publish --yes
+        - npx lerna version minor --yes
+        - npx lerna publish --yes

@@ -129,8 +129,6 @@ matrix:
         - cd ..
         - npm install
         - npm test
-jobs:
-  include:
     - stage: Release fix
       dist: trusty
       os: linux

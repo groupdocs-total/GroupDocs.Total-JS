@@ -370,13 +370,10 @@ BROWSE SIGNATURES SLIDE
     margin: 5px;
 	position: relative;
 }
-.gd-signature-thumbnail label {
-    margin-left: 5px !important;
-    top: 0px !important;
-}
-.gd-signature-thumbnail > input {
-    width: 150px;
-    height: 150px;
+.gd-signature-thumbnail-image {
+    width: 47px;
+    height: 47px;
+    margin: 3px;
 }
 .gd-signature-radio {
     opacity: 0;

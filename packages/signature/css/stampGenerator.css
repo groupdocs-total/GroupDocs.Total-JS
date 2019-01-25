@@ -37,17 +37,18 @@
 }
 .csg-bouding-box {
 	border: 1px solid #679FFA;
-    width: 150px;
-    height: 150px;
-    top: 36%;
-    left: 37%;
+    top: Calc(100% - 323px);
+    left: Calc(100% - 446px);
     position: absolute;
+	z-index: 10;
 }
 .csg-border-width {
 	background-image: url(../images/stampBorderWidth.png);
-	width: 18px !important;
+    width: 18px !important;
     height: 12px !important;
-	margin-left: 5px;
+    margin-left: 5px;
+    margin-right: 5;
+    position: relative;
 }
 .csg-border-width  select {
     position: absolute;
@@ -84,9 +85,6 @@
 }
 .fa-fill-drip > div{
     visibility: hidden; 
-}
-.bcPicker-palette {
-    top: 25px;
 }
 .csg-text-menu {
 	position: fixed;

@@ -139,7 +139,7 @@ matrix:
         - npm install -g npx
         - npx lerna init
         - npm whoami
-        - git reset --hard HEAD
+        - git checkout master && git reset --hard $sha1
         - npx lerna version patch --yes
         - npx lerna publish --yes
     - stage: Release minor update
@@ -152,6 +152,6 @@ matrix:
         - npm install -g npx
         - npx lerna init
         - npm whoami
-        - git reset --hard HEAD
+        - git checkout master && git reset --hard $sha1
         - npx lerna version minor --yes
         - npx lerna publish --yes

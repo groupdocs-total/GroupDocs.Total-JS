@@ -646,6 +646,14 @@
 		height: 36px;
 		margin: 0 21px;
 	}
+
+    .gd-context-menu i {
+        font-size: 30px;
+    }
+
+    .gd-context-menu {
+        top: -54px;
+    }
 }
 @media screen and (orientation: landscape) {
     .gd-modal-dialog-lightbox {

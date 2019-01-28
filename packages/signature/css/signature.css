@@ -574,12 +574,11 @@ SIGNATURE IMAGE
 }
 .gd-context-menu i {
     color: #5c737f;
-    width: 18px;
-    height: 18px;
     font-size: 13px;
     padding-top: 4px;
     display: inline-block;
     position: initial;
+    margin: 3px;
 }
 .gd-context-menu i.active{
     background-color: #e7e7e7;
@@ -707,4 +706,9 @@ TEMPORARY USED ELEMENTS EXCEL DOCUMENTS IMAGE SIGNING FIX
 }
 .gd-lightbox-body {
     padding: 0 !important;
+}
+
+.gd-draw-text {
+    width: inherit;
+    height: inherit;
 }

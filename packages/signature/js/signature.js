@@ -566,7 +566,7 @@ function sign() {
         toggleModalDialog(true, "Signing document", spinner);
     }
     $('#gd-modal-spinner').show();
-    currentDocumentGuid = documentGuid;   
+    currentDocumentGuid = documentGuid;
 	var documentType = getDocumentFormat(documentGuid).format;
     // get signing action URL, depends from signature type
 	var url = getApplicationPath('sign')
@@ -1054,16 +1054,27 @@ function insertText(properties) {
     var currentPageNumber = getCurrentPageNumber();
     // get HTML markup of the resize handles
     var resizeHandles = getHtmlResizeHandles();
-    // new UI
-    var contextMenu = getContextMenu("gd-text-signature-" + signatureImageIndex);
     signature.id = signatureImageIndex;
     signaturesList.push(signature);
     // set document format
     var style = "";
+    var addPositionClass;
     if (draggableSignaturePosition && draggableSignaturePosition.left && draggableSignaturePosition.top) {
         style = 'left: ' + draggableSignaturePosition.left + 'px; top: ' + draggableSignaturePosition.top + 'px;';
+        if (!isMobile()) {
+            if (draggableSignaturePosition.top < 10) {
+                addPositionClass= "gd-context-menu-bottom";
+            } else {
+                addPositionClass = "gd-context-menu-top";
+            }
+        }
         draggableSignaturePosition = {};
+    } else {
+        if (!isMobile()) {
+            addPositionClass = "gd-context-menu-bottom";
+        }
     }
+    var contextMenu = getContextMenu("gd-text-signature-" + signatureImageIndex, addPositionClass);
     var textStyle = "";
     if (signature.imageWidth) {
         textStyle = "width:" + signature.imageWidth + "px;";
@@ -1086,56 +1097,7 @@ function insertText(properties) {
     // add signature to the selected page
     $(signatureHtml).insertBefore($("#gd-page-" + currentPageNumber).find(".gd-wrapper")).delay(1000);
 
-    var signatureToEdit = $.grep(signaturesList, function (obj) { return obj.id === signature.id; })[0];
-
-    // enable rotation, dragging and resizing features for current image
-    $("#gd-draggable-helper-" + signatureImageIndex).draggable({
-        // set restriction for image dragging area to current document page
-        containment: "#gd-page-" + currentPageNumber,
-        create: function () {
-            // initiate image positioning coordinates
-            var signaturePos = $(this).position();
-            updateSignatureProperties(signatureToEdit, null, null, Math.round(signaturePos.left),  Math.round(signaturePos.top));
-        },
-        // action fired when dragging stoped
-        stop: function () {
-            var signaturePos = $(this).position();
-            // get image positioning coordinates after dragging
-            updateSignatureProperties(signatureToEdit, null, null, Math.round(signaturePos.left),  Math.round(signaturePos.top));
-        }
-    }).resizable({
-        // set restriction for image resizing to current document page
-        containment: "#gd-page-" + currentPageNumber,
-        // set image resize handles
-        handles: {
-            'ne': '.ui-resizable-ne',
-            'se': '.ui-resizable-se',
-            'sw': '.ui-resizable-sw',
-            'nw': '.ui-resizable-nw'
-        },
-        grid: [10, 10],
-        create: function (event, ui) {
-            // set signature initial size
-            var width = $(event.target).width();
-            var height = $(event.target).height();
-            // fix signature size if the signature image was not fully loaded at this moment
-            if(width == 0){
-                // use image width which was set at the saving step
-                width =  signatureToEdit.imageWidth;
-            }
-            if(height == 0 || height < 19){
-                // use image height which was set at the saving step
-                height =  signatureToEdit.imageHeight;
-            }
-            updateSignatureProperties(signatureToEdit, Math.round(width), Math.round(height));
-            setGridPosition(width, height);
-        },
-        stop: function (event, image) {
-            // set signature updated size and position
-            updateSignatureProperties(signatureToEdit, Math.round(image.size.width), Math.round(image.size.height), Math.round(image.position.left), Math.round(image.position.top));
-            setGridPosition(signatureToEdit.imageWidth, signatureToEdit.imageHeight);
-        }
-    });
+    setDraggableAndResizable(currentPageNumber);
 
     signature = {};
 
@@ -1151,27 +1113,108 @@ function insertText(properties) {
     signatureImageIndex = signatureImageIndex + 1;
 }
 
+function fixContextMenuTop(elem, top) {
+    if (!isMobile()) {
+        if (top < 10) {
+            elem.addClass("gd-context-menu-bottom");
+            elem.removeClass("gd-context-menu-top");
+        } else {
+            elem.addClass("gd-context-menu-top");
+            elem.removeClass("gd-context-menu-bottom");
+        }
+    }
+}
+
+function setDraggableAndResizable(pageNumber) {
+    var currentImage = signature.id;
+    var signatureToEdit = $.grep(signaturesList, function (obj) {
+        return obj.id === currentImage;
+    })[0];
+    // enable rotation, dragging and resizing features for current image
+    $("#gd-draggable-helper-" + currentImage).draggable({
+        // set restriction for image dragging area to current document page
+        containment: "#gd-page-" + pageNumber,
+        create: function () {
+            // initiate image positioning coordinates
+            var signaturePos = $(this).position();
+            updateSignatureProperties(signatureToEdit, null, null, Math.round(signaturePos.left), Math.round(signaturePos.top));
+        },
+        // action fired when dragging stopped
+        stop: function () {
+            var signaturePos = $(this).position();
+            fixContextMenuTop($(this).find('.gd-context-menu'), signaturePos.top);
+            // get image positioning coordinates after dragging
+            updateSignatureProperties(signatureToEdit, null, null, Math.round(signaturePos.left), Math.round(signaturePos.top));
+        }
+    }).resizable({
+        // set restriction for image resizing to current document page
+        containment: "#gd-page-" + pageNumber,
+        // set image resize handles
+        handles: {
+            'ne': '.ui-resizable-ne',
+            'se': '.ui-resizable-se',
+            'sw': '.ui-resizable-sw',
+            'nw': '.ui-resizable-nw'
+        },
+        grid: [10, 10],
+        create: function (event, ui) {
+            // set signature initial size
+            var width = $(event.target).width();
+            var height = $(event.target).height();
+            // fix signature size if the signature image was not fully loaded at this moment
+            if (width == 0) {
+                // use image width which was set at the saving step
+                width = signatureToEdit.imageWidth;
+            }
+            if (height == 0 || height < 19) {
+                // use image height which was set at the saving step
+                height = signatureToEdit.imageHeight;
+            }
+            $(event.target).css('width', width);
+            $(event.target).css('height', height);
+            updateSignatureProperties(signatureToEdit, Math.round(width), Math.round(height));
+            setGridPosition(width, height);
+        },
+        stop: function (event, image) {
+            // set signature updated size and position
+            updateSignatureProperties(signatureToEdit, Math.round(image.size.width), Math.round(image.size.height), Math.round(image.position.left), Math.round(image.position.top));
+            setGridPosition(signatureToEdit.imageWidth, signatureToEdit.imageHeight);
+        }
+    });
+}
+
 /**
  * Get selected signature image stream
  * @param {string} image - Base64 encoded image
  */
 function insertImage(image) {
     var pageNumber = getCurrentPageNumber();
-	hideAllContextMenu();	
+	hideAllContextMenu();
     // add current signature object into the list of signatures
     signaturesList.push(signature);
     // prepare index which will be used for specific image HTMl elements naming
     var currentImage = signatureImageIndex;
     // get HTML markup of the resize handles
     var resizeHandles = getHtmlResizeHandles();
-	// new UI
-	var contextMenu = getContextMenu("gd-image-signature-" + currentImage);
 	signature.id = currentImage;
     var style = "";
+    var addPositionClass;
     if (draggableSignaturePosition && draggableSignaturePosition.left && draggableSignaturePosition.top) {
         style = 'left: ' + draggableSignaturePosition.left + 'px; top: ' + draggableSignaturePosition.top + 'px;';
+        if (!isMobile()) {
+            if (draggableSignaturePosition.top < 10) {
+                addPositionClass= "gd-context-menu-bottom";
+            } else {
+                addPositionClass = "gd-context-menu-top";
+            }
+        }
         draggableSignaturePosition = {};
+    } else {
+        if (!isMobile()) {
+            addPositionClass = "gd-context-menu-bottom";
+        }
     }
+    var contextMenu = getContextMenu("gd-image-signature-" + currentImage, addPositionClass);
     // prepare signature image HTML
     var signatureHtml = '<div id="gd-draggable-helper-' + currentImage + '"  class="gd-draggable-helper gd-signature" style="'+ style+'">' +
 							contextMenu +
@@ -1185,55 +1228,7 @@ function insertImage(image) {
     if(signature.signatureType == "image" && /Mobi/.test(navigator.userAgent)){
         $(".gd-draggable-helper").css("width", "100%", "!important");
     }
-    var signatureToEdit = $.grep(signaturesList, function (obj) { return obj.id === currentImage; })[0];   
-    // enable rotation, dragging and resizing features for current image
-    $("#gd-draggable-helper-" + currentImage).draggable({
-        // set restriction for image dragging area to current document page
-        containment: "#gd-page-" + pageNumber,
-        create: function () {
-            // initiate image positioning coordinates
-            var signaturePos = $(this).position();
-            updateSignatureProperties(signatureToEdit, null, null, Math.round(signaturePos.left),  Math.round(signaturePos.top));
-        },
-        // action fired when dragging stoped
-        stop: function () {
-            var signaturePos = $(this).position();
-            // get image positioning coordinates after dragging			
-			updateSignatureProperties(signatureToEdit, null, null, Math.round(signaturePos.left),  Math.round(signaturePos.top));
-        }
-    }).resizable({
-        // set restriction for image resizing to current document page
-        containment: "#gd-page-" + pageNumber,
-        // set image resize handles
-        handles: {           
-            'ne': '.ui-resizable-ne',
-            'se': '.ui-resizable-se',
-            'sw': '.ui-resizable-sw',
-            'nw': '.ui-resizable-nw'
-        },
-        grid: [10, 10],
-        create: function (event, ui) {
-            // set signature initial size
-            var width = $(event.target).width();
-            var height = $(event.target).height();
-            // fix signature size if the signature image was not fully loaded at this moment
-            if(width == 0){
-                // use image width which was set at the saving step
-                width =  signatureToEdit.imageWidth;
-            }
-            if(height == 0 || height < 19){
-                // use image height which was set at the saving step
-                height =  signatureToEdit.imageHeight;
-            }			
-			updateSignatureProperties(signatureToEdit, Math.round(width), Math.round(height));            
-            setGridPosition(width, height);
-        },
-        stop: function (event, image) {
-            // set signature updated size and position			
-			updateSignatureProperties(signatureToEdit, Math.round(image.size.width), Math.round(image.size.height), Math.round(image.position.left), Math.round(image.position.top));
-            setGridPosition(signatureToEdit.imageWidth, signatureToEdit.imageHeight);           
-        }
-    });
+    setDraggableAndResizable(pageNumber);
     // increase signature index
     signatureImageIndex = signatureImageIndex + 1;
     // drop the signature object
@@ -1259,8 +1254,8 @@ function updateSignatureProperties(signatureToEdit, width, height, left, top){
  * Append context menu for signature
  * @param {int} signatureId - id number of the signature
  */
-function getContextMenu(signatureId){
-	var contextMenuClass = "gd-context-menu";
+function getContextMenu(signatureId, addClass){
+	var contextMenuClass = "gd-context-menu" + (addClass ? " " + addClass : "");
 	if(signature.signatureType == "text"){
 		contextMenuClass = contextMenuClass + " gd-text-context-menu";
 	}
@@ -1276,7 +1271,7 @@ function getContextMenu(signatureId){
 }
 
 /**
- * Hide all context menu 
+ * Hide all context menu
  */
 function hideAllContextMenu(){
 	$(".gd-context-menu").each(function(index, element){
@@ -1657,7 +1652,7 @@ GROUPDOCS.SIGNATURE PLUGIN
                     '</button>' +
                 '</li>';
     }
-	
+
 	function getHtmlLightboxBox() {
         return '<div class="gd-modal fade" id="lightBoxDialog">' +
 			      '<div class="gd-modal-dialog gd-modal-dialog-lightbox">' +

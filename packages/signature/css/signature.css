@@ -547,6 +547,12 @@ SIGNATURE IMAGE
 .gd-image-cancel > i {
     color: #ff0000 !important;
 }
+.gd-context-menu-bottom {
+    bottom: -40px;
+}
+.gd-context-menu-top {
+    top: -44px;
+}
 .gd-context-menu {
     padding: 5px;
     box-shadow: #00000052 0px 0px 5px;
@@ -556,15 +562,12 @@ SIGNATURE IMAGE
     left: 0;
     right: 0;
     margin: auto;
-    top: -44px;
     cursor: default;
     width: max-content;
 	width: -moz-max-content;
 }
 .gd-text-context-menu {
 	left: -48px;
-    /* TODO remove*/
-    width: 300px;
 }
 .gd-context-menu .fa-arrows-alt {
     cursor: move;

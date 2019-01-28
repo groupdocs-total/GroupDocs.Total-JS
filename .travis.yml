@@ -135,6 +135,7 @@ matrix:
       language: ruby
       if: type = push AND branch = master AND commit_message !~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
+        - git checkout master && git reset --hard $sha1 
         - git config --global user.email "travis@travis-ci.org" && git config --global user.name "Travis CI"
         - git remote remove origin
         - git remote add origin https://${GH_TOKEN}@github.com/groupdocs-total/GroupDocs.Total-JS.git > /dev/null 2>&1
@@ -152,6 +153,7 @@ matrix:
       language: ruby
       if: type = push AND branch = master AND commit_message =~ /@RELEASE_MINOR/ AND commit_message !~ /@SKIP_RELEASE/ AND commit_message !~ /^v[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$/
       script: 
+        - git checkout master && git reset --hard $sha1 
         - git config --global user.email "travis@travis-ci.org" && git config --global user.name "Travis CI"
         - git remote remove origin
         - git remote add origin https://${GH_TOKEN}@github.com/groupdocs-total/GroupDocs.Total-JS.git > /dev/null 2>&1

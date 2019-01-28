@@ -580,13 +580,6 @@
 		transform:rotate(180deg);
 	}
 
-	.gd-context-menu i.active {
-		background-color: #959da5;
-		width: 38px;
-		height: 36px;
-		margin: 0 21px;
-	}
-	
     .gd-signature-context-panel {
         left: 100px;
         width: 100%;
@@ -645,6 +638,21 @@
 
     .gd-signature-clickable {
         width: Calc(100% - 70px);
+    }
+
+	.gd-context-menu i.active {
+		background-color: #959da5;
+		width: 38px;
+		height: 36px;
+		margin: 0 21px;
+	}
+
+    .gd-context-menu i {
+        font-size: 30px;
+    }
+
+    .gd-context-menu {
+        top: -54px;
     }
 }
 @media screen and (orientation: landscape) {

@@ -1060,7 +1060,7 @@ function insertText(properties) {
     var style = "";
     var addPositionClass;
     if (draggableSignaturePosition && draggableSignaturePosition.left && draggableSignaturePosition.top) {
-        style = 'left: ' + draggableSignaturePosition.left + 'px; top: ' + draggableSignaturePosition.top + 'px;';
+        style += 'left: ' + draggableSignaturePosition.left + 'px; top: ' + draggableSignaturePosition.top + 'px;';
         if (!isMobile()) {
             if (draggableSignaturePosition.top < 10) {
                 addPositionClass= "gd-context-menu-bottom";
@@ -1075,22 +1075,21 @@ function insertText(properties) {
         }
     }
     var contextMenu = getContextMenu("gd-text-signature-" + signatureImageIndex, addPositionClass);
-    var textStyle = "";
     if (signature.imageWidth) {
-        textStyle = "width:" + signature.imageWidth + "px;";
+        style += "width:" + signature.imageWidth + "px;";
     } else if (properties && properties.width) {
-        textStyle = "width:" + properties.width + "px;";
+        style += "width:" + properties.width + "px;";
     }
     if (signature.imageHeight) {
-        textStyle = textStyle + "height: " + signature.imageHeight + "px";
+        style += "height: " + signature.imageHeight + "px";
     } else if (properties && properties.height) {
-        textStyle = textStyle + "height: " + properties.height + "px";
+        style += "height: " + properties.height + "px";
     }
     var imageGuid = properties ? properties.imageGuid : "";
     // prepare signature image HTML
     var signatureHtml = '<div id="gd-draggable-helper-' + signatureImageIndex + '"  class="gd-draggable-helper gd-signature" style="'+ style+'">' +
         contextMenu +
-            '<div id="gd-draw-text-' + signatureImageIndex + '" image-guid="' + imageGuid + '" class="gd-draw-text" style="' + textStyle + '"/>' +
+            '<div id="gd-draw-text-' + signatureImageIndex + '" image-guid="' + imageGuid + '" class="gd-draw-text"/>' +
         resizeHandles +
         '';
     $("#gd-image-signature-" + signatureImageIndex).css('background-color','transparent');
@@ -1134,6 +1133,7 @@ function setDraggableAndResizable(pageNumber) {
     $("#gd-draggable-helper-" + currentImage).draggable({
         // set restriction for image dragging area to current document page
         containment: "#gd-page-" + pageNumber,
+        cancel: '',
         create: function () {
             // initiate image positioning coordinates
             var signaturePos = $(this).position();

@@ -57,6 +57,7 @@ $(document).ready(function () {
 				title = "Bar Code";
 			}
 			$(this).prepend($.fn.opticalCodeGenerator.baseHtml(title));
+			$(this).find("#gd-qr-text").focus();
 		}
 	}
 

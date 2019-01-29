@@ -1,6 +1,6 @@
 {
   "name": "@groupdocs.examples.jquery/comparison",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "jQuery plugin that allows to display and comapre documents supported by groupdocs libraries APIs",
   "main": "index.js",
   "scripts": {

@@ -1149,9 +1149,7 @@ GROUPDOCS.ANNOTATION PLUGIN
                 textRedactionAnnotation: true,
                 resourcesRedactionAnnotation: true,
                 textUnderlineAnnotation: true,
-                distanceAnnotation: true,
-                downloadOriginal: true,
-                downloadAnnotated: true,
+                distanceAnnotation: true,              
 				defaultDocument: "",
 				preloadPageCount: 0,
 				pageSelector: true,
@@ -1160,7 +1158,8 @@ GROUPDOCS.ANNOTATION PLUGIN
 				print: true,
 				browse: true,
 				rewrite: true,
-				applicationPath: "http://localhost:8080/annotation"
+				applicationPath: "http://localhost:8080/annotation",
+				enableRightClick: true
             };
 			$('#element').viewer({
 					applicationPath: options.applicationPath,
@@ -1177,7 +1176,8 @@ GROUPDOCS.ANNOTATION PLUGIN
                     print: options.print,
                     browse: options.browse,
                     rewrite: options.rewrite,
-					saveRotateState: false
+					saveRotateState: false,
+					enableRightClick: options.enableRightClick
 			});
             options = $.extend(defaults, options);
             

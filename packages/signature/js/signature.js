@@ -1585,9 +1585,7 @@ GROUPDOCS.SIGNATURE PLUGIN
                 digitalSignature: true,
                 qrCodeSignature: true,
                 barCodeSignature: true,
-                stampSignature: true,
-                downloadOriginal: true,
-                downloadSigned: true,
+                stampSignature: true,               
 				defaultDocument: "",
 				preloadPageCount: 0,
 				pageSelector: true,
@@ -1596,7 +1594,8 @@ GROUPDOCS.SIGNATURE PLUGIN
 				print: true,
 				browse: true,
 				rewrite: true,
-				applicationPath: "http://localhost:8080/signature"
+				applicationPath: "http://localhost:8080/signature",
+				enableRightClick: true
             };
 			$('#element').viewer({
 					applicationPath: options.applicationPath,
@@ -1613,7 +1612,8 @@ GROUPDOCS.SIGNATURE PLUGIN
                     print: options.print,
                     browse: options.browse,
                     rewrite: options.rewrite,
-					saveRotateState: false
+					saveRotateState: false,
+					enableRightClick: options.enableRightClick
 			});
             options = $.extend(defaults, options);
            

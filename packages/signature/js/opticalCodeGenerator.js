@@ -91,32 +91,32 @@ $(document).ready(function () {
 function saveDrawnOpticalCode(properties) {
 	// current document guid is taken from the viewer.js globals
 	var data = {properties: properties, signatureType: signature.signatureType};
-	$('#gd-modal-spinner').show();
 	// sign the document
 	$.ajax({
 		type: 'POST',
 		url: getApplicationPath("saveOpticalCode"),
 		data: JSON.stringify(data),
 		contentType: 'application/json',
-		success: function(returnedData) {				
+		success: function(returnedData) {
 			if(returnedData.message != undefined){
 				// open error popup
 				printMessage(returnedData.message);
 				return;
 			}				
-			// set curent signature data
+			// set current signature data
 			signature.signatureGuid = returnedData.imageGuid;
 			signature.imageHeight = returnedData.height;
 			signature.imageWidth = returnedData.width;
 			$("#gd-qr-preview-container").html("");
 			var prevewImage = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + returnedData.encodedImage + '" alt></image>';
-			$("#gd-qr-preview-container").append(prevewImage);	
-			loadSignaturesTree('');
+			$("#gd-qr-preview-container").append(prevewImage);
+			if (!properties.temp) {
+				loadSignaturesTree('');
+			}
 		},
 		error: function(xhr, status, error) {
 			var err = eval("(" + xhr.responseText + ")");
 			console.log(err.Message);
-			$('#gd-modal-spinner').hide();
 			// open error popup
 			printMessage(err.message);
 		}

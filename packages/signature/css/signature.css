@@ -142,6 +142,12 @@ SIGNATURE TOOL BAR
 .gd-signature-context-panel.hand::after {
     top: 300px;
 }
+.gd-signature-list-wrapper-add {
+    height: Calc(100% - 100px) !important;
+}
+.gd-signature-list-wrapper-add-img {
+    height: Calc(100% - 340px) !important;
+}
 .gd-signature-list-wrapper {
     display: flex;
     height: Calc(100% - 20px);

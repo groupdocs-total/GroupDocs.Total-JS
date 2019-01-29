@@ -7,44 +7,44 @@
  */
 $(document).ready(function () {
 	var userMouseClick = ('ontouch' in document.documentElement)  ? 'touch click' : 'click';
-	
+
     //////////////////////////////////////////////////
     // enter text event
-    //////////////////////////////////////////////////  
+    //////////////////////////////////////////////////
     $("body").on("keyup input", "#gd-qr-text", $.debounce(500, function(e){
 			var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
-			opticalProperties.imageGuid = "";		
+			opticalProperties.imageGuid = "";
 			saveDrawnOpticalCode(opticalProperties);
 		})
 	);
-	
+
 	//////////////////////////////////////////////////
     // Close new optical code signature adding
-    //////////////////////////////////////////////////  
+    //////////////////////////////////////////////////
 	$("body").on(userMouseClick, "#gd-close-signature", function () {
-        $("#gd-add-optical-signature").remove();
+		closeAddCode();
     });
-	
+
 	//////////////////////////////////////////////////
     // Add new optical code signature into the list
-    //////////////////////////////////////////////////  
+    //////////////////////////////////////////////////
 	$("body").on(userMouseClick, ".gd-add-optical", function () {
-		var opticalProperties = $.fn.opticalCodeGenerator.getProperties();			
+		var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
 		opticalProperties.imageGuid = signature.signatureGuid;
 		opticalProperties.temp = false;
 		saveDrawnOpticalCode(opticalProperties);
-		$("#gd-add-optical-signature").remove();  
+		closeAddCode();
     });
-	
+
 });
- 
+
 (function( $ ) {
 
 	/**
 	* Create private variables.
 	**/
-	var paramValues = {	
-		text : 'gd-qr-text'		
+	var paramValues = {
+		text : 'gd-qr-text'
 	}
 
 	$.fn.opticalCodeGenerator = function(e) {
@@ -63,7 +63,7 @@ $(document).ready(function () {
 	$.extend(true, $.fn.opticalCodeGenerator, {
 
         getProperties : function(){
-			var text = $(this).find('#' + paramValues.text).val();			
+			var text = $(this).find('#' + paramValues.text).val();
 			var properties = {text: text, temp: true};
 			return properties;
 		},
@@ -73,9 +73,9 @@ $(document).ready(function () {
 							'<i class="fas fa-times" id="gd-close-signature"></i>'+
 							'<div class="gd-signature-context-panel-title">New ' + title +'</div>'+
 						'</div>'+
-						'<div id="gd-qr-container">' +							
+						'<div id="gd-qr-container">' +
 							'<div id="gd-qr-preview-container"></div>' +
-							'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="this is my text "/>' +	
+							'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="this is my text "/>' +
 							'<div class="gd-add-optical"><i class="fas fa-plus"></i></div>'+
 						'</div></div>';
 			return html;
@@ -110,6 +110,7 @@ function saveDrawnOpticalCode(properties) {
 			$("#gd-qr-preview-container").html("");
 			var prevewImage = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + returnedData.encodedImage + '" alt></image>';
 			$("#gd-qr-preview-container").append(prevewImage);
+			changeListClass("gd-signature-list-wrapper-add-img");
 			if (!properties.temp) {
 				loadSignaturesTree('');
 			}

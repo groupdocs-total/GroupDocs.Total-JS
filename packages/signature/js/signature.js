@@ -85,7 +85,7 @@ $(document).ready(function(){
         if(typeof documentGuid == "undefined" || documentGuid == ""){
             printMessage("Please open document first");
         } else {
-			$("#gd-add-optical-signature").remove();
+			closeAddCode();
             var button = $(this);
             var type = button.attr("signature-type");
             if (type) {
@@ -242,6 +242,7 @@ $(document).ready(function(){
 			case "barCode":
 			case "qrCode":
 				$("#gd-signature-context-panel").opticalCodeGenerator();
+                changeListClass("gd-signature-list-wrapper-add");
 				break;
             case "text":
                 if (isMobile()) {
@@ -256,6 +257,32 @@ $(document).ready(function(){
 		}
     });
 });
+
+
+/**
+ * Close add code panel
+ */
+function closeAddCode() {
+    $("#gd-add-optical-signature").remove();
+    changeListClass();
+}
+
+/**
+ * For correct scroll, while new code panel added/removed
+ *
+ * @param addClass
+ */
+function changeListClass(addClass) {
+    if (addClass) {
+        if (addClass == "gd-signature-list-wrapper-add-img") {
+            $("#gd-signature-list-wrapper").removeClass("gd-signature-list-wrapper-add");
+        }
+        $("#gd-signature-list-wrapper").addClass(addClass);
+    } else {
+        $("#gd-signature-list-wrapper").removeClass("gd-signature-list-wrapper-add-img");
+        $("#gd-signature-list-wrapper").removeClass("gd-signature-list-wrapper-add");
+    }
+}
 
 /**
  * Hide all menu. For mobile only.

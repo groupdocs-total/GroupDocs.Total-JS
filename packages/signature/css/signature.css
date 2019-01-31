@@ -380,6 +380,10 @@ BROWSE SIGNATURES SLIDE
     margin: 5px;
 	position: relative;
 }
+.gd-signature-thumbnail-image i {
+    right: unset !important;
+    left: 16px;
+}
 .gd-signature-thumbnail-image {
     width: 47px;
     height: 47px;

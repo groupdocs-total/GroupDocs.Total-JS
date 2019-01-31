@@ -1555,9 +1555,9 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlDigitalSignatureElement() {
         return '<li>' +
-                    '<button class="gd-tool gd-tool-inactive gd-digital-sign" id="gd-digital-sign" signature-type="digital" signature-type-title="Certificates">' +
+                    '<button class="gd-tool gd-tool-inactive gd-digital-sign" id="gd-digital-sign" signature-type="digital" signature-type-title="Digital signatures">' +
                     '<i class="fas fa-fingerprint fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Digital signature</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Digital signatures</span>' +
                     '</button>' +
                 '</li>';
     }

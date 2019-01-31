@@ -1006,29 +1006,29 @@ function insertText(properties) {
     var addPositionClass;
     if (draggableSignaturePosition && draggableSignaturePosition.left && draggableSignaturePosition.top) {
         style += 'left: ' + draggableSignaturePosition.left + 'px; top: ' + draggableSignaturePosition.top + 'px;';
-        if (!isMobile()) {
-            if (draggableSignaturePosition.top < 10) {
-                addPositionClass= "gd-context-menu-bottom";
-            } else {
-                addPositionClass = "gd-context-menu-top";
-            }
+        if (draggableSignaturePosition.top < 10) {
+            addPositionClass= "gd-context-menu-bottom";
+        } else {
+            addPositionClass = "gd-context-menu-top";
         }
         draggableSignaturePosition = {};
     } else {
-        if (!isMobile()) {
-            addPositionClass = "gd-context-menu-bottom";
-        }
+        addPositionClass = "gd-context-menu-bottom";
     }
     var contextMenu = getContextMenu("gd-text-signature-" + signatureImageIndex, addPositionClass);
     if (signature.imageWidth) {
-        style += "width:" + signature.imageWidth + "px;";
+        style += "width: " + signature.imageWidth + "px;";
     } else if (properties && properties.width) {
-        style += "width:" + properties.width + "px;";
+        style += "width: " + properties.width + "px;";
+    } else {
+        style += isMobile() ? "width: 200px;" : "width: 100px;";
     }
     if (signature.imageHeight) {
         style += "height: " + signature.imageHeight + "px";
     } else if (properties && properties.height) {
         style += "height: " + properties.height + "px";
+    } else {
+        style += isMobile() ? "height: 100px;" : "height: 50px;";
     }
     var imageGuid = properties ? properties.imageGuid : "";
     // prepare signature image HTML
@@ -1058,14 +1058,12 @@ function insertText(properties) {
 }
 
 function fixContextMenuTop(elem, top) {
-    if (!isMobile()) {
-        if (top < 10) {
-            elem.addClass("gd-context-menu-bottom");
-            elem.removeClass("gd-context-menu-top");
-        } else {
-            elem.addClass("gd-context-menu-top");
-            elem.removeClass("gd-context-menu-bottom");
-        }
+    if (top < 10) {
+        elem.addClass("gd-context-menu-bottom");
+        elem.removeClass("gd-context-menu-top");
+    } else {
+        elem.addClass("gd-context-menu-top");
+        elem.removeClass("gd-context-menu-bottom");
     }
 }
 
@@ -1146,18 +1144,14 @@ function insertImage(image) {
     var addPositionClass;
     if (draggableSignaturePosition && draggableSignaturePosition.left && draggableSignaturePosition.top) {
         style = 'left: ' + draggableSignaturePosition.left + 'px; top: ' + draggableSignaturePosition.top + 'px;';
-        if (!isMobile()) {
-            if (draggableSignaturePosition.top < 10) {
-                addPositionClass= "gd-context-menu-bottom";
-            } else {
-                addPositionClass = "gd-context-menu-top";
-            }
+        if (draggableSignaturePosition.top < 10) {
+            addPositionClass= "gd-context-menu-bottom";
+        } else {
+            addPositionClass = "gd-context-menu-top";
         }
         draggableSignaturePosition = {};
     } else {
-        if (!isMobile()) {
-            addPositionClass = "gd-context-menu-bottom";
-        }
+        addPositionClass = "gd-context-menu-bottom";
     }
     var contextMenu = getContextMenu("gd-image-signature-" + currentImage, addPositionClass);
     // prepare signature image HTML

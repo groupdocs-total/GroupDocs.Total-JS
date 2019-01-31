@@ -145,8 +145,7 @@ matrix:
         - npm install -g npx
         - npx lerna init
         - npm whoami
-        - npx lerna version patch --yes
-        - npx lerna publish --yes
+        - npx lerna publish patch --yes
     - stage: Release minor update
       dist: trusty
       os: linux
@@ -163,5 +162,4 @@ matrix:
         - npm install -g npx
         - npx lerna init
         - npm whoami
-        - npx lerna version minor --yes
-        - npx lerna publish --yes
+        - npx lerna publish minor --yes

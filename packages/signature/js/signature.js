@@ -1565,7 +1565,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-tool-inactive gd-text-sign" id="gd-text-sign" signature-type="text" signature-type-title="Texts">' +
                     '<i class="fas fa-font fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Text</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Texts</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1574,7 +1574,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-tool-inactive gd-image-sign" id="gd-image-sign" signature-type="image" signature-type-title="Uploaded images">' +
                     '<i class="fas fa-image fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Image</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Uploaded images</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1583,7 +1583,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-tool-inactive gd-digital-sign" id="gd-digital-sign" signature-type="digital" signature-type-title="Certificates">' +
                     '<i class="fas fa-fingerprint fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Digital</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Digital signature</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1592,7 +1592,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-tool-inactive gd-qrcode-sign" id="gd-qrcode-sign" signature-type="qrCode" signature-type-title="QR codes">' +
                     '<i class="fas fa-qrcode fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">QR code</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">QR codes</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1601,7 +1601,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-tool-inactive gd-barcode-sign" id="gd-barcode-sign" signature-type="barCode" signature-type-title="Bar codes">' +
                     '<i class="fas fa-barcode fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Barcode</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Bar codes</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1610,7 +1610,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-tool-inactive gd-stamp-sign" id="gd-stamp-sign" signature-type="stamp" signature-type-title="Stamps">' +
                     '<i class="fas fa-stamp fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Stamp</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Stamps</span>' +
                     '</button>' +
                 '</li>';
     }
@@ -1619,7 +1619,7 @@ GROUPDOCS.SIGNATURE PLUGIN
         return '<li>' +
                     '<button class="gd-tool gd-tool-inactive gd-hand-sign" id="gd-hand-sign" signature-type="hand" signature-type-title="Signatures">' +
                     '<i class="fas fa-signature fa-lg fa-inverse"></i>' +
-                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Signature</span>' +
+                    '<span class="gd-popupdiv-hover gd-tool-tooltip gd-tool-tooltip-mobile">Signatures</span>' +
                     '</button>' +
                 '</li>';
     }

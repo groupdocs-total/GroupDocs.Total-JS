@@ -107,9 +107,11 @@
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 if($(this).hasClass("down")){
-                    $('#' + parentName).find(".gd-text-menu").css("top", "unset");
+                    $('#' + parentName).find(".gd-text-menu").removeClass("gd-text-menu-top");
+                    $('#' + parentName).find(".gd-text-menu").addClass("gd-text-menu-down");
                 } else {
-                    $('#' + parentName).find(".gd-text-menu").css("top", "100px");
+                    $('#' + parentName).find(".gd-text-menu").addClass("gd-text-menu-top");
+                    $('#' + parentName).find(".gd-text-menu").removeClass("gd-text-menu-down");
                 }
                 $(this).toggleClass("down");
             });

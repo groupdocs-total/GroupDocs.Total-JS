@@ -529,6 +529,14 @@
         cursor: pointer;
     }
 
+	.gd-text-menu-top {
+        top: 100px;
+    }
+
+	.gd-text-menu-down {
+        top: unset;
+    }
+
 	.gd-text-menu {
 		position: fixed;
 		bottom: 0;
@@ -651,8 +659,12 @@
         font-size: 30px;
     }
 
-    .gd-context-menu {
+    .gd-context-menu-top {
         top: -54px;
+    }
+
+    .gd-context-menu-bottom {
+        bottom: -54px;
     }
 }
 @media screen and (orientation: landscape) {

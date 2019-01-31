@@ -139,12 +139,12 @@ matrix:
         - git config --global user.email "travis@travis-ci.org" && git config --global user.name "Travis CI"
         - git remote remove origin
         - git remote add origin https://${GH_TOKEN}@github.com/groupdocs-total/GroupDocs.Total-JS.git > /dev/null 2>&1
+        - git fetch
         - git branch --set-upstream-to=origin/master master
-        - echo "releasing fix skip"
+        - echo "releasing fix"
         - npm install -g npx
         - npx lerna init
         - npm whoami
-        - git checkout master && git reset --hard $sha1
         - npx lerna version patch --yes
         - npx lerna publish --yes
     - stage: Release minor update
@@ -157,11 +157,11 @@ matrix:
         - git config --global user.email "travis@travis-ci.org" && git config --global user.name "Travis CI"
         - git remote remove origin
         - git remote add origin https://${GH_TOKEN}@github.com/groupdocs-total/GroupDocs.Total-JS.git > /dev/null 2>&1
+        - git fetch
         - git branch --set-upstream-to=origin/master master
-        - echo "releasing minor update skip"
+        - echo "releasing minor update"
         - npm install -g npx
         - npx lerna init
         - npm whoami
-        - git checkout master && git reset --hard $sha1
         - npx lerna version minor --yes
         - npx lerna publish --yes

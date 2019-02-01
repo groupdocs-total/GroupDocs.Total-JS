@@ -25,7 +25,8 @@
     margin-right: 10px;
 }
 .csg-params {
-	display: -webkit-inline-box;   
+	display: -webkit-inline-box;  
+    top: -36px;	
 }
 .csg-params i {
     margin-left: 9px;

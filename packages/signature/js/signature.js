@@ -253,6 +253,9 @@ $(document).ready(function(){
             case "image":
                 openUploadSignatures();
                 break;
+            case "digital":
+                openUploadSignatures();
+                break;
 		}
     });
 });
@@ -1035,7 +1038,7 @@ function loadSignatureImage() {
             if ("text" == signature.signatureType) {
                 insertText(returnedData.props);
             } else {
-                insertImage(returnedData.pageImage);
+                insertImage(returnedData.data);
             }
 		},
 		error: function(xhr, status, error) {

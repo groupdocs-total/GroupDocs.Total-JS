@@ -169,7 +169,7 @@
             properties.width = Math.round(text.width());
             properties.height = Math.round(text.height());
             if (!properties.imageGuid) {
-                properties.imageGuid = $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value;
+                properties.imageGuid = $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['data-image-guid'].value;
             }
 			return properties;
 		},
@@ -193,13 +193,13 @@
     function saveTextSignatureIntoFile() {
         var props = $.fn.textGenerator.getProperties();
         if (props.text) {
-            var guid = $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value;
+            var guid = $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['data-image-guid'].value;
             if (props.imageGuid || guid) {
                 saveDrawnText(props);
             } else {
                 saveDrawnText(props,
                     function (data) {
-                        $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['image-guid'].value = data.imageGuid;
+                        $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['data-image-guid'].value = data.imageGuid;
                     });
             }
         }

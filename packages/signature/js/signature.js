@@ -160,7 +160,7 @@ $(document).ready(function(){
             hideAllContextMenu();
             var id = this.parentElement['id'];
             var text = $(this.childNodes)[0].value;
-            var guid = $(this)[0].attributes['image-guid'].value;
+            var guid = $(this)[0].attributes['data-image-guid'].value;
             var elem = $(this.parentElement).find(".gd-context-menu");
             elem.removeClass("hidden");
             $.fn.textGenerator.init(id, null, text, guid);
@@ -1039,7 +1039,7 @@ function insertText(properties) {
     // prepare signature image HTML
     var signatureHtml = '<div id="gd-draggable-helper-' + signatureImageIndex + '"  class="gd-draggable-helper gd-signature" style="'+ style+'">' +
         contextMenu +
-            '<div id="gd-draw-text-' + signatureImageIndex + '" image-guid="' + imageGuid + '" class="gd-draw-text"/>' +
+            '<div id="gd-draw-text-' + signatureImageIndex + '" data-image-guid="' + imageGuid + '" class="gd-draw-text"/>' +
         resizeHandles +
         '';
     $("#gd-image-signature-" + signatureImageIndex).css('background-color','transparent');

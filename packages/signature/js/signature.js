@@ -351,6 +351,9 @@ function fadeLeftBar(on) {
  * @param sign
  */
 function selectSignature(sign) {
+    if ("digital" == signature.signatureType) {
+        return;
+    }
     signature.signatureGuid = sign.attr("data-guid");
     loadSignatureImage();
     $('#gd-signature-context-panel').hide();
@@ -453,7 +456,9 @@ function loadSignaturesTree(dir, callback) {
                         '</div>');
                 } else {
                     var imageBlock = name;
-                    if (signature.signatureType != "digital") {
+                    if ("digital" == signature.signatureType) {
+                        imageBlock = '<div class="gd-signature-thumbnail-image"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
+                    } else {
                         imageBlock = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + elem.image + '" alt></image>';
                     }
 
@@ -466,7 +471,7 @@ function loadSignaturesTree(dir, callback) {
                         '<i class="fa fa-trash-o"></i>' +
                         '</div>');
 
-                    if (!isMobile()) {
+                    if (!isMobile() && "digital" != signature.signatureType) {
                         $('#gd-signature-item-' + index).draggable({
                             start: function() {
                                 $('#gd-signature-list').removeClass("gd-signature-list-scroll");

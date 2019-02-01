@@ -396,12 +396,6 @@
         font-size: 42px;
     }
 
-    #gd-qr-preview-container {
-        left: calc(100% - 71%) !important;
-        top: calc(100% - 28%) !important;
-        position: relative !important;
-    }
-
     .gd-qr-params .gd-qr-color-picker {
         width: 134px !important;
         height: 51px !important;
@@ -615,6 +609,14 @@
 
     .gd-signature-list-wrapper {
         height: Calc(100% - 50px);
+    }
+
+    .gd-signature-list-wrapper-add-img {
+        height: Calc(100% - 1000px) !important;
+    }
+
+    .gd-signature-list-wrapper-add {
+        height: Calc(100% - 250px) !important;
     }
 
     .gd-signature-context-panel::after {

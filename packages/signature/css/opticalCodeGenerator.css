@@ -11,7 +11,7 @@
 	margin: 0 5px 0 5px
 }
 
-#gd-qr-container input {
+.gd-qr-property {
     border: 1px solid #4D73BC;
     padding: 5px;
     color: #5C737F;    

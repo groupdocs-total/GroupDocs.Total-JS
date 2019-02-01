@@ -1847,9 +1847,9 @@ function getHtmlUpload() {
     return uploadSection;
 }
 
-function isMobile(){
+/*function isMobile(){
     return $('body:after').css('content') === 'mobile';
-}
+}*/
 
 /*
 ******************************************************************

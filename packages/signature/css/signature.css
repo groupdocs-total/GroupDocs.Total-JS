@@ -576,6 +576,10 @@ SIGNATURE IMAGE
     width: max-content;
 	width: -moz-max-content;
 }
+.gd-text {
+    width: inherit;
+    height: inherit;
+}
 .gd-text-context-menu {
 	left: -48px;
 }

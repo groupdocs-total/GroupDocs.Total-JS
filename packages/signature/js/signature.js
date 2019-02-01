@@ -1080,11 +1080,10 @@ function setDraggableAndResizable(pageNumber) {
     var signatureToEdit = $.grep(signaturesList, function (obj) {
         return obj.id === currentImage;
     })[0];
-    // enable rotation, dragging and resizing features for current image
+    // enable dragging and resizing features for current image
     $("#gd-draggable-helper-" + currentImage).draggable({
         // set restriction for image dragging area to current document page
-        containment: "#gd-page-" + pageNumber,
-        cancel: '',
+        containment: "#gd-page-" + pageNumber,       
         create: function () {
             // initiate image positioning coordinates
             var signaturePos = $(this).position();

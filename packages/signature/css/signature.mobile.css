@@ -108,9 +108,15 @@
         height: 94px;
     }
 
+    .gd-signature-thumbnail-image i {
+        left: 25px;
+        font-size: 46px !important;
+    }
+
     .gd-signature-item .gd-signature-name {
         width: Calc(100% - 150px);
         font-size: 32px;
+        left: 100px;
     }
 
     .gd-left-bar-spinner {

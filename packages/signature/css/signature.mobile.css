@@ -672,6 +672,11 @@
     .gd-context-menu-bottom {
         bottom: -54px;
     }
+
+    .ui-resizable-handle {
+        width: 18px;
+        height: 18px;
+    }
 }
 @media screen and (orientation: landscape) {
     .gd-modal-dialog-lightbox {

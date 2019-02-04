@@ -1051,6 +1051,7 @@ function setDraggableAndResizable(pageNumber) {
     $("#gd-draggable-helper-" + currentImage).draggable({
         // set restriction for image dragging area to current document page
         containment: "#gd-page-" + pageNumber,
+        cancel: 'select',
         create: function () {
             // initiate image positioning coordinates
             var signaturePos = $(this).position();

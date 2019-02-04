@@ -143,7 +143,6 @@ matrix:
         - git branch --set-upstream-to=origin/master master
         - echo "releasing fix"
         - npm install -g npx
-        - npx lerna init
         - npm whoami
         - git status
         - npx lerna publish patch --yes
@@ -162,7 +161,6 @@ matrix:
         - git branch --set-upstream-to=origin/master master
         - echo "releasing minor update"
         - npm install -g npx
-        - npx lerna init
         - npm whoami
         - git status
         - npx lerna publish minor --yes

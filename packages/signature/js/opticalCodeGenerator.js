@@ -75,7 +75,7 @@ $(document).ready(function () {
 							'<div class="gd-signature-context-panel-title">New ' + title +'</div>'+
 						'</div>'+
 						'<div id="gd-qr-container">' +
-							'<div id="gd-qr-preview-container"></div>' +
+							'<div id="gd-qr-preview-container" class="gd-qr-preview-container"></div>' +
 							'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="this is my text "/>' +
 							'<div class="gd-add-optical"><i class="fas fa-plus"></i></div>'+
 						'</div></div>';

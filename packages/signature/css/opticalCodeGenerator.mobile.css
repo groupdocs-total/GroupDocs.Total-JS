@@ -1,0 +1,24 @@
+@media (max-width: 1024px) {
+    .gd-qr-preview-container {
+        width: 80%;
+        height: 80%;
+        left: 5% !important;
+        top: 0px !important;
+        position: relative !important;
+    }
+
+    .gd-qr-property {
+        width: 80%;
+        height: 50px;
+        font-size: 30px;
+    }
+
+    .gd-add-optical i {
+        font-size: 25px;
+    }
+
+    .gd-add-optical {
+        width: 47px;
+        height: 47px;
+    }
+}

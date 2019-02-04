@@ -690,6 +690,11 @@
     .gd-context-menu-bottom {
         bottom: -54px;
     }
+	
+	.ui-resizable-handle {
+        width: 18px;
+        height: 18px;
+    }
 
     #gd-digital-container {
         width: 840px;

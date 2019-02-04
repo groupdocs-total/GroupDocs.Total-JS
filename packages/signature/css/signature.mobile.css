@@ -611,6 +611,13 @@
         right: 15%;
     }
 
+    .gd-signature-list-wrapper-add-img {
+        height: Calc(100% - 1000px) !important;
+    }
+
+    .gd-signature-list-wrapper-add {
+        height: Calc(100% - 250px) !important;
+    }
     .gd-signature-list-wrapper {
         height: Calc(100% - 50px);
     }

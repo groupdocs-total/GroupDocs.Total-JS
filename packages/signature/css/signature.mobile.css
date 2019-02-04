@@ -254,8 +254,7 @@
         }
 
     .bcPicker-palette {
-        width: 286px !important;
-        ;
+        width: 286px !important;        
     }
 
     .gd-text-params .gd-text-color-picker {
@@ -263,10 +262,8 @@
     }
 
     .bcPicker-palette > .bcPicker-color {
-        width: 62px !important;
-        ;
-        height: 57px !important;
-        ;
+        width: 62px !important;       
+        height: 57px !important;       
     }
 
     .gd-border-style-wrapper {
@@ -420,13 +417,11 @@
     }
 
     #csg-params-container {
-        width: 98% !important;
-        ;
+        width: 98% !important;       
     }
 
     #csg-params-header > button {
-        font-size: 37px !important;
-        ;
+        font-size: 37px !important;      
     }
 
     #csg-preview-container {
@@ -440,46 +435,37 @@
 
     .csg-params .csg-params-toggle {
         right: 86px !important;
-        font-size: 38px !important;
-        ;
+        font-size: 38px !important;       
     }
 
     .csg-params .csg-shape-remove {
-        font-size: 39px !important;
-        ;
+        font-size: 39px !important;       
     }
 
     .csg-params h3 {
-        font-size: 38px !important;
-        ;
+        font-size: 38px !important;       
     }
 
     .csg-params thead td {
-        font-size: 55px !important;
-        ;
+        font-size: 55px !important;       
     }
 
     #csg-container input {
-        font-size: 57px !important;
-        ;
+        font-size: 57px !important;        
         margin-right: 67px;
     }
 
     .csg-params input[type="number"] {
-        width: 125px !important;
-        ;
+        width: 125px !important;       
     }
 
     .csg-params input[type="text"] {
-        width: 100% !important;
-        ;
+        width: 100% !important;       
     }
 
     .csg-params .csg-color-picker {
         width: 144px !important;
-        ;
         height: 69px !important;
-        ;
         margin-right: 69px;
     }
 

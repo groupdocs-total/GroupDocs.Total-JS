@@ -6,6 +6,7 @@
         <link type="text/css" rel="stylesheet" href="packages/common/css/swiper.min.css">
         <link type="text/css" rel="stylesheet" href="packages/common/css/jquery-ui.min.css"/>
         <link type="text/css" rel="stylesheet" href="packages/common/css/circle-progress.css"/>
+		<link type="text/css" rel="stylesheet" href="packages/common/css/font-awesome.min.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer-dark.css"/>
@@ -40,23 +41,16 @@
         <div id="element"></div>
         <script type="text/javascript">
             var host = !window.location.hostname ? 'localhost' : window.location.hostname;
-            $('#element').viewer({
-                applicationPath: 'http://' + host + ':8080/signature/',
+            $('#element').signature({
+				applicationPath: 'http://' + host + ':8080/signature/',
 			    defaultDocument: '',
-			    htmlMode: false,
-			    preloadPageCount: 0,
-			    rewrite: true,
-			    zoom: false,
-			    pageSelector: true,
-			    search: false,
-			    thumbnails: false,
-			    rotate: false,
-			    download: true,
+				preloadPageCount: 0,
+				rewrite: true,
+				pageSelector: true,
+				download: true,
 			    upload: true,
 			    print: true,
-			    browse: true
-            });
-            $('#element').signature({
+			    browse: true,
                 textSignature: true,
                 imageSignature: true,
                 digitalSignature: true,
@@ -65,7 +59,8 @@
                 stampSignature: true,
                 handSignature: true,
                 downloadOriginal: true,
-                downloadSigned: true
+                downloadSigned: true,
+				enableRightClick: true
             });
         </script>
     </body>

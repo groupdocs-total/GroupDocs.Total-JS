@@ -1,5 +1,6 @@
 var gulp        = require('gulp');
 var browserSync = require('browser-sync').create();
+var webserver = require('gulp-webserver');
 
 gulp.task('css-watch', function(){
     return gulp.src("**/css/*.css")
@@ -18,6 +19,13 @@ gulp.task('browser-sync', function() {
         },
         plugins: ['bs-console-qrcode']
     });
-    gulp.watch(["**/css/*.css"],['css-watch']);
-    gulp.watch(["**/js/*.js"], ['js-watch']);
+    gulp.watch(["**/css/*.css"],gulp.series('css-watch'));
+    gulp.watch(["**/js/*.js"], gulp.series('js-watch'));
+});
+
+gulp.task('default', function() {
+    gulp.src('.')
+      .pipe(webserver({
+        port : 3000
+    }));
 });

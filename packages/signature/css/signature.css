@@ -105,7 +105,7 @@ SIGNATURE TOOL BAR
     display: none;
     background-color: #F3F3F3;
     left: 53px;
-    width: 260px;
+	width: 300px;
     height: 100%;
     position: absolute;
 }
@@ -164,8 +164,9 @@ SIGNATURE TOOL BAR
 }
 .gd-signature-context-panel-title {
     color: #AAAAAA;
-    font-size: 14px;
-    margin: 7px 0 0 12px;
+    font-size: 12px;
+    margin: 16px 0 12px 12px;
+    font-family: Helvetica, Bold;
 }
 .gd-left-bar-spinner {
     left: 30%;
@@ -186,12 +187,73 @@ SIGNATURE TOOL BAR
     outline: 0;
     background-color: rgba(255,255,255,0.5);
 }
+#gd-digital-container {
+    background-color: #ffffff;
+    width: 278px;
+    height: 252px;
+    border: 1px solid #3787F5;
+    border-radius: 6px;   
+    margin-top: 16px;
+    margin-left: 12px;
+}
+.gd-add-digital, .gd-sign-digital {
+    width: 263px;
+    height: 27px;
+    background-color: #3787F5;
+    margin: 9px 8px 7px 7px;
+    border-radius: 3px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 13px;
+    box-shadow: 0 0 3px #ddd;
+    cursor: pointer;
+    padding-top: 5px;
+}
+#gd-digital-upload-container {
+    width: 263px;
+    height: 201px;
+    text-align: center;
+    margin: 7px 9px 0px 6px;
+    box-shadow: 0 0 3px #ddd;
+    border-radius: 3px;
+}
+#gd-digital-upload-container i {
+    font-size: 52px;
+    color: #959DA5;
+    margin: 61px 112px 0px 112px;
+}
+.gd-digital-upload-title {
+    color: #5C737F;
+    font-size: 13px;
+    margin: 12px 80px 61px 82px;
+}
+#gd-digital-upload-container input {
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    width: inherit;
+    height: 203px;
+}
+.gd-digital-inputs input {
+    width: 263px;
+    height: 27px;
+    margin: 0 5px -4px 9px;
+    border: 1px solid #ddd;
+    padding-left: 28px;
+}
+.gd-digital-inputs i {
+    position: relative !important;
+    top: -18px !important;
+    left: 15px !important;
+    color: #ccc !important;
+}
+
 /*
 ******************************************
 MODAL
 ******************************************
 */
-.gd-signature-modal-dialog {
+    .gd-signature-modal-dialog {
     width: 700px !important;
     height: 500px !important;
 }
@@ -339,12 +401,6 @@ BROWSE SIGNATURES SLIDE
     height: 365px;
     overflow-y: auto;
 }
-.gd-digital-signature {
-    border-style: solid;
-    border-width: 1px;
-    border-color: #cccccc;
-    background-color: #e5e5e5;  
-}
 .gd-signature-item i {
     position: absolute;
     right: 10px;
@@ -360,25 +416,23 @@ BROWSE SIGNATURES SLIDE
     font-size: 14px;
     color: #AAAAAA;
     position: absolute;
-    height: 100%;
+    height: 24px;
     width: 146px;
     cursor: pointer;
     left: 50px;
-    top:0px;
-    align-items: center;
-    display: flex;
+    top: 11px;
+    align-items: center;   
 }
 .gd-signature .fa-level-up {
     margin-left: 23px;
 }
 .gd-signature-thumbnail {
     background-color: #ffffff;
-    width: 250px;
-    height: 53px;
+    width: 277px;   
     display: inline-block;
     cursor: pointer;
-    margin: 5px;
-	position: relative;
+    margin: 0px 11px 6px 12px;
+    position: relative;
 }
 .gd-signature-thumbnail-image i {
     right: unset !important;
@@ -465,9 +519,6 @@ ADDITIONAL SIGNATURE INFORMATION SLIDE
     top: calc(100% - 42px);
     left: 6px;
     color: #959da5;
-}
-#gd-datepicker{
-    padding-left: 28px !important;
 }
 .gd-signature-information input::-webkit-input-placeholder { /* Chrome/Opera/Safari */
     color: #959da5;

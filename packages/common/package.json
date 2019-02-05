@@ -1,6 +1,6 @@
 {
   "name": "@groupdocs.examples.jquery/common",
-  "version": "0.4.22",
+  "version": "0.9.0",
   "description": "This is common resources used by other GroupDocs jQuery plugins",
   "main": "index.js",
   "scripts": {

@@ -247,6 +247,9 @@ $(document).ready(function () {
             case "text":
                 if (isMobile()) {
                     hideMobileMenu();
+                } else {
+                    $('#gd-signature-context-panel').hide();
+                    inactiveAll();
                 }
                 initSignature(getCurrentPageNumber());
                 insertText();
@@ -392,14 +395,14 @@ function deleteSignatureFile(guid) {
         data: JSON.stringify(data),
         contentType: 'application/json',
         success: function (returnedData) {
-            if (returnedData.message != undefined) {
-                // open error popup
+            // hide loading spinner
+            fadeLeftBar(false);
+            // open error popup
+            if (returnedData && returnedData.message != undefined) {
                 toggleModalDialog(false, "");
                 printMessage(returnedData.message);
                 return;
             }
-            // hide loading spinner
-            fadeLeftBar(false);
             loadSignaturesTree('');
         },
         error: function (xhr, status, error) {
@@ -758,6 +761,7 @@ function saveDrawnText(properties, callback) {
     if (properties && !properties.imageGuid) {
         newId = properties.id;
     }
+    properties.id = undefined;
     var data = { properties: properties };
     // sign the document
     $.ajax({

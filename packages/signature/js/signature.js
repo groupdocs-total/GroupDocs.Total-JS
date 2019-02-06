@@ -86,6 +86,7 @@ $(document).ready(function () {
             printMessage("Please open document first");
         } else {
             closeAddCode();
+            closeAddDigital();
             var button = $(this);
             var type = button.attr("signature-type");
             if (type) {
@@ -270,6 +271,11 @@ $(document).ready(function () {
  */
 function closeAddCode() {
     $("#gd-add-optical-signature").remove();
+    changeListClass();
+}
+
+function closeAddDigital() {
+    $("#gd-add-digital-signature").remove();
     changeListClass();
 }
 

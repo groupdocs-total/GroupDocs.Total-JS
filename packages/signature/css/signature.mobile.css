@@ -303,32 +303,32 @@
         height: 18px;
     }
 
-    #gd-digital-container {
+    .gd-upload-container {
         width: 840px;
         height: 381px;
     }
 
-    #gd-digital-upload-container {
+    .gd-upload-inputs {
         width: 812px;
         height: 296px;
     }
 
-    .gd-add-digital, .gd-sign-digital {
+    .gd-add-upload-file, .gd-sign-digital {
         width: 813px;
         height: 52px;
         font-size: 32px;
     }
 
-    #gd-digital-upload-container input {
+    .gd-upload-inputs input {
         height: 300px;
     }
 
-    #gd-digital-upload-container i {
+    .gd-upload-inputs i {
         font-size: 139px;
         margin-top: 82px;
     }
 
-    .gd-digital-upload-title {
+    .gd-upload-title {
         font-size: 48px;
     }
 

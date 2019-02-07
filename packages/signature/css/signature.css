@@ -186,7 +186,7 @@ SIGNATURE TOOL BAR
     outline: 0;
     background-color: rgba(255,255,255,0.5);
 }
-#gd-digital-container {
+.gd-upload-container {
     background-color: #ffffff;
     width: 278px;
     height: 252px;
@@ -195,7 +195,7 @@ SIGNATURE TOOL BAR
     margin-top: 16px;
     margin-left: 12px;
 }
-.gd-add-digital, .gd-sign-digital {
+.gd-add-upload-file, .gd-sign-digital {
     width: 263px;
     height: 27px;
     background-color: #3787F5;
@@ -208,7 +208,7 @@ SIGNATURE TOOL BAR
     cursor: pointer;
     padding-top: 5px;
 }
-#gd-digital-upload-container {
+.gd-upload-inputs {
     width: 263px;
     height: 201px;
     text-align: center;
@@ -216,17 +216,17 @@ SIGNATURE TOOL BAR
     box-shadow: 0 0 3px #ddd;
     border-radius: 3px;
 }
-#gd-digital-upload-container i {
+.gd-upload-inputs i {
     font-size: 52px;
     color: #959DA5;
     margin: 61px 112px 0px 112px;
 }
-.gd-digital-upload-title {
+.gd-upload-title {
     color: #5C737F;
     font-size: 13px;
     margin: 12px 80px 61px 82px;
 }
-#gd-digital-upload-container input {
+.gd-upload-inputs input {
     opacity: 0;
     position: absolute;
     cursor: pointer;
@@ -252,12 +252,6 @@ SIGNATURE TOOL BAR
 MODAL
 ******************************************
 */
-#gd-signature-upload-input {
-    opacity: 0;
-    filter:alpha(opacity=0);
-    display: none;
-}
-
 .gd-lightbox-close {
     left: 13px;
     top: 14px;

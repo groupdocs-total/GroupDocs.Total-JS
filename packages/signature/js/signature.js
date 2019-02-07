@@ -86,7 +86,8 @@ $(document).ready(function () {
             printMessage("Please open document first");
         } else {
             closeAddCode();
-            closeAddDigital();
+            closeAddUpload();
+            changeListClass();
             var button = $(this);
             var type = button.attr("signature-type");
             if (type) {
@@ -120,14 +121,36 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Upload signature event
     //////////////////////////////////////////////////
-    $('#gd-signature-upload-input').on('change', function (e) {
-        var uploadFiles = $(this).get(0).files;
-        // upload file one by one
-        for (var i = 0; i < uploadFiles.length; i++) {
-            // upload local file
-            uploadSignature(uploadFiles[i], i, "");
+    $('#gd-upload-input').on('change', function (e) {
+        var fileName = '';
+        $.each( $(this)[0].files, function(index, elem) {
+            fileName += elem.name + ', ';
+        });
+        $("#gd-upload-title").html(fileName.substring(0, fileName.lastIndexOf(',')));
+    });
+
+
+    $('#gd-add-upload-file').on(userMouseClick, function (e) {
+        e.preventDefault();
+        var uploadFiles = $("#gd-upload-input").get(0).files;
+        // upload file
+        if (uploadFiles.length > 0) {
+            if ("digital" == signature.signatureType) {
+                uploadSignature(uploadFiles[0], 0, "", loadSignaturesTree);
+            } else {
+                for (var i = 0; i < uploadFiles.length - 1; i++) {
+                    // upload local file
+                    uploadSignature(uploadFiles[i], i, "");
+                }
+                uploadSignature(uploadFiles[uploadFiles.length - 1], uploadFiles.length - 1, "", loadSignaturesTree);
+            }
+            $("#gd-upload-signature").hide();
         }
-        loadSignaturesTree('');
+    });
+
+    $('#gd-close-upload-signature').on(userMouseClick, function () {
+        resetUploadFiles();
+        $("#gd-upload-signature").hide();
     });
 
     //////////////////////////////////////////////////
@@ -256,10 +279,10 @@ $(document).ready(function () {
                 insertText();
                 break;
             case "image":
-                openUploadSignatures();
+                openUploadSignatures("Add image signature", true);
                 break;
             case "digital":
-                openNewDigital();
+                openUploadSignatures("Add digital signature", false);
                 break;
         }
     });
@@ -271,12 +294,10 @@ $(document).ready(function () {
  */
 function closeAddCode() {
     $("#gd-add-optical-signature").remove();
-    changeListClass();
 }
 
-function closeAddDigital() {
-    $("#gd-add-digital-signature").remove();
-    changeListClass();
+function closeAddUpload() {
+    $("#gd-upload-signature").hide();
 }
 
 /**
@@ -316,11 +337,16 @@ FUNCTIONS
 /**
 * Open window for upload signatures
 */
-function openUploadSignatures() {
-    $('#gd-signature-upload-input').show();
-    $('#gd-signature-upload-input').focus();
-    $('#gd-signature-upload-input').click();
-    $('#gd-signature-upload-input').hide();
+function openUploadSignatures(title, multiple) {
+    resetUploadFiles();
+    $("#gd-upload-panel-title").html(title);
+    $("#gd-upload-input")[0].multiple = multiple;
+    $("#gd-upload-signature").show();
+}
+
+function resetUploadFiles() {
+    $("#gd-upload-title").html("Upload file");
+    $("#gd-upload-input").val('');
 }
 
 /**
@@ -429,6 +455,7 @@ function deleteSignatureFile(guid) {
  * @param {object} callback - function that will be executed after ajax call
  */
 function loadSignaturesTree(dir, callback) {
+    dir = dir||'';
     $('#gd-signature-list').html("");
     var data = { path: dir, signatureType: signature.signatureType };
     currentDirectory = dir;
@@ -543,7 +570,7 @@ function loadSignaturesTree(dir, callback) {
  * @param {int} index - Number of the file to upload
  * @param {string} url - URL of the file, set it if URL used instead of file
  */
-function uploadSignature(file, index, url) {
+function uploadSignature(file, index, url, callback) {
     // prepare form data for uploading
     var formData = new FormData();
     // add local file for uploading
@@ -589,7 +616,6 @@ function uploadSignature(file, index, url) {
                 printMessage(returnedData.message);
                 return;
             }
-            loadSignaturesTree('');
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -597,6 +623,10 @@ function uploadSignature(file, index, url) {
             toggleModalDialog(false, "");
             // open error popup
             printMessage(err.message);
+        }
+    }).done(function () {
+        if (typeof callback == "function") {
+            callback();
         }
     });
 }
@@ -808,45 +838,6 @@ function saveDrawnText(properties, callback) {
         if (typeof callback == "function" && data) {
             callback(data);
         }
-    });
-}
-
-/**
- * Generate HTML content of the Digital sign modal
- */
-function openNewDigital() {
-    var html = '<div id="gd-add-digital-signature"><div class="gd-signature-list-title">' +
-        '<i class="fas fa-times" id="gd-close-digital-signature"></i>' +
-        '<div class="gd-signature-context-panel-title">Add digital signture</div>' +
-        '</div>' +
-        '<div id="gd-digital-container">' +
-        '<div id="gd-digital-upload-container">' +
-        '<input type="file" id="gd-digital-upload" class="gd-digital-upload"/>' +
-        '<i class="fas fa-file-upload"></i>' +
-        '<div class="gd-digital-upload-title">Upload certificate</div>' +
-        '</div>' +
-        '<div class="gd-add-digital">Add</div>' +
-        '</div>';
-    $("#gd-signature-context-panel").prepend(html);
-
-    $("#gd-digital-upload").on('change', function (e) {
-        var fileName = e.target.value.split('\\').pop();
-        $(".gd-digital-upload-title")[0].innerHTML = fileName;
-    });
-
-    $('.gd-add-digital').on(userMouseClick, function (e) {
-        e.preventDefault();
-        var uploadFile = $("#gd-digital-upload").get(0).files;
-        // upload file        
-        if (uploadFile.length > 0) {
-            uploadSignature(uploadFile[0], 0, "");
-            loadSignaturesTree('');
-            $("#gd-add-digital-signature").remove();
-        }
-    });
-
-    $("#gd-close-digital-signature").on(userMouseClick, function () {
-        $("#gd-add-digital-signature").remove();
     });
 }
 
@@ -1495,9 +1486,9 @@ GROUPDOCS.SIGNATURE PLUGIN
             '</ul>' +
             '</div>' +
             '<div id="gd-signature-context-panel" class="gd-signature-context-panel">' +
+            getHtmlUploadSignatures() +
             '<div class="gd-signature-list-title">' +
             '<i class="fa fa-plus" id="gd-new-signature"></i>' +
-            '<input id="gd-signature-upload-input" type="file" multiple >' +
             '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
             '</div>' +
             '</div>' +
@@ -1510,6 +1501,23 @@ GROUPDOCS.SIGNATURE PLUGIN
             '<div id="gd-signature-list" class="gd-signature-list gd-signature-list-scroll">' +
             '</div>' +
             '</div>' +
+            '</div>' +
+            '</div>';
+    }
+
+    function getHtmlUploadSignatures() {
+        return '<div id="gd-upload-signature" class="gd-upload-signature">' +
+            '<div class="gd-signature-list-title">' +
+                '<i class="fas fa-times" id="gd-close-upload-signature"></i>' +
+                '<div id="gd-upload-panel-title" class="gd-signature-context-panel-title">Add signature</div>' +
+            '</div>' +
+            '<div id="gd-upload-container" class="gd-upload-container">' +
+                '<div class="gd-upload-inputs">' +
+                    '<input type="file" id="gd-upload-input" class="gd-upload-input"/>' +
+                    '<i class="fas fa-file-upload"></i>' +
+                    '<div id="gd-upload-title" class="gd-upload-title">Upload file</div>' +
+                '</div>' +
+                '<div id="gd-add-upload-file" class="gd-add-upload-file">Add</div>' +
             '</div>' +
             '</div>';
     }

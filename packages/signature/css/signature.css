@@ -366,6 +366,8 @@ SIGNATURE IMAGE
     cursor: default;
     width: max-content;
 	width: -moz-max-content;
+	width: -webkit-max-content;
+	display: inline-table;
 }
 .gd-text {
     width: inherit;

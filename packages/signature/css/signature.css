@@ -105,7 +105,7 @@ SIGNATURE TOOL BAR
     display: none;
     background-color: #F3F3F3;
     left: 53px;
-    width: 260px;
+    width: 300px;
     height: 100%;
     position: absolute;
 }
@@ -120,6 +120,13 @@ SIGNATURE TOOL BAR
     border: 5px solid rgba(0, 0, 0, 0);
     border-right-color: #F3F3F3;
     margin-top: -5px;
+}
+.gd-signature-context-pane-wrapper{
+    display: flex;
+    flex:1;
+    flex-direction: column;
+    align-items: stretch;
+    height: 95vh;
 }
 .gd-signature-context-panel.text::after {
     top: 30px;
@@ -144,22 +151,32 @@ SIGNATURE TOOL BAR
 }
 .gd-signature-list-wrapper {
     display: flex;
-    height: Calc(100% - 20px);
+    flex:1;
+    overflow: auto;
 }
 .gd-signature-list-scroll {
     overflow-x: hidden;
     overflow-y: auto !important;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0px 11px 0px 12px;
+}
+.gd-signature-list-title{
+    display: flex;
+    flex-direction: row;
 }
 .gd-signature-list-title > i {
+    margin: 16px 24px 14px 0px;
     color: #676767;
-    position: absolute;
-    right: 15px;
     cursor: pointer;
 }
 .gd-signature-context-panel-title {
     color: #AAAAAA;
-    font-size: 14px;
-    margin: 7px 0 0 12px;
+    font-size: 12px;
+    width: 100%;
+    font-weight: bold;
+    margin: 16px 0 14px 12px;
 }
 .gd-left-bar-spinner {
     left: 30%;
@@ -243,7 +260,8 @@ MODAL
 }
 
 .gd-signature-clickable {
-    width: Calc(100% - 30px);
+    width: 100%;
+    padding: 17px 0px 20px 30px;
 }
 /*
 ******************************************
@@ -340,9 +358,8 @@ BROWSE SIGNATURES SLIDE
     background-color: #e5e5e5;  
 }
 .gd-signature-item i {
-    position: absolute;
-    right: 10px;
-    top: 16px;
+    padding: 19px 15px 19px 0px;
+    font-size: 12px;
     color: #676767;
     cursor: pointer;
 }
@@ -350,30 +367,36 @@ BROWSE SIGNATURES SLIDE
     margin-left: 17px;
 }
 .gd-signature-item .gd-signature-name {
-	margin: 3px;
-    font-size: 14px;
-    color: #AAAAAA;
-    position: absolute;
-    height: 50px;
-    width: 146px;
+    display: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 160px;
+    font-size: 12px;
+    color: rgba(0,0,0,0.36);
     cursor: pointer;
 }
 .gd-signature .fa-level-up {
     margin-left: 23px;
 }
 .gd-signature-thumbnail {
-    background-color: #ffffff;
-    width: 250px;
-    height: 53px;
-    display: inline-block;
+    background-color: rgba(255,255,255,0.75);
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 3px;
     cursor: pointer;
-    margin: 5px;
 	position: relative;
+    margin-bottom: 6px;
+    min-height: 50px;
+}
+.gd-signature-thumbnail:hover{
+    background-color: rgba(255,255,255,1);
 }
 .gd-signature-thumbnail-image {
     width: 47px;
     height: 47px;
-    margin: 3px;
+    padding: 2px;
 }
 .gd-signature-radio {
     opacity: 0;

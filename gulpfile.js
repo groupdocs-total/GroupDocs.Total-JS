@@ -18,6 +18,6 @@ gulp.task('browser-sync', function() {
         },
         plugins: ['bs-console-qrcode']
     });
-    gulp.watch(["**/css/*.css"],['css-watch']);
-    gulp.watch(["**/js/*.js"], ['js-watch']);
+    gulp.watch(["**/css/*.css"],gulp.series('css-watch'));
+    gulp.watch(["**/js/*.js"], gulp.series('js-watch'));
 });

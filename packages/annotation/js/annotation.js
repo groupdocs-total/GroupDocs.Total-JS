@@ -65,6 +65,11 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('#gd-btn-download').off(userMouseClick);
 
+	//////////////////////////////////////////////////
+    // Disable default print event
+    //////////////////////////////////////////////////
+    $('#gd-btn-print').off(userMouseClick);
+
     //////////////////////////////////////////////////
     // Add SVG to all pages DIVs
     //////////////////////////////////////////////////
@@ -135,8 +140,7 @@ $(document).ready(function () {
                 documentGuid = $(this).attr('data-guid');
                 toggleModalDialog(false, '');
                 loadDocument(function (data) {
-                    // Generate thumbnails
-                    generatePagesTemplate(data, data.length);
+                    generatePagesTemplate(data);
                 });
             }
         }
@@ -330,6 +334,13 @@ $(document).ready(function () {
     // Comment form submit event
     //////////////////////////////////////////////////
 	$('#gd-reply-form').submit(saveReply);
+
+	//////////////////////////////////////////////////
+    // Print event
+    //////////////////////////////////////////////////
+	 $('#gd-btn-print-value > li').on(userMouseClick, function (e) {
+        printAnnotated($(this));
+    });
 });
 
 /*
@@ -361,7 +372,7 @@ function getMousePosition(event) {
 /**
  * Annotate current document
  */
-function annotate() {
+function annotate(print) {
     // set current document guid - used to check if the other document were opened
     var url = getApplicationPath('annotate');
     var annotationsToAdd = [];
@@ -373,8 +384,19 @@ function annotate() {
         guid: documentGuid.replace(/\\/g, "//"),
         password: password,
         annotationsData: annotationsToAdd,
-        documentType: getDocumentFormat(documentGuid).format
+        documentType: getDocumentFormat(documentGuid).format,
+		print: (typeof print != "undefined") ? true : false
     };
+	if(print){
+		// force each document page to be printed as a new page
+		var cssPrint = '<style>' +
+				'.gd-page { display: block !important; height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}'+
+		'</style>';
+		// open print dialog
+		var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+		// add current document into the print window
+		windowObject.document.writeln(cssPrint);
+	}
     // annotate the document
     $.ajax({
         type: 'POST',
@@ -403,11 +425,27 @@ function annotate() {
                 '    <div class="sa-fix"></div>\n' +
                 '  </div>\n' +
                 '</div></div>';
-            toggleSuccessModalDialog(true, 'Annotation', result);
-            $('.gd-modal-close-action').on('click', function () {
-                toggleSuccessModalDialog(false, 'Annotation', result)
-                $('.gd-modal-close-action').off('click').click(closeModal);
-            });
+			if(print){
+				var printHtml = "";
+				for(i = 0; i < returnedData.pages.length; i++){
+					printHtml = printHtml + '<div class="gd-page print"><image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + returnedData.pages[i].data + '" alt></image></div>';
+				}
+				windowObject.document.writeln(printHtml);
+
+				$(windowObject.document).ready(function() {
+					windowObject.document.close();
+					windowObject.focus();
+					windowObject.print();
+					windowObject.close();
+				});
+
+			} else {
+				toggleSuccessModalDialog(true, 'Annotation', result);
+				$('.gd-modal-close-action').on('click', function () {
+					toggleSuccessModalDialog(false, 'Annotation', result)
+					$('.gd-modal-close-action').off('click').click(closeModal);
+				});
+			}
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -1080,6 +1118,40 @@ function hideNotSupportedAnnotations(supportedAnnotations){
 	}
 }
 
+/**
+* Print current document
+*/
+function printAnnotated(button) {
+	var documentContainer = "";
+	var cssPrint = "";
+	if ($(button).attr("id") == "gd-annotated-print") {
+		annotate(print);
+    } else {
+		documentContainer = $("#gd-panzoom");
+		// force each document page to be printed as a new page
+		cssPrint = '<style>' +
+				'.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
+		// set correct page orientation if page were rotated
+		documentContainer.find(".gd-page").each(function (index, page) {
+        if ($(page).css("transform") != "none") {
+            cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
+        }
+		});
+		cssPrint = cssPrint + '</style>';
+		// open print dialog
+		var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+		// add current document into the print window
+		windowObject.document.writeln(cssPrint);
+		// add current document into the print window
+		$.each();
+		windowObject.document.writeln(documentContainer[0].innerHTML);
+		windowObject.document.close();
+		windowObject.focus();
+		windowObject.print();
+		windowObject.close();
+	}
+}
+
 /*
 ******************************************************************
 ******************************************************************
@@ -1118,12 +1190,40 @@ GROUPDOCS.ANNOTATION PLUGIN
                 textUnderlineAnnotation: true,
                 distanceAnnotation: true,
                 downloadOriginal: true,
-                downloadAnnotated: true
+                downloadAnnotated: true,
+				defaultDocument: "",
+				preloadPageCount: 0,
+				pageSelector: true,
+				download: true,
+				upload: true,
+				print: true,
+				browse: true,
+				rewrite: true,
+				applicationPath: "http://localhost:8080/annotation",
+				enableRightClick: true
             };
-
+			$('#element').viewer({
+					applicationPath: options.applicationPath,
+                    defaultDocument: options.defaultDocument,
+                    htmlMode: false,
+                    preloadPageCount: options.preloadPageCount,
+                    zoom : false,
+                    pageSelector: options.pageSelector,
+                    search: false,
+                    thumbnails: false,
+                    rotate: false,
+                    download: options.download,
+                    upload: options.upload,
+                    print: options.print,
+                    browse: options.browse,
+                    rewrite: options.rewrite,
+					saveRotateState: false,
+					enableRightClick: options.enableRightClick
+			});
             options = $.extend(defaults, options);
 
             getHtmlDownloadPanel();
+			getHtmlPrintPanel();
             $('#gd-navbar').append(getHtmlSavePanel);
             // assembly annotation tools side bar html base
             $(".wrapper").append(getHtmlAnnotationsBarBase);
@@ -1420,6 +1520,23 @@ GROUPDOCS.ANNOTATION PLUGIN
         downloadBtn.html(downloadDropDown);
     }
 
+	 function getHtmlPrintPanel() {
+        var downloadBtn = $("#gd-btn-print");
+        var defaultHtml = downloadBtn.html();
+        var downloadDropDown = '<li class="gd-nav-toggle" id="gd-print-val-container">' +
+									'<span id="gd-print-value">' +
+										'<i class="fa fa-print"></i>' +
+										'<span class="gd-tooltip">Print</span>' +
+									'</span>' +
+									'<span class="gd-nav-caret"></span>' +
+									'<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-print-value">' +
+										'<li id="gd-original-print">Print Original</li>'+
+										'<li id="gd-annotated-print">Print Annotated</li>'+
+									'</ul>' +
+								'</li>';
+        downloadBtn.html(downloadDropDown);
+    }
+
     function getHtmlDownloadOriginalElement() {
         return '<li id="gd-original-download">Download Original</li>';
     }
@@ -1430,108 +1547,3 @@ GROUPDOCS.ANNOTATION PLUGIN
 
 })(jQuery);
 
-function appendHtmlContent(pageNumber, documentName, prefix, width, height) {
-    // set empty for undefined of null
-    prefix = prefix || '';
-    // initialize data
-    var gd_page = $('#gd-page-' + pageNumber);
-    var pageData = documentData.pages[pageNumber-1];
-
-    if(preloadPageCount === 0 && pageData.data){
-        renderpage(documentName, gd_page, null, prefix, width, height, pageData.data);
-    }else{
-        if (!gd_prefix_page.hasClass('loaded')) {
-            gd_prefix_page.addClass('loaded');
-            // get document description
-            var data = { guid: documentGuid, page: pageNumber, password: password };
-            $.ajax({
-                type: 'POST',
-                url: getApplicationPath('loadDocumentPage'),
-                data: JSON.stringify(data),
-                global: false,
-                contentType: "application/json",
-                success: function (htmlData) {
-                    renderpage(documentName, gd_page, htmlData, prefix, width, height);
-                },
-                error: function (xhr, status, error) {
-                    fadeAll(false);
-                    var err = eval("(" + xhr.responseText + ")");
-                    // open error popup
-                    printMessage(err ? err.message : 'Error occurred while loading');
-                }
-            });
-        }
-    }
-}
-
-function renderpage(documentName, gd_page, htmlData, prefix, width, height, data) {
-    // only for the first page
-    if (loadedPagesCount == 0) {
-        fadeAll(false);
-    }
-    if (htmlData && htmlData.error !== undefined) {
-        // open error popup
-        printMessage(htmlData.error);
-        return;
-    }
-    // fix zoom in/out scaling
-    var zoomValue = 1;
-
-    data = data || htmlData.pageImage;
-    gd_page.find('.gd-page-spinner').hide();
-    // check if page is horizontally displayed
-    if (width > height) {
-        zoomValue = 0.79;
-    }
-    // if current document if image file fix its zoom
-    if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
-        if (width > $(window).width()) {
-            zoomValue = 0.79;
-        }
-    } else {
-        zoomValue = 1.2;
-    }
-    // set correct size
-    gd_page.css('width', width);
-    gd_page.css('height', height);
-    gd_page.css('zoom', zoomValue);
-    // append page image, in image mode append occurred after setting the size to avoid zero size usage
-    gd_page.append('<div class="gd-wrapper">' +
-        '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + data + '" alt></image>' +
-        '</div>');
-    // set correct width and hight for OneNote format
-    if (documentName.substr((documentName.lastIndexOf('.') + 1)) == "one") {
-        if (htmlMode) {
-            $(".gd-wrapper").css("width", "initial");
-        } else {
-            $(".gd-wrapper").css("width", "inherit");
-        }
-    }
-    // rotate page if it were rotated earlier
-    loadedPagesCount = loadedPagesCount + 1;
-    if (prefix == "thumbnails-") {
-        var gd_prefix_page = $('#gd-' + prefix + 'page-' + data.number);
-        if (width > ($("#gd-thumbnails").width() * 2)) {
-            zoomValue = 0.5;
-        } else {
-            zoomValue = 1.2;
-        }
-        // set correct size
-        gd_prefix_page.css('width', width);
-        gd_prefix_page.css('height', height);
-        gd_prefix_page.css('zoom', zoomValue);
-        // append page image, in image mode append occurred after setting the size to avoid zero size usage
-        gd_prefix_page.append('<div class="gd-wrapper">' +
-            '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + data + '" alt></image>' +
-            '</div>');
-    } else {
-        var pagesAttr = $('#gd-page-num').text().split('/');
-        var lastPageNumber = parseInt(pagesAttr[1]);
-        if(loadedPagesCount == lastPageNumber){
-            $('#gd-btn-print').bind('click', printDocument);
-            $('#gd-btn-print').removeClass('disabled');
-            $('#gd-btn-download').removeClass('disabled');
-            loadedPagesCount = 0;
-        }
-    }
-}

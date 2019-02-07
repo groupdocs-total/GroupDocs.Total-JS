@@ -29,24 +29,17 @@
     <body>
 	    <div id="element"></div>
         <script type="text/javascript">
-            var host = !window.location.hostname ? 'localhost' : window.location.hostname;
-            $('#element').viewer({
-                applicationPath: 'http://' + host + ':8080/annotation',
-                defaultDocument: '',
-                htmlMode: false,
-                preloadPageCount: 0,
-                zoom : false,
-                pageSelector: true,
-                search: false,
-                thumbnails: false,
-                rotate: false,
-                download: true,
+            var host = !window.location.hostname ? 'localhost' : window.location.hostname;            
+            $('#element').annotation({
+				applicationPath: 'http://' + host + ':8080/annotation',
+				defaultDocument: '',
+				preloadPageCount: 0,
+				pageSelector: true,
+				download: true,
                 upload: true,
                 print: true,
                 browse: true,
-                rewrite: true
-            });
-            $('#element').annotation({
+                rewrite: true,
                 textAnnotation: true,
                 areaAnnotation: true,
                 pointAnnotation: true,
@@ -61,7 +54,8 @@
                 textUnderlineAnnotation: true,
                 distanceAnnotation: true,
                 downloadOriginal: true,
-                downloadAnnotated: true
+                downloadAnnotated: true,
+				enableRightClick: true
             });
         </script>
     </body>

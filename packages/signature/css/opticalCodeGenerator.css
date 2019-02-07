@@ -16,7 +16,7 @@
     align-items: stretch;
 }
 
-#gd-qr-container input {
+.gd-qr-property {
     font-size: 12px;
     width: 100%;
     border: 2px solid #DDD;

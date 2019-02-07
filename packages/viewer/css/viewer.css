@@ -289,14 +289,14 @@ PAGES
 ******************************************
 */
 #gd-pages {
-    background-color: #e7e7e7;
-    position: relative;
-    width: 100%;
-    height: 100%;
+   background-color: #e7e7e7;    
+    width: 100%;   
     overflow-x: hidden;
     overflow-y: auto !important;
-    padding-top: 60px;
-
+    padding-top: 10px;
+    margin-top: 50px;
+    transition: all 0.4s;
+    overflow: visible;   
     /* Hides the scrollbar */
     transition:all 0.4s;
     overflow: visible;
@@ -393,7 +393,7 @@ Thumbnails sidebar
     margin-left: -57px;
 }
 #gd-thumbnails-panzoom > .gd-page {
-    margin-bottom: 100px;
+    margin-bottom: 333px;
     margin-left: 0;
 }
 #gd-thumbnails-panzoom > .gd-thumbnails-landscape{

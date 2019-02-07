@@ -6,6 +6,7 @@
         <link type="text/css" rel="stylesheet" href="packages/common/css/swiper.min.css">
         <link type="text/css" rel="stylesheet" href="packages/common/css/jquery-ui.min.css"/>
         <link type="text/css" rel="stylesheet" href="packages/common/css/circle-progress.css"/>
+		<link type="text/css" rel="stylesheet" href="packages/common/css/font-awesome.min.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer-dark.css"/>
@@ -15,6 +16,7 @@
         <link type="text/css" rel="stylesheet" href="packages/signature/css/signature.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="packages/signature/css/stampGenerator.css"/>
         <link type="text/css" rel="stylesheet" href="packages/signature/css/opticalCodeGenerator.css"/>
+        <link type="text/css" rel="stylesheet" href="packages/signature/css/opticalCodeGenerator.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="packages/signature/css/textGenerator.css"/>
         <link type="text/css" rel="stylesheet" href="packages/signature/css/bcPicker.css"/>
 		<link type="text/css" rel="stylesheet" href="packages/signature/css/bcPicker.mobile.css"/>
@@ -26,37 +28,29 @@
 		<script type="text/javascript" src="packages/common/js/jquery.ui.touch-punch.min.js"></script>
         <script type="text/javascript" src="packages/viewer/js/viewer.js"></script>
 		<script type="text/javascript" src="packages/signature/js/fontsObject.js"></script>
+        <script type="text/javascript" src="packages/signature/js/jquery.ba-throttle-debounce.js"></script>
         <script type="text/javascript" src="packages/signature/js/signature.js"></script>
         <script type="text/javascript" src="packages/signature/js/rotatable.js"></script>
         <script type="text/javascript" src="packages/signature/js/bcPaint.js"></script>
-        <script type="text/javascript" src="packages/signature/js/bcPicker.js"></script>	
+        <script type="text/javascript" src="packages/signature/js/bcPicker.js"></script>
         <script type="text/javascript" src="packages/signature/js/stampGenerator.js"></script>
-		<script type="text/javascript" src="packages/signature/js/jquery.ba-throttle-debounce.js"></script>
         <script type="text/javascript" src="packages/signature/js/opticalCodeGenerator.js"></script>
         <script type="text/javascript" src="packages/signature/js/textGenerator.js"></script>
-        <script type="text/javascript" src="packages/common/js/jquery.ui.touch-punch.min.js"></script>
     </head>
     <body>
         <div id="element"></div>
         <script type="text/javascript">
             var host = !window.location.hostname ? 'localhost' : window.location.hostname;
-            $('#element').viewer({
-                applicationPath: 'http://' + host + ':8080/signature/',
+            $('#element').signature({
+				applicationPath: 'http://' + host + ':8080/signature/',
 			    defaultDocument: '',
-			    htmlMode: false,
-			    preloadPageCount: 0,
-			    rewrite: true,
-			    zoom: false,
-			    pageSelector: true,
-			    search: false,
-			    thumbnails: false,
-			    rotate: false,
-			    download: true,
+				preloadPageCount: 0,
+				rewrite: true,
+				pageSelector: true,
+				download: true,
 			    upload: true,
 			    print: true,
-			    browse: true
-            });
-            $('#element').signature({
+			    browse: true,
                 textSignature: true,
                 imageSignature: true,
                 digitalSignature: true,
@@ -65,7 +59,8 @@
                 stampSignature: true,
                 handSignature: true,
                 downloadOriginal: true,
-                downloadSigned: true
+                downloadSigned: true,
+				enableRightClick: true
             });
         </script>
     </body>

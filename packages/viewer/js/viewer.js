@@ -2178,7 +2178,10 @@ $.fn.isOnScreen = function (x, y) {
     };
     viewport.right = viewport.left + win.width();
     viewport.bottom = viewport.top + win.height();
-	var zoom = parseInt($("#gd-zoom-value").html()) / 100;
+    var zoom = parseInt($("#gd-zoom-value").html()) / 100;
+    if (isNaN(zoom)) {
+        zoom = 1;
+    }
     var height = this.outerHeight() * zoom;
     var width = this.outerWidth() * zoom;
 

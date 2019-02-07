@@ -68,7 +68,7 @@ $(document).ready(function(){
 	$('body').on(userMouseClick, '.fa-check', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
-		saveDrawnStamp(applyStamp);
+		saveDrawnStamp();
 	});
 
 	// open border color palit
@@ -406,7 +406,7 @@ $(document).ready(function(){
 			return html;
 		},
 
-		refreshFonts() {
+		refreshFonts : function() {
 			var htmlFontsSelect = getHtmlFontsSelect(mergedFonts);
 			textContextMenuButtons[0] = htmlFontsSelect;
 		},
@@ -550,10 +550,6 @@ function cleanProperties(){
 		italic: false,
 		underline: false
 	}
-}
-
-function applyStamp(){
-	toggleLightBox(false, "", "");	
 }
 
 function setSizeProperties(properties, element){

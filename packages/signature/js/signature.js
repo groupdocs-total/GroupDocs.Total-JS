@@ -501,11 +501,11 @@ function loadSignaturesTree(dir, callback) {
 
                     $('#gd-signature-list').append(
                         '<div data-guid="' + guid + '" id="gd-signature-item-' + index + '" class="gd-signature-item gd-signature-thumbnail ui-draggable ui-draggable-handle">' +
-                        '<div data-guid="' + guid + '" class="gd-signature-clickable">' +
-                        imageBlock +
-                        '<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
-                        '</div>' +
-                        '<i class="fa fa-trash-o"></i>' +
+                            imageBlock +
+                            '<div data-guid="' + guid + '" class="gd-signature-clickable">' +
+                            '<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
+                            '</div>' +
+                            '<i class="fa fa-trash-o"></i>' +
                         '</div>');
 
                     if (!isMobile() && "digital" != signature.signatureType) {
@@ -671,7 +671,7 @@ function sign() {
             signedDocumentGuid = returnedData.guid;
             // prepare signing results HTML
             result = '<div id="gd-modal-signed">Document signed successfully</div>';
-            // show signing results           
+            // show signing results
             $(".gd-modal-body").append(result);
             $("#gd-modal-signed").toggleClass("gd-image-signed");
         },
@@ -1489,29 +1489,31 @@ GROUPDOCS.SIGNATURE PLUGIN
 
     function getHtmlLeftBarBase() {
         return '<div id="gd-left-bar-wrapper" class="gd-left-bar-wrapper">' +
-            // signature tools
-            '<div class="gd-left-bar-tools-container">' +
-            '<ul id="gd-signature-tools">' +
-            '</ul>' +
-            '</div>' +
-            '<div id="gd-signature-context-panel" class="gd-signature-context-panel">' +
-            getHtmlUploadSignatures() +
-            '<div class="gd-signature-list-title">' +
-            '<i class="fa fa-plus" id="gd-new-signature"></i>' +
-            '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
-            '</div>' +
-            '</div>' +
+                    // signature tools
+                    '<div class="gd-left-bar-tools-container">' +
+                        '<ul id="gd-signature-tools">' +
+                        '</ul>' +
+                    '</div>' +
+                    '<div id="gd-signature-context-panel" class="gd-signature-context-panel">' +
+                        '<div class="gd-signature-context-pane-wrapper">'+
+                            getHtmlUploadSignatures() +
+                            '<div class="gd-signature-list-title">' +
+                                '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
+                                '</div>' +
+                                '<i class="fa fa-plus" id="gd-new-signature"></i>' +
+                            '</div>' +
 
-            '<div id="gd-left-bar-fade" class="gd-left-bar-fade">' +
-            '<div id="gd-left-bar-spinner" class="gd-left-bar-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading...</div>' +
-            '</div>' +
+                            '<div id="gd-left-bar-fade" class="gd-left-bar-fade">' +
+                            '<div id="gd-left-bar-spinner" class="gd-left-bar-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading...</div>' +
+                            '</div>' +
 
-            '<div id="gd-signature-list-wrapper" class="gd-signature-list-wrapper">' +
-            '<div id="gd-signature-list" class="gd-signature-list gd-signature-list-scroll">' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>';
+                            '<div id="gd-signature-list-wrapper" class="gd-signature-list-wrapper">' +
+                                '<div id="gd-signature-list" class="gd-signature-list gd-signature-list-scroll">' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>'+
+                    '</div>' +
+                '</div>';
     }
 
     function getHtmlUploadSignatures() {

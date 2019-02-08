@@ -56,7 +56,7 @@ $(document).ready(function () {
 			} else {
 				title = "Bar Code";
 			}
-			$(this).prepend($.fn.opticalCodeGenerator.baseHtml(title));
+			$(this).find('.gd-signature-context-pane-wrapper').prepend($.fn.opticalCodeGenerator.baseHtml(title));
 			$(this).find("#gd-qr-text").focus();
 		}
 	}
@@ -70,15 +70,21 @@ $(document).ready(function () {
 		},
 
 		baseHtml : function(title){
-			var html = 	'<div id="gd-add-optical-signature"><div class="gd-signature-list-title">'+
-							'<i class="fas fa-times" id="gd-close-signature"></i>'+
-							'<div class="gd-signature-context-panel-title">New ' + title +'</div>'+
-						'</div>'+
-						'<div id="gd-qr-container">' +
-							'<div id="gd-qr-preview-container" class="gd-qr-preview-container"></div>' +
-							'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="this is my text "/>' +
-							'<div class="gd-add-optical"><i class="fas fa-plus"></i></div>'+
-						'</div></div>';
+			var html = 	'<div id="gd-add-optical-signature">' +
+							'<div class="gd-signature-list-title">'+
+								'<div class="gd-signature-context-panel-title">New ' + title +'</div>'+
+                				'<i class="fas fa-times" id="gd-close-signature"></i>'+
+							'</div>'+
+							'<div id="gd-qr-container">' +
+								'<div id="gd-qr-preview-container" class="gd-qr-preview-container">' +
+									'<i class="fa fa-qrcode"></i>'+
+								'</div>' +
+								'<div class="new-signature-input-group">'+
+									'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="QR code"/>' +
+									'<div class="gd-add-optical"><i class="fas fa-plus"></i></div>'+
+								'</div>'+
+							'</div>' +
+						'</div>';
 			return html;
 		}
 	});

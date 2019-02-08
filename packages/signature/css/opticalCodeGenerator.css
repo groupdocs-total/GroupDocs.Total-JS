@@ -1,40 +1,75 @@
 #gd-qr-container {
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: #ffffff;
-    width: 100%;
     border: 1px solid #3787F5;
-    margin-top: 15px;
+    border-radius: 5px;
+    margin: 10px 10px 14px 12px;
     padding: 5px;
 }
 
 #gd-add-optical-signature {
-	margin: 0 5px 0 5px
+}
+
+.new-signature-input-group{
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
 }
 
 .gd-qr-property {
-    border: 1px solid #4D73BC;
+    font-size: 12px;
+    width: 100%;
+    border: 2px solid #DDD;
+    border-radius: 3px;
     padding: 5px;
-    color: #5C737F;
-    width: 80%;
+    outline: none;
+    color:#3a4e5b;
+    transition: border-color 0.3s linear;
+    margin: 5px 0px 0px 0px;
+}
+#gd-qr-container input:focus{
+    border: 2px solid #00c4d7;
+    transition: border-color 0.3s linear;
 }
 
 .gd-add-optical {
-	display: -webkit-inline-box;
-    width: 27px;
-    height: 27px;
+    display: block;
+    width: 32px;
+    height: 28px;
+    border-radius: 3px;
+    text-align: center;
     background-color: #3787F5;
-    position: absolute;
-    margin-left: 9px;
+    margin: 5px 0px 0px 5px;
+    box-shadow: rgba(0,0,0,0.4) 0px 0px 3px;
+    cursor: pointer;
+}
+
+.gd-add-optical:hover{
+    box-shadow: rgba(0,0,0,0) 0px 0px 3px;
 }
 
 .gd-add-optical i {
-	color: white;    
-    position: absolute;
-    top: 22%;
-    left: 24%;
+	color: white;
+    line-height: 28px;
+}
+#gd-qr-preview-container{
+    width: 266px;
+    height: 266px;
+    text-align: center;
+
+}
+#gd-qr-preview-container img {
+    width: 266px;
+    height: 266px;
+    border: 1px solid #EEE;
 }
 
-#gd-qr-preview-container img {
-    width: 100%;
-	height: auto;
+#gd-qr-preview-container .fa-qrcode {
+    color: #CCCCCC;
+    line-height: 266px;
+    text-align: center;
+    font-size: 60px;
+    width: 266px;
+    height: 266px;
+    border: 1px solid #EEE;
 }

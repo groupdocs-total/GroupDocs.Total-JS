@@ -1,10 +1,8 @@
 @media (max-width: 1024px){
 
   #bcPaint-header{
-    height: 72px;
+    height: 60px;
     padding: 11px 0;
-    width: 65%;
-    right: 55px;
   }
 
   #bcPaint-palette{
@@ -12,10 +10,10 @@
   }
 
   .bcPaint-palette-color{
-    width: 30px;
-    height: 30px;
-    border-radius: 50px;
-    margin: 0 10px;
+    width: 15px;
+    height: 15px;
+    border-radius: 100%;
+    margin: 0 5px;
   }
 
   #bcPaint-canvas-container > canvas{
@@ -24,6 +22,7 @@
 
   .bcPaint-export {
     top: 25px;
-    font-size: 38px;
+    right: 25px;
+    font-size: 15px;
   }
 }

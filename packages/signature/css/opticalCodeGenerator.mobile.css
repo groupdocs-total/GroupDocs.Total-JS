@@ -1,24 +1,29 @@
 @media (max-width: 1024px) {
+    #gd-qr-container{
+        margin: 0px 13px 0px 12px;
+        border-radius: 5px;
+    }
+    #gd-qr-preview-container .fa-qrcode{
+        width: 100%;
+        height: auto;
+        border: 0px;
+    }
     .gd-qr-preview-container {
-        width: 80%;
-        height: 80%;
-        left: 5% !important;
-        top: 0px !important;
-        position: relative !important;
+        width: 100%;
+        height: auto;
+        text-align: center;
     }
 
     .gd-qr-property {
-        width: 80%;
-        height: 50px;
-        font-size: 30px;
+        font-size: 14px;
     }
 
     .gd-add-optical i {
-        font-size: 25px;
+        font-size: 14px;
     }
 
     .gd-add-optical {
-        width: 47px;
-        height: 47px;
+        width: 34px;
+        height: 30px;
     }
 }

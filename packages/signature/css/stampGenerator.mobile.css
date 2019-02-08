@@ -1,13 +1,11 @@
 @media (max-width: 1024px) {
-	#csg-params-header > button {		
-		width: 169px;
-		height: 45px;
-		margin-top: 15px;
+	#csg-params-header > button {
+		margin-top: 5px;
 	}
 	
 	#csg-params-header > i {
-		font-size: 30px;		
-		top: 21px;
+		font-size: 14px;
+		top: 5px;
 	}
 	
 	.csg-text-input {		

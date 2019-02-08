@@ -1,9 +1,58 @@
 @media (max-width: 1024px) {
+    .gd-modal-header{
+        height: 60px;
+        display: flex;
+        flex-direction: row;
+    }
+    .gd-modal-title{
+        font-size: 14px;
+        line-height: 60px;
+        padding: 0 0 0 23px;
+        width: 100%;
+    }
+    .gd-modal-header{
+        padding: 0;
+    }
+    .gd-modal-close{
+        background-color: #00c4d7;
+        font-size: 23px;
+        padding: 0px 23px;
+        line-height: 60px;
+        position: relative;
+        top: 0;
+        right: 0;
+        left:0px;
+    }
+    .gd-modal-close span{
+        color: #FFFFFF;
+    }
+    .gd-modal-table > tbody > tr > td{
+        font-size: 14px;
+        padding: 10px 0px;
+    }
+    .gd-modal-body{
+        min-height: 100%;
+    }
+
+
+    #gd-header{
+        height: 60px;
+    }
+    #gd-navbar > li{
+        font-size: 16px;
+        line-height: 65px;
+        padding: 0px 22px 0px 22px;
+    }
+    .gd-nav-btn-pages,#gd-page-num,.gd-nav-separator{
+        display: none;
+    }
     .gd-modal-dialog {
         width: 100% !important;
         height: 100% !important;
     }
-
+    .gd-left-bar-tools-container ul li{
+        margin: 0px;
+    }
     #gd-btn-download-value {
         top: 78px;
     }
@@ -13,8 +62,8 @@
     }   
 
     .gd-signature-thumbnail-image {
-        width: 94px;
-        height: 94px;
+        width: 33px;
+        height: 33px;
     }
 
     .gd-signature-thumbnail-image i {
@@ -23,9 +72,8 @@
     }
 
     .gd-signature-item .gd-signature-name {
-        width: Calc(100% - 150px);
-        font-size: 32px;
-        left: 100px;
+        font-size: 10px;
+
     }
 
     .gd-left-bar-spinner {
@@ -38,15 +86,14 @@
     }
 
     .gd-signature-thumbnail {
-        width: 85%;
-        margin: 20px;
-        -webkit-tap-highlight-color: transparent;
+        border-radius: 3px;
+        margin-bottom: 6px;
+        min-height: 50px;
     }
 
     .gd-signature-item i {
-        font-size: 32px;
-        right: 20px;
-        top: 25px;
+        font-size: 11px;
+        padding-left: 8px;
     }  
 
     #gd-text-font {
@@ -84,7 +131,7 @@
     }      
 
     #csg-params-header > button {
-        font-size: 37px !important;
+        font-size: 14px !important;
     }
 
     .csg-params {
@@ -100,19 +147,22 @@
 
     .gd-left-bar-wrapper {
         display: none;
-        top: 100px;
+        top: 60px;
         width: 100%;
     }
 
     #gd-header-logo {
         background-image: unset !important;
-        width: 100px;
+        width: 60px;
     }
 
     .gd-tool {
-        width: 100%;
+        white-space: nowrap;
         text-align: left;
-        margin: 65px 0px 0px 10px;
+        margin: 23px;
+        width: auto !important;
+        height: auto !important;
+        padding: 0px;
     }
 
     .gd-left-bar-tools-container {
@@ -122,19 +172,24 @@
     }
 
     .gd-tool > i {
-        font-size: 3em;
+        font-size: 14px;
+        width: auto;
+        height: auto !important
     }
 
     .gd-tool .gd-popupdiv-hover {
-        display: block;
+        display: inline;
     }
 
     .gd-tool-tooltip-mobile {
-        color: #08090a !important;
+        color: rgba(0,0,0,0.41) !important;
         background-color: #fff !important;
-        left: 100px !important;
-        font-size: 24px;
-        top: 0px;
+        font-size: 14px;
+        position: relative;
+        left: 0px;
+        padding: 0px;
+        text-align: left;
+        top: 0;
     }
 
     .gd-tool-tooltip::after {
@@ -143,9 +198,10 @@
 
     .gd-mobile-menu {
         display: block;
-        position: absolute;
-        margin: 25px;
-        font-size: 3em;
+        text-align: center;
+    }
+    .gd-mobile-menu i{
+        line-height: 60px;
     }
 
     .gd-mobile-menu-open {
@@ -220,26 +276,25 @@
     }
 
     .gd-signature-context-panel {
-        left: 100px;
-        width: 100%;
+        left: 60px;
+        right: 0px;
+        width: auto;
     }
 
     .gd-signature-context-panel-title {
-        font-size: 32px;
-        margin: 20px;
-    }
-
-    .gd-signature-list {
-        width: 100%;
+        font-size: 12px;
+        line-height: 18px;
+        margin: 16px 0 14px 12px;
     }
 
     .gd-signature-list-title > i {
-        font-size: 30px;
-        right: 15%;
-    }    
+        font-size: 15px;
+        line-height: 18px;
+        margin: 15px 29px 12px 0px;
+    }
 
-    .gd-signature-list-wrapper {
-        height: Calc(100% - 50px);
+    .gd-signature-list-scroll{
+        padding: 0px 12px 0px 13px;
     }
 
     .gd-signature-context-panel::after {
@@ -248,31 +303,31 @@
     }
 
     .gd-signature-context-panel.text::after {
-        top: 90px;
+        top: 25px;
     }
 
     .gd-signature-context-panel.image::after {
-        top: 195px;
+        top: 80px;
     }
 
     .gd-signature-context-panel.digital::after {
-        top: 300px;
+        top: 135px;
     }
 
     .gd-signature-context-panel.qrCode::after {
-        top: 410px;
+        top: 190px;
     }
 
     .gd-signature-context-panel.barCode::after {
-        top: 520px;
+        top: 245px;
     }
 
     .gd-signature-context-panel.stamp::after {
-        top: 630px;
+        top: 305px;
     }
 
     .gd-signature-context-panel.hand::after {
-        top: 730px;
+        top: 360px;
     }
 
     .gd-signature-clickable {
@@ -281,13 +336,12 @@
 
     .gd-context-menu i.active {
         background-color: #959da5;
-        width: 38px;
-        height: 36px;
-        margin: 0 21px;
+
     }
 
     .gd-context-menu i {
-        font-size: 30px;
+        font-size: 14px;
+        padding: 0px 3px;
     }
 
     .gd-context-menu-top {
@@ -301,6 +355,7 @@
     .ui-resizable-handle {
         width: 18px;
         height: 18px;
+        border-radius: 100%;
     }
 
     .gd-upload-container {

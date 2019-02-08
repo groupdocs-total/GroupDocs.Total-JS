@@ -385,13 +385,13 @@ function fadeLeftBar(on) {
  * Select signature from list
  * @param sign
  */
-function selectSignature(sign) {
+function selectSignature(sign, pageNumber) {
     if ("digital" == signature.signatureType) {
         openDigitalPanel(sign);
         return;
     }
     signature.signatureGuid = sign.attr("data-guid");
-    loadSignatureImage();
+    loadSignatureImage(pageNumber);
     $('#gd-signature-context-panel').hide();
     if (isMobile()) {
         $('#gd-left-bar-wrapper').hide();
@@ -515,9 +515,12 @@ function loadSignaturesTree(dir, callback) {
                             },
                             stop: function () {
                                 var sign = $(this);
-                                draggableSignaturePosition.left = sign.position().left - sign[0].offsetWidth;
-                                draggableSignaturePosition.top = sign.position().top - sign[0].offsetHeight;
-                                selectSignature(sign);
+                                draggableSignaturePosition.left = sign[0].offsetWidth;
+                                draggableSignaturePosition.top = sign[0].offsetHeight;
+                                var currentPage = document.elementFromPoint(sign.position().left, sign.position().top);
+                                var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
+                                var pageNumber = parseInt(id);
+                                selectSignature(sign, pageNumber);
                                 $('#gd-signature-list').addClass("gd-signature-list-scroll");
                             }
                         });
@@ -733,12 +736,10 @@ function saveDrawnStamp(callback) {
     // get drawn stamp padding from canvas border
     var biggestWidth = stampData[stampData.length - 1].width;
     // combine stamp lines
+    stampData.reverse()
     $(".csg-preview").each(function (index, shape) {
         // calculate stamp real size and paddings
-        var offset = 0;
-        if (index != 0) {
-            offset = biggestWidth - stampData[index - 1].width;
-        }
+        var offset = biggestWidth - stampData[index].width;       
         // crop canvas empty pixels
         if (offset != 0) {
             offset = offset / 2;
@@ -750,6 +751,7 @@ function saveDrawnStamp(callback) {
     // get image from canvas
     image = $("#gd-croped-stamp")[0].toDataURL("image/png");
     // prepare data for ajax
+    stampData.reverse();
     var data = { image: image, stampData: stampData };
     // save the stamp image and xml description in the storage
     $.ajax({
@@ -931,10 +933,12 @@ function initSignature(currentPageNumber) {
 /**
  * Get selected signature image stream
  */
-function loadSignatureImage() {
-    var currentPageNumber = getCurrentPageNumber();
+function loadSignatureImage(pageNumber) {
+    if (!pageNumber) {
+        pageNumber = getCurrentPageNumber();
+    } 
     // current document guid is taken from the viewer.js globals
-    var data = { signatureType: signature.signatureType, guid: signature.signatureGuid, page: currentPageNumber, password: "" };
+    var data = { signatureType: signature.signatureType, guid: signature.signatureGuid, page: pageNumber, password: "" };
     fadeAll(true);
     // load signature image from the storage
     $.ajax({
@@ -953,11 +957,11 @@ function loadSignatureImage() {
             // when ajax is done insert loaded image into the document page
             toggleModalDialog(false, "");
             // insert image over the selected document page
-            initSignature(currentPageNumber);
+            initSignature(pageNumber);
             if ("text" == signature.signatureType) {
-                insertText(returnedData.props);
+                insertText(returnedData.props, pageNumber);
             } else {
-                insertImage(returnedData.data);
+                insertImage(returnedData.data, pageNumber);
             }
         },
         error: function (xhr, status, error) {
@@ -971,9 +975,11 @@ function loadSignatureImage() {
     });
 }
 
-function insertText(properties) {
-    hideAllContextMenu();
-    var currentPageNumber = getCurrentPageNumber();
+function insertText(properties, pageNumber) {
+    if (!pageNumber) {
+        pageNumber = getCurrentPageNumber();
+    }
+    hideAllContextMenu();   
     // get HTML markup of the resize handles
     var resizeHandles = getHtmlResizeHandles();
     signature.id = signatureImageIndex;
@@ -1016,9 +1022,9 @@ function insertText(properties) {
         '';
     $("#gd-image-signature-" + signatureImageIndex).css('background-color', 'transparent');
     // add signature to the selected page
-    $(signatureHtml).insertBefore($("#gd-page-" + currentPageNumber).find(".gd-wrapper")).delay(1000);
+    $(signatureHtml).insertBefore($("#gd-page-" + pageNumber).find(".gd-wrapper")).delay(1000);
 
-    setDraggableAndResizable(currentPageNumber);
+    setDraggableAndResizable(pageNumber);
 
     signature = {};
 
@@ -1107,8 +1113,10 @@ function setDraggableAndResizable(pageNumber) {
  * Get selected signature image stream
  * @param {string} image - Base64 encoded image
  */
-function insertImage(image) {
-    var pageNumber = getCurrentPageNumber();
+function insertImage(image, pageNumber) {
+    if (!pageNumber) {
+        pageNumber = getCurrentPageNumber();
+    }
     hideAllContextMenu();
     // add current signature object into the list of signatures
     signaturesList.push(signature);

@@ -274,10 +274,11 @@
 	******************************************
 	*/
 	#gd-pages {
-		padding-top: 94px;
+		padding-top: 48px;
 	}
 	.gd-page{
-		margin: 10px 0px;
+		width: -webkit-fill-available !important;
+		height: auto !important;
 	}
 	.gd-landscape{
 		margin: -111px;

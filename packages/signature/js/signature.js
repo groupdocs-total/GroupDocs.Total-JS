@@ -770,13 +770,15 @@ function saveDrawnStamp(callback) {
             signature.imageWidth = stampData[0].width;
             loadSignaturesTree('');
             $(".gd-signature-select").removeClass("gd-signing-disabled");
+            toggleLightBox(false, "", "");
         },
         error: function (xhr, status, error) {
+            fadeAll(false);
+            toggleLightBox(false, "", "");
             var err = eval("(" + xhr.responseText + ")");
             console.log(err.Message);
-            fadeAll(false);
             // open error popup
-            printMessage(err.message);
+            printMessage(err ? err.message : "Error");
         }
     }).done(function (data) {
         if (typeof callback == "function") {
@@ -797,7 +799,6 @@ function saveDrawnText(properties, callback) {
     if (properties && !properties.imageGuid) {
         newId = properties.id;
     }
-    properties.id = undefined;
     var data = { properties: properties };
     // sign the document
     $.ajax({

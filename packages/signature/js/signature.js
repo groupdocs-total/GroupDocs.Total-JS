@@ -87,7 +87,6 @@ $(document).ready(function () {
         } else {
             closeAddCode();
             closeAddUpload();
-            changeListClass();
             var button = $(this);
             var type = button.attr("signature-type");
             if (type) {
@@ -144,13 +143,13 @@ $(document).ready(function () {
                 }
                 uploadSignature(uploadFiles[uploadFiles.length - 1], uploadFiles.length - 1, "", loadSignaturesTree);
             }
-            $("#gd-upload-signature").hide();
+            closeAddUpload();
         }
     });
 
     $('#gd-close-upload-signature').on(userMouseClick, function () {
         resetUploadFiles();
-        $("#gd-upload-signature").hide();
+        closeAddUpload();
     });
 
     //////////////////////////////////////////////////
@@ -288,16 +287,23 @@ $(document).ready(function () {
     });
 });
 
+/*
+******************************************************************
+FUNCTIONS
+******************************************************************
+*/
 
 /**
  * Close add code panel
  */
 function closeAddCode() {
     $("#gd-add-optical-signature").remove();
+    changeListClass();
 }
 
 function closeAddUpload() {
     $("#gd-upload-signature").hide();
+    changeListClass();
 }
 
 /**
@@ -328,12 +334,6 @@ function hideMobileMenu() {
     inactiveAll();
 }
 
-/*
-******************************************************************
-FUNCTIONS
-******************************************************************
-*/
-
 /**
 * Open window for upload signatures
 */
@@ -342,6 +342,7 @@ function openUploadSignatures(title, multiple) {
     $("#gd-upload-panel-title").html(title);
     $("#gd-upload-input")[0].multiple = multiple;
     $("#gd-upload-signature").show();
+    changeListClass("gd-signature-list-wrapper-add-img");
 }
 
 function resetUploadFiles() {

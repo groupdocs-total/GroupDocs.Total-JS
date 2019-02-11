@@ -32,6 +32,14 @@
     transition: border-color 0.3s linear;
 }
 
+.gd-add-optical.active {
+    background-color: #3787F5;
+}
+
+.gd-add-optical.inactive {
+    background-color: #646464;
+}
+
 .gd-add-optical {
     display: block;
     width: 32px;

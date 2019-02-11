@@ -268,16 +268,20 @@
 	#gd-modal-error {
 		margin: 0;
 	}
+	.gd-container-spinner {
+		left: 29%;
+	}
 	/*
 	******************************************
 	PAGES
 	******************************************
-	*/
-	#gd-pages {
-		padding-top: 94px;
-	}
+	*/	
 	.gd-page{
-		margin: 10px 0px;
+		width: -webkit-fill-available !important;
+		height: auto !important;
+		min-width: unset !important;
+		min-height: unset !important;
+		margin: 5px 0px;
 	}
 	.gd-landscape{
 		margin: -111px;

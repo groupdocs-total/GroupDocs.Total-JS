@@ -7,3 +7,4 @@ target/*
 App_Data/*
 node_modules/
 *.log
+/package-lock.json

@@ -83,13 +83,7 @@
     .gd-left-bar-fade {
         top: 100px;
         right: 0;
-    }
-
-    .gd-signature-thumbnail {
-        border-radius: 3px;
-        margin-bottom: 6px;
-        min-height: 50px;
-    }
+    }  
 
     .gd-signature-item i {
         font-size: 11px;

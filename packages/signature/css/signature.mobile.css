@@ -160,11 +160,12 @@
     }
 
     .gd-left-bar-tools-container {
-        width: 100%;
-        overflow-x: hidden;
-        overflow-y: auto !important;
+        width: 100%;       
     }
-
+	.ui-draggable-handle {
+		-ms-touch-action: none;
+		touch-action: inherit !important;
+	}
     .gd-tool > i {
         font-size: 14px;
         width: auto;
@@ -287,9 +288,7 @@
         margin: 15px 29px 12px 0px;
     }
 
-    .gd-signature-list-scroll{
-        padding: 0px 12px 0px 13px;
-    }
+    
 
     .gd-signature-context-panel::after {
         border: 10px solid rgba(0, 0, 0, 0);

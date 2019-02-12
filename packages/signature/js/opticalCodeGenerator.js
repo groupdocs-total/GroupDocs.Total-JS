@@ -12,9 +12,16 @@ $(document).ready(function () {
     // enter text event
     //////////////////////////////////////////////////
     $("body").on("keyup input", "#gd-qr-text", $.debounce(500, function(e){
-			var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
-			opticalProperties.imageGuid = "";
-			saveDrawnOpticalCode(opticalProperties);
+			if ($.fn.opticalCodeGenerator.checkText()) {
+				activateAddButton(true);
+				var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
+				opticalProperties.imageGuid = "";
+				saveDrawnOpticalCode(opticalProperties);
+			} else {
+				activateAddButton(false);
+				$("#gd-qr-preview-container").html("");
+				changeListClass("gd-signature-list-wrapper-add");
+			}
 		})
 	);
 
@@ -29,11 +36,13 @@ $(document).ready(function () {
     // Add new optical code signature into the list
     //////////////////////////////////////////////////
 	$("body").on(userMouseClick, ".gd-add-optical", function () {
-		var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
-		opticalProperties.imageGuid = signature.signatureGuid;
-		opticalProperties.temp = false;
-		saveDrawnOpticalCode(opticalProperties);
-		closeAddCode();
+		if ($.fn.opticalCodeGenerator.checkText() && $('.gd-add-optical').hasClass("active")) {
+			var opticalProperties = $.fn.opticalCodeGenerator.getProperties();
+			opticalProperties.imageGuid = signature.signatureGuid;
+			opticalProperties.temp = false;
+			saveDrawnOpticalCode(opticalProperties);
+			closeAddCode();
+		}
     });
 
 });
@@ -69,6 +78,15 @@ $(document).ready(function () {
 			return properties;
 		},
 
+		checkText : function() {
+			var text = $(this).find('#' + paramValues.text).val();
+			if (text && text != "") {
+				return true;
+			} else {
+				return false;
+			}
+		},
+
 		baseHtml : function(title){
 			var html = 	'<div id="gd-add-optical-signature">' +
 							'<div class="gd-signature-list-title">'+
@@ -81,7 +99,7 @@ $(document).ready(function () {
 								'</div>' +
 								'<div class="new-signature-input-group">'+
 									'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="QR code"/>' +
-									'<div class="gd-add-optical"><i class="fas fa-plus"></i></div>'+
+									'<div class="gd-add-optical inactive"><i class="fas fa-plus"></i></div>'+
 								'</div>'+
 							'</div>' +
 						'</div>';
@@ -90,6 +108,16 @@ $(document).ready(function () {
 	});
 
 })(jQuery);
+
+function activateAddButton(option) {
+	if (option) {
+		$('.gd-add-optical').removeClass("inactive");
+		$('.gd-add-optical').addClass("active");
+	} else {
+		$('.gd-add-optical').removeClass("active");
+		$('.gd-add-optical').addClass("inactive");
+	}
+}
 
 /**
  * Save drawn QR-Code signature
@@ -109,7 +137,7 @@ function saveDrawnOpticalCode(properties) {
 				// open error popup
 				printMessage(returnedData.message);
 				return;
-			}				
+			}
 			// set current signature data
 			signature.signatureGuid = returnedData.imageGuid;
 			signature.imageHeight = returnedData.height;

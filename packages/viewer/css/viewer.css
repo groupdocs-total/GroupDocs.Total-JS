@@ -38,7 +38,7 @@ body:after {
     }
 }
 .hidden{
-    display: none;
+    display: none !important;
 }
 /*
 ******************************************

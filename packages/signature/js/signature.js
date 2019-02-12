@@ -451,6 +451,41 @@ function deleteSignatureFile(guid) {
 }
 
 /**
+ * Return html for empty list view
+ *
+ * @returns {string}
+ */
+function getHtmlEmptyList() {
+    var signTypeClass;
+    switch (signature.signatureType) {
+        case "image":
+            signTypeClass = 'fa-image';
+            break;
+        case "text":
+            signTypeClass = 'fa-font';
+            break;
+        case "digital":
+            signTypeClass = 'fa-fingerprint';
+            break;
+        case "hand":
+            signTypeClass = 'fa-signature';
+            break;
+        case "stamp":
+            signTypeClass = 'fa-stamp';
+            break;
+        case "qrCode":
+            signTypeClass = 'fa-qrcode';
+            break;
+        case "barCode":
+            signTypeClass = 'fa-barcode';
+            break;
+
+    }
+    return '<i class="fas ' + signTypeClass + ' fa-lg"></i>' +
+        '<span class="gd-empty-list-text">There is no ' + signature.signatureType + ' signatures yet.</span>';
+}
+
+/**
  * Load file tree
  * @param {string} dir - files location directory
  * @param {object} callback - function that will be executed after ajax call
@@ -458,6 +493,7 @@ function deleteSignatureFile(guid) {
 function loadSignaturesTree(dir, callback) {
     dir = dir||'';
     $('#gd-signature-list').html("");
+    $('#gd-signature-empty-list').html("");
     var data = { path: dir, signatureType: signature.signatureType };
     currentDirectory = dir;
     // show loading spinner
@@ -472,9 +508,14 @@ function loadSignaturesTree(dir, callback) {
             // hide loading spinner
             fadeLeftBar(false);
             // open error popup
-            if (returnedData.message != undefined) {
+            if (returnedData && returnedData.message != undefined) {
                 toggleModalDialog(false, "");
                 printMessage(returnedData.message);
+                return;
+            }
+
+            if (returnedData && returnedData.length == 0) {
+                $('#gd-signature-empty-list').append(getHtmlEmptyList());
                 return;
             }
             // append files to tree list
@@ -541,7 +582,6 @@ function loadSignaturesTree(dir, callback) {
                         deleteSignatureFile(signatureGuid);
                     });
                 }
-
             });
 
             // check if document was changed
@@ -1510,6 +1550,8 @@ GROUPDOCS.SIGNATURE PLUGIN
 
                             '<div id="gd-signature-list-wrapper" class="gd-signature-list-wrapper">' +
                                 '<div id="gd-signature-list" class="gd-signature-list gd-signature-list-scroll">' +
+                                '</div>' +
+                                '<div id="gd-signature-empty-list" class="gd-signature-empty-list">' +
                                 '</div>' +
                             '</div>' +
                         '</div>'+

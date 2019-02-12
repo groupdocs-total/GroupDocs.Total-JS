@@ -145,10 +145,11 @@ function saveDrawnOpticalCode(properties) {
 			$("#gd-qr-preview-container").html("");
 			var prevewImage = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + returnedData.encodedImage + '" alt></image>';
 			$("#gd-qr-preview-container").append(prevewImage);
-			changeListClass("gd-signature-list-wrapper-add-img");
 			if (!properties.temp) {
-				loadSignaturesTree('');
-			}
+                loadSignaturesTree('');
+            } else {
+                changeListClass("gd-signature-list-wrapper-add-img");
+            }
 		},
 		error: function(xhr, status, error) {
 			var err = eval("(" + xhr.responseText + ")");

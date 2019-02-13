@@ -309,11 +309,7 @@ MODAL
     width: inherit;   
     margin: 17px 0px 20px 25px;
 }
-/*
-******************************************
-BROWSE SIGNATURES SLIDE
-******************************************
-*/
+
 .gd-signature-item {
     display: flex;
     width: 100%;

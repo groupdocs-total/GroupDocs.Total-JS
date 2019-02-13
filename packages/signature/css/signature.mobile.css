@@ -62,14 +62,11 @@
     }   
 
     .gd-signature-thumbnail-image {
-        width: 33px;
-        height: 33px;
+        width: 33pt;
+        height: 33pt;
     }
 
-    .gd-signature-thumbnail-image i {
-        left: 25px;
-        font-size: 31px !important;
-    }
+    
 
     .gd-signature-item .gd-signature-name {
         font-size: 10pt;
@@ -85,6 +82,10 @@
         right: 0;
     }      
 
+	.gd-signature-thumbnail-digital i {
+		font-size: 30px !important;
+	}
+	
 	.gd-signature-item i {
 		font-size: 11pt;    
 	}

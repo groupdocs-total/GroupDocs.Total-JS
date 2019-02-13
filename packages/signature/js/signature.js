@@ -536,9 +536,9 @@ function loadSignaturesTree(dir, callback) {
                 } else {
                     var imageBlock = name;
                     if ("digital" == signature.signatureType) {
-                        imageBlock = '<div class="gd-signature-thumbnail-image gd-signature-thumbnail-' + signature.signatureType + '"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
+                        imageBlock = '<div class="gd-signature-thumbnail-' + signature.signatureType + '"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
                     } else {
-                        imageBlock = '<image class="gd-signature-thumbnail-image gd-signature-thumbnail-' + signature.signatureType + '" src="data:image/png;base64,' + elem.image + '" alt></image>';
+                        imageBlock = '<image class="gd-signature-thumbnail-' + signature.signatureType + '" src="data:image/png;base64,' + elem.image + '" alt></image>';
                     }
 
                     $('#gd-signature-list').append(

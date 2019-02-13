@@ -153,8 +153,23 @@ SIGNATURE TOOL BAR
 }
 .gd-signature-list-wrapper {
     display: flex;
+    flex-direction: column;
     flex:1;
     overflow: auto;
+}
+.gd-signature-empty-list {
+    flex-direction: column;
+    display: flex;
+    text-align: center;
+    color: #0000001a;
+}
+.gd-signature-empty-list i{
+    font-size: 60px;
+    padding: 87px 97px 0px;
+}
+.gd-empty-list-text {
+    padding: 18px 38px 0px;
+    font-size: 12px;
 }
 .gd-signature-list-scroll {
     overflow-x: hidden;

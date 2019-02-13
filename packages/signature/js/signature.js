@@ -243,7 +243,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Choose signature event by click
     //////////////////////////////////////////////////
-    $('#gd-signature-list').on(userMouseClick, '.gd-signature-clickable', function (e) {
+    $('#gd-signature-list').on(userMouseClick, '.gd-signature-item', function (e) {
         var sign = $(this);
         selectSignature(sign);
     });
@@ -880,7 +880,7 @@ function openDigitalPanel(currentCertificate) {
         } else {
             return;
         }
-        $(currentCertificate).parent().append(inputs);
+        $(currentCertificate).append(inputs);
         $("#gd-datepicker").datepicker({ dateFormat: 'dd-mm-yy' });
         $(".gd-sign-digital").on(userMouseClick, function (e) {
             setAdditionalInformation(e);
@@ -1517,11 +1517,11 @@ GROUPDOCS.SIGNATURE PLUGIN
                 '</div>';
     }
 
-    function getHtmlUploadSignatures() {
+    function getHtmlUploadSignatures() {		
         return '<div id="gd-upload-signature" class="gd-upload-signature">' +
-            '<div class="gd-signature-list-title">' +
-                '<i class="fas fa-times" id="gd-close-upload-signature"></i>' +
-                '<div id="gd-upload-panel-title" class="gd-signature-context-panel-title">Add signature</div>' +
+            '<div class="gd-signature-list-title">' +               
+                '<div id="gd-upload-panel-title" class="gd-signature-context-upload-title">Add signature</div>' +
+				 '<i class="fas fa-times" id="gd-close-upload-signature"></i>' +
             '</div>' +
             '<div id="gd-upload-container" class="gd-upload-container">' +
                 '<div class="gd-upload-inputs">' +

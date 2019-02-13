@@ -184,16 +184,25 @@ SIGNATURE TOOL BAR
     flex-direction: row;
 }
 .gd-signature-list-title > i {
-    margin: 16px 24px 14px 0px;
+	margin: 13px 26px 0px 0px;
     color: #676767;
     cursor: pointer;
+    width: 12px;
+    height: 20px;
+    font-size: 20px;
 }
-.gd-signature-context-panel-title {
-    color: #AAAAAA;
+.gd-signature-context-upload-title, .gd-signature-context-panel-title {
+	color: #AAAAAA;
     font-size: 12px;
-    width: 100%;
+    width: 121px;
+    font-family: Helvetica;
     font-weight: bold;
-    margin: 16px 0 14px 12px;
+    margin: 16px 129px 0px 12px;
+}
+
+.gd-signature-context-panel-title {   
+    width: 101px;
+    margin: 14px 149px 12px 12px;
 }
 .gd-left-bar-spinner {
     left: 30%;
@@ -218,10 +227,9 @@ SIGNATURE TOOL BAR
     background-color: #ffffff;
     width: 278px;
     height: 252px;
-    border: 1px solid #3787F5;
-    border-radius: 6px;
-    margin-top: 16px;
-    margin-left: 12px;
+    border: 1px solid #3787f5;
+    border-radius: 5px;
+    margin: 9px 10px 14px 12px;
 }
 .gd-add-upload-file, .gd-sign-digital {
     width: 263px;
@@ -237,22 +245,24 @@ SIGNATURE TOOL BAR
     padding-top: 5px;
 }
 .gd-upload-inputs {
-    width: 263px;
+	width: 263px;
     height: 201px;
     text-align: center;
-    margin: 7px 9px 0px 6px;
-    box-shadow: 0 0 3px #ddd;
+    margin: 7px 8px 9px 6px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.16);
     border-radius: 3px;
 }
 .gd-upload-inputs i {
-    font-size: 52px;
+	font-size: 52px;
     color: #959DA5;
-    margin: 61px 112px 0px 112px;
+    margin: 61px 112px 12px 112px;
+    width: 39px;
+    height: 53px;
 }
 .gd-upload-title {
     color: #5C737F;
     font-size: 13px;
-    margin: 12px 80px 61px 82px;
+    margin: 0px 80px 61px 82px;
 }
 .gd-upload-inputs input {
     opacity: 0;
@@ -261,17 +271,21 @@ SIGNATURE TOOL BAR
     width: inherit;
     height: 203px;
 }
+.gd-digital-input-wrapper {
+    margin: 0px 5px 8px 8px;
+    display: flex;
+}
 .gd-digital-inputs input {
     width: 263px;
-    height: 27px;
-    margin: 0 5px -4px 9px;
-    border: 1px solid #ddd;
+    height: 27px;   
+	border: 1px solid rgba(92, 115, 127, 0.3);
+    border-radius: 3px;
     padding-left: 28px;
 }
 .gd-digital-inputs i {
-    position: relative !important;
-    top: -18px !important;
-    left: 15px !important;
+    position: absolute;
+    font-size: 12px;
+    margin: 7px 0px 7px 7px;   
     color: #ccc !important;
 }
 
@@ -291,38 +305,32 @@ MODAL
 	background-image: url(../images/stampBackground.png) !important;
 }
 
-.gd-signature-clickable {
-    width: 100%;
-    padding: 17px 0px 20px 30px;
+.gd-signature-title {
+    width: inherit;   
+    margin: 17px 0px 20px 25px;
 }
-/*
-******************************************
-BROWSE SIGNATURES SLIDE
-******************************************
-*/
+
+.gd-signature-item {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+}
 .gd-signature-item i {
-    padding: 19px 15px 19px 0px;
-    font-size: 12px;
+	font-size: 11px;
     color: #676767;
-    cursor: pointer;
+    cursor: pointer;   
+    margin: 17px 15px 19px 0px;
 }
 .gd-signature-item .gd-signature-name {
-    display: inherit;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 160px;
-    font-size: 12px;
+	font-size: 12px;
     color: rgba(0,0,0,0.36);
     cursor: pointer;
-    left: 50px;
-    top: 11px;
-    align-items: center;
 }
 .gd-signature-thumbnail {
     background-color: rgba(255,255,255,0.75);
     width: 100%;
-    display: flex;
-    flex-direction: row;
+	display: flex;
+    flex-direction: column;
     align-items: center;
     border-radius: 3px;
     cursor: pointer;
@@ -334,13 +342,14 @@ BROWSE SIGNATURES SLIDE
     background-color: rgba(255,255,255,1);
 }
 .gd-signature-thumbnail-image i {
-    right: unset !important;
-    left: 16px;
+	font-size: 30px;
+    padding: 0;   
+    margin: 0px;  
+    opacity: 0.25;
 }
-.gd-signature-thumbnail-image {
-    width: 47px;
-    height: 47px;
-    padding: 2px;
+.gd-signature-thumbnail-image {    
+	margin: 14px 0px 8px 16px;	
+	width: 30px;
 }
 /*
 ******************************************

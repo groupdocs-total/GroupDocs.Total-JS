@@ -243,7 +243,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Choose signature event by click
     //////////////////////////////////////////////////
-    $('#gd-signature-list').on(userMouseClick, '.gd-signature-clickable', function (e) {
+    $('#gd-signature-list').on(userMouseClick, '.gd-signature-item', function (e) {
         var sign = $(this);
         selectSignature(sign);
     });
@@ -536,19 +536,21 @@ function loadSignaturesTree(dir, callback) {
                 } else {
                     var imageBlock = name;
                     if ("digital" == signature.signatureType) {
-                        imageBlock = '<div class="gd-signature-thumbnail-image"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
+                        imageBlock = '<div class="gd-signature-thumbnail-image gd-signature-thumbnail-' + signature.signatureType + '"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
                     } else {
-                        imageBlock = '<image class="gd-signature-thumbnail-image" src="data:image/png;base64,' + elem.image + '" alt></image>';
+                        imageBlock = '<image class="gd-signature-thumbnail-image gd-signature-thumbnail-' + signature.signatureType + '" src="data:image/png;base64,' + elem.image + '" alt></image>';
                     }
 
                     $('#gd-signature-list').append(
-                        '<div data-guid="' + guid + '" id="gd-signature-item-' + index + '" class="gd-signature-item gd-signature-thumbnail ui-draggable ui-draggable-handle">' +
-                            imageBlock +
-                            '<div data-guid="' + guid + '" class="gd-signature-clickable">' +
-                            '<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
-                            '</div>' +
-                            '<i class="fa fa-trash-o"></i>' +
-                        '</div>');
+                        '<div class="gd-signature-item-wrapper gd-signature-thumbnail">'+
+							'<div data-guid="' + guid + '" id="gd-signature-item-' + index + '" class="gd-signature-item ui-draggable ui-draggable-handle">' +
+								imageBlock +
+								'<div data-guid="' + guid + '" class="gd-signature-title">' +
+								'<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
+								'</div>' +
+								'<i class="fa fa-trash-o"></i>' +
+							'</div>'+
+						'</div>');
 
                     if (!isMobile() && "digital" != signature.signatureType) {
                         $('#gd-signature-item-' + index).draggable({
@@ -895,26 +897,42 @@ function openDigitalPanel(currentCertificate) {
         // generate signature information imputs for depending from current document type
         if (documentFormat.format.indexOf("Portable Document") >= 0) {
             inputs = '<div class="gd-digital-inputs">' +
-                '<input id="gd-reason" type="text" placeholder="Reason" > ' +
-                '<i class="fas fa-comment"></i>' +
-                '<input id="gd-contact" type="text" placeholder="Contact">' +
-                '<i class="fas fa-envelope"></i>' +
-                '<input id="gd-location" type="text" placeholder="Location">' +
-                '<i class="fas fa-map-marker-alt"></i>' +
-                '<input id="gd-signature-password" type="password" placeholder="Password">' +
-                '<i class="fas fa-key"></i>' +
-                '<input type="text" id="gd-datepicker" placeholder="Date">' +
-                '<i class="fa fa-calendar" aria-hidden="true"></i>' +
+				'<div class="gd-digital-input-wrapper">'+
+					'<i class="fas fa-comment"></i>' +
+					'<input id="gd-reason" type="text" placeholder="Reason" > ' +					
+				'</div>'+
+				'<div class="gd-digital-input-wrapper">'+
+					'<i class="fas fa-envelope"></i>' +
+					'<input id="gd-contact" type="text" placeholder="Contact">' +					
+				'</div>'+
+				'<div class="gd-digital-input-wrapper">'+
+					'<i class="fas fa-map-marker-alt"></i>' +
+					'<input id="gd-location" type="text" placeholder="Location">' +					
+				'</div>'+	
+				'<div class="gd-digital-input-wrapper">'+	
+					'<i class="fas fa-key"></i>' +
+					'<input id="gd-signature-password" type="password" placeholder="Password">' +					
+				'</div>'+	
+				'<div class="gd-digital-input-wrapper">'+
+					'<i class="fa fa-calendar" aria-hidden="true"></i>' +
+					'<input type="text" id="gd-datepicker" placeholder="Date">' +					
+				'</div>'+	
                 '<div class="gd-sign-digital">Sign</div>' +
                 '</div>';
         } else if (documentFormat.format.indexOf("Word") >= 0 || documentFormat.format.indexOf("Excel") >= 0) {
             inputs = '<div class="gd-digital-inputs">' +
-                '<input id="gd-signature-comment" type="text" placeholder="Comment" > ' +
-                '<i class="fas fa-comment"></i>' +
-                '<input id="gd-signature-password" type="password" placeholder="Password">' +
-                '<i class="fas fa-key"></i>' +
-                '<input type="text" id="gd-datepicker" placeholder="Date">' +
-                '<i class="fa fa-calendar" aria-hidden="true"></i>' +
+				'<div class="gd-digital-input-wrapper">'+
+					'<i class="fas fa-comment"></i>' +
+					'<input id="gd-signature-comment" type="text" placeholder="Comment" > ' +					
+				'</div>'+	
+				'<div class="gd-digital-input-wrapper">'+
+					'<i class="fas fa-key"></i>' +
+					'<input id="gd-signature-password" type="password" placeholder="Password">' +					
+				'</div>'+		
+				'<div class="gd-digital-input-wrapper">'+
+					'<i class="fa fa-calendar" aria-hidden="true"></i>' +
+					'<input type="text" id="gd-datepicker" placeholder="Date">' +					
+				'</div>'+	
                 '<div class="gd-sign-digital">Sign</div>' +
                 '</div>';
         } else {
@@ -948,7 +966,7 @@ function setAdditionalInformation(certificate) {
     signature.date = $("#gd-datepicker").val();
     signature.signaturePassword = $("#gd-signature-password").val();
     signature.signatureComment = $("#gd-signature-comment").val();
-    signature.signatureGuid = $(certificate.target.parentElement.parentElement).data("guid");
+    signature.signatureGuid = $(certificate.target.parentElement.parentElement).find(".gd-signature-item").data("guid");
 }
 
 /**
@@ -1559,11 +1577,11 @@ GROUPDOCS.SIGNATURE PLUGIN
                 '</div>';
     }
 
-    function getHtmlUploadSignatures() {
+    function getHtmlUploadSignatures() {		
         return '<div id="gd-upload-signature" class="gd-upload-signature">' +
-            '<div class="gd-signature-list-title">' +
-                '<i class="fas fa-times" id="gd-close-upload-signature"></i>' +
-                '<div id="gd-upload-panel-title" class="gd-signature-context-panel-title">Add signature</div>' +
+            '<div class="gd-signature-list-title">' +               
+                '<div id="gd-upload-panel-title" class="gd-signature-context-upload-title">Add signature</div>' +
+				 '<i class="fas fa-times" id="gd-close-upload-signature"></i>' +
             '</div>' +
             '<div id="gd-upload-container" class="gd-upload-container">' +
                 '<div class="gd-upload-inputs">' +

@@ -305,7 +305,7 @@ MODAL
 	background-image: url(../images/stampBackground.png) !important;
 }
 
-.gd-signature-clickable {
+.gd-signature-title {
     width: inherit;   
     margin: 17px 0px 20px 25px;
 }

@@ -545,7 +545,7 @@ function loadSignaturesTree(dir, callback) {
                         '<div class="gd-signature-item-wrapper gd-signature-thumbnail">'+
 							'<div data-guid="' + guid + '" id="gd-signature-item-' + index + '" class="gd-signature-item ui-draggable ui-draggable-handle">' +
 								imageBlock +
-								'<div data-guid="' + guid + '" class="gd-signature-clickable">' +
+								'<div data-guid="' + guid + '" class="gd-signature-title">' +
 								'<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
 								'</div>' +
 								'<i class="fa fa-trash-o"></i>' +

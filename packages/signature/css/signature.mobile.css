@@ -68,11 +68,11 @@
 
     .gd-signature-thumbnail-image i {
         left: 25px;
-        font-size: 46px !important;
+        font-size: 31px !important;
     }
 
     .gd-signature-item .gd-signature-name {
-        font-size: 10px;
+        font-size: 10pt;
 
     }
 
@@ -83,12 +83,11 @@
     .gd-left-bar-fade {
         top: 100px;
         right: 0;
-    }  
+    }      
 
-    .gd-signature-item i {
-        font-size: 11px;
-        padding-left: 8px;
-    }  
+	.gd-signature-item i {
+		font-size: 11pt;    
+	}
 
     #gd-text-font {
         width: 257px !important;
@@ -110,19 +109,11 @@
     #gd-modal-signed {
         top: 127px !important;
         font-size: 45px !important;
-    }    
-
-    #gd-datepicker {
-        padding-left: 80px !important;
-    }       
-
+    } 
+	
     .ui-datepicker {
-        font-size: 48px;
-    }
-
-    .fa-calendar:before {
-        font-size: 54px;
-    }      
+        font-size: 18px;
+    }       
 
     #csg-params-header > button {
         font-size: 14px !important;
@@ -283,13 +274,14 @@
     }
 
     .gd-signature-list-title > i {
-        font-size: 15px;
-        line-height: 18px;
-        margin: 15px 29px 12px 0px;
-    }
+        font-size: 20pt;
+		line-height: 18px;
+		margin: 15px 29px 3px 0px;
+    }    
 
-    
-
+	.gd-digital-input-wrapper {
+		width: fit-content;
+	}
     .gd-signature-context-panel::after {
         border: 10px solid rgba(0, 0, 0, 0);
         border-right-color: #F3F3F3;
@@ -352,44 +344,46 @@
     }
 
     .gd-upload-container {
-        width: 840px;
-        height: 381px;
+		width: -webkit-fill-available;
+		height: auto;
     }
-
+	
+	.gd-signature-context-panel-title, .gd-signature-context-upload-title {
+		width: 198pt;
+		margin: 16px 118px 7px 12px;
+		font-size: 12pt;
+	}
     .gd-upload-inputs {
-        width: 812px;
-        height: 296px;
+        width: -webkit-fill-available;        
     }
 
     .gd-add-upload-file, .gd-sign-digital {
-        width: 813px;
-        height: 52px;
-        font-size: 32px;
+		width: auto;
+		height: fit-content;
+		font-size: 32px;
     }
 
     .gd-upload-inputs input {
-        height: 300px;
+        width: -webkit-fill-available;
+		height: 201px;
     }
 
     .gd-upload-inputs i {
-        font-size: 139px;
-        margin-top: 82px;
+		font-size: 99px;   
+		margin: 34px 138px 12px 112px;
     }
 
     .gd-upload-title {
-        font-size: 48px;
+		font-size: 32px;
+		margin-top: 37px;
     }
 
     .gd-digital-inputs input {
-        width: 800px;
-        height: 67px;
-        font-size: 33px;
-        padding-left: 72px;
+        width: 313px;        
     }
 
     .gd-digital-inputs i {
-        top: -53px !important;
-        left: 20px !important;
+        font-size: 10pt;
     }
 }
 

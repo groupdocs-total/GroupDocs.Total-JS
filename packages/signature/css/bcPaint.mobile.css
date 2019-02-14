@@ -1,12 +1,11 @@
 @media (max-width: 1024px){
 
-  #bcPaint-header{
+  #bcPaint-header {
     height: 60px;
-    padding: 11px 0;
+    padding: 20px 5px 0px 100px;
   }
 
   #bcPaint-palette{
-
   }
 
   .bcPaint-palette-color{
@@ -21,8 +20,6 @@
   }
 
   .bcPaint-export {
-    top: 25px;
-    right: 25px;
     font-size: 15px;
   }
 }

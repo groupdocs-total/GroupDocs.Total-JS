@@ -62,12 +62,12 @@
     }   
 
     .gd-signature-thumbnail-image {
-        width: 33pt;
-        height: 33pt;
+        width: 44px;
+        height: 44px;
     }    
 
     .gd-signature-item .gd-signature-name {
-        font-size: 10pt;
+        font-size: 13px;
 
     }
 
@@ -85,7 +85,7 @@
 	}
 	
 	.gd-signature-item i {
-		font-size: 11pt;    
+		font-size: 15px;    
 	}
 
     #gd-text-font {
@@ -273,7 +273,7 @@
     }
 
     .gd-signature-list-title > i {
-        font-size: 20pt;
+        font-size: 27px;
 		line-height: 18px;
 		margin: 15px 29px 3px 0px;
     }    
@@ -348,9 +348,9 @@
     }
 	
 	.gd-signature-context-panel-title, .gd-signature-context-upload-title {
-		width: 198pt;
+		width: 264px;
 		margin: 16px 118px 7px 12px;
-		font-size: 12pt;
+		font-size: 16px;
 	}
     .gd-upload-inputs {
         width: -webkit-fill-available;        
@@ -382,7 +382,7 @@
     }
 
     .gd-digital-inputs i {
-        font-size: 10pt;
+        font-size: 13px;
     }
 }
 

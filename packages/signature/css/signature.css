@@ -294,12 +294,26 @@ SIGNATURE TOOL BAR
 MODAL
 ******************************************
 */
-.gd-lightbox-close {
-    left: 13px;
-    top: 14px;
-    width: fit-content;
+.gd-modal-header {
+    display: flex;
+    flex-direction: row;
+    height: 52px;
+	padding: 0px;
 }
-
+.gd-lightbox-close {
+	width: 20px;    
+    font-size: 35px;
+    margin: 7px 23px 7px 17px;
+    right: 0px;
+    top: 0px;
+    position: relative;
+}
+.gd-modal-title {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 19px 0px 17px 0px;
+	padding: 0px;
+}
 #gd-lightbox-body {
 	background-color: rgba(0, 0, 0, 0);
 	background-image: url(../images/stampBackground.png) !important;
@@ -379,14 +393,9 @@ MODAL
 DRAW IMAGE SLIDE
 ******************************************
 */
-.csg-preview {
-    top: -8px !important;
-    left: 38px;
-}
 .gd-lightbox-header {
-    position: absolute;
-    width: 100%;
-    top: 0;
+	margin: 12px 23px 13px 634px;
+    width: 254px;
 }
 /*
 ******************************************
@@ -423,7 +432,7 @@ SIGNATURE IMAGE
 }
 .gd-context-menu {
     padding: 5px;
-    box-shadow: #00000052 0px 0px 5px;
+    box-shadow: rgba(0, 0, 0, 0.52) 0px 0px 5px;
     background-color: #FFFFFF;
     border-radius: 3px;
     position: absolute;

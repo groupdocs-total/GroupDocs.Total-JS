@@ -259,7 +259,7 @@ $(document).ready(function () {
                 break;
             case "stamp":
                 var html = $.fn.stampGenerator.addInitialShape();
-                toggleLightBox(true, "Draw stamp", html.header);
+                toggleLightBox(true, "Draw signature", html.header);
                 $.fn.stampGenerator.drawShape(0);
                 break;
             case "barCode":

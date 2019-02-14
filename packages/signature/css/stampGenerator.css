@@ -1,35 +1,41 @@
 #csg-params-header {
-    right: 85px;
-    top: 12px;
-    position: inherit;
+	display: flex;
 }
 #csg-params-header > i {
 	color: white;
-    font-size: 21px;
-    position: absolute;
-    top: 2px;
-    right: -47px;
-	cursor: pointer;
+    font-size: 25px;  
+    cursor: pointer;
+    margin-left: 28px;
 }
 #csg-params-header > button {
     background-color: #2e84b9;
     color: #ffffff;
-    width: 82px;
-    height: 22px;   
+    width: 83px;
+    height: 27px; 
     border: 0;
     border-radius: 3px;
-    margin-left: 5px;   
+    margin-left: 12px;   
     cursor: pointer;
+	font-size: 14px;
+	font-family: Helvetica;
+    font-weight: bold;
+	text-align: left;
 }
 #csg-params-header > button i {
-    margin-right: 10px;
+	width: 12px;    
+    margin: 7px 11px 6px 9px;
 }
 .csg-params {
-	display: -webkit-inline-box;  
-    top: -36px;	
+	display: -webkit-inline-box;
+    width: 122px;
+    height: 34px;
+    top: -40px;
+	padding: 0;
 }
 .csg-params i {
-    margin-left: 9px;
+	font-size: 14px;
+    margin: 10px 4px 10px 4px;
+    padding: 0;
 	cursor: pointer;	
 }
 .csg-preview {
@@ -38,25 +44,21 @@
 }
 .csg-bouding-box {
 	border: 1px solid #679FFA;   
-    top: Calc(100% - 323px);
-    left: Calc(100% - 446px);
+	top: 172px;
+    left: 454px;
     position: absolute;
 	z-index: 10;
 }
 .csg-border-width {
 	background-image: url(../images/stampBorderWidth.png);
-    width: 18px !important;
-    height: 12px !important;
-    margin-left: 5px;
-    margin-right: 5;
-    position: relative;
+	width: 14px !important;
+    height: 14px !important;
+    margin: 10px 11px 10px 7px;
 }
 .csg-border-width  select {
     position: absolute;
 	width: 27px;
-    border: 0;
-    margin-left: 2px;
-    top: -2px;
+    border: 0;   
     background-color: rgba(0,0,0,0);  
     cursor: pointer;
 }

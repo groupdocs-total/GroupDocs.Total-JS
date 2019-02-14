@@ -444,10 +444,10 @@ MODAL
 .gd-modal-dialog {
     box-shadow: #0005 0px 0px 10px;
     position: absolute;
-    width: 700px;
+    width: 1079px;
     height: 500px;
-    top: calc(50% - 250px);
-    left: calc(50% - 350px);
+    top: 178px;
+    left: 425px;
 }
 .gd-modal-content {
     background-color: #ffffff;

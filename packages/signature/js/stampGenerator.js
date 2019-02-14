@@ -10,8 +10,8 @@ var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch clic
 var paramValues = {
 	id: 0,
 	text: "",
-	width: 150,
-	height: 150,
+	width: 153,
+	height: 153,
 	left: 0, 
 	top: 0, 
 	zIndex: 10,		
@@ -23,7 +23,7 @@ var paramValues = {
 	fontSize: 10,
 	font: "Arial",
 	textColor: "rgb(51, 51, 51)",
-	radius: 75,
+	radius: 76.5,
 	bold: false,
 	italic: false,
 	underline: false
@@ -113,8 +113,8 @@ $(document).ready(function(){
 	$('body').on("change", ".csg-border-width select", function(){
 		var canvasId = $($(this).parent().parent().parent()[0]).data("id");		
 		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });		
-		properties[0].strokeWidth = $(this).val();
-		setSizeProperties(properties[0], $(this).parent().parent().parent()[0]);
+		properties[0].strokeWidth = $(this).val();		
+		setSizeProperties(properties[0], $(this).parent().parent().parent()[0]);		
 		var isCircle = true;
 		$.each($(".csg-bouding-box"), function(index, element){
 			var lastShape = $(".csg-bouding-box")[$(".csg-bouding-box").length - 1];
@@ -532,8 +532,8 @@ function cleanProperties(){
 	paramValues = {
 		id: 0,
 		text: "",
-		width: 150,
-		height: 150,
+		width: 153,
+		height: 153,
 		left: 0, 
 		top: 0, 
 		zIndex: 10,		
@@ -545,7 +545,7 @@ function cleanProperties(){
 		fontSize: 10,
 		font: "Arial",
 		textColor: "rgb(51, 51, 51)",
-		radius: 75,
+		radius: 76.5,
 		bold: false,
 		italic: false,
 		underline: false
@@ -573,7 +573,7 @@ function setColors(properties, canvasId) {
 }
 
 function setShapeProperties(properties){
-	properties.radius = (properties.width / 2) - 10;
+	properties.radius = (properties.width / 2);	
 	properties.strokeColor = (properties.strokeColor == "") ? "rgb(51, 51, 51)" : properties.strokeColor;
 	properties.strokeWidth = (properties.strokeWidth == "") ? 1 : properties.strokeWidth;
 	properties.fontSize = (properties.fontSize == "") ? 10 : properties.fontSize;

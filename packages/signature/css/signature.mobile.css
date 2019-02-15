@@ -1,19 +1,14 @@
 @media (max-width: 1024px) {
-    .gd-modal-header{
+    .gd-modal-header-lightbox{
         height: 60px;
-        display: flex;
-        flex-direction: row;
+        padding: 0;
     }
-    .gd-modal-title{
+    .gd-modal-title-lightbox {
         font-size: 14px;
         line-height: 60px;
         padding: 0 0 0 23px;
-        width: 100%;
     }
-    .gd-modal-header{
-        padding: 0;
-    }
-    .gd-modal-close{
+    .gd-lightbox-close {
         background-color: #00c4d7;
         font-size: 23px;
         padding: 0px 23px;
@@ -23,7 +18,7 @@
         right: 0;
         left:0px;
     }
-    .gd-modal-close span{
+    .gd-lightbox-close span{
         color: #FFFFFF;
     }
     .gd-modal-table > tbody > tr > td{
@@ -33,7 +28,6 @@
     .gd-modal-body{
         min-height: 100%;
     }
-
 
     #gd-header{
         height: 60px;
@@ -144,7 +138,7 @@
         white-space: nowrap;
         text-align: left;
         margin: 23px;
-        width: auto !important;
+        width: 100% !important;
         height: auto !important;
         padding: 0px;
     }
@@ -386,8 +380,9 @@
     }
 }
 
-@media screen and (orientation: landscape) {
+@media screen and (max-width: 1024px) and (orientation: landscape) {
     .gd-modal-dialog-lightbox {
+        position: fixed;
         display: block;
     }
 
@@ -396,7 +391,7 @@
     }
 }
 
-@media screen and (orientation: portrait) {
+@media screen and (max-width: 1024px) and (orientation: portrait) {
     .gd-modal-dialog-lightbox {
         display: none;
     }

@@ -155,7 +155,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Export drawn image signature
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on(userMouseClick, '#bcPaint-export', function () {
+    $('.gd-modal-lightbox').on(userMouseClick, '#bcPaint-export', function () {
         var drawnImage = $.fn.bcPaint.export();
         saveDrawnImage(drawnImage);
         toggleLightBox(false);
@@ -254,8 +254,9 @@ $(document).ready(function () {
     $('#gd-new-signature').on(userMouseClick, function (e) {
         switch (signature.signatureType) {
             case "hand":
-                toggleLightBox(true, "Draw signature", getDrawSignHeader(), getDrawSignContent());
+                toggleLightBox(true, "Draw signature", "", getDrawSignContent());
                 $("#gd-draw-image").bcPaint();
+                fillLightBoxHeader(getDrawSignHeader());
                 break;
             case "stamp":
                 var html = $.fn.stampGenerator.addInitialShape();
@@ -350,12 +351,17 @@ function resetUploadFiles() {
     $("#gd-upload-input").val('');
 }
 
+function fillLightBoxHeader(header) {
+    $("#gd-lightbox-header").append(header);
+}
+
+
 /**
  * Get html for lightbox header to create new image
  * @returns {string}
  */
 function getDrawSignHeader() {
-    return "";
+    return $.fn.bcPaint.getHeader();
 }
 
 /**
@@ -536,7 +542,7 @@ function loadSignaturesTree(dir, callback) {
                 } else {
                     var imageBlock = name;
                     if ("digital" == signature.signatureType) {
-                        imageBlock = '<div class="gd-signature-thumbnail-' + signature.signatureType + '"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
+                        imageBlock = '<div class="gd-signature-thumbnail-digital"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
                     } else {
                         imageBlock = '<image class="gd-signature-thumbnail-' + signature.signatureType + '" src="data:image/png;base64,' + elem.image + '" alt></image>';
                     }
@@ -635,14 +641,14 @@ function uploadSignature(file, index, url, callback) {
             // upload progress
             xhr.upload.addEventListener("progress", function (event) {
                 if (event.lengthComputable) {
-                    $(".gd-modal-close-action").off(userMouseClick);
+                    $("#gd-modal-close-action").off(userMouseClick);
                     $("#gd-open-document").prop("disabled", true);
                     // increase progress
                     $("#gd-pregress-bar-" + index).addClass("p" + Math.round(event.loaded / event.total * 100));
                     if (event.loaded == event.total) {
                         $("#gd-pregress-bar-" + index).fadeOut();
                         $("#gd-upload-complete-" + index).fadeIn();
-                        $('.gd-modal-close-action').on(userMouseClick, closeModal);
+                        $('#gd-modal-close-action').on(userMouseClick, closeModal);
                         $("#gd-open-document").prop("disabled", false);
                     }
                 }
@@ -1384,7 +1390,7 @@ function toggleLightBox(open, title, header, content) {
                 { queue: false, duration: 'fast' }
             );
         $('#lightBoxDialog').addClass('in');
-        $(".gd-lightbox-header").append(header);
+        fillLightBoxHeader(header);
         $("#gd-lightbox-body").append(content);
 
     } else {
@@ -1397,7 +1403,7 @@ function toggleLightBox(open, title, header, content) {
                 { queue: false, duration: 'fast' }
             )
             .css('display', 'none');
-        $(".gd-lightbox-header").html('');
+        $("#gd-lightbox-header").html('');
         $("#gd-lightbox-body").html('');
     }
 }
@@ -1685,14 +1691,14 @@ GROUPDOCS.SIGNATURE PLUGIN
     }
 
     function getHtmlLightboxBox() {
-        return '<div class="gd-modal fade" id="lightBoxDialog">' +
+        return '<div class="gd-modal-lightbox fade" id="lightBoxDialog">' +
             '<div class="gd-modal-dialog gd-modal-dialog-lightbox">' +
             '<div class="gd-modal-content" id="gd-lightbox-content">' +
             // header
-            '<div class="gd-modal-header">' +
-            '<div class="gd-modal-close gd-modal-close-action gd-lightbox-close"><span>&times;</span></div>' +
-            '<h4 class="gd-modal-title" id="gd-lightbox-title"></h4>' +
-            '<div class=gd-lightbox-header>' +
+            '<div class="gd-modal-header-lightbox">' +
+            '<div id="gd-modal-close-action" class="gd-lightbox-close"><span>&times;</span></div>' +
+            '<h4 id="gd-lightbox-title" class="gd-modal-title-lightbox"></h4>' +
+            '<div id="gd-lightbox-header" class="gd-lightbox-header">' +
             // header custom HTMl will be here
             '</div>' +
             '</div>' +

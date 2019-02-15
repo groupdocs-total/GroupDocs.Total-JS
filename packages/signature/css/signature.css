@@ -294,19 +294,45 @@ SIGNATURE TOOL BAR
 MODAL
 ******************************************
 */
-.gd-modal-header {
+.gd-modal-lightbox {
+    display: none;
+    overflow: hidden;   
+    z-index: 1050;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+    background-color: rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.gd-modal-header-lightbox {
     display: flex;
     flex-direction: row;
     height: 52px;
-	padding: 0px;
+}
+.gd-modal-title-lightbox {
+    font-size: 16px;
+    font-weight: 400;   
+    margin: 19px 0px 17px 0px;
+    color: #ffffff;
+}
+.gd-modal-dialog-lightbox {
+    width: 1079px;
+    height: 592px;
+    left: 425px;
+    top: 178px;
 }
 .gd-lightbox-close {
-	width: 20px;    
-    font-size: 35px;
+	font-size: 35px;
+    width: fit-content;
     margin: 7px 23px 7px 17px;
     right: 0px;
     top: 0px;
     position: relative;
+    color: #959da5;    
+    cursor: pointer;
 }
 .gd-modal-title {
     font-size: 16px;
@@ -390,12 +416,32 @@ MODAL
 }
 /*
 ******************************************
+Fade annimation
+******************************************
+*/
+.gd-modal-lightbox.fade .gd-modal-dialog {
+    -webkit-transform: translate(0, -25%);
+    -ms-transform: translate(0, -25%);
+    -o-transform: translate(0, -25%);
+    transform: translate(0, -25%);
+    -webkit-transition: -webkit-transform 0.3s ease-out;
+    -moz-transition: -moz-transform 0.3s ease-out;
+    -o-transition: -o-transform 0.3s ease-out;
+    transition: transform 0.3s ease-out;
+}
+.gd-modal-lightbox.in .gd-modal-dialog {
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+}
+/*
+******************************************
 DRAW IMAGE SLIDE
 ******************************************
 */
 .gd-lightbox-header {
-	margin: 12px 23px 13px 634px;
-    width: 254px;
+	margin: 14px 23px 14px 304px;
 }
 /*
 ******************************************

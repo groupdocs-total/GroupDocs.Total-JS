@@ -3,30 +3,22 @@
   height: 100%;
 }
 
-#bcPaint-header{
-  width: 70%;
-  height: 25px;
-  position: fixed;
-  top: 12px;
-  right: 64px;
-}
-
-#bcPaint-palette{
-  text-align: right;
+.bcPaint-header{
+  display: flex; 
+  flex-direction: row;
 }
 
 .bcPaint-palette-color{
-  width: 15px;
-  height: 15px;
+  width: 24px;
+  height: 24px;
   display: inline-block;
   cursor: pointer;
   border-radius: 15px;
-  margin: 0 5px;
+  margin-left: 19px;
 }
 
 #bcPaint-palette > .selected{
   border: 2px solid #bdbdbd;
-  margin-bottom: -2px;
 }
 
 #bcPaint-canvas-container{
@@ -35,10 +27,7 @@
 }
 
 .bcPaint-export {
-  text-align: right;
-  color: #FFFFFF;
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  font-size: 14px;
+	margin: 0px 0px 17px 42px;
+	color: #FFFFFF;
+	font-size: 25px;
 }

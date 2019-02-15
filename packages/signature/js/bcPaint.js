@@ -27,7 +27,7 @@ $(document).ready(function(){
 		startPoint		= { x:0, y:0 },
 		templates 		= {
 							container 		: $('<div id="bcPaint-container"></div>'),
-							header 			: $('<div id="bcPaint-header"></div>'),
+							header 			: $('<div id="bcPaint-header" class="bcPaint-header"></div>'),
 							palette 		: $('<div id="bcPaint-palette"></div>'),
 							color 			: $('<div class="bcPaint-palette-color"></div>'),
 							canvasContainer : $('<div id="bcPaint-canvas-container"></div>'),
@@ -36,7 +36,8 @@ $(document).ready(function(){
 							buttonSave		: $('<div id="bcPaint-export" class="bcPaint-export"><i class="fa fa-check"></i></div>')
 						},
 		paintCanvas,
-		paintContext;
+		paintContext,
+		paintHeader;
 
 	/**
 	* Assembly and initialize plugin
@@ -56,13 +57,17 @@ $(document).ready(function(){
 				buttonSave 		= templates.buttonSave.clone(),
 				color;
 
+			header.append(palette);
+            header.append(buttonSave);
+
+            paintHeader = header;
+
 			// assembly pane
 			rootElement.append(container);
-			container.append(header);
+			//add flag if you need append header into container
+			//container.append(header);
 			container.append(canvasContainer);
-			header.append(palette);
 			canvasContainer.append(canvasPane);
-            header.append(buttonSave);
 
 			// assembly color palette
 			$.each(colorSet.colors, function (i) {
@@ -127,7 +132,7 @@ $(document).ready(function(){
 			  }
 			}, false);
 		});
-	}
+	};
 
 	/**
 	* Extend plugin
@@ -139,6 +144,10 @@ $(document).ready(function(){
                 paintCanvas.attributes['width'].value = $('#gd-lightbox-body').width();
                 paintCanvas.attributes['height'].value =$('#gd-lightbox-body').height();
             }
+		},
+
+		getHeader : function() {
+			return paintHeader;
 		},
 
 		/**

@@ -7,6 +7,9 @@
     cursor: pointer;
     margin-left: 28px;
 }
+.csg-header-buttons {
+    margin: 14px 23px 14px 644px;
+}
 #csg-params-header > button {
     background-color: #2e84b9;
     color: #ffffff;
@@ -44,8 +47,8 @@
 }
 .csg-bouding-box {
 	border: 1px solid #679FFA;   
-	top: 172px;
-    left: 454px;
+	top: 231px;
+    left: 463px;
     position: absolute;
 	z-index: 10;
 }
@@ -65,7 +68,7 @@
 .csg-text-input {
 	position: absolute;
     top: 57px;  
-    right: 105px;
+    right: 97px;
     display: none;
 }
 .csg-text-input input {

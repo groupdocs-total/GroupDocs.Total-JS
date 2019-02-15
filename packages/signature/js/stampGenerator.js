@@ -321,7 +321,8 @@ $(document).ready(function(){
 		
 		addInitialShape : function(){
 			stampData = [];
-			stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();				
+			stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();	
+			$(".gd-lightbox-header").addClass("csg-header-buttons");
 			return stampGeneratorHtml;
 		},	
 		

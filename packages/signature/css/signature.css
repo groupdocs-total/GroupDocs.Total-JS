@@ -315,7 +315,7 @@ MODAL
 .gd-modal-title-lightbox {
     font-size: 16px;
     font-weight: 400;   
-    margin: 19px 0px 17px 0px;
+    margin: 16px 0px 17px 0px;
     color: #ffffff;
 }
 .gd-modal-dialog-lightbox {
@@ -441,7 +441,7 @@ DRAW IMAGE SLIDE
 ******************************************
 */
 .gd-lightbox-header {
-	margin: 14px 23px 14px 304px;
+	margin: 14px 23px 14px 299px;
 }
 /*
 ******************************************

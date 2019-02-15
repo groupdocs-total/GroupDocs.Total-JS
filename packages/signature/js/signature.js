@@ -1693,12 +1693,16 @@ GROUPDOCS.SIGNATURE PLUGIN
     }
 
     function getHtmlLightboxBox() {
+		var closeIcon = '<i class="fas fa-times" id="gd-close-signature"></i>';
+		if (isMobile()) {
+			closeIcon = '<i class="fas fa-arrow-left"></i>';
+		}
         return '<div class="gd-modal-lightbox fade" id="lightBoxDialog">' +
             '<div class="gd-modal-dialog gd-modal-dialog-lightbox">' +
             '<div class="gd-modal-content" id="gd-lightbox-content">' +
             // header
             '<div class="gd-modal-header-lightbox">' +
-            '<div id="gd-modal-close-action" class="gd-lightbox-close"><span>&times;</span></div>' +
+            '<div id="gd-modal-close-action" class="gd-lightbox-close">' + closeIcon + '</div>' +
             '<h4 id="gd-lightbox-title" class="gd-modal-title-lightbox"></h4>' +
             '<div id="gd-lightbox-header" class="gd-lightbox-header">' +
             // header custom HTMl will be here

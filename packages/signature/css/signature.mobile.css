@@ -1,23 +1,24 @@
 @media (max-width: 1024px) {
     .gd-modal-header-lightbox{
-        height: 60px;
+        height: 40px;
         padding: 0;
     }
     .gd-modal-title-lightbox {
-        font-size: 14px;
-        line-height: 60px;
-        padding: 0 0 0 23px;
+        font-size: 14px;        
+		margin: 12px 0 0 23px;
     }
     .gd-lightbox-close {
-        background-color: #00c4d7;
-        font-size: 23px;
-        padding: 0px 23px;
-        line-height: 60px;
-        position: relative;
-        top: 0;
-        right: 0;
-        left:0px;
+		background-color: #00c4d7;
+		font-size: 14px;
+		width: 40px;
+		height: 40px;
+		color: #ffffff;
+		margin: 0;
+		padding: 14px 0 18px 14px;
     }
+	.gd-lightbox-header {
+		margin: 13px 15px 14px 25px;
+	}
     .gd-lightbox-close span{
         color: #FFFFFF;
     }
@@ -43,6 +44,8 @@
     .gd-modal-dialog {
         width: 100% !important;
         height: 100% !important;
+		left: 0px;
+		top: 0px;
     }
     .gd-left-bar-tools-container ul li{
         margin: 0px;
@@ -110,11 +113,7 @@
 
     #csg-params-header > button {
         font-size: 14px !important;
-    }
-
-    .csg-params {
-        margin: -25px 0px 0px -27px;
-    }
+    }   
 
     .csg-border-width {
         width: 25px !important;

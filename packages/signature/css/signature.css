@@ -297,11 +297,17 @@ MODAL
 .gd-modal-lightbox {
     display: none;
     overflow: hidden;
-    padding: 179px 425px 0px;
+    padding-top: 179px;
+    padding-left: 425px;
     z-index: 1050;
     -webkit-overflow-scrolling: touch;
     outline: 0;
     background-color: rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 }
 .gd-modal-header-lightbox {
     display: flex;
@@ -324,6 +330,7 @@ MODAL
     width: fit-content;
     color: #959da5;
     padding: 3px 17px 3px;
+    cursor: pointer;
 }
 
 #gd-lightbox-body {

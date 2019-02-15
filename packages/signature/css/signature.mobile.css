@@ -380,7 +380,7 @@
     }
 }
 
-@media screen and (orientation: landscape) {
+@media screen and (max-width: 1024px) and (orientation: landscape) {
     .gd-modal-dialog-lightbox {
         position: fixed;
         display: block;
@@ -391,7 +391,7 @@
     }
 }
 
-@media screen and (orientation: portrait) {
+@media screen and (max-width: 1024px) and (orientation: portrait) {
     .gd-modal-dialog-lightbox {
         display: none;
     }

@@ -64,8 +64,8 @@
 }
 .csg-text-input {
 	position: absolute;
-    top: 32px;
-    left: 4px;
+    top: 57px;  
+    right: 105px;
     display: none;
 }
 .csg-text-input input {

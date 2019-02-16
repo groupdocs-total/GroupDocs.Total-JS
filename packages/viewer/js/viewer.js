@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
  * @author Aspose Pty Ltd
- * @version 1.7.0
+ * @version 1.8.0
  */
 
 /*
@@ -379,11 +379,7 @@ $(document).ready(function () {
     $('#gd-nav-right').on('click', function () {
         // open/close sidebar
         $('#gd-thumbnails').toggleClass('active');
-        if ($("#gd-pages").css("margin-left") == "0px") {
-            $("#gd-pages").css("margin-left", "280px");
-        } else {
-            $("#gd-pages").css("margin-left", "0px");
-        }
+        
     });
 
     //////////////////////////////////////////////////
@@ -900,6 +896,11 @@ function renderThumbnails(pageNumber, pageData) {
                 width = 800;
                 height = 450;
                 zoomValue = 1;
+            }
+			if (getDocumentFormat(documentGuid).format == "Microsoft PowerPoint") {
+                if (width > ($("#gd-thumbnails").width() * 2)) {
+                    zoomValue = 0.7;
+                }
             }
             // set correct size
             gd_thumbnails_page.css('width', width);

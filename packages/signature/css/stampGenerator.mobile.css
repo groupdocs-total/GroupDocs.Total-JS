@@ -17,10 +17,16 @@
 	}
 		
 	.bcPicker-palette {
-		top: -102px !important;
+		top: 0px !important;
+		left: -70px !important;
 		width: 381px !important;
 	}
 
+	.csg-text-color .bcPicker-palette {
+		top: -131px !important;
+		left: -106px !important;
+	}
+	
 	.csg-insert-text {
 		margin-left: 10px;
 	}

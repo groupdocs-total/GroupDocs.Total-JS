@@ -35,7 +35,7 @@ var textContextMenuButtons = [
 	'<i class="fas fa-bold"></i>',
 	'<i class="fas fa-italic"></i>',
 	'<i class="fas fa-underline"></i>',
-	'<div class="gd-text-color-picker"></div>'];
+	'<div class="gd-text-color-picker csg-text-color"></div>'];
 
 $(document).ready(function(){
 
@@ -59,9 +59,11 @@ $(document).ready(function(){
 
 	//Open background color palit
 	$('body').on(userMouseClick, '.fa-fill-drip', function(e){
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		$(".csg-background-color").find(".bcPicker-picker").click();		
+		if (e.cancelable) {
+		   e.preventDefault();
+		   e.stopImmediatePropagation();		  
+		}		
+		$(".csg-background-color").find(".bcPicker-picker").click();
 	});
 	
 	//Save stamp

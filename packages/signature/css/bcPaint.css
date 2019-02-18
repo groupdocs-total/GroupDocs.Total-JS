@@ -4,7 +4,8 @@
 }
 
 .bcPaint-header{
-  display: flex; 
+  display: flex;
+  padding: 14px 23px 14px 20px;
   flex-direction: row;
 }
 
@@ -27,7 +28,7 @@
 }
 
 .bcPaint-export {
-	margin: 0px 0px 17px 42px;
+	margin: 0px 0px 0px 42px;
 	color: #FFFFFF;
 	font-size: 25px;
 }

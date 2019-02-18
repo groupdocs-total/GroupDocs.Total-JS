@@ -10,8 +10,8 @@ var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch clic
 var paramValues = {
 	id: 0,
 	text: "",
-	width: 153,
-	height: 153,
+	width: isMobile() ? 103 : 153,
+	height: isMobile() ? 103 : 153,
 	left: 0, 
 	top: 0, 
 	zIndex: 10,		
@@ -260,7 +260,7 @@ $(document).ready(function(){
 	
 	// Add text
 	$('body').on(userMouseClick, '#csg-text-add', function(e){
-		$(".csg-text-input").css("display", "flex");
+		$(".csg-text-input").show();
 		$(".csg-text-input input").focus();
 	});
 	
@@ -322,7 +322,6 @@ $(document).ready(function(){
 		addInitialShape : function(){
 			stampData = [];
 			stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();	
-			$(".gd-lightbox-header").addClass("csg-header-buttons");
 			return stampGeneratorHtml;
 		},	
 		
@@ -387,7 +386,7 @@ $(document).ready(function(){
 		},
 
 		headerHtml : function(){
-			var html = '<div id="csg-params-header">' +
+			var html = '<div id="csg-params-header" class="csg-header-buttons">' +
 						'<button id="csg-shape-add"><i class="fas fa-plus"></i>Circle</button>' +
 						'<button id="csg-text-add"><i class="fas fa-plus"></i>Text</button>' +
 						'<div class="csg-text-input"><input type="text"><div class="csg-insert-text"><i class="fas fa-plus"></i></div></div>'+
@@ -512,7 +511,8 @@ function makeResizable(canvasId){
 	}).draggable({
 		// set restriction for image dragging area to current document page
 		containment: $(element).parent(),
-		stop : function(event, image) {			
+		cancel: 'select,option',
+		stop : function(event, image) {
             properties[0].left = image.position.left;
             properties[0].top = image.position.top;
 			var isCircle = true;
@@ -533,8 +533,8 @@ function cleanProperties(){
 	paramValues = {
 		id: 0,
 		text: "",
-		width: 153,
-		height: 153,
+		width: isMobile() ? 103 : 153,
+		height: isMobile() ? 103 : 153,
 		left: 0, 
 		top: 0, 
 		zIndex: 10,		

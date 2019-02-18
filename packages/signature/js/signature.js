@@ -237,7 +237,6 @@ $(document).ready(function () {
     // Close lightbox dialog event
     //////////////////////////////////////////////////
     $('.gd-lightbox-close').on(userMouseClick, function () {
-		$(".gd-lightbox-header").removeClass("csg-header-buttons");
         toggleLightBox(false)
     });
 
@@ -803,7 +802,6 @@ function saveDrawnStamp(callback) {
     // prepare data for ajax
     stampData.reverse();
     var data = { image: image, stampData: stampData };
-	$(".gd-lightbox-header").removeClass("csg-header-buttons");
     // save the stamp image and xml description in the storage
     $.ajax({
         type: 'POST',
@@ -1565,9 +1563,9 @@ GROUPDOCS.SIGNATURE PLUGIN
                         '<div class="gd-signature-context-pane-wrapper">'+
                             getHtmlUploadSignatures() +
                             '<div class="gd-signature-list-title">' +
+                                '<i class="fa fa-plus" id="gd-new-signature"></i>' +
                                 '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
                                 '</div>' +
-                                '<i class="fa fa-plus" id="gd-new-signature"></i>' +
                             '</div>' +
 
                             '<div id="gd-left-bar-fade" class="gd-left-bar-fade">' +
@@ -1702,8 +1700,10 @@ GROUPDOCS.SIGNATURE PLUGIN
             '<div class="gd-modal-content" id="gd-lightbox-content">' +
             // header
             '<div class="gd-modal-header-lightbox">' +
+            '<div class="gd-modal-header-title">' +
             '<div id="gd-modal-close-action" class="gd-lightbox-close">' + closeIcon + '</div>' +
             '<h4 id="gd-lightbox-title" class="gd-modal-title-lightbox"></h4>' +
+            '</div>' +
             '<div id="gd-lightbox-header" class="gd-lightbox-header">' +
             // header custom HTMl will be here
             '</div>' +

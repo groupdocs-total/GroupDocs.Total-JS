@@ -1,5 +1,10 @@
 @media (max-width: 1024px){
 
+  .bcPaint-header {
+    height: 40px;
+    padding: 10px 20px 0px 10px;
+  }
+
   .bcPaint-palette-color{
     width: 15px;
     height: 15px;

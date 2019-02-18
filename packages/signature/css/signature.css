@@ -185,7 +185,7 @@ SIGNATURE TOOL BAR
     justify-content: space-between;
 }
 .gd-signature-list-title > i {
-	padding: 15px 25px 0px 0px;
+	padding: 15px 25px 0px 15px;
     color: #676767;
     cursor: pointer;
     width: 12px;
@@ -195,16 +195,11 @@ SIGNATURE TOOL BAR
 .gd-signature-context-upload-title, .gd-signature-context-panel-title {
 	color: #AAAAAA;
     font-size: 12px;
-    width: 121px;
     font-family: Helvetica;
     font-weight: bold;
-    margin: 16px 129px 0px 12px;
-}
-
-.gd-signature-context-panel-title {   
-    width: 101px;
     margin: 16px 12px 12px 12px;
 }
+
 .gd-left-bar-spinner {
     left: 30%;
     top: 50%;
@@ -226,17 +221,15 @@ SIGNATURE TOOL BAR
 }
 .gd-upload-container {
     background-color: #ffffff;
-    width: 278px;
     height: 252px;
     border: 1px solid #3787f5;
     border-radius: 5px;
-    margin: 9px 10px 14px 12px;
+    margin: 0px 10px 0px 12px;
 }
 .gd-add-upload-file, .gd-sign-digital {
-    width: 263px;
     height: 27px;
     background-color: #3787F5;
-    margin: 9px 8px 7px 7px;
+    margin: 9px 8px 7px 8px;
     border-radius: 3px;
     text-align: center;
     color: #ffffff;
@@ -246,30 +239,30 @@ SIGNATURE TOOL BAR
     padding-top: 5px;
 }
 .gd-upload-inputs {
-	width: 263px;
     height: 201px;
     text-align: center;
     margin: 7px 8px 9px 6px;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.16);
     border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
 }
 .gd-upload-inputs i {
 	font-size: 52px;
     color: #959DA5;
-    margin: 61px 112px 12px 112px;
-    width: 39px;
-    height: 53px;
 }
 .gd-upload-title {
     color: #5C737F;
     font-size: 13px;
-    margin: 0px 80px 61px 82px;
+    margin: 10px 0px 0px 0px;
 }
 .gd-upload-inputs input {
     opacity: 0;
     position: absolute;
     cursor: pointer;
-    width: inherit;
+    width: fit-content;
     height: 203px;
 }
 .gd-digital-input-wrapper {

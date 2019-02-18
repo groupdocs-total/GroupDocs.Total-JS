@@ -342,29 +342,9 @@
         width: -webkit-fill-available;        
     }
 
-    .gd-add-upload-file, .gd-sign-digital {
-		width: auto;
-		height: fit-content;
-		font-size: 32px;
-    }
-
     .gd-upload-inputs input {
         width: -webkit-fill-available;
 		height: 201px;
-    }
-
-    .gd-upload-inputs i {
-		font-size: 99px;   
-		margin: 34px 138px 12px 112px;
-    }
-
-    .gd-upload-title {
-		font-size: 32px;
-		margin-top: 37px;
-    }
-
-    .gd-digital-inputs input {
-        width: 313px;        
     }
 
     .gd-digital-inputs i {

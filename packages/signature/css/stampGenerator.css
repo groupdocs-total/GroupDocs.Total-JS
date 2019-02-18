@@ -1,6 +1,3 @@
-#csg-params-header {
-	display: flex;
-}
 #csg-params-header > i {
 	color: white;
     font-size: 25px;  
@@ -8,7 +5,10 @@
     margin-left: 28px;
 }
 .csg-header-buttons {
-    margin: 14px 23px 14px 634px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 14px 23px 14px 14px;
 }
 #csg-params-header > button {
     background-color: #2e84b9;
@@ -67,9 +67,10 @@
 }
 .csg-text-input {
 	position: absolute;
-    top: 57px;  
+    top: 57px;
     right: 97px;
     display: none;
+    z-index: 999999999;
 }
 .csg-text-input input {
 	margin-right: 10px;

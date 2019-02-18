@@ -260,7 +260,7 @@ $(document).ready(function () {
                 break;
             case "stamp":
                 var html = $.fn.stampGenerator.addInitialShape();
-                toggleLightBox(true, "Draw stamp", html.header);
+                toggleLightBox(true, "Draw signature", html.header);
                 $.fn.stampGenerator.drawShape(0);
                 break;
             case "barCode":
@@ -647,7 +647,7 @@ function uploadSignature(file, index, url, callback) {
                     $("#gd-pregress-bar-" + index).addClass("p" + Math.round(event.loaded / event.total * 100));
                     if (event.loaded == event.total) {
                         $("#gd-pregress-bar-" + index).fadeOut();
-                        $("#gd-upload-complete-" + index).fadeIn();
+                        $("#gd-upload-complete-" + index).fadeIn();						
                         $('#gd-modal-close-action').on(userMouseClick, closeModal);
                         $("#gd-open-document").prop("disabled", false);
                     }
@@ -1563,9 +1563,9 @@ GROUPDOCS.SIGNATURE PLUGIN
                         '<div class="gd-signature-context-pane-wrapper">'+
                             getHtmlUploadSignatures() +
                             '<div class="gd-signature-list-title">' +
+                                '<i class="fa fa-plus" id="gd-new-signature"></i>' +
                                 '<div id="gd-signature-context-panel-title" class="gd-signature-context-panel-title">' +
                                 '</div>' +
-                                '<i class="fa fa-plus" id="gd-new-signature"></i>' +
                             '</div>' +
 
                             '<div id="gd-left-bar-fade" class="gd-left-bar-fade">' +
@@ -1691,13 +1691,19 @@ GROUPDOCS.SIGNATURE PLUGIN
     }
 
     function getHtmlLightboxBox() {
+		var closeIcon = '<i class="fas fa-times" id="gd-close-signature"></i>';
+		if (isMobile()) {
+			closeIcon = '<i class="fas fa-arrow-left"></i>';
+		}
         return '<div class="gd-modal-lightbox fade" id="lightBoxDialog">' +
             '<div class="gd-modal-dialog gd-modal-dialog-lightbox">' +
             '<div class="gd-modal-content" id="gd-lightbox-content">' +
             // header
             '<div class="gd-modal-header-lightbox">' +
-            '<div id="gd-modal-close-action" class="gd-lightbox-close"><span>&times;</span></div>' +
+            '<div class="gd-modal-header-title">' +
+            '<div id="gd-modal-close-action" class="gd-lightbox-close">' + closeIcon + '</div>' +
             '<h4 id="gd-lightbox-title" class="gd-modal-title-lightbox"></h4>' +
+            '</div>' +
             '<div id="gd-lightbox-header" class="gd-lightbox-header">' +
             // header custom HTMl will be here
             '</div>' +

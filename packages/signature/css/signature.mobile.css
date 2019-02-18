@@ -1,22 +1,25 @@
 @media (max-width: 1024px) {
+    .gd-modal-lightbox {
+        padding-left: 0px;
+        padding-top: 0px;
+    }
     .gd-modal-header-lightbox{
-        height: 60px;
+        height: 40px;
         padding: 0;
     }
     .gd-modal-title-lightbox {
         font-size: 14px;
-        line-height: 60px;
-        padding: 0 0 0 23px;
+        line-height: 20px;
+        padding: 10px 10px 0 10px;
     }
     .gd-lightbox-close {
-        background-color: #00c4d7;
-        font-size: 23px;
-        padding: 0px 23px;
-        line-height: 60px;
-        position: relative;
-        top: 0;
-        right: 0;
-        left:0px;
+		background-color: #00c4d7;
+		font-size: 14px;
+		width: 40px;
+		height: 40px;
+		color: #ffffff;
+		margin: 0;
+		padding: 10px 10px 0px 10px;
     }
     .gd-lightbox-close span{
         color: #FFFFFF;
@@ -43,6 +46,8 @@
     .gd-modal-dialog {
         width: 100% !important;
         height: 100% !important;
+		left: 0px;
+		top: 0px;
     }
     .gd-left-bar-tools-container ul li{
         margin: 0px;
@@ -62,7 +67,6 @@
 
     .gd-signature-item .gd-signature-name {
         font-size: 13px;
-
     }
 
     .gd-left-bar-spinner {
@@ -110,11 +114,7 @@
 
     #csg-params-header > button {
         font-size: 14px !important;
-    }
-
-    .csg-params {
-        margin: -25px 0px 0px -27px;
-    }
+    }   
 
     .csg-border-width {
         width: 25px !important;
@@ -137,10 +137,10 @@
     .gd-tool {
         white-space: nowrap;
         text-align: left;
-        margin: 23px;
         width: 100% !important;
         height: auto !important;
-        padding: 0px;
+        padding: 23px;
+        margin: 0;
     }
 
     .gd-left-bar-tools-container {
@@ -266,12 +266,6 @@
         margin: 16px 0 14px 12px;
     }
 
-    .gd-signature-list-title > i {
-        font-size: 27px;
-		line-height: 18px;
-		margin: 15px 29px 3px 0px;
-    }    
-
 	.gd-digital-input-wrapper {
 		width: fit-content;
 	}
@@ -285,27 +279,27 @@
     }
 
     .gd-signature-context-panel.image::after {
-        top: 80px;
+        top: 88px;
     }
 
     .gd-signature-context-panel.digital::after {
-        top: 135px;
+        top: 147px;
     }
 
     .gd-signature-context-panel.qrCode::after {
-        top: 190px;
+        top: 209px;
     }
 
     .gd-signature-context-panel.barCode::after {
-        top: 245px;
+        top: 268px;
     }
 
     .gd-signature-context-panel.stamp::after {
-        top: 305px;
+        top: 329px;
     }
 
     .gd-signature-context-panel.hand::after {
-        top: 360px;
+        top: 390px;
     }
 
     .gd-signature-title {
@@ -323,11 +317,11 @@
     }
 
     .gd-context-menu-top {
-        top: -54px;
+        top: -34px;
     }
 
     .gd-context-menu-bottom {
-        bottom: -54px;
+        bottom: -34px;
     }
 
     .ui-resizable-handle {
@@ -342,9 +336,7 @@
     }
 	
 	.gd-signature-context-panel-title, .gd-signature-context-upload-title {
-		width: 264px;
-		margin: 16px 118px 7px 12px;
-		font-size: 16px;
+		width: unset;
 	}
     .gd-upload-inputs {
         width: -webkit-fill-available;        

@@ -10,8 +10,8 @@ var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch clic
 var paramValues = {
 	id: 0,
 	text: "",
-	width: 150,
-	height: 150,
+	width: isMobile() ? 103 : 153,
+	height: isMobile() ? 103 : 153,
 	left: 0, 
 	top: 0, 
 	zIndex: 10,		
@@ -23,7 +23,7 @@ var paramValues = {
 	fontSize: 10,
 	font: "Arial",
 	textColor: "rgb(51, 51, 51)",
-	radius: 75,
+	radius: 76.5,
 	bold: false,
 	italic: false,
 	underline: false
@@ -113,8 +113,8 @@ $(document).ready(function(){
 	$('body').on("change", ".csg-border-width select", function(){
 		var canvasId = $($(this).parent().parent().parent()[0]).data("id");		
 		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });		
-		properties[0].strokeWidth = $(this).val();
-		setSizeProperties(properties[0], $(this).parent().parent().parent()[0]);
+		properties[0].strokeWidth = $(this).val();		
+		setSizeProperties(properties[0], $(this).parent().parent().parent()[0]);			
 		var isCircle = true;
 		$.each($(".csg-bouding-box"), function(index, element){
 			var lastShape = $(".csg-bouding-box")[$(".csg-bouding-box").length - 1];
@@ -260,7 +260,7 @@ $(document).ready(function(){
 	
 	// Add text
 	$('body').on(userMouseClick, '#csg-text-add', function(e){
-		$(".csg-text-input").css("display", "flex");
+		$(".csg-text-input").show();
 		$(".csg-text-input input").focus();
 	});
 	
@@ -321,7 +321,7 @@ $(document).ready(function(){
 		
 		addInitialShape : function(){
 			stampData = [];
-			stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();				
+			stampGeneratorHtml.header = $.fn.stampGenerator.headerHtml();	
 			return stampGeneratorHtml;
 		},	
 		
@@ -386,7 +386,7 @@ $(document).ready(function(){
 		},
 
 		headerHtml : function(){
-			var html = '<div id="csg-params-header">' +
+			var html = '<div id="csg-params-header" class="csg-header-buttons">' +
 						'<button id="csg-shape-add"><i class="fas fa-plus"></i>Circle</button>' +
 						'<button id="csg-text-add"><i class="fas fa-plus"></i>Text</button>' +
 						'<div class="csg-text-input"><input type="text"><div class="csg-insert-text"><i class="fas fa-plus"></i></div></div>'+
@@ -511,7 +511,8 @@ function makeResizable(canvasId){
 	}).draggable({
 		// set restriction for image dragging area to current document page
 		containment: $(element).parent(),
-		stop : function(event, image) {			
+		cancel: 'select,option',
+		stop : function(event, image) {
             properties[0].left = image.position.left;
             properties[0].top = image.position.top;
 			var isCircle = true;
@@ -532,8 +533,8 @@ function cleanProperties(){
 	paramValues = {
 		id: 0,
 		text: "",
-		width: 150,
-		height: 150,
+		width: isMobile() ? 103 : 153,
+		height: isMobile() ? 103 : 153,
 		left: 0, 
 		top: 0, 
 		zIndex: 10,		
@@ -545,7 +546,7 @@ function cleanProperties(){
 		fontSize: 10,
 		font: "Arial",
 		textColor: "rgb(51, 51, 51)",
-		radius: 75,
+		radius: 76.5,
 		bold: false,
 		italic: false,
 		underline: false
@@ -572,8 +573,12 @@ function setColors(properties, canvasId) {
 	});
 }
 
-function setShapeProperties(properties){
-	properties.radius = (properties.width / 2) - 10;
+function setShapeProperties(properties) {
+	if(properties.strokeWidth > 1){
+		properties.radius = (properties.width / 2) - (properties.strokeWidth / 2);	
+	} else {
+		properties.radius = (properties.width / 2);	
+	}
 	properties.strokeColor = (properties.strokeColor == "") ? "rgb(51, 51, 51)" : properties.strokeColor;
 	properties.strokeWidth = (properties.strokeWidth == "") ? 1 : properties.strokeWidth;
 	properties.fontSize = (properties.fontSize == "") ? 10 : properties.fontSize;

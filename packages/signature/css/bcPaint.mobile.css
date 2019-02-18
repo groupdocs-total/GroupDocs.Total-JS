@@ -1,18 +1,15 @@
 @media (max-width: 1024px){
 
-  #bcPaint-header {
-    height: 60px;
-    padding: 20px 5px 0px 100px;
-  }
-
-  #bcPaint-palette{
+  .bcPaint-header {
+    height: 40px;
+    padding: 10px 20px 0px 10px;
   }
 
   .bcPaint-palette-color{
     width: 15px;
     height: 15px;
     border-radius: 100%;
-    margin: 0 5px;
+	margin: 0 15px 0 0;
   }
 
   #bcPaint-canvas-container > canvas{

@@ -1,31 +1,30 @@
 @media (max-width: 1024px) {
-	#csg-params-header > button {
-		margin-top: 5px;
-	}
-	
 	#csg-params-header > i {
 		font-size: 14px;
-		top: 5px;
+		margin-top: 5px
 	}
-	
+	.csg-header-buttons {
+		margin: 0;
+		padding: 5px 20px 0px 10px;
+	}
 	.csg-text-input {		
-		top: 72px;
-		left: 20px;		
+		top: 42px;
+		right: 75px;
+		width: 150px;		
 	}
 	
 	.csg-text-input input {		
-		width: 262px;
 	}
-	
-	.csg-insert-text {
-		left: 262px;
-	}
-	
+		
 	.bcPicker-palette {
 		top: -102px !important;
 		width: 381px !important;
 	}
 
+	.csg-insert-text {
+		margin-left: 10px;
+	}
+	
 	.bcPicker-palette > .bcPicker-color {
 		width: 42px !important;
 		height: 24px !important;
@@ -39,5 +38,20 @@
 	
 	.csg-border-width select {
         width: 21px;
+	}
+	.csg-bouding-box {
+		top: 80px;
+		left: 250px;
+	}
+	.csg-params {
+		top: -37px;
+		margin: auto;
+	}
+	.csg-text-menu {
+		height: 40px;
+	}
+	.csg-text-menu select {
+		padding: 12px 19px 0 13px;
+		margin: 0;
 	}
 }

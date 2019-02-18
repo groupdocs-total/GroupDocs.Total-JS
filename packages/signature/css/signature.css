@@ -181,15 +181,16 @@ SIGNATURE TOOL BAR
 }
 .gd-signature-list-title{
     display: flex;
-    flex-direction: row;
+    flex-direction: row-reverse;
+    justify-content: space-between;
 }
 .gd-signature-list-title > i {
-	margin: 13px 26px 0px 0px;
+	padding: 15px 25px 0px 0px;
     color: #676767;
     cursor: pointer;
     width: 12px;
     height: 20px;
-    font-size: 20px;
+    font-size: 15px;
 }
 .gd-signature-context-upload-title, .gd-signature-context-panel-title {
 	color: #AAAAAA;
@@ -202,7 +203,7 @@ SIGNATURE TOOL BAR
 
 .gd-signature-context-panel-title {   
     width: 101px;
-    margin: 14px 149px 12px 12px;
+    margin: 16px 12px 12px 12px;
 }
 .gd-left-bar-spinner {
     left: 30%;
@@ -296,9 +297,7 @@ MODAL
 */
 .gd-modal-lightbox {
     display: none;
-    overflow: hidden;
-    padding-top: 179px;
-    padding-left: 425px;
+    overflow: hidden;   
     z-index: 1050;
     -webkit-overflow-scrolling: touch;
     outline: 0;
@@ -308,11 +307,18 @@ MODAL
     right: 0;
     bottom: 0;
     left: 0;
+    padding-top: 178px;
+    padding-left: 425px;
 }
 .gd-modal-header-lightbox {
     display: flex;
     flex-direction: row;
     height: 52px;
+    justify-content: space-between;
+}
+.gd-modal-header-title {
+    display: flex;
+    flex-direction: row;
 }
 .gd-modal-title-lightbox {
     font-size: 16px;
@@ -326,16 +332,23 @@ MODAL
     position: unset;
 }
 .gd-lightbox-close {
-    font-size: 35px;
+    font-size: 25px;
     width: fit-content;
     color: #959da5;
-    padding: 3px 17px 3px;
+    margin: 12px 23px 0px 17px;
     cursor: pointer;
 }
-
+.gd-modal-title {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 19px 0px 17px 0px;
+	padding: 0px;
+}
 #gd-lightbox-body {
 	background-color: rgba(0, 0, 0, 0);
 	background-image: url(../images/stampBackground.png) !important;
+    /*important! for right draggable positions*/
+    position: absolute;
 }
 
 .gd-signature-title {
@@ -433,10 +446,6 @@ Fade annimation
 DRAW IMAGE SLIDE
 ******************************************
 */
-.csg-preview {
-    top: -8px !important;
-    left: 38px;
-}
 .gd-lightbox-header {
 }
 /*
@@ -474,7 +483,7 @@ SIGNATURE IMAGE
 }
 .gd-context-menu {
     padding: 5px;
-    box-shadow: #00000052 0px 0px 5px;
+    box-shadow: rgba(0, 0, 0, 0.52) 0px 0px 5px;
     background-color: #FFFFFF;
     border-radius: 3px;
     position: absolute;

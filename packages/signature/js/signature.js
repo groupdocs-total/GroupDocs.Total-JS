@@ -1124,7 +1124,7 @@ function setDraggableAndResizable(pageNumber) {
     $("#gd-draggable-helper-" + currentImage).draggable({
         // set restriction for image dragging area to current document page
         containment: "#gd-page-" + pageNumber,
-        cancel: 'select',
+        cancel: 'select,option',
         create: function () {
             // initiate image positioning coordinates
             var signaturePos = $(this).position();
@@ -1278,7 +1278,8 @@ function getHtmlFontsSelect(fonts, id) {
     if (!fonts || fonts.length == 0) {
         fonts = $.fn.cssFonts();
     }
-    var fontsSelect = id ? '<select id="' + id + '" class="gd-fonts-select">' : '<select class="gd-fonts-select font">';
+    var idParam = id ? 'id="' + id + '"' : "";
+    var fontsSelect = '<select ' + idParam + ' class="gd-fonts-select font">';
     $.each(fonts, function (index, font) {
         fontsSelect = fontsSelect + '<option value="' + font + '">' + font + '</option>';
     });
@@ -1291,7 +1292,8 @@ function getHtmlFontsSelect(fonts, id) {
  * Prepare font sizes select HTML
  */
 function getHtmlFontSizeSelect(id) {
-    var fontSizes = id ? '<select id="' + id + '" class="gd-fonts-select gd-font-size-select">' : '<select class="gd-fonts-select gd-font-size-select">';
+    var idParam = id ? 'id="' + id + '"' : "";
+    var fontSizes = '<select ' + idParam + ' class="gd-fonts-select gd-font-size-select">';
     for (var i = 8; i <= 20; i++) {
         if (i == 10) {
             fontSizes = fontSizes + '<option value="' + i + '" selected="selected">' + i + 'px</option>';

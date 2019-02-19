@@ -37,7 +37,7 @@
 
             $('#' + parentName).find("#" + paramValues.text).focus();
 
-            $('#' + parentName).find("#" + paramValues.fontColor).bcPicker();
+            $('#' + parentName).find("#" + paramValues.fontColor).bcPicker({paletteClass: "text"});
 
             $('#' + parentName).on("change", "#" + paramValues.font, function(e) {
                 var val = $(this).val();

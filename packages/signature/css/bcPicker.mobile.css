@@ -4,6 +4,18 @@
 		right: 18px;
 	}
 
+	.bcPicker-palette.text.top {
+		top: -270px;
+		right: -29px;
+		left: unset;
+	}
+
+	.bcPicker-palette.text.down {
+		top: 33px;
+		right: -29px;
+		left: unset;
+	}
+
 	.bcPicker-palette.down{
 		top: 33px;
 		right: 18px;

@@ -86,16 +86,8 @@
 		font-size: 15px;    
 	}
 
-    #gd-text-font {
-        width: 257px !important;
-    }   
-
     .bcPicker-palette {
         width: 286px !important;
-    }
-
-    .gd-text-color-picker {
-        margin-right: 30px !important;
     }
 
     .bcPicker-palette > .bcPicker-color {
@@ -204,12 +196,14 @@
         position: fixed;
         bottom: 0;
         left: 0;
-        width: 100vw;
+        right: 0;
+        width: 100%;
         height: 75px;
+        align-items: baseline;
     }
 
     .gd-blur {
-        width: 100vw;
+        width: 100%;
         height: 75px;
         background-color: #3E4E5A;
         filter: blur(8px);
@@ -220,23 +214,19 @@
     }
 
     .gd-fonts-select {
-        font-size: 31px;
-        margin: 14px 29px 0 13px;
+        padding: 10px;
         background-color: #717c84;
         color: white;
+        margin: 4px 3px 4px 3px;
+    }
+
+    #gd-text-font {
+        width: 30%;
     }
 
     .gd-text-menu i {
-        font-size: 25px;
         color: white;
-        margin: 0 27px;
-    }
-
-    .gd-text-color-picker {
-        width: 37px;
-        height: 36px;
-        top: 8px;
-        margin: 0px 4px 0 20px;
+        margin: 5px;
     }
 
     .fa-arrow-up {
@@ -312,7 +302,6 @@
     }
 
     .gd-context-menu i {
-        font-size: 14px;
         padding: 0px 3px;
     }
 

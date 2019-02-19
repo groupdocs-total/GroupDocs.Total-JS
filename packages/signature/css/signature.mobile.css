@@ -219,6 +219,10 @@
         margin: 4px 3px 4px 3px;
     }
 
+    #gd-text-font {
+        width: 150px !important;
+    }
+
     .gd-text-menu i {
         color: white;
         margin: 5px;

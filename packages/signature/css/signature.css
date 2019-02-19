@@ -177,7 +177,7 @@ SIGNATURE TOOL BAR
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 0px 11px 0px 12px;
+    padding: 0px 11px 12px 12px;
 }
 .gd-signature-list-title{
     display: flex;
@@ -487,7 +487,8 @@ SIGNATURE IMAGE
     width: max-content;
 	width: -moz-max-content;
 	width: -webkit-max-content;
-	display: inline-table;
+    display: flex;
+    flex-direction: row;
 }
 .gd-text {
     width: inherit;
@@ -501,31 +502,29 @@ SIGNATURE IMAGE
 }
 .gd-context-menu i {
     color: #5c737f;
-    font-size: 13px;
-    padding-top: 4px;
-    display: inline-block;
-    position: initial;
-    margin: 3px;
+    font-size: 14px;
+    padding: 4px 10px 7px 10px;
 }
 .gd-context-menu i.active {
     background-color: #e7e7e7;
 }
 .gd-text-menu {
-	display: -webkit-inline-box;
+    display: flex;
+    flex-direction: row;
 }
 .gd-delete-signature {
     cursor: pointer;
+    margin-right: 10px;
 }
 .gd-fonts-select {
 	border: none;
 }
 .gd-text-color-picker{
-	position: relative;
-    width: 14px;    
-    height: 14px;
-    display: inline-block;
-    top: 2px;
-    margin: 0px 4px 0 6px;
+    width: 22px;
+    height: 22px;
+    padding: 2px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 /*
 ******************************************

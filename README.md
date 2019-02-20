@@ -93,4 +93,3 @@ This gulp plugin starts a local server and exposes two useful endpoints :
 * External: will be IP within your private network that can be accessed by your mobile phone or other device connected to the same network
 
 Browser sync will synchronize all activities performed on a webpage in all connected devices. It also will output QR code so you can access External URL without typing it manually.
-

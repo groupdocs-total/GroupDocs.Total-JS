@@ -44,6 +44,9 @@ $(document).ready(function(){
 				palette 		= templates.palette.clone(),
 				color;
 
+			if (options && options.paletteClass) {
+				palette.addClass(options.paletteClass);
+			}
 			// add position relative to root element
 			elem.css('position', 'relative');
 

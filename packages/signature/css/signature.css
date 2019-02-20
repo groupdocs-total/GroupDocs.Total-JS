@@ -173,8 +173,10 @@ SIGNATURE TOOL BAR
 }
 .gd-signature-list-scroll {
     overflow-x: hidden;
-    overflow-y: auto !important;
-    display: flex;
+    overflow-y: auto !important;   
+}
+.gd-signature-list {
+	display: flex;
     flex-direction: column;
     width: 100%;
     padding: 0px 11px 12px 12px;

@@ -9,7 +9,7 @@
 .bcPicker-palette{
   width: 120px;
   position: absolute;
-  top: 16px;
+  top: -140px;
   padding: 5px;
   border: 1px solid #efefef;
   background-color: #fdfdfd;

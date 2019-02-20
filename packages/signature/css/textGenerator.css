@@ -161,7 +161,7 @@ input[type="checkbox"]:checked ~ .gd-text-helper::after {
     top: 50px;
 }
 
-.bcPicker-palette {
+.bcPicker-palette.text {
     top: 25px;
 }
 

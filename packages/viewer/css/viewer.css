@@ -364,6 +364,10 @@ PAGES
     z-index: 1 !important;
 }
 
+.gd-page .gd-wrapper table tr td span {
+    position: inherit !important;
+}
+
 /*
 ******************************************
 Thumbnails sidebar
@@ -392,7 +396,7 @@ Thumbnails sidebar
     margin-left: -57px;
 }
 #gd-thumbnails-panzoom > .gd-page {
-    margin-bottom: 333px;
+    margin-bottom: 100px;
     margin-left: 0;
 }
 #gd-thumbnails-panzoom > .gd-thumbnails-landscape{
@@ -421,6 +425,10 @@ Thumbnails sidebar
 }
 .gd-thumbnails-landscape-image-rotated {
     margin: 126px 0 -3px -104px !important;
+}
+
+#gd-thumbnails-panzoom .gd-wrapper table {
+    display: contents;
 }
 
 /*

@@ -148,21 +148,21 @@ $(document).ready(function () {
             loadFileTree(currentDirectory);
         } else {
             // if document -> open
-			(!$('#gd-btn-zoom-value').hasClass("disabled")) ? $('#gd-btn-zoom-value').addClass("disabled") : "";
-			$('#gd-btn-zoom-value > li').unbind("click");			
-			(!$('#gd-btn-zoom-in').hasClass("disabled")) ? $('#gd-btn-zoom-in').addClass("disabled") : "";
-			$('#gd-btn-zoom-in').unbind("click");
-			(!$('#gd-btn-zoom-out').hasClass("disabled")) ? $('#gd-btn-zoom-out').addClass("disabled") : "";
-			$('#gd-btn-zoom-out').unbind("click");			
-			(!$('#gd-btn-print').hasClass("disabled")) ? $('#gd-btn-print').addClass("disabled") : "";
-			$('#gd-btn-print').unbind("click");		
-			(!$('#gd-btn-download').hasClass("disabled")) ? $('#gd-btn-download').addClass("disabled") : "";							
+            (!$('#gd-btn-zoom-value').hasClass("disabled")) ? $('#gd-btn-zoom-value').addClass("disabled") : "";
+            $('#gd-btn-zoom-value > li').unbind("click");
+            (!$('#gd-btn-zoom-in').hasClass("disabled")) ? $('#gd-btn-zoom-in').addClass("disabled") : "";
+            $('#gd-btn-zoom-in').unbind("click");
+            (!$('#gd-btn-zoom-out').hasClass("disabled")) ? $('#gd-btn-zoom-out').addClass("disabled") : "";
+            $('#gd-btn-zoom-out').unbind("click");
+            (!$('#gd-btn-print').hasClass("disabled")) ? $('#gd-btn-print').addClass("disabled") : "";
+            $('#gd-btn-print').unbind("click");
+            (!$('#gd-btn-download').hasClass("disabled")) ? $('#gd-btn-download').addClass("disabled") : "";
             clearPageContents();
             toggleModalDialog(false, '');
-			password = ""; 
+            password = "";
             documentGuid = $(this).attr('data-guid');
             loadDocument(function (data) {
-                    generatePagesTemplate(data);
+                generatePagesTemplate(data);
             });
         }
     });
@@ -177,7 +177,7 @@ $(document).ready(function () {
             currentDirectory = currentDirectory.replace(/\/[^\/]+\/?$/, '');
         }
         loadFileTree(currentDirectory);
-    });      
+    });
 
     //////////////////////////////////////////////////
     // Page navigation event
@@ -248,41 +248,41 @@ $(document).ready(function () {
         }
         // set scroll direction
         previousScroll = currentScroll;
-		var zoom = parseInt($("#gd-zoom-value").html()) / 100;
-		var delta = 0.5;
-		if(zoom < 1){
-			delta = 1;
-		}
-		for(i = 1; i <= lastPageNumber; i++){
-			// check if page is visible in the view port more than 50%
-			if ($('#gd-page-' + i).isOnScreen(delta, delta)) {
-				// change current page value
-				if (i != currentPageNumber) {
-					// set current page number
-					setNavigationPageValues(i, lastPageNumber);
-				}
-				// load next page
-				// to set correct page size we use global array documentData which contains all info about current document
-				if (preloadPageCount > 0) {
-					// if scroll down load next page
-					if (scrollDown) {
-						if (i + 1 <= lastPageNumber) {
-							appendHtmlContent(i + 1, documentGuid);
-						} else if (i == lastPageNumber) {
-							appendHtmlContent(i, documentGuid);
-						}
-					} else {
-						// if scroll up load previous page
-						if (currentPageNumber - 1 >= 1) {
-							appendHtmlContent(currentPageNumber - 1, documentGuid);
-						}
-					}
-				}
-			}
-		}
-		if($(this).scrollTop() == 0 && !scrollDown){
-			setNavigationPageValues(1, lastPageNumber);
-		}
+        var zoom = parseInt($("#gd-zoom-value").html()) / 100;
+        var delta = 0.5;
+        if (zoom < 1) {
+            delta = 1;
+        }
+        for (i = 1; i <= lastPageNumber; i++) {
+            // check if page is visible in the view port more than 50%
+            if ($('#gd-page-' + i).isOnScreen(delta, delta)) {
+                // change current page value
+                if (i != currentPageNumber) {
+                    // set current page number
+                    setNavigationPageValues(i, lastPageNumber);
+                }
+                // load next page
+                // to set correct page size we use global array documentData which contains all info about current document
+                if (preloadPageCount > 0) {
+                    // if scroll down load next page
+                    if (scrollDown) {
+                        if (i + 1 <= lastPageNumber) {
+                            appendHtmlContent(i + 1, documentGuid);
+                        } else if (i == lastPageNumber) {
+                            appendHtmlContent(i, documentGuid);
+                        }
+                    } else {
+                        // if scroll up load previous page
+                        if (currentPageNumber - 1 >= 1) {
+                            appendHtmlContent(currentPageNumber - 1, documentGuid);
+                        }
+                    }
+                }
+            }
+        }
+        if ($(this).scrollTop() == 0 && !scrollDown) {
+            setNavigationPageValues(1, lastPageNumber);
+        }
     });
 
     //////////////////////////////////////////////////
@@ -523,7 +523,7 @@ $(document).ready(function () {
     $('.gd-modal-body').on('click', '#gd-add-url', function () {
         addFileForUpload(null, $("#gd-url").val());
         $('#gd-url').val('');
-    });    
+    });
 
     //////////////////////////////////////////////////
     // Open modal dialog (file upload) event
@@ -666,12 +666,12 @@ function loadFileTree(dir) {
                 var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined) ? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
                 // append document
                 $('.gd-modal-table tbody').append(
-					'<tr>' +
-					'<td><i class="fa ' + docFormat.icon + '"></i></td>' +
-					'<td class="gd-filetree-name" data-guid="' + guid + '"><div class="gd-file-name">' + name + '</div></td>' +
-					'<td>' + docFormat.format + '</td>' +
-					'<td>' + new_size + '</td>' +
-				'</tr>');
+                    '<tr>' +
+                    '<td><i class="fa ' + docFormat.icon + '"></i></td>' +
+                    '<td class="gd-filetree-name" data-guid="' + guid + '"><div class="gd-file-name">' + name + '</div></td>' +
+                    '<td>' + docFormat.format + '</td>' +
+                    '<td>' + new_size + '</td>' +
+                    '</tr>');
             });
         },
         error: function (xhr, status, error) {
@@ -788,9 +788,17 @@ function generatePagesTemplate(data) {
         var pageWidth = elem.width;
         var pageHeight = elem.height;
         var pageData = elem.data;
+        var overflow = "";
+        var overflowThumbnails = ""
+        if (getDocumentFormat(documentGuid).format == "Microsoft Excel") {
+            pageWidth = 800;
+            pageHeight = 450;
+            overflow = "overflow: auto";
+            overflowThumbnails = "overflow: hidden";
+        }
         // append empty page
         $('#gd-panzoom').append(
-            '<div id="gd-page-' + pageNumber + '" class="gd-page" style="min-width: ' + pageWidth + 'px; min-height: ' + pageHeight + 'px;">' +
+            '<div id="gd-page-' + pageNumber + '" class="gd-page" style="min-width: ' + pageWidth + 'px; min-height: ' + pageHeight + 'px;' + overflow + '">' +
             '</div>'
         );
         var gd_page = $('#gd-page-' + pageNumber);
@@ -804,7 +812,7 @@ function generatePagesTemplate(data) {
         }
         if (thumbnails) {
             $('#gd-thumbnails-panzoom').append(
-                '<div id="gd-thumbnails-page-' + pageNumber + '" class="gd-page" style="min-width: ' + pageWidth + 'px; min-height: ' + pageHeight + 'px;">' +
+                '<div id="gd-thumbnails-page-' + pageNumber + '" class="gd-page" style="min-width: ' + pageWidth + 'px; min-height: ' + pageHeight + 'px;' + overflowThumbnails + '">' +
                 '</div>'
             );
             if (preloadPageCount == 0) {
@@ -829,7 +837,7 @@ function appendHtmlContent(pageNumber, documentName) {
     if (!gd_page.hasClass('loaded')) {
         gd_page.addClass('loaded');
         // get document description
-        var data = {guid: documentGuid, page: pageNumber, password: password};
+        var data = { guid: documentGuid, page: pageNumber, password: password };
         $.ajax({
             type: 'POST',
             url: getApplicationPath('loadDocumentPage'),
@@ -860,28 +868,22 @@ function renderThumbnails(pageNumber, pageData) {
     var gd_page = $('#gd-page-' + pageNumber);
     var width = pageData.width;
     var height = pageData.height;
-    var zoomValue = gd_page[0].style.zoom;
+    var zoomValue = gd_page[0].style.zoom;   
     // fix thumbnails only when any of document pages is loaded.
     // this is required to fix issue with thumbnails resolution
     isPageLoaded($('#gd-page-1')).then(function (element) {
         var gd_thumbnails_page = $('#gd-thumbnails-page-' + pageNumber);
         if (htmlMode) {
             gd_thumbnails_page.append('<div class="gd-wrapper">' + pageData.data + '</div>');
-            // set correct width and height for thumbnails
-            if (width > height && pageData.angle == 0) {
-                // change the width and height in places if page is landscape oriented
-                var tmp = width;
-                width = height;
-                height = tmp;
-                zoomValue = 0.6;
-                if(getDocumentFormat(documentGuid).format != "Microsoft PowerPoint"){
-                    width = $("#gd-page-1").innerHeight();
-                    height = $("#gd-page-1").innerWidth();
-                }
-            } else {
-                // use first document page size to fix thumbnails size issue
-                width = $("#gd-page-1").innerWidth();
-                height = $("#gd-page-1").innerHeight();
+            if (getDocumentFormat(documentGuid).format == "Microsoft PowerPoint") {
+                zoomValue = 0.7;
+            }
+            width = $("#gd-page-1").innerWidth();
+            height = $("#gd-page-1").innerHeight();
+            if (getDocumentFormat(documentGuid).format == "Microsoft Excel") {
+                width = 800;
+                height = 450;
+                zoomValue = 1;
             }
             gd_thumbnails_page.css('width', width);
             gd_thumbnails_page.css('height', height);
@@ -894,6 +896,11 @@ function renderThumbnails(pageNumber, pageData) {
                 } else {
                     zoomValue = 1.2;
                 }
+            }
+            if (getDocumentFormat(documentGuid).format == "Microsoft Excel") {
+                width = 800;
+                height = 450;
+                zoomValue = 1;
             }
             // set correct size
             gd_thumbnails_page.css('width', width);
@@ -940,110 +947,120 @@ function renderThumbnails(pageNumber, pageData) {
 * @param {string} documentName - current document name
 * @param {int} pageNumber - current page number
 */
-function renderPage(gd_page, pageData, documentName, pageNumber){
-	var width = pageData.width;
-	var height = pageData.height;
-	// fix zoom in/out scaling
-	var zoomValue = 1;
-	// append page content in HTML mode
-	if (htmlMode) {
-		// append page
-		gd_page.append('<div class="gd-wrapper">' + pageData.data + '</div>');
-		// fix to avoid using the spinner DIV size
-		if (preloadPageCount == 0) {
-		   var pageSize = setDocumentPageSize(gd_page, width, height)
-		   width = pageSize.width;
-		   height = pageSize.height;
-		} else {
-			// set correct width and height for document pages
-			var pageSize = setDocumentPageSize(gd_page, width, height)
-			width = pageSize.width;
-			height = pageSize.height;
-		}
-		// check if page is horizontally displayed
-		if (width > height || width >= $(window).width()) {
-			zoomValue = 0.79;
-		}
-		// set correct size
-		gd_page.css('width', width);
-		gd_page.css('height', height);
-		gd_page.css('zoom', zoomValue);
-	} else { // render document in image mode
-		// check if page is horizontally displayed
-		if (width > height) {
-			zoomValue = 0.79;
-		}
-		// if current document if image file fix its zoom
-		if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
-			if (width > $(window).width()) {
-				zoomValue = 0.79;
-			}
-		} else {
-			zoomValue = 1.2;
-		}
-		// set correct size
-		gd_page.css('width', width);
-		gd_page.css('height', height);
-		gd_page.css('zoom', zoomValue);
-		// append page image, in image mode append occurred after setting the size to avoid zero size usage
-		gd_page.append('<div class="gd-wrapper">' +
-								'<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + pageData.data + '" alt></image>' +
-							'</div>');
-	}
-	// set correct width and high for OneNote format
-	if (documentName.substr((documentName.lastIndexOf('.') + 1)) == "one") {
-		if (htmlMode) {
-			$(".gd-wrapper").css("width", "initial");
-		} else {
-			$(".gd-wrapper").css("width", "inherit");
-		}
-	}
-	// rotate page if it were rotated earlier
-	if (pageData.angle != 0) {
-		gd_page.css('animation', 'none');
-		gd_page.css('transition-property', 'none');
-		gd_page.css('transform', 'rotate(' + pageData.angle + 'deg)');
-		if (pageData.angle == 90 || pageData.angle == 270) {
-			// set styles for HTML mode
-			if (htmlMode) {
-				if (gd_page.width() > gd_page.height()) {
-					gd_page.addClass("gd-landscape-rotated");
-				} else {
-					gd_page.addClass("gd-landscape");
-				}
-			} else {
-				// set style for image mode
-				if (gd_page.width() > gd_page.height()) {
-					gd_page.addClass("gd-landscape-image-rotated");
-				} else {
-					gd_page.addClass("gd-landscape-image");
-				}
-			}
-		} else {
-			gd_page.removeClass("gd-landscape");
-			gd_page.removeClass("gd-landscape-image");
-		}
-	}
+function renderPage(gd_page, pageData, documentName, pageNumber) {
+    var width = pageData.width;
+    var height = pageData.height;
+    // fix zoom in/out scaling
+    var zoomValue = 1;
+    if (getDocumentFormat(documentGuid).format == "Microsoft Excel") {
+        width = 800;
+        height = 450;
+    }
+    // append page content in HTML mode
+    if (htmlMode) {
+        // append page
+        gd_page.append('<div class="gd-wrapper">' + pageData.data + '</div>');
+        // fix to avoid using the spinner DIV size
+        if (preloadPageCount == 0) {
+            var pageSize = setDocumentPageSize(gd_page, width, height)
+            width = pageSize.width;
+            height = pageSize.height;
+        } else {
+            // set correct width and height for document pages
+            var pageSize = setDocumentPageSize(gd_page, width, height)
+            width = pageSize.width;
+            height = pageSize.height;
+        }
+        // check if page is horizontally displayed
+        if (width > height || width >= $(window).width()) {
+            zoomValue = 0.79;
+        }
+        // set correct size
+        gd_page.css('width', width);
+        gd_page.css('height', height);
+        if (getDocumentFormat(documentGuid).format == "Microsoft Excel") {
+            zoomValue = 1;
+        }
+        gd_page.css('zoom', zoomValue);
+    } else { // render document in image mode
+        // check if page is horizontally displayed
+        if (width > height) {
+            zoomValue = 0.79;
+        }
+        // if current document if image file fix its zoom
+        if (getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0) {
+            if (width > $(window).width()) {
+                zoomValue = 0.79;
+            }
+        } else {
+            zoomValue = 1.2;
+        }
+        // set correct size
+        gd_page.css('width', width);
+        gd_page.css('height', height);
+        if (getDocumentFormat(documentGuid).format == "Microsoft Excel") {
+            zoomValue = 1;
+        }
+        gd_page.css('zoom', zoomValue);
+        // append page image, in image mode append occurred after setting the size to avoid zero size usage
+        gd_page.append('<div class="gd-wrapper">' +
+            '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + pageData.data + '" alt></image>' +
+            '</div>');
+    }
+    // set correct width and high for OneNote format
+    if (documentName.substr((documentName.lastIndexOf('.') + 1)) == "one") {
+        if (htmlMode) {
+            $(".gd-wrapper").css("width", "initial");
+        } else {
+            $(".gd-wrapper").css("width", "inherit");
+        }
+    }
+    // rotate page if it were rotated earlier
+    if (pageData.angle != 0) {
+        gd_page.css('animation', 'none');
+        gd_page.css('transition-property', 'none');
+        gd_page.css('transform', 'rotate(' + pageData.angle + 'deg)');
+        if (pageData.angle == 90 || pageData.angle == 270) {
+            // set styles for HTML mode
+            if (htmlMode) {
+                if (gd_page.width() > gd_page.height()) {
+                    gd_page.addClass("gd-landscape-rotated");
+                } else {
+                    gd_page.addClass("gd-landscape");
+                }
+            } else {
+                // set style for image mode
+                if (gd_page.width() > gd_page.height()) {
+                    gd_page.addClass("gd-landscape-image-rotated");
+                } else {
+                    gd_page.addClass("gd-landscape-image");
+                }
+            }
+        } else {
+            gd_page.removeClass("gd-landscape");
+            gd_page.removeClass("gd-landscape-image");
+        }
+    }
 
-	if (loadedPagesCount == 0) {
+    if (loadedPagesCount == 0) {
         fadeAll(false);
     }
 
-	loadedPagesCount = loadedPagesCount + 1;
+    loadedPagesCount = loadedPagesCount + 1;
     var pagesAttr = $('#gd-page-num').text().split('/');
-	var lastPageNumber = parseInt(pagesAttr[1]);
-	if(loadedPagesCount == lastPageNumber || preloadPageCount != 0){
-		$('#gd-btn-zoom-value > li').bind("click", function(){setZoomLevel.apply(this);});
-		$('#gd-btn-zoom-value').removeClass("disabled");
-		$('#gd-btn-zoom-in').bind('click', zoomIn);
-		$('#gd-btn-zoom-out').bind('click', zoomOut);
-		$('#gd-btn-zoom-in').removeClass('disabled');
-		$('#gd-btn-zoom-out').removeClass('disabled');
-		$('#gd-btn-print').bind('click', printDocument);
-		$('#gd-btn-print').removeClass('disabled');
-		$('#gd-btn-download').removeClass('disabled');
-		loadedPagesCount = 0;
-	}
+    var lastPageNumber = parseInt(pagesAttr[1]);
+    if (loadedPagesCount == lastPageNumber || preloadPageCount != 0) {
+        $('#gd-btn-zoom-value > li').bind("click", function () { setZoomLevel.apply(this); });
+        $('#gd-btn-zoom-value').removeClass("disabled");
+        $('#gd-btn-zoom-in').bind('click', zoomIn);
+        $('#gd-btn-zoom-out').bind('click', zoomOut);
+        $('#gd-btn-zoom-in').removeClass('disabled');
+        $('#gd-btn-zoom-out').removeClass('disabled');
+        $('#gd-btn-print').bind('click', printDocument);
+        $('#gd-btn-print').removeClass('disabled');
+        $('#gd-btn-download').removeClass('disabled');
+        loadedPagesCount = 0;
+    }
 }
 
 /**
@@ -1052,22 +1069,26 @@ function renderPage(gd_page, pageData, documentName, pageNumber){
 * @param {int} width - current page width
 * @param {int} height - current page height
 */
-function setDocumentPageSize(gd_page, width, height){
-	var pageSize = {
-		width: 0,
-		height: 0
-	}
-	if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && !/Edge/.test(navigator.userAgent)) {							
-		pageSize.width = gd_page.innerWidth();
-		pageSize.height = gd_page.innerHeight();							
-	} else if(gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && /Edge/.test(navigator.userAgent)){
-		pageSize.width = gd_page.innerWidth() / 10;
-		pageSize.height = gd_page.innerHeight();
-		if(getDocumentFormat(documentGuid).format.search("Word") != -1){
-			pageSize.width = gd_page.innerWidth();
-		}
-	}
-	return pageSize;
+function setDocumentPageSize(gd_page, width, height) {
+    var pageSize = {
+        width: 0,
+        height: 0
+    }
+    if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && !/Edge/.test(navigator.userAgent)) {
+        pageSize.width = gd_page.innerWidth();
+        pageSize.height = gd_page.innerHeight();
+    } else if (gd_page.innerWidth() >= width - 1 && gd_page.innerHeight() >= height - 1 && /Edge/.test(navigator.userAgent)) {
+        pageSize.width = gd_page.innerWidth() / 10;
+        pageSize.height = gd_page.innerHeight();
+        if (getDocumentFormat(documentGuid).format.search("Word") != -1) {
+            pageSize.width = gd_page.innerWidth();
+        }
+    }
+    if (getDocumentFormat(documentGuid).format == "Microsoft Excel") {
+        pageSize.width = 800;
+        pageSize.height = 450;
+    }
+    return pageSize;
 }
 
 /**
@@ -1130,24 +1151,24 @@ function toggleModalDialog(open, title, content) {
     if (open) {
         $('#modalDialog .gd-modal-title').text(title);
         $('#modalDialog')
-			.css('opacity', 0)
-			.fadeIn('fast')
-			.animate(
-				{ opacity: 1 },
-				{ queue: false, duration: 'fast' }
-			);
+            .css('opacity', 0)
+            .fadeIn('fast')
+            .animate(
+                { opacity: 1 },
+                { queue: false, duration: 'fast' }
+            );
         $('#modalDialog').addClass('in');
         $(".gd-modal-body").append(content);
     } else {
         $('#modalDialog').removeClass('in');
         $('#modalDialog')
-			.css('opacity', 1)
-			.fadeIn('fast')
-			.animate(
-				{ opacity: 0 },
-				{ queue: false, duration: 'fast' }
-			)
-			.css('display', 'none');
+            .css('opacity', 1)
+            .fadeIn('fast')
+            .animate(
+                { opacity: 0 },
+                { queue: false, duration: 'fast' }
+            )
+            .css('display', 'none');
         $(".gd-modal-body").html('');
     }
 }
@@ -1161,21 +1182,21 @@ function toggleNavDropdown(target) {
     if (!isOpened) {
         $(target).addClass('opened');
         $(target)
-		    .css('opacity', 0)
-		    .slideDown('fast')
-		    .animate(
-				{ opacity: 1 },
-				{ queue: false, duration: 'fast' }
-		    );
+            .css('opacity', 0)
+            .slideDown('fast')
+            .animate(
+                { opacity: 1 },
+                { queue: false, duration: 'fast' }
+            );
     } else {
         $(target).removeClass('opened');
         $(target)
-		    .css('opacity', 1)
-		    .slideUp('fast')
-		    .animate(
-				{ opacity: 0 },
-				{ queue: false, duration: 'fast' }
-		    );
+            .css('opacity', 1)
+            .slideUp('fast')
+            .animate(
+                { opacity: 0 },
+                { queue: false, duration: 'fast' }
+            );
     }
 }
 
@@ -1234,24 +1255,24 @@ function setZoomValue(zoom_val) {
     setNavigationZoomValues(zoom_val_webkit);
     // set css zoom values
     var style = [
-	'zoom: ' + zoom_val_webkit,
-	'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
-	'-moz-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
-	'-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
-    '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
-    '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'        
+        'zoom: ' + zoom_val_webkit,
+        'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
+        '-moz-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'
     ].join(';');
     // check if current browser is IE - if browser is IE we need to add zoom styles to each document page instead of gd-panzoom element
-	var ua = window.navigator.userAgent;
-	var is_ie = /MSIE|Trident/.test(ua);
+    var ua = window.navigator.userAgent;
+    var is_ie = /MSIE|Trident/.test(ua);
 
-	if ( is_ie ) {
-	  $.each($('#gd-panzoom').find(".gd-page"), function(index, page){
-		  $(page).attr('style', style);
-	  });
-	} else {
-		$('#gd-panzoom').attr('style', style);
-	}
+    if (is_ie) {
+        $.each($('#gd-panzoom').find(".gd-page"), function (index, page) {
+            $(page).attr('style', style);
+        });
+    } else {
+        $('#gd-panzoom').attr('style', style);
+    }
 }
 
 /**
@@ -1467,28 +1488,28 @@ function addFileForUpload(uploadFiles, url) {
     if (url) {
         // append URL
         table.append('<div class="swiper-container">' +
-						'<div class="swiper-wrapper">' +
-							'<div class="swiper-slide">' +
-								'<i class="fa ' + getDocumentFormat(url.split('/').pop()).icon + '"></i>' +
-								'<div class="gd-filetree-name" data-uploaded="false" data-value="' + url + '">' +
-									'<div class="gd-file-name">' + url.split('/').pop() + '</div>' +
-									'<span id="gd-upload-size"> type: ' + url.split('/').pop().split('.').pop() + '</span>' +
-								'</div>' +
-								'<div id="gd-pregress-bar-' + tableRowsNumber + '" class="gd-pregress p0 small green gd-upload-status">' +
-									'<div class="slice">' +
-										'<div class="bar"></div>' +
-										'<div class="fill"></div>' +
-									'</div>' +
-								'</div>' +
-								'<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete gd-upload-status"><i class="fa fa-check-circle-o"></i></div>' +
-							'</div>' +
-							'<div class="swiper-slide gd-desktop swiper-slide-cancel">' +
-								'<div class="files-table-remove">' +
-									'<button class="btn gd-cancel-button"><i class="fa fa-trash-o"></i></button>' +
-								'</div>' +
-							'</div>' +
-						'</div>' +
-					'</div>');
+            '<div class="swiper-wrapper">' +
+            '<div class="swiper-slide">' +
+            '<i class="fa ' + getDocumentFormat(url.split('/').pop()).icon + '"></i>' +
+            '<div class="gd-filetree-name" data-uploaded="false" data-value="' + url + '">' +
+            '<div class="gd-file-name">' + url.split('/').pop() + '</div>' +
+            '<span id="gd-upload-size"> type: ' + url.split('/').pop().split('.').pop() + '</span>' +
+            '</div>' +
+            '<div id="gd-pregress-bar-' + tableRowsNumber + '" class="gd-pregress p0 small green gd-upload-status">' +
+            '<div class="slice">' +
+            '<div class="bar"></div>' +
+            '<div class="fill"></div>' +
+            '</div>' +
+            '</div>' +
+            '<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete gd-upload-status"><i class="fa fa-check-circle-o"></i></div>' +
+            '</div>' +
+            '<div class="swiper-slide gd-desktop swiper-slide-cancel">' +
+            '<div class="files-table-remove">' +
+            '<button class="btn gd-cancel-button"><i class="fa fa-trash-o"></i></button>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>');
         // increase table rows counter after adding new record
         tableRowsNumber++
     } else {
@@ -1506,29 +1527,29 @@ function addFileForUpload(uploadFiles, url) {
             }
             // append document
             table.append('<div class="swiper-container">' +
-							'<div class="swiper-wrapper">' +
-								'<div class="swiper-slide">' +
-									'<i class="fa ' + docFormat.icon + '"></i>' +
-									'<div class="gd-filetree-name" data-uploaded="false">' +
-										'<div class="gd-file-name">' + file.name + '</div>' +
-										'<span id="gd-upload-size">size: ' + new_size + '</span>' +
-										'<span id="gd-upload-size"> type: ' + file.name.split('.').pop() + '</span>' +
-									'</div>' +
-									'<div id="gd-pregress-bar-' + tableRowsNumber + '" class="gd-pregress p0 small green gd-upload-status">' +
-										'<div class="slice">' +
-											'<div class="bar"></div>' +
-											'<div class="fill"></div>' +
-										'</div>' +
-									'</div>' +
-									'<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete gd-upload-status"><i class="fa fa-check-circle-o"></i></div>' +
-								'</div>' +
-								'<div class="swiper-slide gd-desktop swiper-slide-cancel">' +
-									'<div class="files-table-remove">' +
-										'<button class="btn gd-cancel-button"><i class="fa fa-trash-o"></i> Remove</button>' +
-									'</div>' +
-								'</div>' +
-							'</div>' +
-						'</div>');
+                '<div class="swiper-wrapper">' +
+                '<div class="swiper-slide">' +
+                '<i class="fa ' + docFormat.icon + '"></i>' +
+                '<div class="gd-filetree-name" data-uploaded="false">' +
+                '<div class="gd-file-name">' + file.name + '</div>' +
+                '<span id="gd-upload-size">size: ' + new_size + '</span>' +
+                '<span id="gd-upload-size"> type: ' + file.name.split('.').pop() + '</span>' +
+                '</div>' +
+                '<div id="gd-pregress-bar-' + tableRowsNumber + '" class="gd-pregress p0 small green gd-upload-status">' +
+                '<div class="slice">' +
+                '<div class="bar"></div>' +
+                '<div class="fill"></div>' +
+                '</div>' +
+                '</div>' +
+                '<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete gd-upload-status"><i class="fa fa-check-circle-o"></i></div>' +
+                '</div>' +
+                '<div class="swiper-slide gd-desktop swiper-slide-cancel">' +
+                '<div class="files-table-remove">' +
+                '<button class="btn gd-cancel-button"><i class="fa fa-trash-o"></i> Remove</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>');
             // increase table rows counter after adding new record
             tableRowsNumber++
         });
@@ -1610,14 +1631,14 @@ function uploadDocument(file, index, url) {
 * Print current document
 */
 function printDocument() {
-	if($(this).find("li").length > 0){
-		return;
-	}
+    if ($(this).find("li").length > 0) {
+        return;
+    }
     // get current document content
     var documentContainer = $("#gd-panzoom");
     // force each document page to be printed as a new page
-    var cssPrint = '<style>' +           
-            '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
+    var cssPrint = '<style>' +
+        '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
     // set correct page orientation if page were rotated
     documentContainer.find(".gd-page").each(function (index, page) {
         if ($(page).css("transform") != "none") {
@@ -1661,12 +1682,12 @@ function openBrowseModal() {
 **/
 function openPasswordModal(error) {
     var passwordSection = '<section id="gd-password-section" class="tab-slider-body">' +
-								'<div class="inner-addon left-addon btn gd-password-wrap" id="gd-password-wrap">' +
-									'<input type="password" class="form-control" id="gd-password-input" placeholder="Enter password">' +
-									'<button class="btn btn-primary" id="gd-password-submit">Submit</button>' +
-									'<span class="gd-password-error" style="display: none;"></span>' +
-							    '</div>' +
-							'</section>';
+        '<div class="inner-addon left-addon btn gd-password-wrap" id="gd-password-wrap">' +
+        '<input type="password" class="form-control" id="gd-password-input" placeholder="Enter password">' +
+        '<button class="btn btn-primary" id="gd-password-submit">Submit</button>' +
+        '<span class="gd-password-error" style="display: none;"></span>' +
+        '</div>' +
+        '</section>';
     toggleModalDialog(true, 'Password required', passwordSection);
     if (error != "" && typeof error != "undefined") {
         $(".gd-password-error")[0].innerHTML = error;
@@ -1731,57 +1752,57 @@ function isPageLoaded(selector) {
 * Set zoom level
 */
 function setZoomLevel(zoomString) {
-	var zoomValue = zoomString || $(this).text();
-	switch (zoomValue) {
-		case 'Fit Width':
-			// get page width
-			var pageWidth = $('.gd-page').width();
-			// get screen width
-			var screenWidth = $('#gd-pages').width();
-			// get scale ratio
-			var scale = (pageWidth / screenWidth) * 100;
-			// set values
-			zoomValue = 200 - scale;
-			break;
-		case 'Fit Height':
-			// get page height
-			var pageHeight = $('.gd-page').height();
-			// get screen height
-			var screenHeight = $('#gd-pages').height();
-			// get scale ratio
-			var scale = (screenHeight / pageHeight) * 100;
-			// set values
-			zoomValue = scale;
-			break;
-		default:
-			zoomValue = zoomValue.slice(0, -1);
-			break;
-	}
-	setZoomValue(zoomValue);
+    var zoomValue = zoomString || $(this).text();
+    switch (zoomValue) {
+        case 'Fit Width':
+            // get page width
+            var pageWidth = $('.gd-page').width();
+            // get screen width
+            var screenWidth = $('#gd-pages').width();
+            // get scale ratio
+            var scale = (pageWidth / screenWidth) * 100;
+            // set values
+            zoomValue = 200 - scale;
+            break;
+        case 'Fit Height':
+            // get page height
+            var pageHeight = $('.gd-page').height();
+            // get screen height
+            var screenHeight = $('#gd-pages').height();
+            // get scale ratio
+            var scale = (screenHeight / pageHeight) * 100;
+            // set values
+            zoomValue = scale;
+            break;
+        default:
+            zoomValue = zoomValue.slice(0, -1);
+            break;
+    }
+    setZoomValue(zoomValue);
 }
 
 /**
 * Zoom in
 */
 function zoomIn(event) {
-	event.stopImmediatePropagation();
-	var zoom_val = getZoomValue();
-	if (zoom_val < 490) {
-		zoom_val = zoom_val + 10;
-	}
-	setZoomValue(zoom_val);	
+    event.stopImmediatePropagation();
+    var zoom_val = getZoomValue();
+    if (zoom_val < 490) {
+        zoom_val = zoom_val + 10;
+    }
+    setZoomValue(zoom_val);
 }
 
 /**
 * Zoom out
 */
 function zoomOut(event) {
-	event.stopImmediatePropagation();
-	var zoom_val = getZoomValue();
-	if (zoom_val > 30) {
-		zoom_val = zoom_val - 10;
-	}
-	setZoomValue(zoom_val);
+    event.stopImmediatePropagation();
+    var zoom_val = getZoomValue();
+    if (zoom_val > 30) {
+        zoom_val = zoom_val - 10;
+    }
+    setZoomValue(zoom_val);
 }
 
 /**
@@ -1789,27 +1810,27 @@ function zoomOut(event) {
 **/
 function getHtmlFileBrowser() {
     return '<section id="gd-browse-section" class="tab-slider-body">' +
-				'<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
-				'<table id="gd-modal-filebroswer" class="gd-modal-table">' +
-					'<thead>' +
-						'<tr>' +
-							'<th class="col-md-1"> </th>' +
-							'<th class="col-md-5">Document</th>' +
-							'<th class="col-md-3">Format</th>' +
-							'<th class="col-md-3">Size</th>' +
-						'</tr>' +
-					'</thead>' +
-					'<tbody>' +
-						'<tr>' +
-						    '<td class="text-center gd-go-up"><i class="fa fa-level-up"></i></td>' +
-						    '<td class="gd-filetree-up gd-go-up">...</td>' +
-						    '<td></td>' +
-						    '<td></td>' +
-						'</tr>' +
-						// list of files
-					'</tbody>' +
-				'</table>' +
-			'</section>';
+        '<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
+        '<table id="gd-modal-filebroswer" class="gd-modal-table">' +
+        '<thead>' +
+        '<tr>' +
+        '<th class="col-md-1"> </th>' +
+        '<th class="col-md-5">Document</th>' +
+        '<th class="col-md-3">Format</th>' +
+        '<th class="col-md-3">Size</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody>' +
+        '<tr>' +
+        '<td class="text-center gd-go-up"><i class="fa fa-level-up"></i></td>' +
+        '<td class="gd-filetree-up gd-go-up">...</td>' +
+        '<td></td>' +
+        '<td></td>' +
+        '</tr>' +
+        // list of files
+        '</tbody>' +
+        '</table>' +
+        '</section>';
 }
 
 /**
@@ -1818,39 +1839,39 @@ function getHtmlFileBrowser() {
 function getHtmlUpload() {
     // upload section
     var uploadSection = '<section id="gd-upload-section" class="tab-slider-body">' +
-							'<div class="gd-drag-n-drop-wrap" id="gd-dropZone">' +
-								'<div class="gd-drag-n-drop-icon"><i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i></div>' +
-								'<h2>Drag &amp; Drop your files here</h2>' +
-								'<h4>OR</h4>' +
-								'<div class="gd-drag-n-drop-buttons">' +
-									'<label class="btn btn-primary">' +
-										'<i class="fa fa-file"></i>' +
-										'SELECT FILE' +
-										'<input id="gd-upload-input" type="file" multiple style="display: none;">' +
-									'</label>' +
-									'<label class="btn" id="gd-url-button">' +
-										'<i class="fa fa-link"></i>' +
-										'URL' +
-									'</label>' +
-								'</div>' +
-							'</div>' +
-							'<div class="inner-addon left-addon btn gd-url-wrap" id="gd-url-wrap" style="display: none;">' +
-								'<input type="url" class="form-control" id="gd-url" placeholder="Enter your file URL">' +
-								'<button class="btn" id="gd-add-url"><i class="fa fa-plus"></i></button>' +
-								'<button class="btn" id="gd-url-cancel"><i class="fa fa-times"></i></button>' +
-							'</div>' +
-							'<div id="gd-upload-files-table">' +
-								// list of files
-							'</div>' +
-							'<button id="gd-upload-button" type="button" class="btn btn-success" disabled>Upload</button>' +
-							'<button id="gd-open-document" type="button" class="btn">Browse files</button>' +
-						'</section>';
+        '<div class="gd-drag-n-drop-wrap" id="gd-dropZone">' +
+        '<div class="gd-drag-n-drop-icon"><i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i></div>' +
+        '<h2>Drag &amp; Drop your files here</h2>' +
+        '<h4>OR</h4>' +
+        '<div class="gd-drag-n-drop-buttons">' +
+        '<label class="btn btn-primary">' +
+        '<i class="fa fa-file"></i>' +
+        'SELECT FILE' +
+        '<input id="gd-upload-input" type="file" multiple style="display: none;">' +
+        '</label>' +
+        '<label class="btn" id="gd-url-button">' +
+        '<i class="fa fa-link"></i>' +
+        'URL' +
+        '</label>' +
+        '</div>' +
+        '</div>' +
+        '<div class="inner-addon left-addon btn gd-url-wrap" id="gd-url-wrap" style="display: none;">' +
+        '<input type="url" class="form-control" id="gd-url" placeholder="Enter your file URL">' +
+        '<button class="btn" id="gd-add-url"><i class="fa fa-plus"></i></button>' +
+        '<button class="btn" id="gd-url-cancel"><i class="fa fa-times"></i></button>' +
+        '</div>' +
+        '<div id="gd-upload-files-table">' +
+        // list of files
+        '</div>' +
+        '<button id="gd-upload-button" type="button" class="btn btn-success" disabled>Upload</button>' +
+        '<button id="gd-open-document" type="button" class="btn">Browse files</button>' +
+        '</section>';
     return uploadSection;
 }
 
-/*function isMobile(){
+function isMobile() {
     return $('body:after').css('content') === 'mobile';
-}*/
+}
 
 /*
 ******************************************************************
@@ -1887,7 +1908,7 @@ GROUPDOCS.VIEWER PLUGIN
                 upload: true,
                 print: true,
                 defaultDocument: null,
-                browse: true,               
+                browse: true,
                 rewrite: true,
                 htmlMode: true,
                 saveRotateState: true,
@@ -1897,9 +1918,9 @@ GROUPDOCS.VIEWER PLUGIN
 
             // set global option params
             applicationPath = options.applicationPath;
-            preloadPageCount = options.preloadPageCount;            
+            preloadPageCount = options.preloadPageCount;
             rewrite = options.rewrite;
-			htmlMode = options.htmlMode;
+            htmlMode = options.htmlMode;
             thumbnails = options.thumbnails;
             saveRotateState = options.saveRotateState;
 			enableRightClick = options.enableRightClick;
@@ -1976,38 +1997,38 @@ GROUPDOCS.VIEWER PLUGIN
     */
     function getHtmlBase() {
         return '<div id="gd-container">' +
-			    '<div class="wrapper">' +
-			        // header BEGIN
-			        '<div id="gd-header">' +
-						'<div id="gd-header-logo">' +
-						'</div>' +
+            '<div class="wrapper">' +
+            // header BEGIN
+            '<div id="gd-header">' +
+            '<div id="gd-header-logo">' +
+            '</div>' +
 
-						// nav bar BEGIN
-						'<ul id="' + gd_navbar.slice(1) + '">' +
-							// nav bar content
-						'</ul>' +
-						// nav bar END
-			        '</div>' +
-			        // header END
+            // nav bar BEGIN
+            '<ul id="' + gd_navbar.slice(1) + '">' +
+            // nav bar content
+            '</ul>' +
+            // nav bar END
+            '</div>' +
+            // header END
 
-			        // thumbnails sidebar BEGIN
-			        '<div id="gd-thumbnails">' +
-						'<div id="gd-thumbnails-panzoom">' +
-							// Thumbnails will be added here automatically on document open
-						'</div>' +
-			        '</div>' +
-			        // thumbnails sidebar END
+            // thumbnails sidebar BEGIN
+            '<div id="gd-thumbnails">' +
+            '<div id="gd-thumbnails-panzoom">' +
+            // Thumbnails will be added here automatically on document open
+            '</div>' +
+            '</div>' +
+            // thumbnails sidebar END
 
-			        // pages BEGIN
-			        '<div id="gd-pages">' +
-						'<div id="gd-panzoom">' +
-							// list of pages
-						'</div>' +
-			        '</div>' +
-			        // pages END
+            // pages BEGIN
+            '<div id="gd-pages">' +
+            '<div id="gd-panzoom">' +
+            // list of pages
+            '</div>' +
+            '</div>' +
+            // pages END
 
-			    '</div>' +
-			'</div>' +
+            '</div>' +
+            '</div>' +
             '<div id="gd-container-fade" class="gd-container-fade">' +
             '<div id="gd-container-fade-text" class="gd-container-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
             '</div>';
@@ -2015,24 +2036,24 @@ GROUPDOCS.VIEWER PLUGIN
 
     function getHtmlModalDialog() {
         return '<div class="gd-modal fade" id="modalDialog">' +
-			      '<div class="gd-modal-dialog">' +
-			        '<div class="gd-modal-content" id="gd-modal-content">' +
-			            // header
-			            '<div class="gd-modal-header">' +
-							'<div class="gd-modal-close gd-modal-close-action"><span>&times;</span></div>' +
-							'<h4 class="gd-modal-title"></h4>' +
-			            '</div>' +
-			            // body
-			            '<div class="gd-modal-body">' +
-							// modal content will be here
-						'</div>' +
-			            // footer
-			            '<div class="gd-modal-footer">' +
-			            // empty footer
-			            '</div>' +
-			        '</div><!-- /.modal-content -->' +
-			      '</div><!-- /.modal-dialog -->' +
-			    '</div>';
+            '<div class="gd-modal-dialog">' +
+            '<div class="gd-modal-content" id="gd-modal-content">' +
+            // header
+            '<div class="gd-modal-header">' +
+            '<div class="gd-modal-close gd-modal-close-action"><span>&times;</span></div>' +
+            '<h4 class="gd-modal-title"></h4>' +
+            '</div>' +
+            // body
+            '<div class="gd-modal-body">' +
+            // modal content will be here
+            '</div>' +
+            // footer
+            '<div class="gd-modal-footer">' +
+            // empty footer
+            '</div>' +
+            '</div><!-- /.modal-content -->' +
+            '</div><!-- /.modal-dialog -->' +
+            '</div>';
     }
 
     function getHtmlNavSplitter() {
@@ -2041,62 +2062,62 @@ GROUPDOCS.VIEWER PLUGIN
 
     function getHtmlNavZoomPanel() {
         return '<li class="gd-nav-toggle" id="gd-zoom-val-container">' +
-					'<span id="gd-zoom-value">100%</span>' +
-					'<span class="gd-nav-caret"></span>' +
-					'<ul class="gd-nav-dropdown-menu gd-nav-dropdown disabled" id="gd-btn-zoom-value">' +
-						'<li>25%</li>' +
-						'<li>50%</li>' +
-						'<li>100%</li>' +
-						'<li>150%</li>' +
-						'<li>200%</li>' +
-						'<li>300%</li>' +
-						'<li role="separator" class="gd-nav-dropdown-menu-separator"></li>' +
-						'<li>Fit Width</li>' +
-						'<li>Fit Height</li>' +
-		            '</ul>' +
-				'</li>' +
-				'<li id="gd-btn-zoom-in" class="disabled">' +
-					'<i class="fa fa-search-plus"></i>' +
-					'<span class="gd-tooltip">Zoom In</span>' +
-				'</li>' +
-				'<li id="gd-btn-zoom-out" class="disabled">' +
-					'<i class="fa fa-search-minus"></i>' +
-					'<span class="gd-tooltip">Zoom Out</span>' +
-				'</li>';
+            '<span id="gd-zoom-value">100%</span>' +
+            '<span class="gd-nav-caret"></span>' +
+            '<ul class="gd-nav-dropdown-menu gd-nav-dropdown disabled" id="gd-btn-zoom-value">' +
+            '<li>25%</li>' +
+            '<li>50%</li>' +
+            '<li>100%</li>' +
+            '<li>150%</li>' +
+            '<li>200%</li>' +
+            '<li>300%</li>' +
+            '<li role="separator" class="gd-nav-dropdown-menu-separator"></li>' +
+            '<li>Fit Width</li>' +
+            '<li>Fit Height</li>' +
+            '</ul>' +
+            '</li>' +
+            '<li id="gd-btn-zoom-in" class="disabled">' +
+            '<i class="fa fa-search-plus"></i>' +
+            '<span class="gd-tooltip">Zoom In</span>' +
+            '</li>' +
+            '<li id="gd-btn-zoom-out" class="disabled">' +
+            '<i class="fa fa-search-minus"></i>' +
+            '<span class="gd-tooltip">Zoom Out</span>' +
+            '</li>';
     }
 
     function getHtmlNavPagesPanel() {
         return '<li id="gd-btn-page-first" class="gd-nav-btn-pages">' +
-					'<i class="fa fa-angle-double-left"></i>' +
-					'<span class="gd-tooltip">First Page</span>' +
-				'</li>' +
-				'<li id="gd-btn-page-prev" class="gd-nav-btn-pages">' +
-					'<i class="fa fa-angle-left"></i>' +
-					'<span class="gd-tooltip">Previous Page</span>' +
-				'</li>' +
-				'<li id="gd-page-num">0/0</li>' +
-				'<li id="gd-btn-page-next" class="gd-nav-btn-pages">' +
-					'<i class="fa fa-angle-right"></i>' +
-					'<span class="gd-tooltip">Next Page</span>' +
-				'</li>' +
-				'<li id="gd-btn-page-last" class="gd-nav-btn-pages">' +
-					'<i class="fa fa-angle-double-right"></i>' +
-					'<span class="gd-tooltip">Last Page</span>' +
-				'</li>';
+            '<i class="fa fa-angle-double-left"></i>' +
+            '<span class="gd-tooltip">First Page</span>' +
+            '</li>' +
+            '<li id="gd-btn-page-prev" class="gd-nav-btn-pages">' +
+            '<i class="fa fa-angle-left"></i>' +
+            '<span class="gd-tooltip">Previous Page</span>' +
+            '</li>' +
+            '<li id="gd-page-num">0/0</li>' +
+            '<li id="gd-btn-page-next" class="gd-nav-btn-pages">' +
+            '<i class="fa fa-angle-right"></i>' +
+            '<span class="gd-tooltip">Next Page</span>' +
+            '</li>' +
+            '<li id="gd-btn-page-last" class="gd-nav-btn-pages">' +
+            '<i class="fa fa-angle-double-right"></i>' +
+            '<span class="gd-tooltip">Last Page</span>' +
+            '</li>';
     }
 
     function getHtmlNavSearchPanel() {
         return '<li id="gd-btn-search" class="gd-nav-toggle">' +
-					'<i class="fa fa-search"></i>' +
-					'<span class="gd-tooltip">Search</span>' +
-					'<div id="gd-nav-search-container" class="gd-nav-dropdown">' +
-						'<input type="text" id="gd-search-input"/>' +
-						'<div id="gd-search-count">0 of 0</div>' +
-						'<div class="gd-nav-search-btn" id="gd-nav-search-prev"><i class="fa fa-chevron-left"></i></div>' +
-						'<div class="gd-nav-search-btn" id="gd-nav-search-next"><i class="fa fa-chevron-right"></i></div>' +
-						'<div class="gd-nav-search-btn" id="gd-nav-search-cancel"><i class="fa fa-times"></i></div>' +
-					'</div>' +
-				'</li>';
+            '<i class="fa fa-search"></i>' +
+            '<span class="gd-tooltip">Search</span>' +
+            '<div id="gd-nav-search-container" class="gd-nav-dropdown">' +
+            '<input type="text" id="gd-search-input"/>' +
+            '<div id="gd-search-count">0 of 0</div>' +
+            '<div class="gd-nav-search-btn" id="gd-nav-search-prev"><i class="fa fa-chevron-left"></i></div>' +
+            '<div class="gd-nav-search-btn" id="gd-nav-search-next"><i class="fa fa-chevron-right"></i></div>' +
+            '<div class="gd-nav-search-btn" id="gd-nav-search-cancel"><i class="fa fa-times"></i></div>' +
+            '</div>' +
+            '</li>';
     }
 
     function getHtmlNavThumbTogglePanel() {
@@ -2105,7 +2126,7 @@ GROUPDOCS.VIEWER PLUGIN
 
     function getHtmlRotatePanel() {
         return '<li id="gd-btn-counterclockwise"><i class="fa fa-rotate-left"></i><span class="gd-tooltip">Rotate CCW</span></li>' +
-		       '<li id="gd-btn-clockwise"><i class="fa fa-rotate-right"></i><span class="gd-tooltip">Rotate CW</span></li>';
+            '<li id="gd-btn-clockwise"><i class="fa fa-rotate-right"></i><span class="gd-tooltip">Rotate CW</span></li>';
     }
 
     function getHtmlNavDownloadPanel() {
@@ -2142,9 +2163,9 @@ $.fn.scrollTo = function (target, options, callback) {
     }, options);
     return this.each(function () {
         var scrollPane = $(this);
-		if(isNaN(settings.zoom)){
-			settings.zoom = 100;
-		}
+        if (isNaN(settings.zoom)) {
+            settings.zoom = 100;
+        }
         var scrollTarget = (typeof settings.scrollTarget == "number") ? settings.scrollTarget : $(settings.scrollTarget);
         if (typeof settings.scrollTarget != "number") {
             var scrollYTop = scrollTarget.offset().top * (settings.zoom / 100);

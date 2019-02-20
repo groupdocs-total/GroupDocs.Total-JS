@@ -115,7 +115,8 @@
 .csg-text-menu i {
     font-size: 14px;
     color: white;
-    margin: 0 12px;
+    padding: 6px;
+    margin: 6px;
 }
 .csg-text-menu .gd-text-color-picker {
     position: relative;
@@ -124,4 +125,7 @@
     display: inline-block;
     top: 6px;
     margin: 0px 4px 0 11px;
+}
+.csg-text-menu i.active {
+    background-color: #969696;
 }

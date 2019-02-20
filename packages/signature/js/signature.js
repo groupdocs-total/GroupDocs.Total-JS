@@ -267,7 +267,7 @@ $(document).ready(function () {
             case "stamp":
                 var html = $.fn.stampGenerator.addInitialShape();
                 toggleLightBox(true, "Draw signature", html.header);
-                $.fn.stampGenerator.drawShape(0);
+                $.fn.stampGenerator.addShape(0);
                 break;
             case "barCode":
             case "qrCode":

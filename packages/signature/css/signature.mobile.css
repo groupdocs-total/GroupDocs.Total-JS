@@ -185,7 +185,7 @@
     }
 
     .gd-text-menu-top {
-        top: 100px;
+        top: 60px;
     }
 
     .gd-text-menu-down {
@@ -200,6 +200,8 @@
         width: 100%;
         height: 75px;
         align-items: baseline;
+        padding: 0px;
+        margin: 0px;
     }
 
     .gd-blur {
@@ -305,10 +307,6 @@
 
     .gd-context-menu-top {
         top: -34px;
-    }
-
-    .gd-context-menu-bottom {
-        bottom: -34px;
     }
 
     .ui-resizable-handle {

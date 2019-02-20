@@ -15,11 +15,12 @@
         underline : 'gd-text-underline',
         font : 'gd-text-font',
         fontSize : 'gd-text-font-size',
-        parentName : ''
+        parentName : '',
+        textMenuId: ''
     };
     var menuButtons = [getHtmlFontsSelect(mergedFonts, paramValues.font),
         getHtmlFontSizeSelect(paramValues.fontSize),
-        '<i id="gd-text-bold" class="fas fa-bold"></i>',
+        '<i id="' + paramValues.bold + '" class="fas fa-bold"></i>',
         '<i id="' + paramValues.italic + '" class="fas fa-italic"></i>',
         '<i id="' + paramValues.underline + '" class="fas fa-underline"></i>',
         '<div id="' + paramValues.fontColor + '" class="gd-text-color-picker"></div>'];
@@ -29,34 +30,35 @@
     };
 
 	$.extend(true, $.fn.textGenerator, {
-	    create: function(parentName) {
+	    create: function(parentName, textMenuId) {
 	        properties = {};
 
             paramValues.parentName = parentName;
+            paramValues.textMenuId = textMenuId;
             $('#' + paramValues.parentName).find('.gd-draw-text').append(baseHtml());
 
             $('#' + parentName).find("#" + paramValues.text).focus();
 
-            $('#' + parentName).find("#" + paramValues.fontColor).bcPicker({paletteClass: "text"});
+            $('#' + paramValues.textMenuId).find("#" + paramValues.fontColor).bcPicker({paletteClass: "text"});
 
-            $('#' + parentName).on("change", "#" + paramValues.font, function(e) {
+            $('#' + paramValues.textMenuId).on("change", "#" + paramValues.font, function(e) {
                 var val = $(this).val();
                 $('#' + parentName).find('#' + paramValues.text).css("font-family", val);
                 properties.font = val;
                 setTimeout(saveTextSignatureIntoFile, 500);
             });
 
-            $('#' + parentName).on("change", "#" + paramValues.fontSize, function(e) {
+            $('#' + paramValues.textMenuId).on("change", "#" + paramValues.fontSize, function(e) {
                 var val = $(this).val();
                 $('#' + parentName).find('#' + paramValues.text).css("font-size", val);
                 properties.fontSize = val;
                 setTimeout(saveTextSignatureIntoFile, 500);
             });
 
-            $('#' + parentName).on(userMouseClick, "#" + paramValues.bold, function(e) {
+            $('#' + paramValues.textMenuId).on(userMouseClick, "#" + paramValues.bold, function(e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                $('#' + parentName).find('#' + paramValues.bold).toggleClass("active");
+                $('#' + paramValues.textMenuId).find('#' + paramValues.bold).toggleClass("active");
                 if($('#' + parentName).find('#' + paramValues.text).css("font-weight") == "400") {
                     $('#' + parentName).find('#' + paramValues.text).css("font-weight", "bold");
                     properties.bold = true;
@@ -67,10 +69,10 @@
                 setTimeout(saveTextSignatureIntoFile, 500);
             });
 
-            $('#' + parentName).on(userMouseClick, "#" + paramValues.italic, function(e) {
+            $('#' + paramValues.textMenuId).on(userMouseClick, "#" + paramValues.italic, function(e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                $('#' + parentName).find('#' + paramValues.italic).toggleClass("active");
+                $('#' + paramValues.textMenuId).find('#' + paramValues.italic).toggleClass("active");
                 if($('#' + parentName).find('#' + paramValues.text).css("font-style") != "italic") {
                     $('#' + parentName).find('#' + paramValues.text).css("font-style", "italic");
                     properties.italic = true;
@@ -81,10 +83,10 @@
                 setTimeout(saveTextSignatureIntoFile, 500);
             });
 
-            $('#' + parentName).on(userMouseClick, "#" + paramValues.underline, function(e) {
+            $('#' + paramValues.textMenuId).on(userMouseClick, "#" + paramValues.underline, function(e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
-                $('#' + parentName).find('#' + paramValues.underline).toggleClass("active");
+                $('#' + paramValues.textMenuId).find('#' + paramValues.underline).toggleClass("active");
                 if($('#' + parentName).find('#' + paramValues.text).css("text-decoration").indexOf("underline") == -1) {
                     $('#' + parentName).find('#' + paramValues.text).css("text-decoration", "underline");
                     properties.underline = true;
@@ -95,7 +97,7 @@
                 setTimeout(saveTextSignatureIntoFile, 500);
             });
 
-            $('#' + parentName).on(userMouseClick, ".bcPicker-color", function(e) {
+            $('#' + paramValues.textMenuId).on(userMouseClick, ".bcPicker-color", function(e) {
                 $.fn.bcPicker.pickColor($(this));
                 var css = $(this).css("background-color");
                 $('#' + parentName).find('#' + paramValues.text).css("color", css);
@@ -103,15 +105,15 @@
                 setTimeout(saveTextSignatureIntoFile, 500);
             });
 
-            $('#' + parentName).on(userMouseClick, ".fa-arrow-up", function(e) {
+            $('#' + paramValues.textMenuId).on(userMouseClick, ".fa-arrow-up", function(e) {
                 e.preventDefault();
                 e.stopImmediatePropagation();
                 if($(this).hasClass("down")){
-                    $('#' + parentName).find(".gd-text-menu").removeClass("gd-text-menu-top");
-                    $('#' + parentName).find(".gd-text-menu").addClass("gd-text-menu-down");
+                    $('#' + paramValues.textMenuId).removeClass("gd-text-menu-top");
+                    $('#' + paramValues.textMenuId).addClass("gd-text-menu-down");
                 } else {
-                    $('#' + parentName).find(".gd-text-menu").addClass("gd-text-menu-top");
-                    $('#' + parentName).find(".gd-text-menu").removeClass("gd-text-menu-down");
+                    $('#' + paramValues.textMenuId).addClass("gd-text-menu-top");
+                    $('#' + paramValues.textMenuId).removeClass("gd-text-menu-down");
                 }
                 $(this).toggleClass("down");
             });
@@ -128,21 +130,22 @@
 	            return;
             }
             paramValues.parentName = parent;
+	        paramValues.textMenuId = $('#' + paramValues.parentName).attr('data-textMenuId');
             if (props) {
                 properties = props;
 
-                $('#' + paramValues.parentName).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color", props.fontColor);
+                $('#' + paramValues.textMenuId).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color", props.fontColor);
                 if (props.underline) {
-                    $('#' + paramValues.parentName).find('#' + paramValues.underline).toggleClass("active");
+                    $('#' + paramValues.textMenuId).find('#' + paramValues.underline).toggleClass("active");
                 }
                 if (props.italic) {
-                    $('#' + paramValues.parentName).find('#' + paramValues.italic).toggleClass("active");
+                    $('#' + paramValues.textMenuId).find('#' + paramValues.italic).toggleClass("active");
                 }
                 if (props.bold) {
-                    $('#' + paramValues.parentName).find('#' + paramValues.bold).toggleClass("active");
+                    $('#' + paramValues.textMenuId).find('#' + paramValues.bold).toggleClass("active");
                 }
-                $('#' + paramValues.parentName).find("#" + paramValues.fontSize).val(props.fontSize);
-                $('#' + paramValues.parentName).find("#" + paramValues.font).val(props.font);
+                $('#' + paramValues.textMenuId).find("#" + paramValues.fontSize).val(props.fontSize);
+                $('#' + paramValues.textMenuId).find("#" + paramValues.font).val(props.font);
 
                 initTextCss();
                 properties.id = paramValues.parentName.substring(paramValues.parentName.lastIndexOf('-') + 1);
@@ -174,8 +177,10 @@
 			return properties;
 		},
 
-		getMenu : function () {
-            var menuHtml = '<div class="gd-text-menu">';
+		getMenu : function (menuClass, signatureId) {
+	        var id = "menu-" + signatureId;
+	        paramValues.textMenuId = id;
+            var menuHtml = '<div id="' + id + '" class="gd-text-menu ' + menuClass+ '">';
             if (isMobile()) {
                 menuHtml = menuHtml + '<div class="gd-blur"></div>';
             }
@@ -218,12 +223,12 @@
         properties.width = text.width();
         properties.height = text.height();
 
-        properties.underline = $('#' + paramValues.parentName).find('#' + paramValues.underline)[0].className.indexOf("active") > 0;
-        properties.italic = $('#' + paramValues.parentName).find('#' + paramValues.italic)[0].className.indexOf("active") > 0;
-        properties.bold = $('#' + paramValues.parentName).find('#' + paramValues.bold)[0].className.indexOf("active") > 0;
-        properties.fontColor = $('#' + paramValues.parentName).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color");
-        properties.font = $('#' + paramValues.parentName).find("#" + paramValues.font).val();
-        properties.fontSize = $('#' + paramValues.parentName).find("#" + paramValues.fontSize).val();
+        properties.underline = $('#' + paramValues.textMenuId).find('#' + paramValues.underline)[0].className.indexOf("active") > 0;
+        properties.italic = $('#' + paramValues.textMenuId).find('#' + paramValues.italic)[0].className.indexOf("active") > 0;
+        properties.bold = $('#' + paramValues.textMenuId).find('#' + paramValues.bold)[0].className.indexOf("active") > 0;
+        properties.fontColor = $('#' + paramValues.textMenuId).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color");
+        properties.font = $('#' + paramValues.textMenuId).find("#" + paramValues.font).val();
+        properties.fontSize = $('#' + paramValues.textMenuId).find("#" + paramValues.fontSize).val();
 
     }
 

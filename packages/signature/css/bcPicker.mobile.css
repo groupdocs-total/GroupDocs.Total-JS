@@ -1,11 +1,9 @@
 @media (max-width: 1024px) {
 	.bcPicker-palette.top{
-		top: -570px;
-		right: 18px;
 	}
 
 	.bcPicker-palette.text.top {
-		top: -270px;
+		top: -230px;
 		right: -29px;
 		left: unset;
 	}

@@ -21,6 +21,11 @@ FIX DOCUMENT PAGE POSITION FOR IMAGE SIGNATURE
 .gd-mobile-menu-close {
     display: none;
 }
+#gd-panzoom {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+}
 /*
 ******************************************
 SIGNATURE TOOL BAR

@@ -35,7 +35,8 @@ var textContextMenuButtons = [
 	'<i class="fas fa-bold"></i>',
 	'<i class="fas fa-italic"></i>',
 	'<i class="fas fa-underline"></i>',
-	'<div class="gd-text-color-picker csg-text-color"></div>'];
+	'<div class="gd-text-color-picker csg-text-color"></div>',
+	'<i class="fas fa-trash-alt fa-sm csg-delete-text"></i>'];
 
 $(document).ready(function(){
 
@@ -46,7 +47,7 @@ $(document).ready(function(){
 		if(e.target.tagName == "CANVAS"){
 			$(".bcPicker-palette").css("display", "none");
 			var clickedElementId = $(e.target).data("id");
-			toggleShape(clickedElementId);
+			toggleShape(clickedElementId);			
 		}
 	});	
 
@@ -160,6 +161,17 @@ $(document).ready(function(){
 		$(this).parent().parent().remove();		
 	});
 	
+	//Delete text
+	$('body').on(userMouseClick, '.csg-delete-text', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		var canvasId = $(this).parent()[0].attributes['data-canvasId'].value;
+		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });
+		properties[0].text = "";
+		removeTextMenu(canvasId);
+		$.fn.stampGenerator.redrawCanvas(properties[0].id);
+	});
+	
 	// Add new shape
 	$('body').on(userMouseClick, '#csg-shape-add', function(e){
 		e.preventDefault();
@@ -179,7 +191,7 @@ $(document).ready(function(){
 			paramValues.id = $($("#gd-lightbox-body").find(".csg-bouding-box")[0]).data("id") + 1;
 		}
 		stampData.push(paramValues);
-		shape = $.fn.stampGenerator.addShape(paramValues.id);
+		shape = $.fn.stampGenerator.addShape(paramValues.id);		
 		if(paramValues.width != 0){
 			$("#csg-shape-" + paramValues.id).css("width", paramValues.width + $.fn.stampGenerator.getSizeMagnifier());
 			$("#csg-shape-" + paramValues.id).css("height", paramValues.width + $.fn.stampGenerator.getSizeMagnifier());
@@ -187,6 +199,7 @@ $(document).ready(function(){
 			$("#csg-shape-" + paramValues.id).css("top", paramValues.top);
 			$("#csg-shape-" + paramValues.id).css("z-index", paramValues.zIndex);
 		}
+		removeTextMenu();
 	});
 	
 	// Add text
@@ -208,6 +221,8 @@ $(document).ready(function(){
 		$(".csg-text-input input").val("");
 		$.fn.stampGenerator.redrawCanvas(properties[0].id);
 		$(".csg-text-input").css("display", "none");
+		addTextMenu(canvasId);
+		setColors(properties[0]);
 	});
 });
 
@@ -264,11 +279,10 @@ $(document).ready(function(){
 				$("#gd-lightbox-body").append($.fn.stampGenerator.canvasHtml(properties[0]));
 			} else {
 				$("#gd-lightbox-body").prepend($.fn.stampGenerator.canvasHtml(properties[0]));
-			}
-			addTextMenu(canvasId);
-			setColors(properties[0]);
+			}			
 			makeResizable(properties[0].id);
 			$.fn.stampGenerator.redrawCanvas(canvasId);
+			setColors(properties[0]);
 		},
 
 		redrawCanvas: function(canvasId) {
@@ -345,9 +359,15 @@ function toggleShape(clickedElementId) {
 	});
 	$("#csg-shape-" + clickedElementId).find(".csg-params").show();
 	$("#csg-shape-" + clickedElementId).find(".ui-resizable-handle").show();
-	$("#csg-shape-" + clickedElementId).css("border", "1px solid #679FFA");
-	hideAllTextMenu();
-	showTextMenu(clickedElementId);
+	$("#csg-shape-" + clickedElementId).css("border", "1px solid #679FFA");	
+	var properties = $.grep(stampData, function(e){ return e.id == clickedElementId; });
+	if(properties[0].text != ""){
+		removeTextMenu();
+		addTextMenu(clickedElementId);
+		setColors(properties[0]);
+	} else {
+		removeTextMenu();
+	}
 }
 
 function getStampContextMenu(){
@@ -380,7 +400,11 @@ function showTextMenu(canvasId, hide) {
 }
 
 function removeTextMenu(canvasId){
-	$('#csg-text-menu-' + canvasId).remove();
+	if(canvasId){
+		$('#csg-text-menu-' + canvasId).remove();
+	} else {
+		$(".csg-text-menu").remove();
+	}
 }
 
 function addTextMenu(canvasId) {
@@ -390,7 +414,7 @@ function addTextMenu(canvasId) {
 		html = html + button;
 	});
 	html = html + '</div>';
-	$('#gd-lightbox-body').append(html);
+	$('#gd-lightbox-body').append(html);	
 }
 
 /**

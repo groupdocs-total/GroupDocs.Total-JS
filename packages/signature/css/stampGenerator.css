@@ -117,6 +117,7 @@
     color: white;
     padding: 6px;
     margin: 0 26px 0 16px;
+	cursor: pointer;
 }
 .csg-text-menu .gd-text-color-picker {
     position: relative;

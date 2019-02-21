@@ -1,27 +1,28 @@
 .bcPicker-picker{
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-  border: 1px;
-  border-radius: 15px;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	border: 1px;
+	border-radius: 15px;
 }
 
 .bcPicker-palette{
-  width: 120px;
-  position: absolute;
-  top: -140px;
-  padding: 5px;
-  border: 1px solid #efefef;
-  background-color: #fdfdfd;
-  z-index: 10;
-  display: none;
+	width: 232px;
+    position: absolute;
+    top: -57px;
+	padding: 5px;
+	border: 1px solid #efefef;
+	background-color: #fdfdfd;
+	z-index: 10;
+	display: none;
 }
 
 .bcPicker-palette > .bcPicker-color{
-  width: 14px;
-  height: 14px;
-  margin: 2px;
-  display: inline-block;
-  border: 1px solid #efefef;
-  background-color: #9da97b;
+	width: 14px;
+	height: 14px;
+	margin: 2px;
+	display: inline-block;
+	border: 1px solid #efefef;
+	background-color: #9da97b;
+	cursor: pointer;
 }

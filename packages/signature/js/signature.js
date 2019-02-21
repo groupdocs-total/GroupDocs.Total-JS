@@ -566,19 +566,18 @@ function loadSignaturesTree(dir, callback) {
                             },
                             stop: function () {
                                 var sign = $(this);
-                                var position = getOffset($(this)[0]);                                
-                                var pageNumber;
+                                var position = getOffset($(this)[0]);
                                 var currentPage = document.elementFromPoint(position.left, position.top);
-								if($(currentPage).parent().parent().hasClass("gd-page")){
+								if(currentPage && $(currentPage).parent().parent() && $(currentPage).parent().parent().hasClass("gd-page")) {
 									draggableSignaturePosition.left = position.left - $(currentPage).parent().parent()[0].offsetLeft - $(sign)[0].clientWidth;
 									draggableSignaturePosition.top = position.top - $(currentPage).parent().parent()[0].offsetTop - $(sign)[0].clientHeight;
-									if (currentPage && $(currentPage).parent().parent().attr("id")) {
-										var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
-										pageNumber = parseInt(id);
-									}
+                                    var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
+                                    var pageNumber = parseInt(id);
 									selectSignature(sign, pageNumber);
-									$('#gd-signature-list').addClass("gd-signature-list-scroll");
-								}
+								} else {
+                                    $(this)[0].style = 'position: relative';
+                                }
+                                $('#gd-signature-list').addClass("gd-signature-list-scroll");
                             }
                         });
                     }

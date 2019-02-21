@@ -570,8 +570,8 @@ function loadSignaturesTree(dir, callback) {
                                 var pageNumber;
                                 var currentPage = document.elementFromPoint(position.left, position.top);
 								if($(currentPage).parent().parent().hasClass("gd-page")){
-									draggableSignaturePosition.left = position.left - $(currentPage).parent().parent()[0].offsetLeft;
-									draggableSignaturePosition.top = position.top - $(currentPage).parent().parent()[0].offsetTop;
+									draggableSignaturePosition.left = position.left - $(currentPage).parent().parent()[0].offsetLeft - $(sign)[0].clientWidth;
+									draggableSignaturePosition.top = position.top - $(currentPage).parent().parent()[0].offsetTop - $(sign)[0].clientHeight;
 									if (currentPage && $(currentPage).parent().parent().attr("id")) {
 										var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
 										pageNumber = parseInt(id);

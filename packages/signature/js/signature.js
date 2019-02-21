@@ -566,17 +566,19 @@ function loadSignaturesTree(dir, callback) {
                             },
                             stop: function () {
                                 var sign = $(this);
-                                var position = getOffset($(this)[0]);
-                                draggableSignaturePosition.left = position.left - sign[0].offsetWidth - 200;
-                                draggableSignaturePosition.top = position.top - sign[0].offsetHeight - 50;
+                                var position = getOffset($(this)[0]);                                
                                 var pageNumber;
-                                var currentPage = document.elementFromPoint(draggableSignaturePosition.left, draggableSignaturePosition.top);
-                                if (currentPage && $(currentPage).parent().parent().attr("id")) {
-                                    var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
-                                    pageNumber = parseInt(id);
-                                }
-                                selectSignature(sign, pageNumber);
-                                $('#gd-signature-list').addClass("gd-signature-list-scroll");
+                                var currentPage = document.elementFromPoint(position.left, position.top);
+								if($(currentPage).parent().parent().hasClass("gd-page")){
+									draggableSignaturePosition.left = position.left - $(currentPage).parent().parent()[0].offsetLeft;
+									draggableSignaturePosition.top = position.top - $(currentPage).parent().parent()[0].offsetTop;
+									if (currentPage && $(currentPage).parent().parent().attr("id")) {
+										var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
+										pageNumber = parseInt(id);
+									}
+									selectSignature(sign, pageNumber);
+									$('#gd-signature-list').addClass("gd-signature-list-scroll");
+								}
                             }
                         });
                     }

@@ -58,6 +58,8 @@
 	}
 	.csg-text-menu select {		
 		margin: 0 25px 0 15px;
-		width: 200px;
+	}
+	.csg-text-menu i {
+		margin: 0 12px 0 12px;
 	}
 }

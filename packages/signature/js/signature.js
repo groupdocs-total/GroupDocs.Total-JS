@@ -562,7 +562,7 @@ function loadSignaturesTree(dir, callback) {
                         $('#gd-signature-item-' + index).draggable({
                             start: function () {
                                 $('#gd-signature-list').removeClass("gd-signature-list-scroll");
-                            },
+                            },							
                             stop: function () {
                                 var sign = $(this);
                                 draggableSignaturePosition.left = sign[0].offsetWidth;

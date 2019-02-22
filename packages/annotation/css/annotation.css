@@ -524,8 +524,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 
 .gd-text-annotation, .gd-textReplacement-annotation, .gd-resourcesRedaction-annotation{
-    background-color: #28f;
-    opacity: .3;
+    background-color: #28f;    
     filter: alpha(opacity=20);   
 }
 

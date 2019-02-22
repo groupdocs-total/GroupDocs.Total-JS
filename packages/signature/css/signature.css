@@ -308,7 +308,7 @@ MODAL
 .gd-modal-header-lightbox {
     display: flex;
     flex-direction: row;
-    height: 52px;
+    height: 60px;
     justify-content: space-between;
 }
 .gd-modal-header-title {
@@ -318,7 +318,7 @@ MODAL
 .gd-modal-title-lightbox {
     font-size: 16px;
     font-weight: 400;
-    padding: 15px 17px 15px;
+    line-height: 60px;
     color: #ffffff;
 }
 .gd-modal-dialog-lightbox {
@@ -330,7 +330,7 @@ MODAL
     font-size: 25px;
     width: fit-content;
     color: #959da5;
-    margin: 12px 23px 0px 17px;
+    margin: 20px;
     cursor: pointer;
 }
 .gd-modal-title {
@@ -460,7 +460,6 @@ SIGNATURE IMAGE
 */
 .gd-draggable-helper, .ui-wrapper {
     position: absolute !important;
-	border: 1px solid #3c97fe;
 	z-index: 999;
 }
 .gd-image-signed {
@@ -495,9 +494,9 @@ SIGNATURE IMAGE
 .gd-text {
     width: inherit;
     height: inherit;
+    border: 1px solid #3c97fe;
 }
 .gd-text-context-menu {
-	left: -48px;
 }
 .gd-context-menu .fa-arrows-alt {
     cursor: move;
@@ -516,14 +515,13 @@ SIGNATURE IMAGE
 }
 .gd-delete-signature {
     cursor: pointer;
-    margin-right: 10px;
 }
 .gd-fonts-select {
 	border: none;
 }
 .gd-text-color-picker{
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     padding: 2px;
     margin-left: 5px;
     margin-right: 5px;
@@ -537,6 +535,7 @@ SIGNATURE IMAGE RESIZE HANDLES
     background-color: #679FFA;
     width: 8px;
     height: 8px;
+    border-radius: 100%;
 }
 
 .ui-resizable-se {

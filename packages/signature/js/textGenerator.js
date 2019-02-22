@@ -187,9 +187,7 @@
             $.each(menuButtons, function(index, button){
                 menuHtml = menuHtml + button;
             });
-            if(isMobile()){
-                menuHtml = menuHtml + '<i class="fas fa-arrow-up"></i>';
-            }
+
             menuHtml = menuHtml + '</div>';
             return menuHtml;
         }

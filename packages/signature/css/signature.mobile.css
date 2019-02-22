@@ -4,22 +4,26 @@
         padding-top: 0px;
     }
     .gd-modal-header-lightbox{
-        height: 40px;
+        height: 60px;
         padding: 0;
     }
     .gd-modal-title-lightbox {
         font-size: 14px;
-        line-height: 20px;
-        padding: 10px 10px 0 10px;
+        line-height: 60px;
+        padding: 0 0 0 10px;
     }
     .gd-lightbox-close {
 		background-color: #00c4d7;
-		font-size: 14px;
-		width: 40px;
-		height: 40px;
+		width: 60px;
+		height: 60px;
 		color: #ffffff;
+        text-align: center;
+        padding: 18px;
 		margin: 0;
-		padding: 10px 10px 0px 10px;
+        line-height: 60px;
+    }
+    .gd-signature-thumbnail-text, .gd-signature-thumbnail-image, .gd-signature-thumbnail-hand{
+        margin: 0;
     }
     .gd-lightbox-close span{
         color: #FFFFFF;
@@ -198,7 +202,6 @@
         left: 0;
         right: 0;
         width: 100%;
-        height: 75px;
         align-items: baseline;
     }
 
@@ -206,9 +209,7 @@
         width: 100%;
         height: 75px;
         background-color: #3E4E5A;
-        filter: blur(8px);
         opacity: 0.7;
-        -webkit-filter: blur(4px);
         position: absolute;
         z-index: -1;
     }
@@ -315,6 +316,23 @@
         width: 18px;
         height: 18px;
         border-radius: 100%;
+    }
+
+    .ui-resizable-nw{
+        left: -9px;
+        top: -9px;
+    }
+    .ui-resizable-sw{
+        left: -9px;
+        bottom: -9px;
+    }
+    .ui-resizable-se{
+        bottom: -9px;
+        right: -9px;
+    }
+    .ui-resizable-ne{
+        right: -9px;
+        top: -9px;
     }
 
     .gd-upload-container {

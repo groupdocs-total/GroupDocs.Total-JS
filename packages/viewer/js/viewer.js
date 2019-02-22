@@ -2234,6 +2234,7 @@ CHECK IF MOBILE
 ******************************************************************
 */
 var isMobile = function () {
-    return 'ontouchstart' in window // works on most browsers
-        || 'onmsgesturechange' in window; // works on ie10
+    return navigator.maxTouchPoints > 0 || //for chrome
+        window.navigator.msMaxTouchPoints > 0 ||
+            'ontouchstart' in window // works on most browsers       
 };

@@ -352,6 +352,10 @@ MODAL
     height: fit-content;
 }
 
+.gd-signature-title.text {
+    padding-left: 20px;
+}
+
 .gd-signature-item {
     display: flex;
     width: 100%;	

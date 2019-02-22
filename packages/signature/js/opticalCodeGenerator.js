@@ -90,8 +90,8 @@ $(document).ready(function () {
 		baseHtml : function(title){
 			var html = 	'<div id="gd-add-optical-signature">' +
 							'<div class="gd-signature-list-title">'+
-								'<div class="gd-signature-context-panel-title">New ' + title +'</div>'+
                 				'<i class="fas fa-times" id="gd-close-signature"></i>'+
+								'<div class="gd-signature-context-panel-title">New ' + title +'</div>'+
 							'</div>'+
 							'<div id="gd-qr-container">' +
 								'<div id="gd-qr-preview-container" class="gd-qr-preview-container">' +

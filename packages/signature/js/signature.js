@@ -1702,7 +1702,7 @@ GROUPDOCS.SIGNATURE PLUGIN
     }
 
     function getHtmlLightboxBox() {
-		var closeIcon = '<i class="fas fa-times" id="gd-close-signature"></i>';
+		var closeIcon = '<i class="fas fa-times" id="gd-close-lightbox"></i>';
 		if (isMobile()) {
 			closeIcon = '<i class="fas fa-arrow-left"></i>';
 		}

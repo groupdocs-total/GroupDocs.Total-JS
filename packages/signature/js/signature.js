@@ -182,6 +182,8 @@ $(document).ready(function () {
         if ($(this.parentElement).find(".gd-context-menu")[0].className.indexOf('hidden') > 0) {
             hideAllContextMenu();
             var id = this.parentElement['id'];
+            var menuId = this.parentElement.attributes['data-textMenuId'].value;
+            $('#' + menuId).removeClass("hidden");
             var text = $(this.childNodes)[0].value;
             var guid = $(this)[0].attributes['data-image-guid'].value;
             var elem = $(this.parentElement).find(".gd-context-menu");
@@ -212,9 +214,13 @@ $(document).ready(function () {
             return false;
         }
         var signatureId = parseInt($(e.target).data("id").replace(/[^\d.]/g, ''));
-        e.target.parentElement.parentElement.remove();
         // get signature data to delete
         var signatureToRemove = $.grep(signaturesList, function (obj) { return obj.id === signatureId; })[0];
+        if (signatureToRemove.signatureType == 'text' && isMobile()) {
+            var menuId = e.target.parentElement.parentElement.attributes['data-textMenuId'].value;
+            $('#' + menuId).remove();
+        }
+        e.target.parentElement.parentElement.remove();
         // delete signature from the signatures list
         signaturesList.splice($.inArray(signatureToRemove, signaturesList), 1);
     });
@@ -261,7 +267,7 @@ $(document).ready(function () {
             case "stamp":
                 var html = $.fn.stampGenerator.addInitialShape();
                 toggleLightBox(true, "Draw signature", html.header);
-                $.fn.stampGenerator.drawShape(0);
+                $.fn.stampGenerator.addShape(0);
                 break;
             case "barCode":
             case "qrCode":
@@ -1080,7 +1086,7 @@ function insertText(properties, pageNumber) {
     }
     var imageGuid = properties ? properties.imageGuid : "";
     // prepare signature image HTML
-    var signatureHtml = '<div id="gd-draggable-helper-' + signatureImageIndex + '"  class="gd-draggable-helper gd-signature" style="' + style + '">' +
+    var signatureHtml = '<div id="gd-draggable-helper-' + signatureImageIndex + '"  class="gd-draggable-helper gd-signature" style="' + style + '" data-textMenuId="menu-gd-text-signature-' + signatureImageIndex + '">' +
         contextMenu +
             '<div id="gd-draw-text-' + signatureImageIndex + '" data-image-guid="' + imageGuid + '" class="gd-draw-text"/>' +
         resizeHandles +
@@ -1093,7 +1099,7 @@ function insertText(properties, pageNumber) {
 
     signature = {};
 
-    $.fn.textGenerator.create("gd-draggable-helper-" + signatureImageIndex);
+    $.fn.textGenerator.create("gd-draggable-helper-" + signatureImageIndex, "menu-gd-text-signature-" + signatureImageIndex);
 
     if (properties) {
         $.fn.textGenerator.init("gd-draggable-helper-" + signatureImageIndex, properties);
@@ -1247,11 +1253,14 @@ function getContextMenu(signatureId, addClass) {
     var contextMenuClass = "gd-context-menu" + (addClass ? " " + addClass : "");
     if (signature.signatureType == "text") {
         contextMenuClass = contextMenuClass + " gd-text-context-menu";
+        if (isMobile()) {
+            $('#gd-pages').append($.fn.textGenerator.getMenu(contextMenuClass, signatureId));
+        }
     }
     var menuHtml = '<div id="gd-context-menu" class="' + contextMenuClass + '">';
     $.each(contextMenuButtons, function (index, button) {
-        if (signature.signatureType == "text" && index == 1) {
-            menuHtml = menuHtml + $.fn.textGenerator.getMenu();
+        if (!isMobile() && signature.signatureType == "text" && index == 1) {
+            menuHtml = menuHtml + $.fn.textGenerator.getMenu('', signatureId);
         }
         menuHtml = menuHtml + '<i class="' + button + '" data-id="' + signatureId + '"></i>'
     });

@@ -564,13 +564,15 @@ function loadSignaturesTree(dir, callback) {
                             start: function () {
                                 $('#gd-signature-list').removeClass("gd-signature-list-scroll");
                             },
-                            stop: function () {
+                            stop: function (event, image) {
                                 var sign = $(this);
-                                var position = getOffset($(this)[0]);
-                                var currentPage = document.elementFromPoint(position.left, position.top);
+								var position = getMousePosition(event);
+                                
+                                var currentPage = document.elementFromPoint(position.x, position.y);
 								if(currentPage && $(currentPage).parent().parent() && $(currentPage).parent().parent().hasClass("gd-page")) {
-									draggableSignaturePosition.left = position.left - $(currentPage).parent().parent()[0].offsetLeft - $(sign)[0].clientWidth;
-									draggableSignaturePosition.top = position.top - $(currentPage).parent().parent()[0].offsetTop - $(sign)[0].clientHeight;
+									var documentPage = $(currentPage).parent().parent()[0];
+									draggableSignaturePosition.left = position.x - $(documentPage).offset().left - $(sign)[0].clientWidth;
+									draggableSignaturePosition.top = position.y - $(documentPage).offset().top - $(sign)[0].clientHeight;
                                     var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
                                     var pageNumber = parseInt(id);
 									selectSignature(sign, pageNumber);
@@ -622,35 +624,20 @@ function loadSignaturesTree(dir, callback) {
     });
 }
 
-function getOffset(elem) {
-    if (elem.getBoundingClientRect) {
-        return getOffsetRect(elem);
-    } else {
-        return getOffsetSum(elem);
+function getMousePosition(event) {
+    var mouse = {
+        x: 0,
+        y: 0
+    };
+    var ev = event || window.event; //Moz || IE
+    if (ev.pageX || ev.touches[0].pageX) { //Moz
+        mouse.x = (typeof ev.pageX != "undefined" && ev.pageX != 0) ? ev.pageX : ev.touches[0].pageX;
+        mouse.y = (typeof ev.pageY != "undefined" && ev.pageY != 0) ? ev.pageY : ev.touches[0].pageY;
+    } else if (ev.clientX) { //IE
+        mouse.x = ev.clientX + document.body.scrollLeft;
+        mouse.y = ev.clientY + document.body.scrollTop;
     }
-}
-
-function getOffsetSum(elem) {
-    var top = 0, left = 0;
-    while (elem) {
-        top = top + parseFloat(elem.offsetTop);
-        left = left + parseFloat(elem.offsetLeft);
-        elem = elem.offsetParent;
-    }
-    return {top: Math.round(top), left: Math.round(left)}
-}
-
-function getOffsetRect(elem) {
-    var box = elem.getBoundingClientRect()
-    var body = document.body
-    var docElem = document.documentElement
-    var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop
-    var scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft
-    var clientTop = docElem.clientTop || body.clientTop || 0
-    var clientLeft = docElem.clientLeft || body.clientLeft || 0
-    var top  = box.top +  scrollTop - clientTop
-    var left = box.left + scrollLeft - clientLeft
-    return { top: Math.round(top), left: Math.round(left) }
+    return mouse;
 }
 
 /**

@@ -566,17 +566,25 @@ function loadSignaturesTree(dir, callback) {
 
                     if (!isMobile() && "digital" != signature.signatureType) {
                         $('#gd-signature-item-' + index).draggable({
+                            containment: "#gd-panzoom",
                             start: function () {
                                 $('#gd-signature-list').removeClass("gd-signature-list-scroll");
-                            },							
-                            stop: function () {
+                            },
+                            stop: function (event, image) {
                                 var sign = $(this);
-                                draggableSignaturePosition.left = sign[0].offsetWidth;
-                                draggableSignaturePosition.top = sign[0].offsetHeight;
-                                var currentPage = document.elementFromPoint(sign.position().left, sign.position().top);
-                                var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
-                                var pageNumber = parseInt(id);
-                                selectSignature(sign, pageNumber);
+								var position = getMousePosition(event);
+                                
+                                var currentPage = document.elementFromPoint(position.x, position.y);
+								if(currentPage && $(currentPage).parent().parent() && $(currentPage).parent().parent().hasClass("gd-page")) {
+									var documentPage = $(currentPage).parent().parent()[0];
+									draggableSignaturePosition.left = position.x - $(documentPage).offset().left - ($(sign)[0].clientWidth / 2);
+									draggableSignaturePosition.top = position.y - $(documentPage).offset().top - ($(sign)[0].clientHeight / 2);
+                                    var id = $(currentPage).parent().parent().attr("id").replace(/[^\d.]/g, '');
+                                    var pageNumber = parseInt(id);
+									selectSignature(sign, pageNumber);
+								} else {
+                                    $(this)[0].style = 'position: relative';
+                                }
                                 $('#gd-signature-list').addClass("gd-signature-list-scroll");
                             }
                         });
@@ -620,6 +628,22 @@ function loadSignaturesTree(dir, callback) {
             callback(data);
         }
     });
+}
+
+function getMousePosition(event) {
+    var mouse = {
+        x: 0,
+        y: 0
+    };
+    var ev = event || window.event; //Moz || IE
+    if (ev.pageX || ev.touches[0].pageX) { //Moz
+        mouse.x = (typeof ev.pageX != "undefined" && ev.pageX != 0) ? ev.pageX : ev.touches[0].pageX;
+        mouse.y = (typeof ev.pageY != "undefined" && ev.pageY != 0) ? ev.pageY : ev.touches[0].pageY;
+    } else if (ev.clientX) { //IE
+        mouse.x = ev.clientX + document.body.scrollLeft;
+        mouse.y = ev.clientY + document.body.scrollTop;
+    }
+    return mouse;
 }
 
 /**

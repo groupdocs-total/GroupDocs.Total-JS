@@ -5,7 +5,7 @@
 
 .bcPaint-header{
   display: flex;
-  padding: 20px;
+  padding: 11px 16px 0 0;
   flex-direction: row;
 }
 

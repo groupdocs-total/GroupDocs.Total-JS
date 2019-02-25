@@ -61,8 +61,6 @@
     line-height: 28px;
 }
 #gd-qr-preview-container{
-    width: 266px;
-    height: 266px;
     text-align: center;
 
 }
@@ -70,6 +68,7 @@
     width: 266px;
     height: 266px;
     border: 1px solid #EEE;
+    margin: 0px;
 }
 
 #gd-qr-preview-container .fa-qrcode {

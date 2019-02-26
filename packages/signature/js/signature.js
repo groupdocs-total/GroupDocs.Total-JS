@@ -534,7 +534,7 @@ function loadSignaturesTree(dir, callback) {
             $.each(returnedData, function (index, elem) {
                 // document name
                 var name = elem.name;
-                if (signature.signatureType == 'qrCode' || signature.signatureType == 'barCode') {
+                if (signature.signatureType == 'qrCode' || signature.signatureType == 'barCode' || signature.signatureType == 'text') {
                     name = elem.text;
                 }
                 // document guid
@@ -547,18 +547,26 @@ function loadSignaturesTree(dir, callback) {
                         '</div>');
                 } else {
                     var imageBlock = name;
-                    if ("digital" == signature.signatureType) {
-                        imageBlock = '<div class="gd-signature-thumbnail-digital"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
-                    } else {
-                        imageBlock = '<image class="gd-signature-thumbnail-' + signature.signatureType + '" src="data:image/png;base64,' + elem.image + '" alt></image>';
-                    }
-
+					var textSignatureClass = "";
+					var textStyle = "";
+					switch(signature.signatureType){
+						case "digital":
+							imageBlock = '<div class="gd-signature-thumbnail-digital"><i class="fas fa-fingerprint fa-lg fa-inverse"></i></div>';
+							break;
+						case "text":
+							imageBlock = "";
+							textSignatureClass = "text";
+							textStyle = 'style="color: ' + elem.fontColor + ';"';
+							break;
+						default:
+							imageBlock = '<image class="gd-signature-thumbnail-' + signature.signatureType + '" src="data:image/png;base64,' + elem.image + '" alt></image>';							
+					}                    
                     $('#gd-signature-list').append(
                         '<div class="gd-signature-item-wrapper gd-signature-thumbnail">'+
 							'<div data-guid="' + guid + '" id="gd-signature-item-' + index + '" class="gd-signature-item ui-draggable ui-draggable-handle">' +
 								imageBlock +
-								'<div data-guid="' + guid + '" class="gd-signature-title">' +
-								'<label for="gd-signature-' + index + '" class="gd-signature-name">' + name + '</label>' +
+								'<div data-guid="' + guid + '" class="gd-signature-title ' + textSignatureClass + '">' +
+								'<label for="gd-signature-' + index + '" class="gd-signature-name" ' + textStyle + '>' + name + '</label>' +
 								'</div>' +
 								'<i class="fa fa-trash-o"></i>' +
 							'</div>'+

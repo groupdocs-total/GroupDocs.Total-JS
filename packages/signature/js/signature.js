@@ -761,6 +761,18 @@ function sign() {
             // show signing results
             $(".gd-modal-body").append(result);
             $("#gd-modal-signed").toggleClass("gd-image-signed");
+			var digitalMarker = "";
+			$.each(signaturesList, function(index, sign){
+				if(sign.signatureType == "digital"){
+					digitalMarker = (sign.contact) ? sign.contact : sign.signatureComment;
+					return false;
+				} else {
+					return;
+				}
+			});
+			if(digitalMarker != ""){
+				addDigitalMarker(digitalMarker);				
+			}
         },
         error: function (xhr, status, error) {
             $('#gd-modal-spinner').hide();
@@ -770,6 +782,20 @@ function sign() {
             printMessage(err.message);
         }
     });
+}
+
+/**
+ * Add digitaly signed marker
+ * @param {string} contact - digital signature comment
+ */
+function addDigitalMarker(contact){
+	var marker = '<div class="gd-digital-marker">'+
+				'<i class="fas fa-info-circle"></i>'+
+				'<div>Digitaly signed : ' + contact + '</div>'+
+			'</div>';	
+	$(".gd-page").each(function(index, page){
+		$(page).append(marker);
+	})
 }
 
 /**

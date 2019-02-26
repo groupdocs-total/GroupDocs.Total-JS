@@ -8,7 +8,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    margin: 14px 23px 14px 14px;
+    margin: 11px 23px 14px 14px;
 }
 #csg-params-header > button {
     background-color: #2e84b9;
@@ -98,7 +98,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 60px;
+    height: 50px;
     background-color: #3E4E5A;
     display: flex;
     flex-direction: row;
@@ -106,7 +106,7 @@
 }
 .csg-text-menu select {
     font-size: 14px;
-    margin: 20px 29px 0 13px;
+    margin: 16px 29px 0 13px;
     background-color: #3e4e5a;
     color: white;
 	cursor: pointer;

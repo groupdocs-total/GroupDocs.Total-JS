@@ -301,14 +301,12 @@ MODAL
     top: 0;
     right: 0;
     bottom: 0;
-    left: 0;
-    padding-top: 178px;
-    padding-left: 425px;
+    left: 0;   
 }
 .gd-modal-header-lightbox {
     display: flex;
     flex-direction: row;
-    height: 60px;
+    height: 50px;
     justify-content: space-between;
 }
 .gd-modal-header-title {
@@ -318,19 +316,24 @@ MODAL
 .gd-modal-title-lightbox {
     font-size: 16px;
     font-weight: 400;
-    line-height: 60px;
+    line-height: 52px;
     color: #ffffff;
 }
 .gd-modal-dialog-lightbox {
     width: 1079px;
     height: 592px;
-    position: unset;
+    margin: auto;   
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 .gd-lightbox-close {
     font-size: 25px;
     width: fit-content;
     color: #959da5;
-    margin: 20px;
+	margin: 13px 16px 0px 16px;
     cursor: pointer;
 }
 .gd-modal-title {
@@ -463,6 +466,7 @@ SIGNATURE IMAGE
 .gd-draggable-helper, .ui-wrapper {
     position: absolute !important;
 	z-index: 999;
+	border: 1px solid #679FFA;
 }
 .gd-image-signed {
     top: 69px !important;

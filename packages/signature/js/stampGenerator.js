@@ -12,8 +12,8 @@ var paramValues = {
 	text: "",
 	width: isMobile() ? 103 : 153,
 	height: isMobile() ? 103 : 153,
-	left: isMobile() ? 250 : 450,
-	top: isMobile() ? 35 : 140,
+	left: isMobile() ? 278 : 473,
+	top: isMobile() ? 75 : 195,
 	zIndex: 10,		
 	backgroundColor: "rgb(255, 255, 255)",
 	strokeColor: "rgb(51, 51, 51)", 
@@ -334,7 +334,7 @@ $(document).ready(function(){
 		},	
 
 		canvasHtml : function(properties){
-			var resizeHandles = getHtmlResizeHandles();	
+			var resizeHandles = getHtmlResizeHandles(true);	
 			var position = (properties.left != 0) ? "left:" + properties.left + "px; top:" + properties.top + "px" : "";
 			var html = '<div class="csg-bouding-box" id="csg-shape-' + properties.id + '" data-id="' + properties.id + '" style="width: ' + properties.width + 'px; height: ' + properties.height + 'px; ' + position + '">'+
 						getStampContextMenu() +
@@ -347,7 +347,7 @@ $(document).ready(function(){
 		refreshFonts : function() {
 			var htmlFontsSelect = getHtmlFontsSelect(mergedFonts);
 			textContextMenuButtons[0] = htmlFontsSelect;
-		},
+		}		 
 	});
 
 })(jQuery);
@@ -461,31 +461,33 @@ function makeResizable(canvasId){
 	element.resizable({
 		// set restriction for image resizing to current document page        
 		// set image resize handles
-		handles: {           
-			'ne': '.ui-resizable-ne',
-			'se': '.ui-resizable-se',
-			'sw': '.ui-resizable-sw',
-			'nw': '.ui-resizable-nw'
+		handles: { 
+			'se': '.ui-resizable-se'			
 		},
-		aspectRatio: 1 / 1,
+		aspectRatio: true,		
 		stop: function(event, image) {                      
 			properties[0].width = Math.ceil(image.size.width);
 			properties[0].height = Math.ceil(image.size.height);
+			resizeCanvas(properties[0].width, properties[0].height, $("#csg-stamp-" + properties[0].id));
+			refreshRadius(properties[0]);
+			$.fn.stampGenerator.redrawCanvas(properties[0].id);			
         },
-	}).draggable({
-		// set restriction for image dragging area to current document page
-		containment: $(element).parent(),
-		start: function(event, image) {
-			$(".bcPicker-palette").css("display", "none");
-			toggleShape($(image.helper)[0].attributes['data-id'].value);
-		},
-		stop : function(event, image) {
-            properties[0].left = image.position.left;
-            properties[0].top = image.position.top;
+		resize: function(event, image) {
+			$(this).css({
+				'top': parseInt(image.position.top, 10) + ((image.originalSize.height - image.size.height)) / 2,
+				'left': parseInt(image.position.left, 10) + ((image.originalSize.width - image.size.width)) / 2
+			});
 		}
 	});
 }
 
+//resize the canvas
+function resizeCanvas(width, height, canvas) {	
+	var ctx = canvas[0].getContext('2d');
+	ctx.canvas.height = height;
+	ctx.canvas.width = width;
+} 
+		
 function cleanProperties(){
 	paramValues = null;
 	paramValues = {
@@ -493,8 +495,8 @@ function cleanProperties(){
 		text: "",
 		width: isMobile() ? 103 : 153,
 		height: isMobile() ? 103 : 153,
-		left: isMobile() ? 250 : 450,
-		top: isMobile() ? 35 : 140,
+		left: isMobile() ? 278 : 473,
+		top: isMobile() ? 75 : 195,
 		zIndex: 10,		
 		backgroundColor: "rgb(255, 255, 255)",
 		strokeColor: "rgb(51, 51, 51)",

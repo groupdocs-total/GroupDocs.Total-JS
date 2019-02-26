@@ -1399,11 +1399,15 @@ function getFonts() {
 /**
  * Get HTML of the resize handles - used to add resize handles to the added signature image
  */
-function getHtmlResizeHandles() {
-    return '<div class="ui-resizable-handle ui-resizable-ne"></div>' +
-        '<div class="ui-resizable-handle ui-resizable-se"></div>' +
-        '<div class="ui-resizable-handle ui-resizable-sw"></div>' +
-        '<div class="ui-resizable-handle ui-resizable-nw"></div>';
+function getHtmlResizeHandles(stampGenerator) {
+	var handlesHtml = '<div class="ui-resizable-handle ui-resizable-ne"></div>' +
+						'<div class="ui-resizable-handle ui-resizable-se"></div>' +
+						'<div class="ui-resizable-handle ui-resizable-sw"></div>' +
+						'<div class="ui-resizable-handle ui-resizable-nw"></div>';
+	if(stampGenerator){
+		handlesHtml = '<div class="ui-resizable-handle ui-resizable-se"></div>';						
+	}
+    return handlesHtml;
 }
 
 /**

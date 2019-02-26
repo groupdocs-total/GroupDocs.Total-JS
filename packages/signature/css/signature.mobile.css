@@ -4,21 +4,21 @@
         padding-top: 0px;
     }
     .gd-modal-header-lightbox{
-        height: 60px;
+        height: 50px;
         padding: 0;
     }
     .gd-modal-title-lightbox {
         font-size: 14px;
-        line-height: 60px;
+        line-height: 50px;
         padding: 0 0 0 10px;
     }
     .gd-lightbox-close {
 		background-color: #00c4d7;
-		width: 60px;
-		height: 60px;
+		width: 50px;
+		height: 50px;
 		color: #ffffff;
-        text-align: center;
-        padding: 18px;
+		text-align: center;
+		padding: 13px;
 		margin: 0;
         line-height: 60px;
     }

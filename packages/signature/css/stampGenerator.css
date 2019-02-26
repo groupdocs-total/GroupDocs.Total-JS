@@ -46,9 +46,7 @@
 	height: 100%;
 }
 .csg-bouding-box {
-	border: 1px solid #679FFA;   
-	top: 231px;
-    left: 463px;
+	border: 1px solid #679FFA;
     position: absolute;
 	z-index: 10;
 }

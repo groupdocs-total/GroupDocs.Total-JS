@@ -1221,7 +1221,7 @@ function setDraggableAndResizable(pageNumber) {
                 // use image width which was set at the saving step
                 width = signatureToEdit.imageWidth;
             }
-            if (height == 0 || height < 19) {
+            if ((height == 0 || height < 19) && signatureToEdit.imageHeight && signatureToEdit.imageHeight != 0) {
                 // use image height which was set at the saving step
                 height = signatureToEdit.imageHeight;
             }

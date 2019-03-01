@@ -54,6 +54,11 @@ $(document).ready(function () {
     // Disable default download event
     //////////////////////////////////////////////////
     $('#gd-btn-download').off(userMouseClick);
+	
+	 $('.gd-modal-body').on('click', '.gd-filetree-name', function (e) {
+		 $("#gd-signature-context-panel").hide();
+		  signaturesList = [];
+	 });
 
     //////////////////////////////////////////////////
     // Sign document
@@ -203,6 +208,12 @@ $(document).ready(function () {
         }
     });
 
+	$('#gd-container').on(userMouseClick, function (e) {     
+		if(!$(e.target).hasClass("gd-signature-image") && !$(e.target).hasClass("gd-text")){
+            hideAllContextMenu();
+		}
+    });
+	
     //////////////////////////////////////////////////
     // Delete signature click event
     //////////////////////////////////////////////////
@@ -290,7 +301,7 @@ $(document).ready(function () {
                 openUploadSignatures("Add digital signature", false);
                 break;
         }
-    });
+    });		
 });
 
 /*
@@ -824,7 +835,8 @@ function addDigitalMarker(contact){
  * @param {string} image - Base64 encoded image
  */
 function saveDrawnImage(image) {
-    fadeAll(true);
+    fadeAll(true);	
+	hideAllContextMenu();
     // current document guid is taken from the viewer.js globals
     var data = { image: image };
     // sign the document
@@ -857,7 +869,8 @@ function saveDrawnImage(image) {
  * Save drawn stamp signature
  */
 function saveDrawnStamp(callback) {
-    fadeAll(true);
+    fadeAll(true);	
+	hideAllContextMenu();
     //get drawn stamp data
     stampData = $.fn.stampGenerator.getStampData();
     // initiate image
@@ -1088,7 +1101,8 @@ function loadSignatureImage(pageNumber) {
     }
     // current document guid is taken from the viewer.js globals
     var data = { signatureType: signature.signatureType, guid: signature.signatureGuid, page: pageNumber, password: "" };
-    fadeAll(true);
+    fadeAll(true);	
+	hideAllContextMenu();
     // load signature image from the storage
     $.ajax({
         type: 'POST',

@@ -3,7 +3,7 @@
         margin: 0px 13px 0px 12px;
         border-radius: 5px;
     }
-    #gd-qr-preview-container .fa-qrcode{
+    #gd-qr-preview-container .fa-qrcode, #gd-qr-preview-container .fa-barcode{
         width: 100%;
         height: auto;
         border: 0px;

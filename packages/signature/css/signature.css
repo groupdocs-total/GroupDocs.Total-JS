@@ -330,7 +330,7 @@ MODAL
     right: 0;
 }
 .gd-lightbox-close {
-    font-size: 25px;
+    font-size: 21px;
     width: fit-content;
     color: #959da5;
 	margin: 13px 16px 0px 16px;
@@ -482,7 +482,6 @@ SIGNATURE IMAGE
     top: -44px;
 }
 .gd-context-menu {
-    padding: 5px;
     box-shadow: rgba(0, 0, 0, 0.52) 0px 0px 5px;
     background-color: #FFFFFF;
     border-radius: 3px;
@@ -509,8 +508,14 @@ SIGNATURE IMAGE
 }
 .gd-context-menu i {
     color: #5c737f;
+    padding: 10px 7px 10px 10px;
     font-size: 14px;
-    padding: 4px 10px 7px 10px;
+}
+.gd-context-menu i:last-child{
+    padding: 10px 10px 10px 10px;
+}
+.gd-context-menu .gd-text-color-picker{
+    margin: 7px 0px 7px 7px;
 }
 .gd-context-menu i.active {
     background-color: #e7e7e7;
@@ -518,6 +523,9 @@ SIGNATURE IMAGE
 .gd-text-menu {
     display: flex;
     flex-direction: row;
+}
+.gd-text-menu select{
+    margin-right: 7px;
 }
 .gd-delete-signature {
     cursor: pointer;

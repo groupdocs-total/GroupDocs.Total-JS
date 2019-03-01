@@ -71,7 +71,7 @@
     margin: 0px;
 }
 
-#gd-qr-preview-container .fa-qrcode {
+#gd-qr-preview-container .fa-qrcode, #gd-qr-preview-container .fa-barcode {
     color: #CCCCCC;
     line-height: 266px;
     text-align: center;

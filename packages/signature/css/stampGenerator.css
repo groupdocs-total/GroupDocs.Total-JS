@@ -30,16 +30,17 @@
 }
 .csg-params {
 	display: -webkit-inline-box;
-    width: 122px;
     height: 34px;
     top: -40px;
 	padding: 0;
 }
 .csg-params i {
 	font-size: 14px;
-    margin: 10px 4px 10px 4px;
-    padding: 0;
+    padding: 10px 7px 10px 10px;
 	cursor: pointer;	
+}
+.csg-params > *:last-child{
+    padding: 10px 10px 10px 10px;
 }
 .csg-preview {
 	width: 100%;

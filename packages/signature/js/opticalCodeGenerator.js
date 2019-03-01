@@ -88,6 +88,8 @@ $(document).ready(function () {
 		},
 
 		baseHtml : function(title){
+        	var icon = title === "Bar Code" ? "fa-barcode" : "fa-qrcode";
+
 			var html = 	'<div id="gd-add-optical-signature">' +
 							'<div class="gd-signature-list-title">'+
                 				'<i class="fas fa-times" id="gd-close-signature"></i>'+
@@ -95,10 +97,10 @@ $(document).ready(function () {
 							'</div>'+
 							'<div id="gd-qr-container">' +
 								'<div id="gd-qr-preview-container" class="gd-qr-preview-container">' +
-									'<i class="fa fa-qrcode"></i>'+
+									'<i class="fa '+icon+'"></i>'+
 								'</div>' +
 								'<div class="new-signature-input-group">'+
-									'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="QR code"/>' +
+									'<input type="text" id="gd-qr-text" class="gd-qr-property" placeholder="'+title+'"/>' +
 									'<div class="gd-add-optical inactive"><i class="fas fa-plus"></i></div>'+
 								'</div>'+
 							'</div>' +

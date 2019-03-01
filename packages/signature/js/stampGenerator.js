@@ -370,7 +370,6 @@ function toggleShape(clickedElementId) {
 
 function getStampContextMenu(){
 	var html = '<div class="gd-context-menu csg-params">'+
-					'<i class="fas fa-arrows-alt fa-sm"></i>'+
 					'<div class="csg-background-color"></div>'+
 					'<i class="fas fa-fill-drip"></i>'+
 					'<div class="csg-border-width">'+

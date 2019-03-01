@@ -511,6 +511,7 @@ SIGNATURE IMAGE
     color: #5c737f;
     font-size: 14px;
     padding: 4px 10px 7px 10px;
+	border-radius: 3px;
 }
 .gd-context-menu i.active {
     background-color: #e7e7e7;

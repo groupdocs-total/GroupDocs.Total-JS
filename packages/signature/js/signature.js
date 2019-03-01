@@ -745,10 +745,7 @@ function sign(download) {
             // Only handle status code 200
             if(request.status === 200) {
                 // Try to find out the filename from the content disposition `filename` value
-                var disposition = request.getResponseHeader('Content-Disposition');
-                var matches = /"([^"]*)"/.exec(disposition);
-                var filename = (matches != null && matches[1] ? matches[1] : documentGuid.split('/')[documentGuid.split('/').length - 1]);
-
+                var filename = documentGuid.replace(/\\/g,"/").split('/').pop();
                 // The actual download
                 var blob = new Blob([request.response], { type: 'application/' + documentGuid.split('.').pop().toLowerCase() });
                 var link = document.createElement('a');

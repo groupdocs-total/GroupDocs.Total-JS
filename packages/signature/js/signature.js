@@ -32,8 +32,7 @@ var signature = {
     address: "",
     date: "",
     pageNumber: 0,
-    angle: 0,
-    deleted: false
+    angle: 0
 };
 var draggableSignaturePosition = {};
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
@@ -724,68 +723,90 @@ function uploadSignature(file, index, url, callback) {
 /**
  * Sign current document
  */
-function sign() {
-    if ($(".gd-modal-body").children().length == 0) {
-        var spinner = '<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>';
-        toggleModalDialog(true, "Signing document", spinner);
-    }
+function sign(download) {
     $('#gd-modal-spinner').show();
     currentDocumentGuid = documentGuid;
     var documentType = getDocumentFormat(documentGuid).format;
-    // get signing action URL, depends from signature type
-    var url = getApplicationPath('sign')
-    // current document guid is taken from the viewer.js globals
     var data = {
         guid: documentGuid,
         password: password,
         signaturesData: signaturesList,
         documentType: documentType
     };
-    // sign the document
-    $.ajax({
-        type: 'POST',
-        url: url,
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        success: function (returnedData) {
-            $('#gd-modal-spinner').hide();
-            var result = "";
-            if (returnedData.message != undefined) {
-                // open error popup
-                printMessage(returnedData.message);
-                return;
+    if (download) {
+        fadeAll(true);
+        var request = new XMLHttpRequest();
+        request.open('POST', getApplicationPath('downloadSigned'), true);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.responseType = 'blob';
+
+        request.onload = function() {
+            fadeAll(false);
+            // Only handle status code 200
+            if(request.status === 200) {
+                // Try to find out the filename from the content disposition `filename` value
+                var filename = documentGuid.replace(/\\/g,"/").split('/').pop();
+                // The actual download
+                var blob = new Blob([request.response], { type: 'application/' + documentGuid.split('.').pop().toLowerCase() });
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+                // for ff we should append element and then remove it
+                document.body.appendChild(link);
+
+                link.click();
+
+                document.body.removeChild(link);
             }
-            signedDocumentGuid = returnedData.guid;
-            // prepare signing results HTML
-            result = '<div id="gd-modal-signed">Document signed successfully</div>';
-            // show signing results
-            $(".gd-modal-body").append(result);
-            $("#gd-modal-signed").toggleClass("gd-image-signed");
-			var digitalMarker = "";
-			$.each(signaturesList, function(index, sign){
-				if(sign.signatureType == "digital"){
-					digitalMarker = (sign.contact) ? sign.contact : sign.signatureComment;
-					return false;
-				} else {
-					return;
-				}
-			});
-			if(digitalMarker != ""){
-				addDigitalMarker(digitalMarker);				
-			}
-        },
-        error: function (xhr, status, error) {
-            $('#gd-modal-spinner').hide();
-            var err = eval("(" + xhr.responseText + ")");
-            console.log(err.Message);
-            // open error popup
-            printMessage(err.message);
-        }
-    });
+        };
+
+        request.send(JSON.stringify(data));
+    } else {
+        var spinner = '<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>';
+        toggleModalDialog(true, "Signing document", spinner);
+        // sign the document
+        $.ajax({
+            type: 'POST',
+            url: getApplicationPath('sign'),
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (returnedData, status, request) {
+                $('#gd-modal-spinner').hide();
+                if (returnedData && returnedData.message != undefined) {
+                    // open error popup
+                    printMessage(returnedData.message);
+                    return;
+                }
+                signedDocumentGuid = returnedData.guid;
+                // prepare signing results HTML
+                var result = '<div id="gd-modal-signed">Document signed successfully</div>';
+                // show signing results
+                $(".gd-modal-body").append(result);
+                $("#gd-modal-signed").toggleClass("gd-image-signed");
+                var digitalMarker = "";
+                $.each(signaturesList, function (index, sign) {
+                    if (sign.signatureType == "digital") {
+                        digitalMarker = (sign.contact) ? sign.contact : sign.signatureComment;
+                    }
+                });
+                if (digitalMarker != "") {
+                    addDigitalMarker(digitalMarker);
+                }
+            },
+            error: function (xhr, status, error) {
+                $('#gd-modal-spinner').hide();
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err.Message);
+                // open error popup
+                printMessage(err.message);
+            }
+        });
+    }
 }
 
 /**
- * Add digitaly signed marker
+ * Add digitally signed marker
  * @param {string} contact - digital signature comment
  */
 function addDigitalMarker(contact){
@@ -852,7 +873,7 @@ function saveDrawnStamp(callback) {
     stampData.reverse()
     $(".csg-preview").each(function (index, shape) {
         // calculate stamp real size and paddings
-        var offset = biggestWidth - stampData[index].width;       
+        var offset = biggestWidth - stampData[index].width;
         // crop canvas empty pixels
         if (offset != 0) {
             offset = offset / 2;
@@ -1056,7 +1077,6 @@ function getCurrentPageNumber() {
  */
 function initSignature(currentPageNumber) {
     signature.pageNumber = currentPageNumber;
-    signature.deleted = false;
 }
 
 /**
@@ -1065,7 +1085,7 @@ function initSignature(currentPageNumber) {
 function loadSignatureImage(pageNumber) {
     if (!pageNumber) {
         pageNumber = getCurrentPageNumber();
-    } 
+    }
     // current document guid is taken from the viewer.js globals
     var data = { signatureType: signature.signatureType, guid: signature.signatureGuid, page: pageNumber, password: "" };
     fadeAll(true);
@@ -1108,7 +1128,7 @@ function insertText(properties, pageNumber) {
     if (!pageNumber) {
         pageNumber = getCurrentPageNumber();
     }
-    hideAllContextMenu();   
+    hideAllContextMenu();
     // get HTML markup of the resize handles
     var resizeHandles = getHtmlResizeHandles();
     signature.id = signatureImageIndex;
@@ -1427,21 +1447,16 @@ function setGridPosition(width, height) {
  * @param {Object} button - Clicked download button
  */
 function download(button) {
-    var signed = false;
-    var documentName = "";
     if ($(button).attr("id") == "gd-signed-download") {
-        signed = true;
-        documentName = signedDocumentGuid;
-        signedDocumentGuid = "";
+        sign(true);
     } else {
-        documentName = documentGuid;
-    }
-    if (typeof documentName != "undefined" && documentName != "") {
-        // Open download dialog
-        window.location.assign(getApplicationPath("downloadDocument/?path=") + documentName + "&signed=" + signed);
-    } else {
-        // open error popup
-        printMessage("Please open or sign document first");
+        if (typeof documentGuid != "undefined" && documentGuid != "") {
+            // Open download dialog
+            window.location.assign(getApplicationPath("downloadDocument/?path=") + documentGuid);
+        } else {
+            // open error popup
+            printMessage("Please open or sign document first");
+        }
     }
 }
 

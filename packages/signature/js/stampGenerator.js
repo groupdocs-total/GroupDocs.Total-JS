@@ -205,8 +205,13 @@ $(document).ready(function(){
 	
 	// Add text
 	$('body').on(userMouseClick, '#csg-text-add', function(e){
-		$(".csg-text-input").show();
-		$(".csg-text-input input").focus();
+		var csgElement = $(".csg-text-input")[0];
+		if (csgElement && (csgElement.hidden || csgElement.style.display == 'none' || $(".csg-text-input").css('display') == 'none')) {
+			$(".csg-text-input").show();
+			$(".csg-text-input input").focus();
+		} else {
+			$(".csg-text-input").hide();
+		}
 	});
 	
 	// Insert text
@@ -222,8 +227,7 @@ $(document).ready(function(){
 		$(".csg-text-input input").val("");
 		$.fn.stampGenerator.redrawCanvas(properties[0].id);
 		$(".csg-text-input").css("display", "none");
-		addTextMenu(canvasId);
-		setTextColors(properties[0]);
+		addTextMenu(properties[0]);
 	});
 });
 
@@ -400,14 +404,21 @@ function removeTextMenu(canvasId){
 	$('#csg-text-menu-' + canvasId).remove();
 }
 
-function addTextMenu(canvasId) {
+function addTextMenu(properties) {
+	var canvasId = properties.id;
 	var id = "csg-text-menu-" + canvasId;
+	// if menu exists then don't add
+	var existsMenu = $('#gd-lightbox-body').find('#' + id);
+	if (existsMenu && existsMenu.length > 0 && existsMenu[0]) {
+		return;
+	}
 	var html = '<div id="' + id + '" class="csg-text-menu" data-canvasId="' + canvasId + '">';
 	$.each(textContextMenuButtons, function(index, button){
 		html = html + button;
 	});
 	html = html + '</div>';
 	$('#gd-lightbox-body').append(html);
+	setTextColors(properties);
 }
 
 /**

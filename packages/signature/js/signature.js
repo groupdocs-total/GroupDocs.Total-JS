@@ -130,6 +130,7 @@ $(document).ready(function () {
             fileName += elem.name + ', ';
         });
         $("#gd-upload-title").html(fileName.substring(0, fileName.lastIndexOf(',')));
+        $('#gd-add-upload-file').addClass('active');
     });
 
 
@@ -208,7 +209,14 @@ $(document).ready(function () {
         }
     });
 
-	$('#gd-container').on(userMouseClick, function (e) {     
+	$('#gd-container').on(userMouseClick, function (e) {
+        var elem = $(e.target);
+        for (var i = 0; i < 5; i++) {
+            if (elem && elem[0].id == "gd-context-menu") {
+                return;
+            }
+            elem = elem.parent();
+        }
 		if(!$(e.target).hasClass("gd-signature-image") && !$(e.target).hasClass("gd-text")){
             hideAllContextMenu();
 		}
@@ -365,6 +373,7 @@ function openUploadSignatures(title, multiple) {
 function resetUploadFiles() {
     $("#gd-upload-title").html("Upload file");
     $("#gd-upload-input").val('');
+    $('#gd-add-upload-file').removeClass('active');
 }
 
 function fillLightBoxHeader(header) {
@@ -683,26 +692,6 @@ function uploadSignature(file, index, url, callback) {
     formData.append("signatureType", signature.signatureType);
     formData.append("rewrite", rewrite);
     $.ajax({
-        // callback function which updates upload progress bar
-        xhr: function () {
-            var xhr = new window.XMLHttpRequest();
-            // upload progress
-            xhr.upload.addEventListener("progress", function (event) {
-                if (event.lengthComputable) {
-                    $("#gd-modal-close-action").off(userMouseClick);
-                    $("#gd-open-document").prop("disabled", true);
-                    // increase progress
-                    $("#gd-pregress-bar-" + index).addClass("p" + Math.round(event.loaded / event.total * 100));
-                    if (event.loaded == event.total) {
-                        $("#gd-pregress-bar-" + index).fadeOut();
-                        $("#gd-upload-complete-" + index).fadeIn();						
-                        $('#gd-modal-close-action').on(userMouseClick, closeModal);
-                        $("#gd-open-document").prop("disabled", false);
-                    }
-                }
-            }, false);
-            return xhr;
-        },
         type: 'POST',
         url: getApplicationPath('uploadDocument'),
         data: formData,
@@ -989,6 +978,11 @@ function openDigitalPanel(currentCertificate) {
     var documentFormat = getDocumentFormat(documentGuid, false);
     var inputs = "";
     if ($(".gd-digital-inputs").length == 0) {
+        var addActive = 'active';
+        var signatureAdded = $.grep(signaturesList, function (obj) { return obj.signatureGuid == signature.signatureGuid; });
+        if (signatureAdded && signatureAdded.length > 0 && signatureAdded[0]) {
+            addActive= '';
+        }
         // generate signature information imputs for depending from current document type
         if (documentFormat.format.indexOf("Portable Document") >= 0) {
             inputs = '<div class="gd-digital-inputs">' +
@@ -1012,7 +1006,7 @@ function openDigitalPanel(currentCertificate) {
 					'<i class="fa fa-calendar" aria-hidden="true"></i>' +
 					'<input type="text" id="gd-datepicker" placeholder="Date">' +					
 				'</div>'+	
-                '<div class="gd-sign-digital">Sign</div>' +
+                '<div id="gd-sign-digital" class="gd-sign-digital ' + addActive + '">Sign</div>' +
                 '</div>';
         } else if (documentFormat.format.indexOf("Word") >= 0 || documentFormat.format.indexOf("Excel") >= 0) {
             inputs = '<div class="gd-digital-inputs">' +
@@ -1028,23 +1022,26 @@ function openDigitalPanel(currentCertificate) {
 					'<i class="fa fa-calendar" aria-hidden="true"></i>' +
 					'<input type="text" id="gd-datepicker" placeholder="Date">' +					
 				'</div>'+	
-                '<div class="gd-sign-digital">Sign</div>' +
+                '<div id="gd-sign-digital" class="gd-sign-digital ' + addActive + '">Sign</div>' +
                 '</div>';
         } else {
             return;
         }
         $(currentCertificate).parent().append(inputs);
         $("#gd-datepicker").datepicker({ dateFormat: 'dd-mm-yy' });
-        $(".gd-sign-digital").on(userMouseClick, function (e) {
-            setAdditionalInformation(e);
-            if (!isMobile()) {
-                $('#gd-signature-context-panel').hide();
-            } else {
-                hideMobileMenu();
+        $("#gd-sign-digital").on(userMouseClick, function (e) {
+            if ($(this).hasClass('active')) {
+                setAdditionalInformation(e);
+                if (!isMobile()) {
+                    $('#gd-signature-context-panel').hide();
+                } else {
+                    hideMobileMenu();
+                }
+                signaturesList.push(signature);
+                var digitalMarker = (signature.contact) ? signature.contact : signature.signatureComment;
+                addDigitalMarker(digitalMarker);
+                $('#gd-sign-digital').removeClass('active');
             }
-            signaturesList.push(signature);
-            var digitalMarker = (signature.contact) ? signature.contact : signature.signatureComment;
-            addDigitalMarker(digitalMarker);
         });
     } else {
         $(".gd-digital-inputs").remove();

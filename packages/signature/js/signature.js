@@ -217,7 +217,7 @@ $(document).ready(function () {
             }
             elem = elem.parent();
         }
-		if(!$(e.target).hasClass("gd-signature-image") && !$(e.target).hasClass("gd-text")){
+		if(!$(e.target).hasClass("gd-signature-image") && !$(e.target).hasClass("gd-text") && $(e.target).attr("id") != "gd-new-signature"){
             hideAllContextMenu();
 		}
     });

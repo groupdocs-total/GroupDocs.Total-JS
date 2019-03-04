@@ -228,9 +228,12 @@ SIGNATURE TOOL BAR
     border-radius: 5px;
     margin: 0px 10px 0px 12px;
 }
+.gd-add-upload-file.active, .gd-sign-digital.active {
+    background-color: #3787F5;
+}
 .gd-add-upload-file, .gd-sign-digital {
     height: 27px;
-    background-color: #3787F5;
+    background-color: #969696;
     margin: 9px 8px 7px 8px;
     border-radius: 3px;
     text-align: center;

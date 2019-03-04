@@ -209,7 +209,14 @@ $(document).ready(function () {
         }
     });
 
-	$('#gd-container').on(userMouseClick, function (e) {     
+	$('#gd-container').on(userMouseClick, function (e) {
+        var elem = $(e.target);
+        for (var i = 0; i < 5; i++) {
+            if (elem && elem[0].id == "gd-context-menu") {
+                return;
+            }
+            elem = elem.parent();
+        }
 		if(!$(e.target).hasClass("gd-signature-image") && !$(e.target).hasClass("gd-text")){
             hideAllContextMenu();
 		}

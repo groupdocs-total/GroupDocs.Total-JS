@@ -680,7 +680,7 @@ function uploadSignature(file, index, url, callback) {
     }
     // add URL if set
     formData.append("url", url);
-    formData.append("signatureType", signature.signatureType)
+    formData.append("signatureType", signature.signatureType);
     formData.append("rewrite", rewrite);
     $.ajax({
         // callback function which updates upload progress bar
@@ -795,15 +795,6 @@ function sign(download) {
                 // show signing results
                 $(".gd-modal-body").append(result);
                 $("#gd-modal-signed").toggleClass("gd-image-signed");
-                var digitalMarker = "";
-                $.each(signaturesList, function (index, sign) {
-                    if (sign.signatureType == "digital") {
-                        digitalMarker = (sign.contact) ? sign.contact : sign.signatureComment;
-                    }
-                });
-                if (digitalMarker != "") {
-                    addDigitalMarker(digitalMarker);
-                }
             },
             error: function (xhr, status, error) {
                 $('#gd-modal-spinner').hide();
@@ -1052,7 +1043,8 @@ function openDigitalPanel(currentCertificate) {
                 hideMobileMenu();
             }
             signaturesList.push(signature);
-            sign();
+            var digitalMarker = (signature.contact) ? signature.contact : signature.signatureComment;
+            addDigitalMarker(digitalMarker);
         });
     } else {
         $(".gd-digital-inputs").remove();

@@ -38,7 +38,7 @@ body:after {
     }
 }
 .hidden{
-    display: none;
+    display: none !important;
 }
 /*
 ******************************************
@@ -295,8 +295,7 @@ PAGES
     overflow-y: auto !important;
     padding-top: 10px;
     margin-top: 50px;
-    transition: all 0.4s;
-    overflow: visible;   
+    transition: all 0.4s;     
     /* Hides the scrollbar */
     transition:all 0.4s;
     overflow: visible;

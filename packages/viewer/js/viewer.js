@@ -740,6 +740,7 @@ function loadDocument(callback) {
             console.log(err.Message);
             // open error popup
             printMessage(err.message);
+            documentGuid = '';
         }
     }).done(function (data) {
         // return POST data
@@ -1868,9 +1869,9 @@ function getHtmlUpload() {
     return uploadSection;
 }
 
-function isMobile() {
+/*function isMobile() {
     return $('body:after').css('content') === 'mobile';
-}
+}*/
 
 /*
 ******************************************************************
@@ -2199,6 +2200,9 @@ $.fn.isOnScreen = function (x, y) {
     viewport.right = viewport.left + win.width();
     viewport.bottom = viewport.top + win.height();
     var zoom = parseInt($("#gd-zoom-value").html()) / 100;
+    if (isNaN(zoom)) {
+        zoom = 1;
+    }
     var height = this.outerHeight() * zoom;
     var width = this.outerWidth() * zoom;
 
@@ -2236,5 +2240,5 @@ CHECK IF MOBILE
 var isMobile = function () {
     return navigator.maxTouchPoints > 0 || //for chrome
         window.navigator.msMaxTouchPoints > 0 ||
-            'ontouchstart' in window // works on most browsers       
+            'ontouchstart' in window // works on most browsers
 };

@@ -1,0 +1,65 @@
+@media (max-width: 1024px) {
+	#csg-params-header > i {
+		font-size: 14px;
+		margin-top: 5px
+	}
+	.csg-header-buttons {
+		margin: 0;
+		padding: 12px 20px 0px 10px;
+	}
+	.csg-text-input {		
+		top: 42px;
+		right: 100px;
+		width: 200px;		
+	}
+	
+	.csg-text-input input {		
+	}
+		
+	.bcPicker-palette {
+		top: 0px;
+		left: -70px;
+		width: 381px;
+	}
+
+	.csg-text-color .bcPicker-palette {
+		top: -250px !important;
+		left: -106px !important;
+	}
+	
+	.csg-insert-text {
+		margin-left: 10px;
+	}
+	
+	.bcPicker-palette > .bcPicker-color {
+		width: 42px !important;
+		height: 24px !important;
+	}
+	
+	.csg-border-width {
+        width: 18px !important;
+		height: 16px !important;
+		margin-left: 8px;
+	}
+	
+	.csg-border-width select {
+        width: 21px;
+	}
+	.csg-bouding-box {
+		top: 80px;
+		left: 250px;
+	}
+	.csg-params {
+		top: -37px;
+		margin: auto;
+	}
+	.csg-text-menu {
+		height: 40px;
+	}
+	.csg-text-menu select {		
+		margin: 0 25px 0 15px;
+	}
+	.csg-text-menu i {
+		margin: 0 12px 0 12px;
+	}
+}

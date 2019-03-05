@@ -1,11 +1,12 @@
 <html>
     <head>
-        <title>GroupDocs.Signature for Java Dropwizard</title>
+        <title>GroupDocs.Signature</title>
         <link type="text/css" rel="stylesheet" href="packages/common/css/all.min.css"/>
 		<link type="text/css" rel="stylesheet" href="packages/common/css/v4-shims.min.css">
         <link type="text/css" rel="stylesheet" href="packages/common/css/swiper.min.css">
         <link type="text/css" rel="stylesheet" href="packages/common/css/jquery-ui.min.css"/>
         <link type="text/css" rel="stylesheet" href="packages/common/css/circle-progress.css"/>
+		<link type="text/css" rel="stylesheet" href="packages/common/css/font-awesome.min.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="packages/viewer/css/viewer-dark.css"/>
@@ -15,13 +16,19 @@
         <link type="text/css" rel="stylesheet" href="packages/signature/css/signature.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="packages/signature/css/stampGenerator.css"/>
         <link type="text/css" rel="stylesheet" href="packages/signature/css/opticalCodeGenerator.css"/>
+        <link type="text/css" rel="stylesheet" href="packages/signature/css/opticalCodeGenerator.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="packages/signature/css/textGenerator.css"/>
         <link type="text/css" rel="stylesheet" href="packages/signature/css/bcPicker.css"/>
+		<link type="text/css" rel="stylesheet" href="packages/signature/css/bcPicker.mobile.css"/>
+		<link type="text/css" rel="stylesheet" href="packages/signature/css/stampGenerator.mobile.css"/>
         <script type="text/javascript" src="packages/common/js/jquery.min.js"></script>
         <script type="text/javascript" src="packages/common/js/swiper.min.js"></script>
         <script type="text/javascript" src="packages/common/js/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="packages/common/js/es6-promise.auto.js"></script>
+		<script type="text/javascript" src="packages/common/js/jquery.ui.touch-punch.min.js"></script>
         <script type="text/javascript" src="packages/viewer/js/viewer.js"></script>
+		<script type="text/javascript" src="packages/signature/js/fontsObject.js"></script>
+        <script type="text/javascript" src="packages/signature/js/jquery.ba-throttle-debounce.js"></script>
         <script type="text/javascript" src="packages/signature/js/signature.js"></script>
         <script type="text/javascript" src="packages/signature/js/rotatable.js"></script>
         <script type="text/javascript" src="packages/signature/js/bcPaint.js"></script>
@@ -29,12 +36,12 @@
         <script type="text/javascript" src="packages/signature/js/stampGenerator.js"></script>
         <script type="text/javascript" src="packages/signature/js/opticalCodeGenerator.js"></script>
         <script type="text/javascript" src="packages/signature/js/textGenerator.js"></script>
-        <script type="text/javascript" src="packages/common/js/jquery.ui.touch-punch.min.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         <div id="element"></div>
         <script type="text/javascript">
-            var host = !window.location.hostname ? 'localhost' : window.location.hostname;           
+            var host = !window.location.hostname ? 'localhost' : window.location.hostname;
             $('#element').signature({
 				applicationPath: 'http://' + host + ':8080/signature/',
 			    defaultDocument: '',
@@ -51,6 +58,7 @@
                 qrCodeSignature: true,
                 barCodeSignature: true,
                 stampSignature: true,
+                handSignature: true,
                 downloadOriginal: true,
                 downloadSigned: true,
 				enableRightClick: true

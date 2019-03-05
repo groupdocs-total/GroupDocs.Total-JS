@@ -35,7 +35,7 @@ $(document).ready(function(){
 	* Color picker assembly
 	**/
 	$.fn.bcPicker = function (options) {
-
+		
 		return this.each(function () {
 			var elem 			= $(this),
 				colorSet		= $.extend({}, $.fn.bcPicker.defaults, options),
@@ -44,6 +44,9 @@ $(document).ready(function(){
 				palette 		= templates.palette.clone(),
 				color;
 
+			if (options && options.paletteClass) {
+				palette.addClass(options.paletteClass);
+			}
 			// add position relative to root element
 			elem.css('position', 'relative');
 
@@ -73,7 +76,16 @@ $(document).ready(function(){
 		* Toggle color palette
 		**/
 		toggleColorPalette : function(elem){
-			elem.next().toggle('fast');
+			if(isMobile()){
+				if(!$(".fa-arrow-up").hasClass("down")) {
+					$(".bcPicker-palette").removeClass("down");
+					$(".bcPicker-palette").addClass("top");
+				} else {
+					$(".bcPicker-palette").removeClass("top");
+					$(".bcPicker-palette").addClass("down");
+				}
+			}
+			elem.next().toggle();
 		},
 
 		/**
@@ -84,7 +96,7 @@ $(document).ready(function(){
 			var pickedColor = elem.css('background-color');
 			// set picker with selected color
 			elem.parent().parent().find('.bcPicker-picker').css('background-color', pickedColor);
-			elem.parent().toggle('fast');
+			elem.parent().slideToggle('fast');
 		},
 
 		/**
@@ -124,7 +136,7 @@ $(document).ready(function(){
 	**/
 	$.fn.bcPicker.defaults = {
         // default color
-        defaultColor : "000000",
+        defaultColor : "00CCFF",
 
         // default color set
         colors : [

@@ -1,7 +1,7 @@
 /*
 Header, modal header, modal footer buttons
 */
-#gd-header, #gd-nav-search-container, .gd-modal-header, .gd-modal-footer > .btn{
+#gd-header, #gd-nav-search-container, .gd-modal-header, .gd-modal-header-lightbox, .gd-modal-footer > .btn{
     background-color: #3e4e5a;
 }
 /*

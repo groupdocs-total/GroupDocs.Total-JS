@@ -7,283 +7,238 @@
  */
 
 (function( $ ) {
-
-	/**
-	* Create private variables.
-	**/
-	var paramValues = {	
-		text : 'gd-text-text',
-		borderColor : 'gd-text-border-color',
-		borderStyle : 'gd-text-border-style',
-		borderWidth : 'gd-text-border-width',
-        backgroundColor : 'gd-text-background',
-		fontColor : 'gd-text-font-color',
-		bold : 'gd-text-bold',
-		italic : 'gd-text-italic',
+    var paramValues = {
+        text : 'gd-text',
+        fontColor : 'gd-text-font-color',
+        bold : 'gd-text-bold',
+        italic : 'gd-text-italic',
         underline : 'gd-text-underline',
-		font : 'gd-text-font',
-		fontSize : 'gd-text-font-size',
-        width : 200,
-        height : 50
-	}
-
+        font : 'gd-text-font',
+        fontSize : 'gd-text-font-size',
+        parentName : '',
+        textMenuId: ''
+    };
+    var menuButtons = [getHtmlFontsSelect(mergedFonts, paramValues.font),
+        getHtmlFontSizeSelect(paramValues.fontSize),
+        '<i id="' + paramValues.bold + '" class="fas fa-bold"></i>',
+        '<i id="' + paramValues.italic + '" class="fas fa-italic"></i>',
+        '<i id="' + paramValues.underline + '" class="fas fa-underline"></i>',
+        '<div id="' + paramValues.fontColor + '" class="gd-text-color-picker"></div>'];
 	var properties = {};
-	
+
 	$.fn.textGenerator = function() {
-        if ($("#gd-text-container").length == 0) {
-            $(this).append($.fn.textGenerator.baseHtml());
-			var propertiesContainer = "";
-			if(/Mobi/.test(navigator.userAgent)) {
-				propertiesContainer = $.fn.textGenerator.propertiesHtmlMobile();
-			} else {
-				propertiesContainer = $.fn.textGenerator.propertiesHtml();
-			}
-            $("#gd-text-params-header").append(propertiesContainer);
-            $('#' + paramValues.borderColor).bcPicker();
-            $('#' + paramValues.backgroundColor).bcPicker();
-            $('#' + paramValues.fontColor).bcPicker();
-        }
-	}
+    };
 
 	$.extend(true, $.fn.textGenerator, {
+	    create: function(parentName, textMenuId) {
+	        properties = {};
 
-        getProperties : function(){
-				var text = $(this).find('#' + paramValues.text).val();
-				var borderColor = $('#' + paramValues.borderColor).children().css('background-color');
-            	var borderStyle = parseInt($(this).find('#' + paramValues.borderStyle).val());
-				var borderWidth = parseInt($(this).find('#' + paramValues.borderWidth).val());
-				var backgroundColor = $('#' + paramValues.backgroundColor).children().css('background-color');
-				var fontColor = $('#' + paramValues.fontColor).children().css('background-color');
-            	var bold = $(this).find('#' + paramValues.bold).is(':checked') ? true : false;
-            	var italic = $(this).find('#' + paramValues.italic).is(':checked') ? true : false;
-            	var underline = $(this).find('#' + paramValues.underline).is(':checked') ? true : false;
-            	var font = $(this).find('#' + paramValues.font).val();
-           		var fontSize = parseInt($(this).find('#' + paramValues.fontSize).val());
-				properties = {
-					text: text,
-					borderColor: borderColor,
-					borderStyle: borderStyle,
-					borderWidth: borderWidth,
-                    backgroundColor: backgroundColor,
-                    fontColor: fontColor,
-					bold: bold,
-					italic: italic,
-					underline: underline,
-					font: font,
-					fontSize: fontSize,
-                    width: paramValues.width,
-                    height: paramValues.height
-				};
-				return properties;
+            paramValues.parentName = parentName;
+            paramValues.textMenuId = textMenuId;
+            $('#' + paramValues.parentName).find('.gd-draw-text').append(baseHtml());
+
+            $('#' + parentName).find("#" + paramValues.text).focus();
+
+            $('#' + paramValues.textMenuId).find("#" + paramValues.fontColor).bcPicker({paletteClass: "text"});
+
+            $('#' + paramValues.textMenuId).on("change", "#" + paramValues.font, function(e) {
+                var val = $(this).val();
+                $('#' + parentName).find('#' + paramValues.text).css("font-family", val);
+                properties.font = val;
+                setTimeout(saveTextSignatureIntoFile, 500);
+            });
+
+            $('#' + paramValues.textMenuId).on("change", "#" + paramValues.fontSize, function(e) {
+                var val = $(this).val();
+                $('#' + parentName).find('#' + paramValues.text).css("font-size", val);
+                properties.fontSize = val;
+                setTimeout(saveTextSignatureIntoFile, 500);
+            });
+
+            $('#' + paramValues.textMenuId).on(userMouseClick, "#" + paramValues.bold, function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('#' + paramValues.textMenuId).find('#' + paramValues.bold).toggleClass("active");
+                if($('#' + parentName).find('#' + paramValues.text).css("font-weight") == "400") {
+                    $('#' + parentName).find('#' + paramValues.text).css("font-weight", "bold");
+                    properties.bold = true;
+                } else {
+                    $('#' + parentName).find('#' + paramValues.text).css("font-weight", "unset");
+                    properties.bold = false;
+                }
+                setTimeout(saveTextSignatureIntoFile, 500);
+            });
+
+            $('#' + paramValues.textMenuId).on(userMouseClick, "#" + paramValues.italic, function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('#' + paramValues.textMenuId).find('#' + paramValues.italic).toggleClass("active");
+                if($('#' + parentName).find('#' + paramValues.text).css("font-style") != "italic") {
+                    $('#' + parentName).find('#' + paramValues.text).css("font-style", "italic");
+                    properties.italic = true;
+                } else {
+                    $('#' + parentName).find('#' + paramValues.text).css("font-style", "unset");
+                    properties.italic = false;
+                }
+                setTimeout(saveTextSignatureIntoFile, 500);
+            });
+
+            $('#' + paramValues.textMenuId).on(userMouseClick, "#" + paramValues.underline, function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                $('#' + paramValues.textMenuId).find('#' + paramValues.underline).toggleClass("active");
+                if($('#' + parentName).find('#' + paramValues.text).css("text-decoration").indexOf("underline") == -1) {
+                    $('#' + parentName).find('#' + paramValues.text).css("text-decoration", "underline");
+                    properties.underline = true;
+                } else {
+                    $('#' + parentName).find('#' + paramValues.text).css("text-decoration", "unset");
+                    properties.underline = false;
+                }
+                setTimeout(saveTextSignatureIntoFile, 500);
+            });
+
+            $('#' + paramValues.textMenuId).on(userMouseClick, ".bcPicker-color", function(e) {
+                $.fn.bcPicker.pickColor($(this));
+                var css = $(this).css("background-color");
+                $('#' + parentName).find('#' + paramValues.text).css("color", css);
+                properties.fontColor = css;
+                setTimeout(saveTextSignatureIntoFile, 500);
+            });
+
+            $('#' + paramValues.textMenuId).on(userMouseClick, ".fa-arrow-up", function(e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                if($(this).hasClass("down")){
+                    $('#' + paramValues.textMenuId).removeClass("gd-text-menu-top");
+                    $('#' + paramValues.textMenuId).addClass("gd-text-menu-down");
+                } else {
+                    $('#' + paramValues.textMenuId).addClass("gd-text-menu-top");
+                    $('#' + paramValues.textMenuId).removeClass("gd-text-menu-down");
+                }
+                $(this).toggleClass("down");
+            });
+            $('#' + parentName).on("keyup input", '#' + paramValues.text, $.debounce(500, function(e){
+                saveTextSignatureIntoFile();
+                })
+            );
+            initProps();
+            initTextCss();
+        },
+
+	    init : function (parent, props, text, imageGuid) {
+	        if (! parent) {
+	            return;
+            }
+            paramValues.parentName = parent;
+	        paramValues.textMenuId = $('#' + paramValues.parentName).attr('data-textMenuId');
+            if (props) {
+                properties = props;
+
+                $('#' + paramValues.textMenuId).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color", props.fontColor);
+                if (props.underline) {
+                    $('#' + paramValues.textMenuId).find('#' + paramValues.underline).toggleClass("active");
+                }
+                if (props.italic) {
+                    $('#' + paramValues.textMenuId).find('#' + paramValues.italic).toggleClass("active");
+                }
+                if (props.bold) {
+                    $('#' + paramValues.textMenuId).find('#' + paramValues.bold).toggleClass("active");
+                }
+                $('#' + paramValues.textMenuId).find("#" + paramValues.fontSize).val(props.fontSize);
+                $('#' + paramValues.textMenuId).find("#" + paramValues.font).val(props.font);
+
+                initTextCss();
+                properties.id = paramValues.parentName.substring(paramValues.parentName.lastIndexOf('-') + 1);
+            } else {
+                initProps();
+                properties.text = text;
+                properties.imageGuid = imageGuid;
+            }
+        },
+
+        refreshFonts : function() {
+            var htmlFontsSelect = getHtmlFontsSelect(mergedFonts, paramValues.font);
+            menuButtons[0] = htmlFontsSelect;
+            $.each($("#" + paramValues.font), function (index, elem) {
+                    $(htmlFontsSelect).insertBefore($(elem).parent().find("#" + paramValues.fontSize)[0]);
+                    $(elem).remove();
+                }
+            );
+        },
+
+        getProperties : function() {
+            var text = $('#' + paramValues.parentName).find('#' + paramValues.text);
+            properties.text = text.val();
+            properties.width = Math.round(text.width());
+            properties.height = Math.round(text.height());
+            if (!properties.imageGuid) {
+                properties.imageGuid = $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['data-image-guid'].value;
+            }
+			return properties;
 		},
 
-		draw : function(properties){
-			$("#gd-text-preview-container").html('');
-			$("#gd-text-preview-container").html(properties.text);
-			$("#gd-text-preview-container").css("border-color", properties.borderColor);
-			$("#gd-text-preview-container").css("border-style", properties.borderStyle);
-			$("#gd-text-preview-container").css("border-width", properties.borderWidth + "px");
-			$("#gd-text-preview-container").css("border-style", $('#gd-text-border-style option:selected').text());
-			$("#gd-text-preview-container").css("background-color", properties.backgroundColor);
-			$("#gd-text-preview-container").css("color", properties.fontColor);		
-			if($("#gd-text-bold").parent().find("input").prop("checked")) {			
-				$("#gd-text-preview-container").css("font-weight", "bold");
-			} else {
-				$("#gd-text-preview-container").css("font-weight", "unset");
-			}
-			if($("#gd-text-italic").parent().find("input").prop("checked")){
-				$("#gd-text-preview-container").css("font-style", "italic");
-			} else {
-				$("#gd-text-preview-container").css("font-style", "unset");
-			}
-			if($("#gd-text-underline").parent().find("input").prop("checked")){
-				$("#gd-text-preview-container").css("text-decoration", "underline");
-			} else {
-				$("#gd-text-preview-container").css("text-decoration", "unset");
-			}
-			$("#gd-text-preview-container").css("font-family", properties.font);
-			$("#gd-text-preview-container").css("font-size", properties.fontSize);
-		},
-		
-		baseHtml : function(){
-			var html = '<div id="gd-text-container">' +
-				'<div id="gd-text-params-container">' +
-					'<div id="gd-text-params-header">' +
-						// Text properties will be here
-					'</div>' +
-				'</div>' +
-				'<div id="gd-text-preview-container"></div>' +
-			'</div>';
-			return html;
-		},
+		getMenu : function (menuClass, signatureId) {
+	        var id = "menu-" + signatureId;
+	        paramValues.textMenuId = id;
+            var menuHtml = '<div id="' + id + '" class="gd-text-menu ' + menuClass+ '">';
+            if (isMobile()) {
+                menuHtml = menuHtml + '<div class="gd-blur"></div>';
+            }
+            $.each(menuButtons, function(index, button){
+                menuHtml = menuHtml + button;
+            });
 
-		propertiesHtml : function(){
-			var html = '<div class="gd-text-params" id="gd-text-params">'+
-							'<h3>Signature Properties</h3>' +
-							'<table id="gd-text-table">'+
-								'<tbody>'+
-									'<tr>'+
-										'<td>'+
-                                            '<div class="gd-text-label">text</div>'+
-                                            '<input type="text" id="' + paramValues.text + '" class="gd-text-property" value="this is my text "/>'+
-                                        '</td>'+
-										'<td>'+
-                                            '<div class="gd-text-label">font color</div>' +
-                                            '<div class="gd-text-color-picker gd-text-property" id="' + paramValues.fontColor + '"></div>'+
-                                        '</td>'+
-                                        '<td>' +
-                                            '<div class="gd-text-label">size</div>' +
-                                            '<input type="number" class="gd-text-property" id="' + paramValues.fontSize + '" value="10"/>' +
-                                        '</td>'+
-										 '<td>'+
-											'<div class="gd-text-checkboxes">'+
-												'<div class="gd-text-checkbox gd-text-label">'+   
-													'<label>'+
-														'<input type="checkbox" id="' + paramValues.bold + '" class="gd-text-property" value="1"/>'+
-														'<i class="gd-text-helper "></i>bold'+
-													'</label>'+
-												'</div>'+
-												'<div class="gd-text-checkbox gd-text-label">'+
-													'<label class="gd-text-italic">'+
-														'<input type="checkbox" id="' + paramValues.italic + '" class="gd-text-property" value="1"/>'+
-														'<i class="gd-text-helper "></i>italic'+
-													'</label>'+
-												'</div>'+
-												'<div class="gd-text-checkbox gd-text-label">'+
-													'<label class="gd-text-underline">'+
-														'<input type="checkbox" id="' + paramValues.underline + '" class="gd-text-property" value="1"/>'+
-														'<i class="gd-text-helper gd-text-underline"></i>underline'+
-													'</label>'+
-												'</div>'+
-											'</div>'+
-                                        '</td>'+                						
-									'</tr>'+									
-                                '</tbody>'+
-                            '</table>'+
-							'<table id="gd-text-border-table">'+
-								'<tbody>'+
-									'<tr>'+
-										'<td>'+
-											'<div class="gd-text-label">font</div>'+
-											'<input type="text" id="' + paramValues.font + '" class="gd-text-property" value="Arial"/>'+
-										'</td>'+
-										'<td>'+
-                                            '<div class="gd-text-color gd-text-label">border color</div>'+
-                                            '<div class="gd-text-color-picker gd-text-property" id="' + paramValues.borderColor + '"></div>'+
-                                        '</td>'+
-                						'<td>'+
-                                            '<div class="gd-text-color gd-text-label gd-text-background-color">background color</div>'+
-                                            '<div class="gd-text-color-picker gd-text-property" id="' + paramValues.backgroundColor + '"></div>'+
-                                        '</td>'+
-										'<td>'+
-                                            '<div class="gd-text-label" id="gd-text-border-width-div">border width</div>'+
-                                            '<input type="number" class="gd-text-property" id="' + paramValues.borderWidth + '" value="0"/>'+
-                                        '</td>'+
-                                        '<td id="gd-text-border-style-line">'+
-                                            '<div class="gd-text-label">border style'+
-												'<div class="gd-border-style-wrapper">'+
-													'<select class="gd-border-style-select gd-text-property" id="' + paramValues.borderStyle + '">'+
-														'<option value="0">solid</option>'+														
-														'<option value="5">dotted</option>'+														
-														'<option value="6">dashed</option>'+
-													'</select>'+
-												'</div>'+
-                                            '</div>'+
-                                        '</td>'+
-									'</tr>'+
-								'</tbody>'+
-							'</table>'+
-						'</div>';
-			return html;
-		},
-		
-		propertiesHtmlMobile : function(){
-			var html = '<div class="gd-text-params" id="gd-text-params">'+
-							'<h3>Signature Properties</h3>' +
-							'<table id="gd-text-table">'+
-								'<tbody>'+
-									'<tr>'+
-										'<td>'+
-                                            '<div class="gd-text-label">text</div>'+
-                                            '<input type="text" id="' + paramValues.text + '" class="gd-text-property" value="this is my text "/>'+
-                                        '</td>'+
-									'</tr>'+
-								 '</tbody>'+
-                            '</table>'+
-							'<table id="gd-text-border-table">'+
-								'<tbody>'+
-									'<tr>'+
-										'<td>'+
-                                            '<div class="gd-text-label">font color</div>' +
-                                            '<div class="gd-text-color-picker gd-text-property" id="' + paramValues.fontColor + '"></div>'+
-                                        '</td>'+
-                                        '<td>' +
-                                            '<div class="gd-text-label" id="gd-text-size-label">size</div>' +
-                                            '<input type="number" class="gd-text-property" id="' + paramValues.fontSize + '" value="10"/>' +
-                                        '</td>'+
-										 '<td>'+
-											'<div class="gd-text-checkboxes">'+
-												'<div class="gd-text-checkbox gd-text-label">'+   
-													'<label>'+
-														'<input type="checkbox" id="' + paramValues.bold + '" class="gd-text-property" value="1"/>'+
-														'<i class="gd-text-helper "></i>bold'+
-													'</label>'+
-												'</div>'+
-												'<div class="gd-text-checkbox gd-text-label">'+
-													'<label class="gd-text-italic">'+
-														'<input type="checkbox" id="' + paramValues.italic + '" class="gd-text-property" value="1"/>'+
-														'<i class="gd-text-helper "></i>italic'+
-													'</label>'+
-												'</div>'+
-												'<div class="gd-text-checkbox gd-text-label">'+
-													'<label class="gd-text-underline">'+
-														'<input type="checkbox" id="' + paramValues.underline + '" class="gd-text-property" value="1"/>'+
-														'<i class="gd-text-helper gd-text-underline"></i>underline'+
-													'</label>'+
-												'</div>'+
-											'</div>'+
-                                        '</td>'+
-									'</tr>'+									
-                                '</tbody>'+
-                            '</table>'+
-							'<table id="gd-text-border-table">'+
-								'<tbody>'+
-									'<tr>'+
-										'<td>'+
-											'<div class="gd-text-label">font</div>'+
-											'<input type="text" id="' + paramValues.font + '" class="gd-text-property" value="Arial"/>'+
-										'</td>'+
-									   '<td>'+
-                                            '<div class="gd-text-label" id="gd-text-border-width-div">border width</div>'+
-                                            '<input type="number" class="gd-text-property" id="' + paramValues.borderWidth + '" value="0"/>'+
-                                        '</td>'+
-                                        '<td id="gd-text-border-style-line">'+
-                                            '<div class="gd-text-label">border style'+
-												'<div class="gd-border-style-wrapper">'+
-													'<select class="gd-border-style-select gd-text-property" id="' + paramValues.borderStyle + '">'+
-														'<option value="0">solid</option>'+														
-														'<option value="5">dotted</option>'+														
-														'<option value="6">dashed</option>'+
-													'</select>'+
-												'</div>'+
-                                            '</div>'+
-                                        '</td>'+ 						
-									'</tr>'+
-									'<tr>'+
-										'<td>'+
-                                            '<div class="gd-text-color gd-text-label gd-text-background-color">background color</div>'+
-                                            '<div class="gd-text-color-picker gd-text-property" id="' + paramValues.backgroundColor + '"></div>'+
-                                        '</td>'+
-										'<td>'+
-                                            '<div class="gd-text-color gd-text-label">border color</div>'+
-                                            '<div class="gd-text-color-picker gd-text-property" id="' + paramValues.borderColor + '"></div>'+
-                                        '</td>'+ 
-									'</tr>'+
-								'</tbody>'+
-							'</table>'+
-						'</div>';
-			return html;
-		}
+            menuHtml = menuHtml + '</div>';
+            return menuHtml;
+        }
 	});
+
+    function saveTextSignatureIntoFile() {
+        var props = $.fn.textGenerator.getProperties();
+        if (props.text) {
+            var guid = $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['data-image-guid'].value;
+            if (props.imageGuid || guid) {
+                saveDrawnText(props);
+            } else {
+                saveDrawnText(props,
+                    function (data) {
+                        $('#' + paramValues.parentName).find('.gd-draw-text')[0].attributes['data-image-guid'].value = data.imageGuid;
+                    });
+            }
+        }
+    }
+
+    function baseHtml() {
+        var html = '<textarea id="' + paramValues.text + '" class="gd-text">' +
+            '</textarea>';
+        return html;
+    };
+
+	function initProps() {
+        var text = $('#' + paramValues.parentName).find('#' + paramValues.text);
+        properties.id = paramValues.parentName.substring(paramValues.parentName.lastIndexOf('-') + 1);
+
+        properties.width = text.width();
+        properties.height = text.height();
+
+        properties.underline = $('#' + paramValues.textMenuId).find('#' + paramValues.underline)[0].className.indexOf("active") > 0;
+        properties.italic = $('#' + paramValues.textMenuId).find('#' + paramValues.italic)[0].className.indexOf("active") > 0;
+        properties.bold = $('#' + paramValues.textMenuId).find('#' + paramValues.bold)[0].className.indexOf("active") > 0;
+        properties.fontColor = $('#' + paramValues.textMenuId).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color");
+        properties.font = $('#' + paramValues.textMenuId).find("#" + paramValues.font).val();
+        properties.fontSize = $('#' + paramValues.textMenuId).find("#" + paramValues.fontSize).val();
+
+    }
+
+    function initTextCss() {
+        var textField = $('#' + paramValues.parentName).find('#' + paramValues.text);
+        textField.val(properties.text);
+        textField.css("text-decoration", properties.underline ? "underline" : "unset");
+        textField.css("font-style", properties.italic ? "italic" : "unset");
+        textField.css("font-weight", properties.bold ? "bold" : "unset");
+        textField.css("color", properties.fontColor);
+        textField.css("font-family", properties.font);
+        textField.css("font-size", properties.fontSize);
+    }
 
 })(jQuery);

@@ -1,143 +1,128 @@
-#csg-container {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: #ffffff;
-    position: relative;
-    width: 100%;
-    height: 335px;
+#csg-params-header > i {
+	color: white;
+    font-size: 25px;  
+    cursor: pointer;
+    margin-left: 28px;
 }
-
-#csg-container input {
-    border: 1px solid #dcdcdc;
-    padding: 5px;
-    color: #9c9c9c;
-    font-weight: 300;
+.csg-header-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 11px 23px 14px 14px;
 }
-
-#csg-container input[type="file"] {
-    border: 0;
-}
-
-#csg-container input:focus, button:focus {
-    outline: none;
-}
-
-#csg-params-header {
-    text-align: center;
-}
-
 #csg-params-header > button {
     background-color: #2e84b9;
     color: #ffffff;
-    text-transform: uppercase;
-    font-size: 10px;
+    width: 83px;
+    height: 27px; 
     border: 0;
-    margin-bottom: 10px;
-    padding: 7px 10px;
+    border-radius: 3px;
+    margin-left: 12px;   
+    cursor: pointer;
+	font-size: 14px;
+	font-family: Helvetica;
+    font-weight: bold;
+	text-align: left;
 }
-
-#csg-params-container {
-    position: absolute;
-    width: 250px;
-    height: calc(100% - 20px);
-    padding: 10px;
-    overflow: scroll;
+#csg-params-header > button i {
+	width: 12px;    
+    margin: 7px 11px 6px 9px;
 }
-
 .csg-params {
-    background-color: #f7f7f7;
-    padding: 15px 20px;
-    margin-bottom: 10px;
-    position: relative;
-    border: 1px solid #ddd;
+	display: -webkit-inline-box;
+    height: 34px;
+    top: -40px;
+	padding: 0;
 }
-
-.csg-params h2 {
-    text-transform: uppercase;
-    font-weight: 400;
-    font-size: 13px;
-    margin: 0;
-    margin-left: -5px;
-    text-align: left;
+.csg-params i {
+	font-size: 14px;
+    padding: 10px 7px 10px 10px;
+	cursor: pointer;	
 }
-
-.csg-params h3 {
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 300;
-    font-size: 12px;
-    margin: 0;
-    margin-top: 15px;
+.csg-params > *:last-child{
+    padding: 10px 10px 10px 10px;
 }
-
-.csg-params thead td {
-    font-size: 12px;
-    font-weight: 300;
-    color: #adadad;
-}
-
-.csg-params > div {
-    display: none;
-}
-
-.csg-params input[type="number"] {
-    width: 60px;
-}
-
-.csg-params input[type="text"] {
-    width: 185px;
-}
-
-.csg-params #csg-text-font {
-    width: 120px;
-}
-
-.csg-params .jscolor {
-    width: 70px;
-}
-
-.csg-params .csg-color-picker {
-    width: 55px;
-    height: 23px;
-    border: 1px solid #dcdcdc;
-}
-
-.csg-params .csg-params-toggle {
-    position: absolute;
-    top: 15px;
-    right: 50px;
-}
-
-.csg-params .csg-shape-remove {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-}
-
-.csg-params button {
-    background: none;
-    border: 0;
-}
-
-#csg-preview-container {
-    position: absolute;
-    left: 250px;
-    width: calc(100% - 320px);
-    height: 100%;
-}
-
-#csg-footer-container {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 20px;
-    padding: 5px 20px;
-}
-
 .csg-preview {
-    position: absolute;
-    top: 50px;
+	width: 100%;
+	height: 100%;
 }
-
-.bcPicker-palette {
-    top: 25px;
+.csg-bouding-box {
+	border: 1px solid #679FFA;
+    position: absolute;
+	z-index: 10;
+}
+.csg-border-width {
+	background-image: url(../images/stampBorderWidth.png);
+	width: 14px !important;
+    height: 14px !important;
+    margin: 10px 11px 10px 7px;
+}
+.csg-border-width  select {
+    position: absolute;
+	width: 27px;
+    border: 0;   
+    background-color: rgba(0,0,0,0);  
+    cursor: pointer;
+}
+.csg-text-input {
+	position: absolute;
+    top: 57px;
+    right: 97px;
+    display: none;
+    z-index: 999999999;
+}
+.csg-text-input input {
+	margin-right: 10px;
+	height: 26px;
+}
+.csg-insert-text {
+	display: -webkit-inline-box;
+    width: 27px;
+    height: 27px;
+    background-color: #3787F5;
+    position: absolute;
+	left: 176px;
+}
+.csg-insert-text i {
+    color: white;
+    position: absolute;
+    top: 22%;
+    left: 24%;
+}
+.fa-fill-drip > div{
+    visibility: hidden; 
+}
+.csg-text-menu {
+	position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: #3E4E5A;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.csg-text-menu select {
+    font-size: 14px;
+    margin: 16px 29px 0 13px;
+    background-color: #3e4e5a;
+    color: white;
+	cursor: pointer;
+}
+.csg-text-menu i {
+    font-size: 14px;
+    color: white;
+    padding: 6px;
+    margin: 0 16px 0 16px;
+	cursor: pointer;
+}
+.csg-text-menu .gd-text-color-picker {
+    width: 26px;
+    height: 26px;
+    top: 6px;
+    margin: 0px 11px 0 11px;
+}
+.csg-text-menu i.active {
+    background-color: #969696;
 }

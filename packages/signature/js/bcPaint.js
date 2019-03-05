@@ -27,17 +27,17 @@ $(document).ready(function(){
 		startPoint		= { x:0, y:0 },
 		templates 		= {
 							container 		: $('<div id="bcPaint-container"></div>'),
-							header 			: $('<div id="bcPaint-header"></div>'),
+							header 			: $('<div id="bcPaint-header" class="bcPaint-header"></div>'),
 							palette 		: $('<div id="bcPaint-palette"></div>'),
 							color 			: $('<div class="bcPaint-palette-color"></div>'),
 							canvasContainer : $('<div id="bcPaint-canvas-container"></div>'),
 							canvasPane 		: $('<canvas id="bcPaintCanvas"></canvas>'),
-							bottom 			: $('<div id="bcPaint-bottom"></div>'),
 							buttonReset 	: $('<button id="bcPaint-reset">Reset</button>'),
-							buttonSave		: $('<button id="bcPaint-export">Save</button>')
+							buttonSave		: $('<div id="bcPaint-export" class="bcPaint-export"><i class="fa fa-check"></i></div>')
 						},
 		paintCanvas,
-		paintContext;
+		paintContext,
+		paintHeader;
 
 	/**
 	* Assembly and initialize plugin
@@ -53,20 +53,21 @@ $(document).ready(function(){
 				palette 		= templates.palette.clone(),
 				canvasContainer = templates.canvasContainer.clone(),
 				canvasPane 		= templates.canvasPane.clone(),
-				bottom 			= templates.bottom.clone(),
 				buttonReset 	= templates.buttonReset.clone(),
 				buttonSave 		= templates.buttonSave.clone(),
 				color;
 
+			header.append(palette);
+            header.append(buttonSave);
+
+            paintHeader = header;
+
 			// assembly pane
 			rootElement.append(container);
-			container.append(header);
+			//add flag if you need append header into container
+			//container.append(header);
 			container.append(canvasContainer);
-			container.append(bottom);
-			header.append(palette);
 			canvasContainer.append(canvasPane);
-			bottom.append(buttonReset);
-			bottom.append(buttonSave);
 
 			// assembly color palette
 			$.each(colorSet.colors, function (i) {
@@ -77,9 +78,19 @@ $(document).ready(function(){
 
 			// set canvas pane width and height
 			var bcCanvas = rootElement.find('canvas');
-			var bcCanvasContainer = rootElement.find('#bcPaint-canvas-container');
-			bcCanvas.attr('width', bcCanvasContainer.width());
-			bcCanvas.attr('height', bcCanvasContainer.height());
+
+            var width;
+            var height;
+            if ($('#gd-lightbox-body').width() == 0) {
+            	width = $('.gd-mobile-portrait').height();
+            	height = $('.gd-mobile-portrait').width() - 100;
+			} else {
+            	width = $('#gd-lightbox-body').width();
+            	height = $('#gd-lightbox-body').height();
+			}
+
+            bcCanvas.attr('width', width);
+            bcCanvas.attr('height', height);
 
 			// get canvas pane context
 			paintCanvas = document.getElementById('bcPaintCanvas');
@@ -121,12 +132,23 @@ $(document).ready(function(){
 			  }
 			}, false);
 		});
-	}
+	};
 
 	/**
 	* Extend plugin
 	**/
 	$.extend(true, $.fn.bcPaint, {
+
+		refreshPositions : function() {
+            if (paintCanvas && $('#gd-lightbox-body').width() != 0) {
+                paintCanvas.attributes['width'].value = $('#gd-lightbox-body').width();
+                paintCanvas.attributes['height'].value =$('#gd-lightbox-body').height();
+            }
+		},
+
+		getHeader : function() {
+			return paintHeader;
+		},
 
 		/**
 		* Dispatch mouse event
@@ -245,3 +267,8 @@ $(document).ready(function(){
     };
 
 })(jQuery);
+
+// Listen for resize changes
+window.addEventListener("resize", function() {
+    $.fn.bcPaint.refreshPositions();
+}, false);

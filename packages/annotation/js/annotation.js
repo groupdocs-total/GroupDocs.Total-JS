@@ -83,7 +83,7 @@ $(document).ready(function () {
         rows = null;
         // append svg element to each page, this is required to draw svg based annotations
         addSvgContainer();		
-        if(isMobile() && !/Edge/.test(navigator.userAgent)){
+        if(isMobile()){
             setZoomLevel("Fit Width");
         }
 		hideNotSupportedAnnotations(documentData.supportedAnnotations);
@@ -836,10 +836,13 @@ function moveArrow(image, x, y, canvas){
 	var newCoordinates = "";	
 	var offsetX = 0;
 	var	offsetY = 0;
-	var firstPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
-	var firstPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));	
-	var secondPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
-	var secondPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
+	var currentPath = $("#" + $(image.helper[0]).data("id")).attr("d");
+	// adjust SVG path for IE11
+	currentPath = adjustSVGPath(currentPath);
+	var firstPointX = parseInt(currentPath.split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+	var firstPointY = parseInt(currentPath.split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));	
+	var secondPointX = parseInt(currentPath.split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
+	var secondPointY = parseInt(currentPath.split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
 	if(x != 0 && x < $(canvas).outerWidth()) {
 		if(firstPointX > secondPointX){
 			offsetX = (x + image.helper[0].offsetWidth) - firstPointX;
@@ -854,7 +857,7 @@ function moveArrow(image, x, y, canvas){
 			offsetY = (y + 5) - firstPointY;
 		}
 	}	
-	$.each($("#" + $(image.helper[0]).data("id")).attr("d").split(" "), function(index, coordinates){								
+	$.each(currentPath.split(" "), function(index, coordinates){								
 		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
 		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
 		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
@@ -874,10 +877,13 @@ function moveDistance(image, x, y, canvas){
 	var newCoordinates = "";	
 	var offsetX = 0;
 	var	offsetY = 0;
-	var firstPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
-	var firstPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));		
-	var secondPointX = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
-	var secondPointY = parseInt($("#" + $(image.helper[0]).data("id")).attr("d").split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
+	var currentPath = $("#" + $(image.helper[0]).data("id")).attr("d");
+	// adjust SVG path for IE11
+	currentPath = adjustSVGPath(currentPath);
+	var firstPointX = parseInt(currentPath.split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+	var firstPointY = parseInt(currentPath.split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));		
+	var secondPointX = parseInt(currentPath.split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
+	var secondPointY = parseInt(currentPath.split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
 	if(x != 0 && x < $(canvas).outerWidth()) {
 		if(firstPointX > secondPointX){
 			offsetX = (x + image.helper[0].offsetWidth - 25) - firstPointX;
@@ -892,7 +898,7 @@ function moveDistance(image, x, y, canvas){
 			offsetY = (y + 25) - firstPointY;
 		}
 	}		
-	$.each($("#" + $(image.helper[0]).data("id")).attr("d").split(" "), function(index, coordinates){								
+	$.each(currentPath.split(" "), function(index, coordinates){								
 		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
 		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
 		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
@@ -901,6 +907,19 @@ function moveDistance(image, x, y, canvas){
 	return newCoordinates;	
 }
 
+/**
+ * adjust SVG path to formating standarts
+ * @param {string} currentPath - current SVG path
+ */
+function adjustSVGPath(currentPath){
+	if(!!navigator.userAgent.match(/Trident.*rv\:11\./)){ 
+		currentPath = currentPath.replace("M ", "M");
+		currentPath = currentPath.replace(" L ", "L");
+		currentPath = currentPath.replace(/\s/g, ",");
+		currentPath = currentPath.replace("L", " L");
+	}
+	return currentPath;
+}
 
 /**
  * Import already existed annotations

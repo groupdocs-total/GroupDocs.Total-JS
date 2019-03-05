@@ -227,8 +227,11 @@
                     currentAnnotation.width = path.width();
                     currentAnnotation.height = path.height();
                     var svgPath = "M";
-                    $.each(path.attr("d").split(" "), function (index, point) {
-                        svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";
+					var currentPath = path.attr("d");
+					// adjust SVG path for IE11
+					currentPath = adjustSVGPath(currentPath);
+                    $.each(currentPath.split(" "), function (index, point) {						
+						svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";						
                     });
                     currentAnnotation.svgPath = $.trim(svgPath.slice(0, -1));
                     annotationsList.push(currentAnnotation);
@@ -322,7 +325,10 @@
                     currentAnnotation.width = path.width();
                     currentAnnotation.height = path.height();
                     var svgPath = "M";
-                    $.each(path.attr("d").split(" "), function (index, point) {
+                    var currentPath = path.attr("d");
+					// adjust SVG path for IE11
+					currentPath = adjustSVGPath(currentPath);
+                    $.each(currentPath.split(" "), function (index, point) {	
                         svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " L";
                     });
                     currentAnnotation.svgPath = $.trim(svgPath.slice(0, -1));
@@ -630,34 +636,30 @@
             case "arrow":
                 width = width + 10;
                 height = height + 10;
-                var points = $(svgElement.node).attr("d").split(" ");
-                $.each(points, function (index, point) {
-                    var currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
-                    var currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
-                    if (currentX < x) {
-                        x = currentX;
-                    }
-                    if (currentY < y) {
-                        y = currentY;
-                    }
-                });
+                var points;				
+				if(!!navigator.userAgent.match(/Trident.*rv\:11\./)){
+					points = $(svgElement.node).attr("d").split("L");					
+				} else {
+					points = $(svgElement.node).attr("d").split(" ");					
+				}
+				var coordinates = getPoints(points, x, y);
+				x = coordinates.x;
+				y = coordinates.y;
                 x = x - 5;
                 y = y - 5;
                 break;
             case "distance":
                 width = width + 40;
                 height = height + 50;
-                var points = $(svgElement.node).attr("d").split(" ");
-                $.each(points, function (index, point) {
-                    var currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
-                    var currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
-                    if (currentX < x) {
-                        x = currentX;
-                    }
-                    if (currentY < y) {
-                        y = currentY;
-                    }
-                });
+				var points;				
+				if(!!navigator.userAgent.match(/Trident.*rv\:11\./)){
+					points = $(svgElement.node).attr("d").split("L");					
+				} else {
+					points = $(svgElement.node).attr("d").split(" ");					
+				}
+				var coordinates = getPoints(points, x, y);
+				x = coordinates.x;
+				y = coordinates.y;
                 x = x - 25;
                 y = y - 25;
                 break;
@@ -670,6 +672,28 @@
         return boundingBox;
     }
 
+	function getPoints(points, x, y){
+		var currentX = 0;
+		var currentY = 0;
+		var coordinates = {x: x, y: y};
+		$.each(points, function (index, point) {
+			if(!!navigator.userAgent.match(/Trident.*rv\:11\./)){
+				currentX = parseInt(point.split(" ")[1].replace(/[^\d.]/g, ''));
+				currentY = parseInt(point.split(" ")[2].replace(/[^\d.]/g, ''));
+			} else {
+				currentX = parseInt(point.split(",")[0].replace(/[^\d.]/g, ''));
+				currentY = parseInt(point.split(",")[1].replace(/[^\d.]/g, ''));
+			}
+			if (currentX < coordinates.x) {
+				coordinates.x = currentX;
+			}
+			if (currentY < coordinates.y) {
+				coordinates.y = currentY;
+			}
+		});	
+		return coordinates;
+	}
+	
 	/**
 	 * calculate distance annotation
 	 * @param {Object} point1 - coordinates of the start point

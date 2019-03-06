@@ -98,7 +98,7 @@ $(document).ready(function () {
             }
             var typeTitle = button.attr("signature-type-title");
             var gd = $('#gd-signature-context-panel');
-            if (button[0].className.includes("gd-tool-inactive")) {
+            if (button[0].className.indexOf("gd-tool-inactive") > 0) {
                 loadSignaturesTree('');
                 if (isMobile()) {
                     $('.gd-tool-tooltip-mobile').hide();

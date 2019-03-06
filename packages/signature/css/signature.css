@@ -388,15 +388,13 @@ MODAL
     min-width: 41px; 
 }
 .gd-signature-thumbnail-qrCode, .gd-signature-thumbnail-barCode {
-    width: 44px;
+    width: auto;
     height: 44px;
     margin: 10px 30px 8px 8px;
 }
-.gd-signature-thumbnail-barCode {
-    width: 60px; 
-}
+
 .gd-signature-thumbnail-stamp {
-    width: 48px;
+    width: auto;
     height: 48px;
     margin: 7px 29px 7px 11px;
 }
@@ -421,7 +419,7 @@ MODAL
 }
 .gd-signature-thumbnail-digital {    
 	margin: 20px 25px 8px 16px;	
-	width: 30px;
+	width: auto;
 }
 /*
 ******************************************

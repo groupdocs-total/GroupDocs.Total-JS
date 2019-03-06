@@ -467,8 +467,7 @@ SIGNATURE IMAGE
 ******************************************
 */
 .gd-draggable-helper, .ui-wrapper {
-    position: absolute !important;
-	z-index: 999;
+    position: absolute !important;	
 	border: 1px solid #679FFA;
 }
 .gd-image-signed {

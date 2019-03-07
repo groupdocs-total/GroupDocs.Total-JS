@@ -41,8 +41,8 @@
     }
     #gd-navbar > li{
         font-size: 16px;
-        line-height: 65px;
-        padding: 0px 22px 0px 22px;
+        line-height: 52px;
+		padding: 0px 15px 0px 8px;
     }
     .gd-nav-btn-pages,#gd-page-num,.gd-nav-separator{
         display: none;

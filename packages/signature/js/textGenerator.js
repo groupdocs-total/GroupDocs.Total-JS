@@ -50,9 +50,12 @@
 
             $('#' + paramValues.textMenuId).on("change", "#" + paramValues.fontSize, function(e) {
                 var val = $(this).val();
-                $('#' + parentName).find('#' + paramValues.text).css("font-size", val);
-                properties.fontSize = val;
-                setTimeout(saveTextSignatureIntoFile, 500);
+                if (val) {
+                    var cssVal = val.indexOf('px') > 0 ? val : val + 'px';
+                    $('#' + parentName).find('#' + paramValues.text).css("font-size", cssVal);
+                    properties.fontSize = val;
+                    setTimeout(saveTextSignatureIntoFile, 500);
+                }
             });
 
             $('#' + paramValues.textMenuId).on(userMouseClick, "#" + paramValues.bold, function(e) {
@@ -238,7 +241,7 @@
         textField.css("font-weight", properties.bold ? "bold" : "unset");
         textField.css("color", properties.fontColor);
         textField.css("font-family", properties.font);
-        textField.css("font-size", properties.fontSize);
+        textField.css("font-size", properties.fontSize ? properties.fontSize + 'px' : '');
     }
 
 })(jQuery);

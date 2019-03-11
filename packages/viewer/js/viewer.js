@@ -732,7 +732,7 @@ function loadDocument(callback) {
             // get total page number
             var totalPageNumber = documentData.pages.length;
             // set total page number on navigation panel
-            setNavigationPageValues('1', totalPageNumber);
+            setNavigationPageValues('1', totalPageNumber);            
         },
         error: function (xhr, status, error) {
             fadeAll(false);
@@ -745,7 +745,7 @@ function loadDocument(callback) {
     }).done(function (data) {
         // return POST data
         if (data.message == undefined && callback) {
-            callback(data.pages);
+            callback(data);
         }
     });
 }
@@ -783,7 +783,7 @@ function generatePagesTemplate(data) {
     // hide loading text only
     $('#gd-container-fade-text').hide();
     // loop though pages
-    $.each(data, function (index, elem) {
+    $.each(data.pages, function (index, elem) {
         var pageNumber = elem.number;
         var pageWidth = elem.width;
         var pageHeight = elem.height;
@@ -805,10 +805,10 @@ function generatePagesTemplate(data) {
         if (pageData == null || (pageData != null && preloadPageCount > 0)) {
             gd_page.append('<div class="gd-page-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>');
             if (pageNumber <= preloadPageCount) {
-                appendHtmlContent(pageNumber, documentGuid);
+                appendHtmlContent(pageNumber, documentGuid, data.printAllowed);
             }
         } else {
-            renderPage(gd_page, elem, documentGuid, pageNumber);
+            renderPage(gd_page, elem, documentGuid, data.printAllowed);
         }
         if (thumbnails) {
             $('#gd-thumbnails-panzoom').append(
@@ -830,7 +830,7 @@ function generatePagesTemplate(data) {
 * @param {int} pageNumber - page number
 * @param {string} documentName - document name/id
 */
-function appendHtmlContent(pageNumber, documentName) {
+function appendHtmlContent(pageNumber, documentName, printAllowed) {
     // initialize data
     var gd_page = $('#gd-page-' + pageNumber);
 
@@ -852,7 +852,7 @@ function appendHtmlContent(pageNumber, documentName) {
                 }
                 // remove spinner
                 gd_page.find('.gd-page-spinner').hide();
-                renderPage(gd_page, htmlData, documentName, pageNumber)
+                renderPage(gd_page, htmlData, documentName, printAllowed)
             },
             error: function (xhr, status, error) {
                 fadeAll(false);
@@ -947,7 +947,7 @@ function renderThumbnails(pageNumber, pageData) {
 * @param {string} documentName - current document name
 * @param {int} pageNumber - current page number
 */
-function renderPage(gd_page, pageData, documentName, pageNumber) {
+function renderPage(gd_page, pageData, documentName, printAllowed) {
     var width = pageData.width;
     var height = pageData.height;
     // fix zoom in/out scaling
@@ -1056,8 +1056,10 @@ function renderPage(gd_page, pageData, documentName, pageNumber) {
         $('#gd-btn-zoom-out').bind('click', zoomOut);
         $('#gd-btn-zoom-in').removeClass('disabled');
         $('#gd-btn-zoom-out').removeClass('disabled');
-        $('#gd-btn-print').bind('click', printDocument);
-        $('#gd-btn-print').removeClass('disabled');
+        if (printAllowed || typeof printAllowed == "undefined") {
+            $('#gd-btn-print').bind('click', printDocument);
+            $('#gd-btn-print').removeClass('disabled');
+        }
         $('#gd-btn-download').removeClass('disabled');
         loadedPagesCount = 0;
     }

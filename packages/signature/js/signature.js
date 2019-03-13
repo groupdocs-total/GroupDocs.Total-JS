@@ -183,19 +183,16 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     //Signature click event
     //////////////////////////////////////////////////
-    $('#gd-panzoom').on(userMouseClick, '.gd-draw-text', function (e) {
-        if ($(this.parentElement).find(".gd-context-menu")[0].className.indexOf('hidden') > 0) {
-            hideAllContextMenu();
-            var id = this.parentElement['id'];
-            var menuId = this.parentElement.attributes['data-textMenuId'].value;
-            $('#' + menuId).removeClass("hidden");
-            var text = $(this.childNodes)[0].value;
-            var guid = $(this)[0].attributes['data-image-guid'].value;
-            var elem = $(this.parentElement).find(".gd-context-menu");
-            elem.removeClass("hidden");
-            $.fn.textGenerator.init(id, null, text, guid);
+    $('#gd-panzoom').on(userMouseClick + 'touchstart mousedown', '.gd-signature', function (e) {
+        hideAllContextMenu();
+        var signature = $(e.target).closest('.gd-signature');
+        var contextMenu = signature.find('.gd-context-menu');
+        showContextMenuFor(signature);
+        if(signature.find('.gd-draw-text').length){
+            var textarea = signature.find('textarea');
+            $.fn.textGenerator.init(signature.id, null, textarea.val(), contextMenu);
+            textarea.focus();
         }
-        $(this.childNodes)[0].focus();
     });
 
     //////////////////////////////////////////////////
@@ -1353,12 +1350,16 @@ function getContextMenu(signatureId, addClass) {
  * Hide all context menu
  */
 function hideAllContextMenu() {
-    $(".gd-context-menu").each(function (index, element) {
-        if (!$(element).hasClass("hidden")) {
-            $(element).addClass("hidden");
-        }
+    $(".gd-signature").each(function (index, element) {
+        $(element).addClass("inactive");
     });
 }
+
+
+function showContextMenuFor(signature){
+    signature.removeClass('inactive');
+}
+
 
 /**
  * Prepare fonts select HTML

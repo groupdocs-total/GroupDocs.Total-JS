@@ -188,12 +188,10 @@ $(document).ready(function () {
         var signature = $(e.target).closest('.gd-signature');
         var contextMenu = signature.find('.gd-context-menu');
         showContextMenuFor(signature);
-        console.log("FOCUS",signature);   
         if(signature.find('.gd-draw-text').length){
             var textarea = signature.find('textarea');
             $.fn.textGenerator.init(signature.id, null, textarea.val(), contextMenu);
             textarea.focus();
-            console.log('TEXT SIGNATURE');
         }
     });
 

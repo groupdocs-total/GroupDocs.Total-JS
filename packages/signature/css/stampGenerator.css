@@ -65,29 +65,41 @@
     cursor: pointer;
 }
 .csg-text-input {
-	position: absolute;
-    top: 57px;
-    right: 97px;
     display: none;
+    padding: 5px;
+    background-color: #e6e6e6;
+    position: absolute;
+    top: 50px;
+    left: 0px;
     z-index: 999999999;
+    width: 100%;
+    flex-direction: row;
+    display: flex;
+}
+.csg-text-input::after{
+    content: " ";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 4px 5px 4px;
+    border-color: transparent transparent #e6e6e6 transparent;
+    position: absolute;
+    top:-5px;
+    right: 110px;
 }
 .csg-text-input input {
 	margin-right: 10px;
-	height: 26px;
+    height: 26px;
+    width:100%;
 }
 .csg-insert-text {
-	display: -webkit-inline-box;
+    padding: 5px;
     width: 27px;
     height: 27px;
     background-color: #3787F5;
-    position: absolute;
-	left: 176px;
 }
 .csg-insert-text i {
     color: white;
-    position: absolute;
-    top: 22%;
-    left: 24%;
 }
 .fa-fill-drip > div{
     visibility: hidden; 

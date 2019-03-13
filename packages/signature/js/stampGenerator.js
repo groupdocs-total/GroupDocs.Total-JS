@@ -207,7 +207,7 @@ $(document).ready(function(){
 	$('body').on(userMouseClick, '#csg-text-add', function(e){
 		var csgElement = $(".csg-text-input")[0];
 		if (csgElement && (csgElement.hidden || csgElement.style.display == 'none' || $(".csg-text-input").css('display') == 'none')) {
-			$(".csg-text-input").show();
+			$(".csg-text-input").css('display','flex');
 			$(".csg-text-input input").focus();
 		} else {
 			$(".csg-text-input").hide();
@@ -331,7 +331,7 @@ $(document).ready(function(){
 			var html = '<div id="csg-params-header" class="csg-header-buttons">' +
 						'<button id="csg-shape-add"><i class="fas fa-plus"></i>Circle</button>' +
 						'<button id="csg-text-add"><i class="fas fa-plus"></i>Text</button>' +
-						'<div class="csg-text-input"><input type="text"><div class="csg-insert-text"><i class="fas fa-plus"></i></div></div>'+
+						'<div class="csg-text-input"><input placeholder="Type your text" type="text"><div class="csg-insert-text"><i class="fas fa-plus"></i></div></div>'+
 						'<i class="fas fa-check"></i>'+
 					'</div>';				
 			return html;
@@ -511,7 +511,7 @@ function cleanProperties(){
 		backgroundColor: "rgb(255, 255, 255)",
 		strokeColor: "rgb(51, 51, 51)",
 		strokeWidth: 1,
-		textExpansion: 0.173,
+		textExpansion: 0.049,
 		textRepeat: 1,
 		fontSize: 10,
 		font: "Arial",

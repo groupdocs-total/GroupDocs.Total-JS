@@ -466,7 +466,7 @@ SIGNATURE IMAGE
 */
 .gd-draggable-helper, .ui-wrapper {
     position: absolute !important;	
-	border: 1px solid #679FFA;
+	outline: 1px solid #679FFA;
 }
 .gd-image-signed {
     top: 69px !important;
@@ -499,9 +499,7 @@ SIGNATURE IMAGE
 .gd-text {
     width: inherit;
     height: inherit;
-    border: 1px solid #3c97fe;
-}
-.gd-text-context-menu {
+    border: none;
 }
 .gd-context-menu .fa-arrows-alt {
     cursor: move;
@@ -599,4 +597,17 @@ TEMPORARY USED ELEMENTS EXCEL DOCUMENTS IMAGE SIGNING FIX
 .gd-draw-text {
     width: inherit;
     height: inherit;
+}
+
+.gd-context-menu{
+    z-index: 999999;
+}
+.gd-signature.inactive .ui-resizable-handle{
+    display: none;
+}
+.gd-signature.inactive{
+    outline: 1px solid transparent;
+}
+.gd-signature.inactive .gd-context-menu{
+    display: none;
 }

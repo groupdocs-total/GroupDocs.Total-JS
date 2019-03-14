@@ -771,6 +771,62 @@ function loadThumbnails() {
     });
 }
 
+function loadPrint() {
+    var data = { guid: documentGuid, password: password };
+    var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+    windowObject.document.writeln("Loading please wait...");
+    windowObject.focus();
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('loadPrint'),
+        data: JSON.stringify(data),
+        global: false,
+        contentType: "application/json",
+        success: function (returnedData) {
+            if (returnedData.message != undefined) {
+                console.log(returnedData.message);
+                return;
+            }           
+            var pagesHtml = "";
+            $.each(returnedData.pages, function (index, elem) {
+                pagesHtml = pagesHtml + '<div id="gd-page-' + elem.pageNumber + '" class="gd-page" style="min-width: ' + elem.width + 'px; min-height: ' + elem.height + 'px;">' +
+                    '<div class="gd-wrapper">' + elem.data + '</div>'+
+                    '</div>'
+            });
+            renderPrint(windowObject, pagesHtml);
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err ? err.Message : error);
+        }
+    });
+}
+
+function renderPrint(windowObject, pages) {
+    windowObject.document.getElementsByTagName('body')[0].innerHTML = ''
+    // get current document content
+    var documentContainer = $("#gd-panzoom");
+    // force each document page to be printed as a new page
+    var cssPrint = '<style>' +
+        '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
+    // set correct page orientation if page were rotated
+    documentContainer.find(".gd-page").each(function (index, page) {
+        if ($(page).css("transform") != "none") {
+            cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
+        }
+    });
+    cssPrint = cssPrint + '</style>';
+    // open print dialog
+   
+    // add current document into the print window
+    windowObject.document.writeln(cssPrint);
+    // add current document into the print window
+    windowObject.document.writeln(pages);
+    windowObject.document.close();
+    windowObject.focus();
+    windowObject.print();
+    windowObject.close();
+}
 /**
 * Generate empty pages temples before the actual get pages request
 * @param {object} data - document pages array
@@ -1633,32 +1689,12 @@ function uploadDocument(file, index, url) {
 /**
 * Print current document
 */
-function printDocument() {
+function printDocument(event) {
+    event.stopImmediatePropagation();
     if ($(this).find("li").length > 0) {
         return;
     }
-    // get current document content
-    var documentContainer = $("#gd-panzoom");
-    // force each document page to be printed as a new page
-    var cssPrint = '<style>' +
-        '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
-    // set correct page orientation if page were rotated
-    documentContainer.find(".gd-page").each(function (index, page) {
-        if ($(page).css("transform") != "none") {
-            cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
-        }
-    });
-    cssPrint = cssPrint + '</style>';
-    // open print dialog
-    var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
-    // add current document into the print window
-    windowObject.document.writeln(cssPrint);
-    // add current document into the print window
-    windowObject.document.writeln(documentContainer[0].innerHTML);
-    windowObject.document.close();
-    windowObject.focus();
-    windowObject.print();
-    windowObject.close();
+    loadPrint();   
 }
 
 /**

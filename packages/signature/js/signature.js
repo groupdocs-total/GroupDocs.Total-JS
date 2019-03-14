@@ -759,8 +759,8 @@ function sign(download) {
 
         request.send(JSON.stringify(data));
     } else {
-        var spinner = '<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>';
-        toggleModalDialog(true, "Signing document", spinner);
+        var spinner = $('<div id="gd-modal-spinner" style="display:block;"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>').show();
+        toggleSuccessModalDialog(true, 'Signing document', spinner);
         // sign the document
         $.ajax({
             type: 'POST',
@@ -777,10 +777,20 @@ function sign(download) {
                 }
                 signedDocumentGuid = returnedData.guid;
                 // prepare signing results HTML
-                var result = '<div id="gd-modal-signed">Document signed successfully</div>';
+                var result = '<div id="gd-modal-signed"><div class="check_mark">\n' +
+                '  <div class="sa-icon sa-success animate">\n' +
+                '    <span class="sa-line sa-tip animateSuccessTip"></span>\n' +
+                '    <span class="sa-line sa-long animateSuccessLong"></span>\n' +
+                '    <div class="sa-placeholder"></div>\n' +
+                '    <div class="sa-fix"></div>\n' +
+                '  </div>\n' +
+                '</div></div>';
                 // show signing results
-                $(".gd-modal-body").append(result);
-                $("#gd-modal-signed").toggleClass("gd-image-signed");
+                toggleSuccessModalDialog(true, 'Document signed', result);
+				$('.gd-modal-close-action').on('click', function () {
+					toggleSuccessModalDialog(false, 'Document signed', result)
+					$('.gd-modal-close-action').off('click').click(closeModal);
+				});
             },
             error: function (xhr, status, error) {
                 $('#gd-modal-spinner').hide();
@@ -793,6 +803,35 @@ function sign(download) {
     }
 }
 
+
+function toggleSuccessModalDialog(open, title, content) {
+
+    if (open) {
+        $('#modalDialog .gd-modal-title').text(title);
+        $('#modalDialog')
+            .addClass('success')
+            .css('opacity', 0)
+            .fadeIn('fast')
+            .animate(
+                { opacity: 1 },
+                { queue: false, duration: 'fast' }
+            );
+        $('#modalDialog').addClass('in');
+        $(".gd-modal-body").append(content);
+    } else {
+        $('#modalDialog').removeClass('in');
+        $('#modalDialog').removeClass('success');
+        $('#modalDialog')
+            .css('opacity', 1)
+            .fadeIn('fast')
+            .animate(
+                { opacity: 0 },
+                { queue: false, duration: 'fast' }
+            )
+            .css('display', 'none');
+        $(".gd-modal-body").html('');
+    }
+}
 /**
  * Add digitally signed marker
  * @param {string} contact - digital signature comment

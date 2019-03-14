@@ -776,30 +776,34 @@ function loadPrint() {
     var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
     windowObject.document.writeln("Loading please wait...");
     windowObject.focus();
-    $.ajax({
-        type: 'POST',
-        url: getApplicationPath('loadPrint'),
-        data: JSON.stringify(data),
-        global: false,
-        contentType: "application/json",
-        success: function (returnedData) {
-            if (returnedData.message != undefined) {
-                console.log(returnedData.message);
-                return;
-            }           
-            var pagesHtml = "";
-            $.each(returnedData.pages, function (index, elem) {
-                pagesHtml = pagesHtml + '<div id="gd-page-' + elem.pageNumber + '" class="gd-page" style="min-width: ' + elem.width + 'px; min-height: ' + elem.height + 'px;">' +
-                    '<div class="gd-wrapper">' + elem.data + '</div>'+
-                    '</div>'
-            });
-            renderPrint(windowObject, pagesHtml);
-        },
-        error: function (xhr, status, error) {
-            var err = eval("(" + xhr.responseText + ")");
-            console.log(err ? err.Message : error);
-        }
-    });
+    if (preloadPageCount != 0) {
+        $.ajax({
+            type: 'POST',
+            url: getApplicationPath('loadPrint'),
+            data: JSON.stringify(data),
+            global: false,
+            contentType: "application/json",
+            success: function (returnedData) {
+                if (returnedData.message != undefined) {
+                    console.log(returnedData.message);
+                    return;
+                }
+                var pagesHtml = "";
+                $.each(returnedData.pages, function (index, elem) {
+                    pagesHtml = pagesHtml + '<div id="gd-page-' + elem.pageNumber + '" class="gd-page" style="min-width: ' + elem.width + 'px; min-height: ' + elem.height + 'px;">' +
+                        '<div class="gd-wrapper">' + elem.data + '</div>' +
+                        '</div>'
+                });
+                renderPrint(windowObject, pagesHtml);
+            },
+            error: function (xhr, status, error) {
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err ? err.Message : error);
+            }
+        });
+    } else {
+        renderPrint(windowObject);
+    }
 }
 
 function renderPrint(windowObject, pages) {
@@ -816,16 +820,19 @@ function renderPrint(windowObject, pages) {
         }
     });
     cssPrint = cssPrint + '</style>';
-    // open print dialog
-   
     // add current document into the print window
+    if (!pages) {
+        pages = documentContainer[0].innerHTML;
+    }
     windowObject.document.writeln(cssPrint);
     // add current document into the print window
     windowObject.document.writeln(pages);
     windowObject.document.close();
     windowObject.focus();
-    windowObject.print();
-    windowObject.close();
+    $(windowObject.document).ready(function () {
+        windowObject.print();
+        windowObject.close();
+    });   
 }
 /**
 * Generate empty pages temples before the actual get pages request

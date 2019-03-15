@@ -27,6 +27,8 @@ var htmlMode = false;
 var thumbnails = false;
 var saveRotateState = true;
 var enableRightClick = true;
+var partialPrintPagesCount = 50;
+var partialThumbnailsPagesCount = 100;
 // add supported formats
 map['folder'] = { 'format': '', 'icon': 'fa-folder' };
 map['pdf'] = { 'format': 'Portable Document Format', 'icon': 'fa-file-pdf-o' };
@@ -100,11 +102,11 @@ $(document).ready(function () {
     NAV BAR CONTROLS
     ******************************************************************
     */
-	if (!enableRightClick){
-		$(document).bind("contextmenu", function (e) {
-			e.preventDefault();       
-		});
-	}
+    if (!enableRightClick) {
+        $(document).bind("contextmenu", function (e) {
+            e.preventDefault();
+        });
+    }
     //////////////////////////////////////////////////
     // Toggle navigation dropdown menus
     //////////////////////////////////////////////////
@@ -379,7 +381,7 @@ $(document).ready(function () {
     $('#gd-nav-right').on('click', function () {
         // open/close sidebar
         $('#gd-thumbnails').toggleClass('active');
-        
+
     });
 
     //////////////////////////////////////////////////
@@ -728,7 +730,7 @@ function loadDocument(callback) {
             // get total page number
             var totalPageNumber = documentData.pages.length;
             // set total page number on navigation panel
-            setNavigationPageValues('1', totalPageNumber);            
+            setNavigationPageValues('1', totalPageNumber);
         },
         error: function (xhr, status, error) {
             fadeAll(false);
@@ -746,8 +748,10 @@ function loadDocument(callback) {
     });
 }
 
-function loadThumbnails() {
-    var data = { guid: documentGuid, password: password };
+function loadThumbnails(pageNumber) {
+    var data = { guid: documentGuid, password: password, page: pageNumber, partialPagesCount: partialThumbnailsPagesCount };
+    var totalPagesNumber = $('#gd-panzoom > div').length;
+
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadThumbnails'),
@@ -759,10 +763,13 @@ function loadThumbnails() {
                 console.log(returnedData.message);
                 return;
             }
-            $.each(returnedData.pages, function (index, elem) {
-                var pageNumber = elem.number;
-                renderThumbnails(pageNumber, elem);
-            });
+            if (pageNumber <= totalPagesNumber) {
+                pageNumber = pageNumber + partialThumbnailsPagesCount;
+                $.each(returnedData.pages, function (index, elem) {
+                    renderThumbnails(elem.number, elem);
+                });
+                loadThumbnails(pageNumber);
+            }
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -771,11 +778,9 @@ function loadThumbnails() {
     });
 }
 
-function loadPrint() {
-    var data = { guid: documentGuid, password: password };
-    var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
-    windowObject.document.writeln("Loading please wait...");
-    windowObject.focus();
+function loadPrint(pageNumber, windowObject, firstCall) { 
+    var data = { guid: documentGuid, password: password, page: pageNumber, partialPagesCount: partialPrintPagesCount };
+    var totalPagesNumber = $('#gd-panzoom > div').length;
     if (preloadPageCount != 0) {
         $.ajax({
             type: 'POST',
@@ -790,11 +795,23 @@ function loadPrint() {
                 }
                 var pagesHtml = "";
                 $.each(returnedData.pages, function (index, elem) {
-                    pagesHtml = pagesHtml + '<div id="gd-page-' + elem.pageNumber + '" class="gd-page" style="min-width: ' + elem.width + 'px; min-height: ' + elem.height + 'px;">' +
+                    var rotation = "";
+                    if (elem.width > elem.height) {
+                        rotation = "transform: rotate(-90deg);";
+                    }
+                    pagesHtml = pagesHtml + '<div id="gd-page-' + elem.number + '" class="gd-page" style="min-width: ' +
+                        elem.width + 'px; min-height: ' + elem.height + 'px; ' + rotation + '">' +
                         '<div class="gd-wrapper">' + elem.data + '</div>' +
-                        '</div>'
-                });
-                renderPrint(windowObject, pagesHtml);
+                        '</div>';
+                });               
+                renderPrint(windowObject, pagesHtml, pageNumber, false, firstCall);
+                if (pageNumber <= totalPagesNumber) {
+                    pageNumber = pageNumber + partialPrintPagesCount;
+                    firstCall = false;
+                    loadPrint(pageNumber, windowObject, firstCall);
+                } else {
+                    renderPrint(windowObject, null, pageNumber, true, false);
+                }
             },
             error: function (xhr, status, error) {
                 var err = eval("(" + xhr.responseText + ")");
@@ -802,38 +819,47 @@ function loadPrint() {
             }
         });
     } else {
-        renderPrint(windowObject);
+        renderPrint(windowObject, null, totalPagesNumber, true, true);
     }
 }
 
-function renderPrint(windowObject, pages) {
-    windowObject.document.getElementsByTagName('body')[0].innerHTML = ''
-    // get current document content
-    var documentContainer = $("#gd-panzoom");
-    // force each document page to be printed as a new page
-    var cssPrint = '<style>' +
-        '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
-    // set correct page orientation if page were rotated
-    documentContainer.find(".gd-page").each(function (index, page) {
-        if ($(page).css("transform") != "none") {
-            cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
+function renderPrint(windowObject, pages, pageNumber, startPrint, firstCall) {
+    if (firstCall) {
+        if (pageNumber == 1) {
+            pageNumber = partialPrintPagesCount;
         }
-    });
-    cssPrint = cssPrint + '</style>';
-    // add current document into the print window
-    if (!pages) {
-        pages = documentContainer[0].innerHTML;
+        // get current document content
+        var documentContainer = $("#gd-panzoom");
+        // force each document page to be printed as a new page
+        var cssPrint = '<style>' +
+            '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
+        // set correct page orientation if page were rotated
+        documentContainer.find(".gd-page").each(function (index, page) {
+            if ($(page).css("transform") != "none") {
+                cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
+            }
+        });
+        cssPrint = cssPrint + '</style>';       
+        windowObject.document.writeln(cssPrint);
+         // add current document into the print window
+        if (!pages && pages != "") {
+            pages = documentContainer[0].innerHTML;
+        }
     }
-    windowObject.document.writeln(cssPrint);
     // add current document into the print window
-    windowObject.document.writeln(pages);
+    if (pages != null) {
+        $(windowObject.document).find('body').append(pages);
+        $(windowObject.document).find('#gd-print-counter').html(pageNumber + " / " + $('#gd-panzoom > div').length);
+    }
     windowObject.document.close();
     windowObject.focus();
-    $(windowObject.document).ready(function () {
-        windowObject.print();
+    if (startPrint) {
+        $(windowObject.document).find('#gd-print-spinner').remove()
+        windowObject.print();        
         windowObject.close();
-    });   
+    }
 }
+
 /**
 * Generate empty pages temples before the actual get pages request
 * @param {object} data - document pages array
@@ -880,7 +906,7 @@ function generatePagesTemplate(data) {
         }
     });
     if (thumbnails && preloadPageCount != 0) {
-        loadThumbnails();
+        loadThumbnails(1);
     }
 }
 
@@ -927,7 +953,7 @@ function renderThumbnails(pageNumber, pageData) {
     var gd_page = $('#gd-page-' + pageNumber);
     var width = pageData.width;
     var height = pageData.height;
-    var zoomValue = gd_page[0].style.zoom;   
+    var zoomValue = gd_page[0].style.zoom;
     // fix thumbnails only when any of document pages is loaded.
     // this is required to fix issue with thumbnails resolution
     isPageLoaded($('#gd-page-1')).then(function (element) {
@@ -961,7 +987,7 @@ function renderThumbnails(pageNumber, pageData) {
                 height = 450;
                 zoomValue = 1;
             }
-			if (getDocumentFormat(documentGuid).format == "Microsoft PowerPoint") {
+            if (getDocumentFormat(documentGuid).format == "Microsoft PowerPoint") {
                 if (width > ($("#gd-thumbnails").width() * 2)) {
                     zoomValue = 0.7;
                 }
@@ -1701,7 +1727,10 @@ function printDocument(event) {
     if ($(this).find("li").length > 0) {
         return;
     }
-    loadPrint();   
+    var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+    windowObject.document.writeln('<div id="gd-print-spinner">Loading <div id="gd-print-counter"></div> please wait...</div>');
+    windowObject.focus();
+    loadPrint(1, windowObject, true);
 }
 
 /**
@@ -1958,7 +1987,7 @@ GROUPDOCS.VIEWER PLUGIN
                 rewrite: true,
                 htmlMode: true,
                 saveRotateState: true,
-				enableRightClick: true
+                enableRightClick: true
             };
             options = $.extend(defaults, options);
 
@@ -1969,7 +1998,7 @@ GROUPDOCS.VIEWER PLUGIN
             htmlMode = options.htmlMode;
             thumbnails = options.thumbnails;
             saveRotateState = options.saveRotateState;
-			enableRightClick = options.enableRightClick;
+            enableRightClick = options.enableRightClick;
             // assembly html base
             this.append(getHtmlBase);
             this.append(getHtmlModalDialog);
@@ -2286,5 +2315,5 @@ CHECK IF MOBILE
 var isMobile = function () {
     return navigator.maxTouchPoints > 0 || //for chrome
         window.navigator.msMaxTouchPoints > 0 ||
-            'ontouchstart' in window // works on most browsers
+        'ontouchstart' in window // works on most browsers
 };

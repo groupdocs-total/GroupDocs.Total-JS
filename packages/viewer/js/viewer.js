@@ -100,11 +100,11 @@ $(document).ready(function () {
     NAV BAR CONTROLS
     ******************************************************************
     */
-	if (!enableRightClick){
-		$(document).bind("contextmenu", function (e) {
-			e.preventDefault();       
-		});
-	}
+    if (!enableRightClick) {
+        $(document).bind("contextmenu", function (e) {
+            e.preventDefault();
+        });
+    }
     //////////////////////////////////////////////////
     // Toggle navigation dropdown menus
     //////////////////////////////////////////////////
@@ -379,7 +379,7 @@ $(document).ready(function () {
     $('#gd-nav-right').on('click', function () {
         // open/close sidebar
         $('#gd-thumbnails').toggleClass('active');
-        
+
     });
 
     //////////////////////////////////////////////////
@@ -728,7 +728,7 @@ function loadDocument(callback) {
             // get total page number
             var totalPageNumber = documentData.pages.length;
             // set total page number on navigation panel
-            setNavigationPageValues('1', totalPageNumber);            
+            setNavigationPageValues('1', totalPageNumber);
         },
         error: function (xhr, status, error) {
             fadeAll(false);
@@ -768,6 +768,93 @@ function loadThumbnails() {
             var err = eval("(" + xhr.responseText + ")");
             console.log(err ? err.Message : error);
         }
+    });
+}
+
+function loadPrint() {
+    var data = { guid: documentGuid, password: password };
+    if (preloadPageCount != 0) {
+        $.ajax({
+            type: 'POST',
+            url: getApplicationPath('loadPrint'),
+            data: JSON.stringify(data),
+            global: false,
+            contentType: "application/json",
+            success: function (returnedData) {
+                if (returnedData.message != undefined) {
+                    console.log(returnedData.message);
+                    return;
+                }
+                if (getDocumentFormat(documentGuid).format == "Portable Document Format") {
+                    printPdf(returnedData.guid);
+                } else {
+                    var pagesHtml = "";
+                    $.each(returnedData.pages, function (index, elem) {
+                        pagesHtml = pagesHtml + '<div id="gd-page-' + elem.number + '" class="gd-page" style="min-width: ' +
+                            elem.width + 'px; min-height: ' + elem.height + 'px;">' +
+                            '<div class="gd-wrapper">' + elem.data + '</div>' +
+                            '</div>';
+                    });
+                    renderPrint(pagesHtml);
+                }
+            },
+            error: function (xhr, status, error) {
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err ? err.Message : error);
+            }
+        });
+    } else {
+        renderPrint();
+    }
+}
+
+function renderPrint(pages) {
+
+    // get current document content
+    var documentContainer = $("#gd-panzoom");
+    // force each document page to be printed as a new page
+    var cssPrint = '<style>' +
+        '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
+    // set correct page orientation if page were rotated
+    documentContainer.find(".gd-page").each(function (index, page) {
+        if ($(page).css("transform") != "none") {
+            cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
+        }
+    });
+    cssPrint = cssPrint + '</style>';
+    var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+    windowObject.focus();
+    windowObject.document.writeln(cssPrint);
+    // add current document into the print window
+    if (!pages && pages != "") {
+        pages = documentContainer[0].innerHTML;
+    }
+    // add current document into the print window
+    windowObject.document.writeln(pages);
+    windowObject.document.close();
+    windowObject.focus();
+    windowObject.print();
+    windowObject.close();
+
+}
+
+function printPdf(guid) {
+    var url = getApplicationPath(guid)
+    var windowObject = window.open(url, "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+
+    windowObject.focus();
+
+    $(windowObject).on('load', function () {
+        windowObject.document.close();
+        windowObject.focus();
+        windowObject.onafterprint = function (e) {
+            $(windowObject).off('mousemove', windowObject.onafterprint);
+            windowObject.close();
+        };
+        windowObject.print();
+        setTimeout(function () {
+            $(windowObject).on('mousemove', windowObject.onafterprint);
+        }, 1000);
     });
 }
 
@@ -864,7 +951,7 @@ function renderThumbnails(pageNumber, pageData) {
     var gd_page = $('#gd-page-' + pageNumber);
     var width = pageData.width;
     var height = pageData.height;
-    var zoomValue = gd_page[0].style.zoom;   
+    var zoomValue = gd_page[0].style.zoom;
     // fix thumbnails only when any of document pages is loaded.
     // this is required to fix issue with thumbnails resolution
     isPageLoaded($('#gd-page-1')).then(function (element) {
@@ -898,7 +985,7 @@ function renderThumbnails(pageNumber, pageData) {
                 height = 450;
                 zoomValue = 1;
             }
-			if (getDocumentFormat(documentGuid).format == "Microsoft PowerPoint") {
+            if (getDocumentFormat(documentGuid).format == "Microsoft PowerPoint") {
                 if (width > ($("#gd-thumbnails").width() * 2)) {
                     zoomValue = 0.7;
                 }
@@ -1633,32 +1720,12 @@ function uploadDocument(file, index, url) {
 /**
 * Print current document
 */
-function printDocument() {
+function printDocument(event) {
+    event.stopImmediatePropagation();
     if ($(this).find("li").length > 0) {
         return;
     }
-    // get current document content
-    var documentContainer = $("#gd-panzoom");
-    // force each document page to be printed as a new page
-    var cssPrint = '<style>' +
-        '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
-    // set correct page orientation if page were rotated
-    documentContainer.find(".gd-page").each(function (index, page) {
-        if ($(page).css("transform") != "none") {
-            cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
-        }
-    });
-    cssPrint = cssPrint + '</style>';
-    // open print dialog
-    var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
-    // add current document into the print window
-    windowObject.document.writeln(cssPrint);
-    // add current document into the print window
-    windowObject.document.writeln(documentContainer[0].innerHTML);
-    windowObject.document.close();
-    windowObject.focus();
-    windowObject.print();
-    windowObject.close();
+    loadPrint();
 }
 
 /**
@@ -1915,7 +1982,7 @@ GROUPDOCS.VIEWER PLUGIN
                 rewrite: true,
                 htmlMode: true,
                 saveRotateState: true,
-				enableRightClick: true
+                enableRightClick: true
             };
             options = $.extend(defaults, options);
 
@@ -1926,7 +1993,7 @@ GROUPDOCS.VIEWER PLUGIN
             htmlMode = options.htmlMode;
             thumbnails = options.thumbnails;
             saveRotateState = options.saveRotateState;
-			enableRightClick = options.enableRightClick;
+            enableRightClick = options.enableRightClick;
             // assembly html base
             this.append(getHtmlBase);
             this.append(getHtmlModalDialog);
@@ -2243,5 +2310,5 @@ CHECK IF MOBILE
 var isMobile = function () {
     return navigator.maxTouchPoints > 0 || //for chrome
         window.navigator.msMaxTouchPoints > 0 ||
-            'ontouchstart' in window // works on most browsers
+        'ontouchstart' in window // works on most browsers
 };

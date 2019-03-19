@@ -773,7 +773,7 @@ function loadThumbnails() {
 
 function loadPrint() {
     var data = { guid: documentGuid, password: password };
-    if (preloadPageCount != 0) {
+    if (preloadPageCount != 0 && document.location.pathname.indexOf("viewer") >= 0) {
         $.ajax({
             type: 'POST',
             url: getApplicationPath('loadPrint'),

@@ -857,7 +857,7 @@ function printPdf(guid) {
             windowObject.print();
             setTimeout(function () {
                 $(windowObject).on('mousemove', windowObject.onafterprint);
-            }, 1000);
+            }, 3000);
         });
     });   
 }

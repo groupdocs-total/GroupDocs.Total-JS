@@ -14,6 +14,7 @@
     <script type="text/javascript" src="packages/common/js/jquery.min.js"></script>
     <script type="text/javascript" src="packages/common/js/swiper.min.js"></script>
 	<script type="text/javascript" src="packages/common/js/es6-promise.auto.js"></script>
+	<script type="text/javascript" src="packages/viewer/js/viewer.js"></script>
     <script type="text/javascript" src="packages/comparison/js/comparison.js"></script>
 </head>
 <body>
@@ -23,10 +24,9 @@
     $('#element').comparison({
         applicationPath: 'http://' + host + ':8080/comparison/',
         download: true,
-        upload: true,
-        print: true,
+        upload: true,        
         rewrite: true,
-        preloadResultPageCount: 2,
+        preloadResultPageCount: 0,
         multiComparing: true
     });
 </script>

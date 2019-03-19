@@ -1,50 +1,13 @@
-.gd-comparison-toggle:checked + .gd-lbl-toggle + #gd-select-compare-files{
-  width: 16px;
-}
-
-.gd-comparison-toggle:checked + .gd-lbl-toggle {
-  left: 1px;
-  transition: left .25s ease-in-out;
-  transform: rotate(360deg) translateX(3px);
-}
-
-.gd-lbl-toggle::before {
-    content: ' ';
-    display: block;
-    border-top: 30px solid transparent;
-    border-bottom: 30px solid transparent;
-    border-left: 5px solid currentColor;
-}
-.gd-comparison-toggle {
-    display: none;
-    position: fixed;
-    top: 52%;
-    left: 289px;
-    height: 53px;
-    font-size: 25px;
-    z-index: 9999;
-}
-.gd-lbl-toggle {
-    color: #959da5;
-    top: 50%;
-    left: 289px;
-    cursor: pointer;
-    position: fixed;
-    transform: rotate(180deg) translateX(-3px);
-    z-index: 2;
-}
 .gd-comparison-bar-wrapper{
-    position: relative;
-    top: 50px;
-    left: 0px;
-    margin-right: 17px;
-}
-.gd-comparison-bar-wrapper.active{
-    width: 307px;
-    margin-right: 49px;
+    background-color: #E7E7E7;
+    display: flex;
+    flex-direction: row;
 }
 #gd-header-logo {
     background-image: url('../images/logo.png') !important;
+}
+#gd-add-multicompare {
+	float: right !important;
 }
 .gd-drag-n-drop-wrap-compare.hover {
     background: #ddd;
@@ -108,14 +71,7 @@
     color: #959da5;
 }
 #gd-select-compare-files {
-    width: 307px;
-    overflow: hidden;
-    position: fixed;
-    top: 50px;
-    background-color: #3e4e5a;
-    height: 95%;
-    overflow-y: auto;
-    z-index: 1;
+	display: inherit;
 }
 .gd-drag-n-drop-wrap-compare {
     margin-top: 0px;

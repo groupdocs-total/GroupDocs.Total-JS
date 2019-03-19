@@ -840,21 +840,38 @@ function renderPrint(pages) {
 
 function printPdf(guid) {
     var url = getApplicationPath(guid)
-    var windowObject = window.open(url, "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
-
-    windowObject.focus();
-
-    $(windowObject).on('load', function () {
-        windowObject.document.close();
+    urlExists(url, function (validUrl) {
+        if (!validUrl) {
+            url = url.replace("/viewer", "");  
+        }
+        var windowObject = window.open(url, "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
         windowObject.focus();
-        windowObject.onafterprint = function (e) {
-            $(windowObject).off('mousemove', windowObject.onafterprint);
-            windowObject.close();
-        };
-        windowObject.print();
-        setTimeout(function () {
-            $(windowObject).on('mousemove', windowObject.onafterprint);
-        }, 1000);
+
+        $(windowObject).on('load', function () {
+            windowObject.document.close();
+            windowObject.focus();
+            windowObject.onafterprint = function (e) {
+                $(windowObject).off('mousemove', windowObject.onafterprint);
+                windowObject.close();
+            };
+            windowObject.print();
+            setTimeout(function () {
+                $(windowObject).on('mousemove', windowObject.onafterprint);
+            }, 1000);
+        });
+    });   
+}
+
+function urlExists(url, callback) {
+    $.ajax({
+        type: 'HEAD',
+        url: url,
+        success: function () {
+            callback(true);
+        },
+        error: function () {
+            callback(false);
+        }
     });
 }
 

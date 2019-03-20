@@ -19,14 +19,10 @@
     var pointSvgSize = 25;
     var svgCircleRadius = 22;
 
-    var zoomCorrection = {
-        x: 0,
-        y: 0
-    };
+   
 	var markerWidth = 20;
     var canvas = null;
     var currentAnnotation = null;
-    var canvasTopOffset = null;
     var currentPrefix = "";
     var userMouseUp = ('ontouchend' in document.documentElement) ? 'touchend mouseup' : 'mouseup';
     var userMouseMove = ('ontouchmove' in document.documentElement) ? 'touchmove mousemove' : 'mousemove';
@@ -36,16 +32,8 @@
 	 */
     $.fn.drawSvgAnnotation = function (documentPage, prefix) {
         // get current data required to draw and positioning the annotation
-        canvas = documentPage;
-        zoomLevel = (typeof $(canvas).css("zoom") == "undefined") ? 1 : $(canvas).css("zoom");
-        currentAnnotation = annotation;
-        if (zoomLevel == "100%") {
-            zoomLevel = 1;
-        }
-        // get coordinates correction - this is required since the document page is zoomed
-        zoomCorrection.x = ($(canvas).offset().left * zoomLevel) - $(canvas).offset().left;
-        zoomCorrection.y = ($(canvas).offset().top * zoomLevel) - $(canvas).offset().top;
-        canvasTopOffset = $(canvas).offset().top * zoomLevel;
+        canvas = documentPage;        
+        currentAnnotation = annotation;   
         currentPrefix = prefix;
     }
 
@@ -60,8 +48,8 @@
         drawPoint: function (event) {
             mouse = getMousePosition(event);
             // get current x and y coordinates
-            var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
-            var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
+            var x = mouse.x;
+            var y = mouse.y;
             // set annotation data
             currentAnnotation.id = annotationsCounter;
             currentAnnotation.left = x;
@@ -93,8 +81,8 @@
         drawPolyline: function (event) {
             mouse = getMousePosition(event);
             // get x and y coordinates
-            var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
-            var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
+            var x = mouse.x;
+            var y = mouse.y;
             currentAnnotation.id = annotationsCounter;
             // set polyline draw options
             var option = {
@@ -182,8 +170,8 @@
         drawArrow: function (event) {
             mouse = getMousePosition(event);
             // get coordinates
-            var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
-            var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;
+            var x = mouse.x + markerWidth;
+            var y = mouse.y + markerWidth;
             currentAnnotation.id = annotationsCounter;
             // set draw options
             var option = {
@@ -202,8 +190,8 @@
                 if (path) {
                     // get current coordinates after mouse move
                     mouse = getMousePosition(event);
-                    var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
-                    var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;
+                    var endX = mouse.x + markerWidth;
+                    var endY = mouse.y + markerWidth;
 					var coordinates = validateCoordinates(endX, endY, canvas);
 					endX = coordinates.x;
 					endY = coordinates.y;
@@ -250,8 +238,8 @@
         drawDistance: function (event) {
             // get coordinates
             mouse = getMousePosition(event);
-            var x = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2);
-            var y = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2);
+            var x = mouse.x;
+            var y = mouse.y;
             currentAnnotation.id = annotationsCounter;
             // set draw options
             var option = {
@@ -278,8 +266,8 @@
                 if (path) {
                     // get end coordinates
                     mouse = getMousePosition(event);
-                    var endX = mouse.x - $(canvas).offset().left - (parseInt($(canvas).css("margin-left")) * 2) + markerWidth;
-                    var endY = mouse.y - canvasTopOffset - (parseInt($(canvas).css("margin-top")) * 2) + markerWidth;					
+                    var endX = mouse.x + markerWidth;
+                    var endY = mouse.y + markerWidth;					
 					var coordinates = validateCoordinates(endX, endY, canvas);
 					endX = coordinates.x;
 					endY = coordinates.y;
@@ -537,8 +525,8 @@
             }
 
             arr = [
-                [p.x - zoomCorrection.x, p.y - zoomCorrection.y],
-                [p.x - zoomCorrection.x, p.y - zoomCorrection.y]
+                [p.x, p.y],
+                [p.x, p.y]
             ];
 
             this.el.plot(arr);
@@ -554,8 +542,8 @@
                 var x = (typeof e.clientX != "undefined") ? e.clientX : e.changedTouches[0].clientX;
                 var y = (typeof e.clientY != "undefined") ? e.clientY : e.changedTouches[0].clientY;
                 var p = this.transformPoint(x, y);
-                p.x = p.x - zoomCorrection.x;
-                p.y = p.y - zoomCorrection.y;
+                p.x = p.x;
+                p.y = p.y;
                 arr.push(this.snapToGrid([p.x, p.y]));
             }
 
@@ -572,8 +560,8 @@
                 // Add the new Point to the point-array
                 var p = this.transformPoint(x, y),
                     arr = this.el.array().valueOf();
-                p.x = p.x - zoomCorrection.x;
-                p.y = p.y - zoomCorrection.y;
+                p.x = p.x;
+                p.y = p.y;
                 arr.push(this.snapToGrid([p.x, p.y]));
 
                 this.el.plot(arr);

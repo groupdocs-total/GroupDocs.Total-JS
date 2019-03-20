@@ -354,19 +354,49 @@ FUNCTIONS
  * @param {Object} event - click event
  */
 function getMousePosition(event) {
+    console.log(event.target.nodeName);
     var mouse = {
         x: 0,
         y: 0
     };
-    var ev = event || window.event; //Moz || IE
-    if (ev.pageX || ev.touches[0].pageX) { //Moz
-        mouse.x = (typeof ev.pageX != "undefined" && ev.pageX != 0) ? ev.pageX : ev.touches[0].pageX;
-        mouse.y = (typeof ev.pageY != "undefined" && ev.pageY != 0) ? ev.pageY : ev.touches[0].pageY;
-    } else if (ev.clientX) { //IE
-        mouse.x = ev.clientX + document.body.scrollLeft;
-        mouse.y = ev.clientY + document.body.scrollTop;
+    if (event.target.nodeName != "DIV") {
+        console.log(event.target);
+        var ev = event || window.event; //Moz || IE
+        var offsetX = ev.offsetX || ev.touches[0].pageX || ev.clientX;
+        var offsetY = ev.offsetY || ev.touches[0].pageY || ev.clientY;
+
+        mouse.x = (typeof offsetX != "undefined") ? offsetX : ev.touches[0].pageX;
+        mouse.y = (typeof offsetY != "undefined") ? offsetY : ev.touches[0].pageY;
     }
+  
     return mouse;
+}
+
+/**
+* Zoom document
+* @param {int} zoom_val - zoom value from 0 to 100
+*/
+function setZoomValue(zoom_val) {
+    // adapt value for css
+    // display zoom value
+    setNavigationZoomValues(zoom_val + "%");
+    zoom_val = zoom_val / 100;       
+    // set css zoom values
+    var style = [
+        'transform-origin: top',
+        'transform: scale(' + zoom_val + ')'
+    ].join(';');
+    // check if current browser is IE - if browser is IE we need to add zoom styles to each document page instead of gd-panzoom element
+    var ua = window.navigator.userAgent;
+    var is_ie = /MSIE|Trident/.test(ua);
+
+    if (is_ie) {
+        $.each($('#gd-panzoom').find(".gd-page"), function (index, page) {
+            $(page).attr('style', style);
+        });
+    } else {
+        $('#gd-panzoom').attr('style', style);
+    }
 }
 
 /**
@@ -1090,7 +1120,7 @@ function addSvgContainer(){
  * Append context menu for annotation
  */
 function getContextMenu(annotationId, editable){
-	return '<div class="gd-context-menu hidden">' +
+	return '<div class="gd-context-menu">' +
 				'<i class="fas fa-arrows-alt fa-sm"></i>'+
                 (editable ? '<i class="fas fa-i-cursor fa-sm gd-edit-text-field"></i>' : '') +
 				'<i class="fas fa-trash-alt fa-sm gd-delete-comment" data-id="' + annotationId + '"></i>'+
@@ -1226,7 +1256,7 @@ GROUPDOCS.ANNOTATION PLUGIN
                     defaultDocument: options.defaultDocument,
                     htmlMode: false,
                     preloadPageCount: options.preloadPageCount,
-                    zoom : false,
+                    zoom : true,
                     pageSelector: options.pageSelector,
                     search: false,
                     thumbnails: false,

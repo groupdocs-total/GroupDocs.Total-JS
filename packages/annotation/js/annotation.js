@@ -354,14 +354,12 @@ FUNCTIONS
  * Get current mouse coordinates
  * @param {Object} event - click event
  */
-function getMousePosition(event) {
-    console.log(event.target.nodeName);
+function getMousePosition(event) {    
     var mouse = {
         x: 0,
         y: 0
     };
-    if (event.target.nodeName != "DIV") {
-        console.log(event.target);
+    if (event.target.nodeName != "DIV") {        
         var ev = event || window.event; //Moz || IE
         var offsetX = ev.offsetX || ev.touches[0].pageX || ev.clientX;
         var offsetY = ev.offsetY || ev.touches[0].pageY || ev.clientY;

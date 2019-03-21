@@ -1364,7 +1364,7 @@ function setZoomValue(zoom_val) {
     var style = [
         'zoom: ' + zoom_val_webkit,
         'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
-        '-moz-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-moz-transform: scale(' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'
@@ -1372,7 +1372,6 @@ function setZoomValue(zoom_val) {
     // check if current browser is IE - if browser is IE we need to add zoom styles to each document page instead of gd-panzoom element
     var ua = window.navigator.userAgent;
     var is_ie = /MSIE|Trident/.test(ua);
-
     if (is_ie) {
         $.each($('#gd-panzoom').find(".gd-page"), function (index, page) {
             $(page).attr('style', style);

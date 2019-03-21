@@ -367,8 +367,10 @@ function getMousePosition(event) {
         mouse.x = (typeof offsetX != "undefined") ? offsetX : ev.touches[0].pageX;
         mouse.y = (typeof offsetY != "undefined") ? offsetY : ev.touches[0].pageY;
     }
-    mouse.x = mouse.x / (getZoomValue() / 100);
-    mouse.y = mouse.y / (getZoomValue() / 100);
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') < 0) {    
+        mouse.x = mouse.x / (getZoomValue() / 100);
+        mouse.y = mouse.y / (getZoomValue() / 100);
+    }
     return mouse;
 }
 

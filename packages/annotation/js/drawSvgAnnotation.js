@@ -521,11 +521,22 @@
                     y: e.touches[0].clientY / (getZoomValue() / 100)
                 };
             } else {
-                var x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.touches[0].clientX / (getZoomValue() / 100);
-                var y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.touches[0].clientY / (getZoomValue() / 100);
-                p = this.transformPoint(x, y);
+                var x = 0;
+                var y = 0;
+                if (navigator.userAgent.toLowerCase().indexOf('firefox') < 0) {
+                    x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.touches[0].clientX / (getZoomValue() / 100);
+                    y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.touches[0].clientY / (getZoomValue() / 100);     
+                    p = this.transformPoint(x, y);
+                } else {
+                    x = this.startPoint.x / (getZoomValue() / 100);
+                    y = this.startPoint.y / (getZoomValue() / 100);                   
+                    p = {
+                        x: x,
+                        y: y
+                    };
+                }               
             }
-
+           
             arr = [
                 [p.x, p.y],
                 [p.x, p.y]
@@ -540,9 +551,16 @@
             arr.pop();
 
             if (e) {
+                var x = 0;
+                var y = 0;
                 // fix for mobiles
-                var x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.changedTouches[0].clientX / (getZoomValue() / 100);
-                var y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.changedTouches[0].clientY / (getZoomValue() / 100);              
+                if (navigator.userAgent.toLowerCase().indexOf('firefox') < 0) {
+                    x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.changedTouches[0].clientX / (getZoomValue() / 100);
+                    y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.changedTouches[0].clientY / (getZoomValue() / 100);
+                } else {
+                    x = (typeof e.clientX != "undefined") ? e.clientX : e.changedTouches[0].clientX;
+                    y = (typeof e.clientY != "undefined") ? e.clientY : e.changedTouches[0].clientY;
+                }
                 var p = this.transformPoint(x, y);
                 p.x = p.x;
                 p.y = p.y;
@@ -557,8 +575,13 @@
 
             if (this.el.type.indexOf('poly') > -1) {
                 // fix for mobiles
-                var x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.touches[0].clientX / (getZoomValue() / 100);
-                var y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.touches[0].clientY / (getZoomValue() / 100);
+                if (navigator.userAgent.toLowerCase().indexOf('firefox') < 0) {
+                    var x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.touches[0].clientX / (getZoomValue() / 100);
+                    var y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.touches[0].clientY / (getZoomValue() / 100);
+                } else {
+                    var x = (typeof e.clientX != "undefined") ? e.clientX : e.touches[0].clientX;
+                    var y = (typeof e.clientY != "undefined") ? e.clientY : e.touches[0].clientY;
+                }
                 // Add the new Point to the point-array               
                 var p = this.transformPoint(x, y),
                     arr = this.el.array().valueOf();

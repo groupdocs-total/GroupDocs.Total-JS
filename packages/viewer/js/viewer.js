@@ -1354,17 +1354,29 @@ function clearSearch() {
 * Zoom document
 * @param {int} zoom_val - zoom value from 0 to 100
 */
-function setZoomValue(zoom_val) {
+function setZoomValue(zoom_val) {    
     // adapt value for css
     var zoom_val_non_webkit = zoom_val / 100;
-    var zoom_val_webkit = Math.round(zoom_val) + '%';
+    var zoom_val_webkit = Math.round(zoom_val) + '%';    
     // display zoom value
     setNavigationZoomValues(zoom_val_webkit);
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        if (zoom_val > 100) {
+            $(".gd-page").each(function (index, page) {
+                (!$(page).hasClass("gd-page-zoomed")) ? $(page).addClass("gd-page-zoomed") : "";
+            });
+        } else {
+            $(".gd-page").each(function (index, page) {
+                $(page).removeClass("gd-page-zoomed");
+            });
+        }
+    }   
     // set css zoom values
     var style = [
         'zoom: ' + zoom_val_webkit,
         'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
-        '-moz-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-moz-transform: scale(' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-moz-transform-origin: top;',
         '-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'
@@ -1372,7 +1384,6 @@ function setZoomValue(zoom_val) {
     // check if current browser is IE - if browser is IE we need to add zoom styles to each document page instead of gd-panzoom element
     var ua = window.navigator.userAgent;
     var is_ie = /MSIE|Trident/.test(ua);
-
     if (is_ie) {
         $.each($('#gd-panzoom').find(".gd-page"), function (index, page) {
             $(page).attr('style', style);
@@ -1849,7 +1860,7 @@ function setZoomLevel(zoomString) {
             // get scale ratio
             var scale = (pageWidth / screenWidth) * 100;
             // set values
-            zoomValue = 200 - scale;
+            zoomValue = 200 - scale;                     
             break;
         case 'Fit Height':
             // get page height

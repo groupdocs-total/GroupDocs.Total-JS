@@ -319,6 +319,11 @@ PAGES
     box-shadow: 0px 4px 12px -4px rgba(0,0,0,0.38);
     transition: all 0.3s;
 }
+/* This class used to fix pages positioning when zoomed if FF */
+.gd-page-zoomed {
+	display: flex;
+	margin: auto auto 10px auto;	
+}
 .gd-page .gd-wrapper {
     padding: 0;
     width: inherit;

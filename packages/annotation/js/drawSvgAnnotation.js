@@ -517,11 +517,13 @@
             var p = null;
             if (isNaN(this.startPoint.x) && isNaN(this.startPoint.y)) {
                 p = {
-                    x: e.touches[0].clientX,
-                    y: e.touches[0].clientY
+                    x: e.touches[0].clientX / (getZoomValue() / 100),
+                    y: e.touches[0].clientY / (getZoomValue() / 100)
                 };
             } else {
-                p = this.startPoint;
+                var x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.touches[0].clientX / (getZoomValue() / 100);
+                var y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.touches[0].clientY / (getZoomValue() / 100);
+                p = this.transformPoint(x, y);
             }
 
             arr = [
@@ -539,8 +541,8 @@
 
             if (e) {
                 // fix for mobiles
-                var x = (typeof e.clientX != "undefined") ? e.clientX : e.changedTouches[0].clientX;
-                var y = (typeof e.clientY != "undefined") ? e.clientY : e.changedTouches[0].clientY;
+                var x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.changedTouches[0].clientX / (getZoomValue() / 100);
+                var y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.changedTouches[0].clientY / (getZoomValue() / 100);              
                 var p = this.transformPoint(x, y);
                 p.x = p.x;
                 p.y = p.y;
@@ -555,9 +557,9 @@
 
             if (this.el.type.indexOf('poly') > -1) {
                 // fix for mobiles
-                var x = (typeof e.clientX != "undefined") ? e.clientX : e.touches[0].clientX;
-                var y = (typeof e.clientY != "undefined") ? e.clientY : e.touches[0].clientY;
-                // Add the new Point to the point-array
+                var x = (typeof e.clientX != "undefined") ? e.clientX / (getZoomValue() / 100) : e.touches[0].clientX / (getZoomValue() / 100);
+                var y = (typeof e.clientY != "undefined") ? e.clientY / (getZoomValue() / 100) : e.touches[0].clientY / (getZoomValue() / 100);
+                // Add the new Point to the point-array               
                 var p = this.transformPoint(x, y),
                     arr = this.el.array().valueOf();
                 p.x = p.x;

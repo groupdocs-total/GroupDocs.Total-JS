@@ -32,13 +32,14 @@ var annotationsList = [];
 var annotationsCounter = 0;
 var rows = null;
 var svgList = null;
-var userMouseClick = ('ontouchstart' in document.documentElement)  ? 'touch click' : 'click';
-var userMouseDown = ('ontouchstart' in document.documentElement)  ? 'mousedown touchstart' : 'mousedown';
+var fitWidth = false;
+var userMouseClick = ('ontouchstart' in document.documentElement) ? 'touch click' : 'click';
+var userMouseDown = ('ontouchstart' in document.documentElement) ? 'mousedown touchstart' : 'mousedown';
 
-$( document ).ajaxStart(function() {
+$(document).ajaxStart(function () {
     fadeAll(true);
 });
-$( document ).ajaxComplete(function( event, request, settings ) {
+$(document).ajaxComplete(function (event, request, settings) {
     fadeAll(false);
 });
 $(document).ready(function () {
@@ -65,7 +66,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('#gd-btn-download').off(userMouseClick);
 
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
     // Disable default print event
     //////////////////////////////////////////////////
     $('#gd-btn-print').off(userMouseClick);
@@ -82,11 +83,11 @@ $(document).ready(function () {
         // set text rows data to null
         rows = null;
         // append svg element to each page, this is required to draw svg based annotations
-        addSvgContainer();		
-        if(isMobile()){
+        addSvgContainer();
+        if (isMobile() || fitWidth) {
             setZoomLevel("Fit Width");
         }
-		hideNotSupportedAnnotations(documentData.supportedAnnotations);
+        hideNotSupportedAnnotations(documentData.supportedAnnotations);
         //check if document contains annotations
         if ($(this).parent().parent().attr("id").search("thumbnails") == -1) {
             var pages = documentData.pages;
@@ -103,7 +104,7 @@ $(document).ready(function () {
             }
         }
     });
-	
+
     //////////////////////////////////////////////////
     // Fix for tooltips of the dropdowns
     //////////////////////////////////////////////////
@@ -121,7 +122,7 @@ $(document).ready(function () {
     $('.gd-modal-body').on(userMouseClick, '.gd-filetree-name', function (e) {
         annotationsList = [];
         svgList = null;
-		if (disable_click_flag) {
+        if (disable_click_flag) {
             // make annotations list empty for the new document
             clearComments();
             var isDir = $(this).parent().find('.fa-folder').hasClass('fa-folder');
@@ -151,20 +152,20 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('.gd-tools-container').on(userMouseClick, function (e) {
         e.preventDefault();
-		e.stopPropagation();
+        e.stopPropagation();
         $('.gd-tool-field').removeClass('active');
         annotationType = null;
         // TODO : cancel on toolbar click
     });
 
-    $('.gd-tool-field').on(userMouseClick, function(e){
+    $('.gd-tool-field').on(userMouseClick, function (e) {
         e.preventDefault();
-		e.stopPropagation();
+        e.stopPropagation();
         var tool = $(e.target);
 
         if (tool.hasClass("active")) {
             disableDrawingModeFor(tool);
-        }else{
+        } else {
             enableDrawingModeFor(tool);
         }
     });
@@ -174,9 +175,9 @@ $(document).ready(function () {
     //////////////////////////////////////////////////	
     $('#gd-panzoom').on(userMouseDown, 'svg', function (e) {
         globalBlur();
-        if($("#gd-panzoom").find("svg").length == 0 && svgList == null){
-			addSvgContainer();
-	    }		
+        if ($("#gd-panzoom").find("svg").length == 0 && svgList == null) {
+            addSvgContainer();
+        }
         if ($(e.target).prop("tagName") == "IMG" || $(e.target).prop("tagName") == "svg") {
             // initiate annotation object if null
             if (annotation == null) {
@@ -201,9 +202,9 @@ $(document).ready(function () {
             // add annotation			
             switch (annotationType) {
                 case "text":
-                    ++annotationsCounter;                    
-					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "text", e);
-					annotation = null;                   
+                    ++annotationsCounter;
+                    $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "text", e);
+                    annotation = null;
                     break;
                 case "area":
                     ++annotationsCounter;
@@ -217,9 +218,9 @@ $(document).ready(function () {
                     annotation = null;
                     break;
                 case "textStrikeout":
-                    ++annotationsCounter;                   
-					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textStrikeout", e);
-					annotation = null;                  
+                    ++annotationsCounter;
+                    $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textStrikeout", e);
+                    annotation = null;
                     break;
                 case "polyline":
                     ++annotationsCounter;
@@ -240,9 +241,9 @@ $(document).ready(function () {
                     annotation = null;
                     break;
                 case "textReplacement":
-                    ++annotationsCounter;                    
-					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textReplacement", e);
-					annotation = null;                   
+                    ++annotationsCounter;
+                    $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textReplacement", e);
+                    annotation = null;
                     break;
                 case "arrow":
                     ++annotationsCounter;
@@ -251,9 +252,9 @@ $(document).ready(function () {
                     annotation = null;
                     break;
                 case "textRedaction":
-                    ++annotationsCounter;                   
-					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textRedaction", e);
-					annotation = null;                    
+                    ++annotationsCounter;
+                    $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textRedaction", e);
+                    annotation = null;
                     break;
                 case "resourcesRedaction":
                     ++annotationsCounter;
@@ -261,9 +262,9 @@ $(document).ready(function () {
                     annotation = null;
                     break;
                 case "textUnderline":
-                    ++annotationsCounter;                    
-					$.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textUnderline", e);
-					annotation = null;                    
+                    ++annotationsCounter;
+                    $.fn.drawTextAnnotation($(e.target).parent()[0], annotationsList, annotation, annotationsCounter, "textUnderline", e);
+                    annotation = null;
                     break;
                 case "distance":
                     ++annotationsCounter;
@@ -287,8 +288,8 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('#gd-panzoom').on(userMouseClick, '.gd-delete-comment', function (e) {
         //e.stopPropagation();
-		deleteAnnotation(e);
-		clearComments();
+        deleteAnnotation(e);
+        clearComments();
     });
 
     //////////////////////////////////////////////////
@@ -297,7 +298,7 @@ $(document).ready(function () {
     $('.gd-annotations-comments-header div.close').click(function () {
         closeCommentsPanel();
     });
-    $('.gd-add-comment-action').click(function(){
+    $('.gd-add-comment-action').click(function () {
         openCommentForm();
     });
     $('.gd-comments-cancel-action').click(function () {
@@ -316,7 +317,7 @@ $(document).ready(function () {
                 var annotationToAddComments = $.grep(annotationsList, function (obj) { return obj.id === annotationId; })[0];
                 addComment(annotationToAddComments);
                 commentsDrawer.data('id', annotationId);
-                if(commentsDrawer.data('id')){
+                if (commentsDrawer.data('id')) {
                     openCommentsPanel()
                 }
             }
@@ -333,12 +334,12 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Comment form submit event
     //////////////////////////////////////////////////
-	$('#gd-reply-form').submit(saveReply);
+    $('#gd-reply-form').submit(saveReply);
 
-	//////////////////////////////////////////////////
+    //////////////////////////////////////////////////
     // Print event
     //////////////////////////////////////////////////
-	 $('#gd-btn-print-value > li').on(userMouseClick, function (e) {
+    $('#gd-btn-print-value > li').on(userMouseClick, function (e) {
         printAnnotated($(this));
     });
 });
@@ -368,35 +369,9 @@ function getMousePosition(event) {
         mouse.x = (typeof offsetX != "undefined") ? offsetX : ev.touches[0].pageX;
         mouse.y = (typeof offsetY != "undefined") ? offsetY : ev.touches[0].pageY;
     }
-  
+    mouse.x = mouse.x / (getZoomValue() / 100);
+    mouse.y = mouse.y / (getZoomValue() / 100);
     return mouse;
-}
-
-/**
-* Zoom document
-* @param {int} zoom_val - zoom value from 0 to 100
-*/
-function setZoomValue(zoom_val) {
-    // adapt value for css
-    // display zoom value
-    setNavigationZoomValues(zoom_val + "%");
-    zoom_val = zoom_val / 100;       
-    // set css zoom values
-    var style = [
-        'transform-origin: top',
-        'transform: scale(' + zoom_val + ')'
-    ].join(';');
-    // check if current browser is IE - if browser is IE we need to add zoom styles to each document page instead of gd-panzoom element
-    var ua = window.navigator.userAgent;
-    var is_ie = /MSIE|Trident/.test(ua);
-
-    if (is_ie) {
-        $.each($('#gd-panzoom').find(".gd-page"), function (index, page) {
-            $(page).attr('style', style);
-        });
-    } else {
-        $('#gd-panzoom').attr('style', style);
-    }
 }
 
 /**
@@ -406,8 +381,8 @@ function annotate(print) {
     // set current document guid - used to check if the other document were opened
     var url = getApplicationPath('annotate');
     var annotationsToAdd = [];
-    $.each(annotationsList, function (index, annotationToAdd) {        
-	   annotationsToAdd.push(annotationToAdd);        
+    $.each(annotationsList, function (index, annotationToAdd) {
+        annotationsToAdd.push(annotationToAdd);
     });
     // current document guid is taken from the viewer.js globals
     var data = {
@@ -415,18 +390,18 @@ function annotate(print) {
         password: password,
         annotationsData: annotationsToAdd,
         documentType: getDocumentFormat(documentGuid).format,
-		print: (typeof print != "undefined") ? true : false
+        print: (typeof print != "undefined") ? true : false
     };
-	if(print){
-		// force each document page to be printed as a new page
-		var cssPrint = '<style>' +
-				'.gd-page { display: block !important; height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}'+
-		'</style>';
-		// open print dialog
-		var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
-		// add current document into the print window
-		windowObject.document.writeln(cssPrint);
-	}
+    if (print) {
+        // force each document page to be printed as a new page
+        var cssPrint = '<style>' +
+            '.gd-page { display: block !important; height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}' +
+            '</style>';
+        // open print dialog
+        var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+        // add current document into the print window
+        windowObject.document.writeln(cssPrint);
+    }
     // annotate the document
     $.ajax({
         type: 'POST',
@@ -455,27 +430,27 @@ function annotate(print) {
                 '    <div class="sa-fix"></div>\n' +
                 '  </div>\n' +
                 '</div></div>';
-			if(print){
-				var printHtml = "";
-				for(i = 0; i < returnedData.pages.length; i++){
-					printHtml = printHtml + '<div class="gd-page print"><image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + returnedData.pages[i].data + '" alt></image></div>';
-				}
-				windowObject.document.writeln(printHtml);
+            if (print) {
+                var printHtml = "";
+                for (i = 0; i < returnedData.pages.length; i++) {
+                    printHtml = printHtml + '<div class="gd-page print"><image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + returnedData.pages[i].data + '" alt></image></div>';
+                }
+                windowObject.document.writeln(printHtml);
 
-				$(windowObject.document).ready(function() {
-					windowObject.document.close();
-					windowObject.focus();
-					windowObject.print();
-					windowObject.close();
-				});
+                $(windowObject.document).ready(function () {
+                    windowObject.document.close();
+                    windowObject.focus();
+                    windowObject.print();
+                    windowObject.close();
+                });
 
-			} else {
-				toggleSuccessModalDialog(true, 'Annotation', result);
-				$('.gd-modal-close-action').on('click', function () {
-					toggleSuccessModalDialog(false, 'Annotation', result)
-					$('.gd-modal-close-action').off('click').click(closeModal);
-				});
-			}
+            } else {
+                toggleSuccessModalDialog(true, 'Annotation', result);
+                $('.gd-modal-close-action').on('click', function () {
+                    toggleSuccessModalDialog(false, 'Annotation', result)
+                    $('.gd-modal-close-action').off('click').click(closeModal);
+                });
+            }
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -490,7 +465,7 @@ function annotate(print) {
  * @param {Object} event - delete annotation button click event data
  */
 function deleteAnnotation(event) {
-    if (!confirm("Do you want to delete?")){
+    if (!confirm("Do you want to delete?")) {
         return false;
     }
     // get annotation id
@@ -517,11 +492,11 @@ function deleteAnnotation(event) {
                 });
             }
             $(element).remove();
-			$.each($(".gd-bounding-box"), function(index, boundingBox){
-				if($(boundingBox).data("id").search(id) != -1){
-					$(boundingBox).remove();
-				}
-			});
+            $.each($(".gd-bounding-box"), function (index, boundingBox) {
+                if ($(boundingBox).data("id").search(id) != -1) {
+                    $(boundingBox).remove();
+                }
+            });
         } else {
             return true;
         }
@@ -529,85 +504,85 @@ function deleteAnnotation(event) {
     $("#gd-save-comments").addClass("gd-save-button-disabled");
 }
 
-function clearComments(){
+function clearComments() {
     $(".gd-annotations-comments-body").html("");
 }
 
-function isCommentsPanelOpened(){
+function isCommentsPanelOpened() {
     return $(".gd-annotations-comments-wrapper").hasClass("active");
 }
 
-function openCommentsPanel(){
+function openCommentsPanel() {
     var commentsDrawer = $(".gd-annotations-comments-wrapper");
     commentsDrawer.addClass('active');
 }
 
-function closeCommentsPanel(){
+function closeCommentsPanel() {
     var commentsDrawer = $(".gd-annotations-comments-wrapper");
     commentsDrawer.removeClass('active');
 }
 
-function openCommentForm(){
+function openCommentForm() {
     $('.gd-annotations-comments-form').slideDown(100);
     $('.gd-comments-nonideal-state').hide();
 }
 
-function closeCommentForm(){
+function closeCommentForm() {
     var annotationId = parseInt($('.gd-annotations-comments-wrapper').data('id'));
     var annotationToAddComments = $.grep(annotationsList, function (obj) { return obj.id === annotationId; })[0];
-    $('.gd-annotations-comments-form').slideUp(100,function(){
-        if(annotationToAddComments.comments.length === 0){
+    $('.gd-annotations-comments-form').slideUp(100, function () {
+        if (annotationToAddComments.comments.length === 0) {
             $('.gd-comments-nonideal-state').show();
         }
     });
 }
 
-function resetCommentForm(){
+function resetCommentForm() {
     $('#gd-reply-form').get(0).reset();
 }
 
-function enableDrawingModeFor(tool){
+function enableDrawingModeFor(tool) {
     $('.gd-tool-field').removeClass('active');
     tool.addClass("active");
     annotationType = tool.data("type");
     $('#gd-panzoom').addClass("drawing");
 }
 
-function disableDrawingModeFor(tool){
+function disableDrawingModeFor(tool) {
     tool.removeClass("active");
     annotationType = null;
     $('#gd-panzoom').removeClass("drawing");
 }
-function getRectangleFromPath(path){
+function getRectangleFromPath(path) {
     var leftTop = {
-        x : Number.MAX_VALUE,
-        y : Number.MAX_VALUE
+        x: Number.MAX_VALUE,
+        y: Number.MAX_VALUE
     };
     var rightBottom = {
-        x : Number.MIN_VALUE,
-        y : Number.MIN_VALUE
+        x: Number.MIN_VALUE,
+        y: Number.MIN_VALUE
     };
-    for(var idx in path){
+    for (var idx in path) {
         leftTop.x = (path[idx].x < leftTop.x) ? path[idx].x : leftTop.x;
         leftTop.y = (path[idx].y < leftTop.y) ? path[idx].y : leftTop.y;
         rightBottom.x = (path[idx].x >= rightBottom.x) ? path[idx].x : rightBottom.x;
         rightBottom.y = (path[idx].y >= rightBottom.y) ? path[idx].y : rightBottom.y;
     }
     return {
-        left  : leftTop.x,
-        top   : leftTop.y,
-        width : rightBottom.x - leftTop.x,
+        left: leftTop.x,
+        top: leftTop.y,
+        width: rightBottom.x - leftTop.x,
         height: rightBottom.y - leftTop.y
     }
 }
-function convertPairsToPoints(spaceSeparatedPoints){
+function convertPairsToPoints(spaceSeparatedPoints) {
     var pairs = spaceSeparatedPoints.split(' ');
     var points = [];
-    for(var idx in pairs){
+    for (var idx in pairs) {
         var pair = pairs[idx].split(',');
         points.push({
-            x : parseInt(pair[0]),
-            y : parseInt(pair[1])
+            x: parseInt(pair[0]),
+            y: parseInt(pair[1])
         })
     }
     return points;
@@ -627,7 +602,7 @@ function addComment(currentAnnotation) {
             commentHtml.fadeIn(500);
             $('.gd-comments-nonideal-state').hide();
         });
-    } else {        
+    } else {
         currentAnnotation.comments = [];
         $('.gd-comments-nonideal-state').show();
     }
@@ -665,18 +640,18 @@ function toggleSuccessModalDialog(open, title, content) {
         $(".gd-modal-body").html('');
     }
 }
-function toggleContextFor(element){
+function toggleContextFor(element) {
     $('.gd-context-menu').hide();
-    $('.gd-bounding-box').css('z-index',9);
+    $('.gd-bounding-box').css('z-index', 9);
     $('.ui-resizable-handle').hide();
     $('.gd-bounding-box.gd-active-annotation').removeClass('gd-active-annotation');
     $(element).find('.gd-context-menu').show();
-    $(element).css('z-index',99999);
+    $(element).css('z-index', 99999);
     $(element).closest('.gd-bounding-box').addClass('gd-active-annotation');
     $(element).find('.ui-resizable-handle').show();
 }
 
-function globalBlur(){
+function globalBlur() {
     $('.ui-resizable-handle').hide();
     $('.gd-bounding-box.gd-active-annotation').removeClass('gd-active-annotation');
     $('.gd-context-menu').hide();
@@ -692,14 +667,14 @@ function makeResizable(currentAnnotation, html) {
 
     toggleContextFor(element);
     $('.gd-context-menu').mousedown(function (e) {
-        if(!$(e.target).hasClass('fa-arrows-alt')){
+        if (!$(e.target).hasClass('fa-arrows-alt')) {
             e.stopPropagation();
         }
     });
     disableDrawingModeFor($('.gd-tool-field.active'));
     $(element).mousedown(function (e) {
         toggleContextFor(element);
-        if(isCommentsPanelOpened() && currentAnnotation.id !== parseInt($(".gd-annotations-comments-wrapper").data('id'))){
+        if (isCommentsPanelOpened() && currentAnnotation.id !== parseInt($(".gd-annotations-comments-wrapper").data('id'))) {
             closeCommentForm();
             closeCommentsPanel();
         }
@@ -711,11 +686,11 @@ function makeResizable(currentAnnotation, html) {
     $(element).draggable({
         containment: "#gd-page-" + currentAnnotation.pageNumber,
         stop: function (event, image) {
-            if (['text','textStrikeout','textUnderline'].indexOf(annotationType) >= 0) {               
+            if (['text', 'textStrikeout', 'textUnderline'].indexOf(annotationType) >= 0) {
                 currentAnnotation.left = Math.ceil(image.position.left);
                 currentAnnotation.top = Math.ceil(image.position.top);
                 currentAnnotation.height = image.helper[0].clientHeight;
-            } else if(['point','polyline','arrow','distance'].indexOf(annotationType) >= 0) {
+            } else if (['point', 'polyline', 'arrow', 'distance'].indexOf(annotationType) >= 0) {
                 switch (annotationType) {
                     case "point":
                         currentAnnotation.left = $("#" + $(image.helper[0]).data("id")).attr("cx");
@@ -731,7 +706,7 @@ function makeResizable(currentAnnotation, html) {
                         currentAnnotation.svgPath = stopMoveArrow(image);
                         break;
                 }
-            }else {
+            } else {
                 currentAnnotation.left = Math.ceil(image.position.left);
                 currentAnnotation.top = Math.ceil(image.position.top);
             }
@@ -794,34 +769,34 @@ function makeResizable(currentAnnotation, html) {
  * Set updated SVG path coordinates when arrow annotation move is finish
  * @param {Object} image - current arrow object
  */
-function stopMoveArrow(image){
-	var svgPath = "M";	
-	$.each($("#" + $(image.helper[0]).data("id")).attr("d").split(" "), function (index, point) {
-		svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " ";		
-	});	
-	return svgPath;							
+function stopMoveArrow(image) {
+    var svgPath = "M";
+    $.each($("#" + $(image.helper[0]).data("id")).attr("d").split(" "), function (index, point) {
+        svgPath = svgPath + parseInt(point.split(",")[0].replace(/[^\d.]/g, '')).toFixed(0) + "," + parseInt(point.split(",")[1].replace(/[^\d.]/g, '')).toFixed(0) + " ";
+    });
+    return svgPath;
 }
 
 /**
  * Set updated SVG path coordinates when polyline annotation move is finish
  * @param {Object} image - current polyline object
  */
-function stopMovePolyline(image){
-	var svgPath = "M";
-	var previousX = 0;
-	var previousY = 0;
-	$.each($("#" + $(image.helper[0]).data("id")).attr("points").split(" "), function (index, point) {
-		if (index == 0) {
-			svgPath = svgPath + point.split(",")[0] + "," + point.split(",")[1] + "l";
-		} else {
-			previousX = point.split(",")[0] - previousX;
-			previousY = point.split(",")[1] - previousY;
-			svgPath = svgPath + previousX + "," + previousY + "l";
-		}
-		previousX = point.split(",")[0];
-		previousY = point.split(",")[1];
-	});	
-	return svgPath.slice(0,-1);							
+function stopMovePolyline(image) {
+    var svgPath = "M";
+    var previousX = 0;
+    var previousY = 0;
+    $.each($("#" + $(image.helper[0]).data("id")).attr("points").split(" "), function (index, point) {
+        if (index == 0) {
+            svgPath = svgPath + point.split(",")[0] + "," + point.split(",")[1] + "l";
+        } else {
+            previousX = point.split(",")[0] - previousX;
+            previousY = point.split(",")[1] - previousY;
+            svgPath = svgPath + previousX + "," + previousY + "l";
+        }
+        previousX = point.split(",")[0];
+        previousY = point.split(",")[1];
+    });
+    return svgPath.slice(0, -1);
 }
 
 /**
@@ -832,26 +807,26 @@ function stopMovePolyline(image){
  * @param {int} previouseMouseX - previouse mouse position X
  * @param {int} previouseMouseY - previouse mouse position Y
  */
-function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
-	var newCoordinates = "";
-	var offsetX = 0;
-	var	offsetY = 0;
-	if(previouseMouseX == 0){	
-		offsetX = 0;		
-	} else {
-		offsetX = x - previouseMouseX;		
-	}	
-	if(previouseMouseY == 0){
-		offsetY = 0;
-	} else {
-		offsetY = y - previouseMouseY;
-	}
-	$.each($("#" + $(image.helper[0]).data("id")).attr("points").split(" "), function(index, coordinates){								
-		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
-		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
-		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
-	});
-	return newCoordinates;	
+function movePolyline(image, x, y, previouseMouseX, previouseMouseY) {
+    var newCoordinates = "";
+    var offsetX = 0;
+    var offsetY = 0;
+    if (previouseMouseX == 0) {
+        offsetX = 0;
+    } else {
+        offsetX = x - previouseMouseX;
+    }
+    if (previouseMouseY == 0) {
+        offsetY = 0;
+    } else {
+        offsetY = y - previouseMouseY;
+    }
+    $.each($("#" + $(image.helper[0]).data("id")).attr("points").split(" "), function (index, coordinates) {
+        var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;
+        var currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
+        newCoordinates = newCoordinates + currentX + "," + currentY + " ";
+    });
+    return newCoordinates;
 }
 
 /**
@@ -862,37 +837,37 @@ function movePolyline(image, x, y, previouseMouseX, previouseMouseY){
  * @param {int} previouseMouseX - previouse mouse position X
  * @param {int} previouseMouseY - previouse mouse position Y
  */
-function moveArrow(image, x, y, canvas){	 
-	var newCoordinates = "";	
-	var offsetX = 0;
-	var	offsetY = 0;
-	var currentPath = $("#" + $(image.helper[0]).data("id")).attr("d");
-	// adjust SVG path for IE11
-	currentPath = adjustSVGPath(currentPath);
-	var firstPointX = parseInt(currentPath.split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
-	var firstPointY = parseInt(currentPath.split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));	
-	var secondPointX = parseInt(currentPath.split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
-	var secondPointY = parseInt(currentPath.split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
-	if(x != 0 && x < $(canvas).outerWidth()) {
-		if(firstPointX > secondPointX){
-			offsetX = (x + image.helper[0].offsetWidth) - firstPointX;
-		} else {
-			offsetX = (x + 5) - firstPointX;
-		}
-	}
-	if(y != 0) {
-		if(firstPointY > secondPointY){
-			offsetY = (y + image.helper[0].offsetHeight) - firstPointY;
-		} else {
-			offsetY = (y + 5) - firstPointY;
-		}
-	}	
-	$.each(currentPath.split(" "), function(index, coordinates){								
-		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
-		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
-		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
-	});	
-	return newCoordinates;	
+function moveArrow(image, x, y, canvas) {
+    var newCoordinates = "";
+    var offsetX = 0;
+    var offsetY = 0;
+    var currentPath = $("#" + $(image.helper[0]).data("id")).attr("d");
+    // adjust SVG path for IE11
+    currentPath = adjustSVGPath(currentPath);
+    var firstPointX = parseInt(currentPath.split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+    var firstPointY = parseInt(currentPath.split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));
+    var secondPointX = parseInt(currentPath.split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
+    var secondPointY = parseInt(currentPath.split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
+    if (x != 0 && x < $(canvas).outerWidth()) {
+        if (firstPointX > secondPointX) {
+            offsetX = (x + image.helper[0].offsetWidth) - firstPointX;
+        } else {
+            offsetX = (x + 5) - firstPointX;
+        }
+    }
+    if (y != 0) {
+        if (firstPointY > secondPointY) {
+            offsetY = (y + image.helper[0].offsetHeight) - firstPointY;
+        } else {
+            offsetY = (y + 5) - firstPointY;
+        }
+    }
+    $.each(currentPath.split(" "), function (index, coordinates) {
+        var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;
+        var currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
+        newCoordinates = newCoordinates + currentX + "," + currentY + " ";
+    });
+    return newCoordinates;
 }
 
 /**
@@ -903,52 +878,52 @@ function moveArrow(image, x, y, canvas){
  * @param {int} previouseMouseX - previouse mouse position X
  * @param {int} previouseMouseY - previouse mouse position Y
  */
-function moveDistance(image, x, y, canvas){	 
-	var newCoordinates = "";	
-	var offsetX = 0;
-	var	offsetY = 0;
-	var currentPath = $("#" + $(image.helper[0]).data("id")).attr("d");
-	// adjust SVG path for IE11
-	currentPath = adjustSVGPath(currentPath);
-	var firstPointX = parseInt(currentPath.split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
-	var firstPointY = parseInt(currentPath.split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));		
-	var secondPointX = parseInt(currentPath.split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
-	var secondPointY = parseInt(currentPath.split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
-	if(x != 0 && x < $(canvas).outerWidth()) {
-		if(firstPointX > secondPointX){
-			offsetX = (x + image.helper[0].offsetWidth - 25) - firstPointX;
-		} else {
-			offsetX = (x + 25) - firstPointX;
-		}
-	}
-	if(y != 0) {
-		if(firstPointY > secondPointY){
-			offsetY = (y + image.helper[0].offsetHeight - 25) - firstPointY;
-		} else {
-			offsetY = (y + 25) - firstPointY;
-		}
-	}		
-	$.each(currentPath.split(" "), function(index, coordinates){								
-		var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;								
-		var	currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
-		newCoordinates = newCoordinates + currentX + "," + currentY + " ";								
-	});	
-	$($("#" + $(image.helper[0]).data("id")).next("text").find("textPath").attr("href")).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));	
-	return newCoordinates;	
+function moveDistance(image, x, y, canvas) {
+    var newCoordinates = "";
+    var offsetX = 0;
+    var offsetY = 0;
+    var currentPath = $("#" + $(image.helper[0]).data("id")).attr("d");
+    // adjust SVG path for IE11
+    currentPath = adjustSVGPath(currentPath);
+    var firstPointX = parseInt(currentPath.split(" ")[0].split(",")[0].replace(/[^\d.]/g, ''));
+    var firstPointY = parseInt(currentPath.split(" ")[0].split(",")[1].replace(/[^\d.]/g, ''));
+    var secondPointX = parseInt(currentPath.split(" ")[1].split(",")[0].replace(/[^\d.]/g, ''));
+    var secondPointY = parseInt(currentPath.split(" ")[1].split(",")[1].replace(/[^\d.]/g, ''));
+    if (x != 0 && x < $(canvas).outerWidth()) {
+        if (firstPointX > secondPointX) {
+            offsetX = (x + image.helper[0].offsetWidth - 25) - firstPointX;
+        } else {
+            offsetX = (x + 25) - firstPointX;
+        }
+    }
+    if (y != 0) {
+        if (firstPointY > secondPointY) {
+            offsetY = (y + image.helper[0].offsetHeight - 25) - firstPointY;
+        } else {
+            offsetY = (y + 25) - firstPointY;
+        }
+    }
+    $.each(currentPath.split(" "), function (index, coordinates) {
+        var currentX = parseInt(coordinates.split(",")[0].replace(/[^\d.]/g, '')) + offsetX;
+        var currentY = parseInt(coordinates.split(",")[1].replace(/[^\d.]/g, '')) + offsetY;
+        newCoordinates = newCoordinates + currentX + "," + currentY + " ";
+    });
+    $($("#" + $(image.helper[0]).data("id")).next("text").find("textPath").attr("href")).attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
+    return newCoordinates;
 }
 
 /**
  * adjust SVG path to formating standarts
  * @param {string} currentPath - current SVG path
  */
-function adjustSVGPath(currentPath){
-	if(!!navigator.userAgent.match(/Trident.*rv\:11\./)){ 
-		currentPath = currentPath.replace("M ", "M");
-		currentPath = currentPath.replace(" L ", "L");
-		currentPath = currentPath.replace(/\s/g, ",");
-		currentPath = currentPath.replace("L", " L");
-	}
-	return currentPath;
+function adjustSVGPath(currentPath) {
+    if (!!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+        currentPath = currentPath.replace("M ", "M");
+        currentPath = currentPath.replace(" L ", "L");
+        currentPath = currentPath.replace(/\s/g, ",");
+        currentPath = currentPath.replace("L", " L");
+    }
+    return currentPath;
 }
 
 /**
@@ -1051,25 +1026,25 @@ function getHtmlResizeHandles() {
 function getCommentHtml(comment) {
     var time = (typeof comment.time != "undefined") ? comment.time : "";
     var text = (typeof comment.text != "undefined") ? comment.text : "";
-    var userName = (typeof comment.userName != "undefined") ? comment.userName : "";	
+    var userName = (typeof comment.userName != "undefined") ? comment.userName : "";
 
     return '<div class="gd-annotation-comment">' +
-                '<div class="gd-comment-avatar">' +
-                    '<div class="gd-comment-userpic">' +
-                        '<i class="fas fa-lg fa-user-circle"></i>' +
-                    '</div>' +
-                    '<div class="gd-comment-username">' +
-                        userName +
-                    '</div>' +
-                '</div>' +
-                '<div class="gd-comment-content">' +
-                    text +
-                '</div>'+
-                '<div class="gd-comment-footer">' +
-                    '<div class="gd-comment-toggle-reply"></div>' +
-                    '<div class="gd-comment-created-at">'+$.timeago(new Date(time))+'</div>' +
-                '</div>' +
-            '</div>';
+        '<div class="gd-comment-avatar">' +
+        '<div class="gd-comment-userpic">' +
+        '<i class="fas fa-lg fa-user-circle"></i>' +
+        '</div>' +
+        '<div class="gd-comment-username">' +
+        userName +
+        '</div>' +
+        '</div>' +
+        '<div class="gd-comment-content">' +
+        text +
+        '</div>' +
+        '<div class="gd-comment-footer">' +
+        '<div class="gd-comment-toggle-reply"></div>' +
+        '<div class="gd-comment-created-at">' + $.timeago(new Date(time)) + '</div>' +
+        '</div>' +
+        '</div>';
 }
 
 /**
@@ -1093,45 +1068,45 @@ function download(button) {
 /**
  * Append SVG container to each document page
  */
-function addSvgContainer(){
-	$('div.gd-page').each(function (index, page) {
-		$(page).css("zoom", "1");
-		// initiate svg object
-		if (svgList == null) {
-			svgList = {};
-		}
-		if (page.id.indexOf("thumbnails") >= 0) {
-			return true;
-		} else {
-			if (!(page.id in svgList) && $(page).find("svg").length == 0) {
-				$(page).addClass("gd-disable-select");
-				// add svg object to the list for further use
-				var draw = SVG(page.id).size(page.offsetWidth, page.offsetHeight);
-				svgList[page.id] = draw;
-				draw = null;
-			} else {
-				return true;
-			}
-		}
-	});
+function addSvgContainer() {
+    $('div.gd-page').each(function (index, page) {
+        $(page).css("zoom", "1");
+        // initiate svg object
+        if (svgList == null) {
+            svgList = {};
+        }
+        if (page.id.indexOf("thumbnails") >= 0) {
+            return true;
+        } else {
+            if (!(page.id in svgList) && $(page).find("svg").length == 0) {
+                $(page).addClass("gd-disable-select");
+                // add svg object to the list for further use
+                var draw = SVG(page.id).size(page.offsetWidth, page.offsetHeight);
+                svgList[page.id] = draw;
+                draw = null;
+            } else {
+                return true;
+            }
+        }
+    });
 }
 
 /**
  * Append context menu for annotation
  */
-function getContextMenu(annotationId, editable){
-	return '<div class="gd-context-menu">' +
-				'<i class="fas fa-arrows-alt fa-sm"></i>'+
-                (editable ? '<i class="fas fa-i-cursor fa-sm gd-edit-text-field"></i>' : '') +
-				'<i class="fas fa-trash-alt fa-sm gd-delete-comment" data-id="' + annotationId + '"></i>'+
-				'<i class="fas fa-comments fa-sm gd-comments"></i>'+
-			'</div>';
+function getContextMenu(annotationId, editable) {
+    return '<div class="gd-context-menu">' +
+        '<i class="fas fa-arrows-alt fa-sm"></i>' +
+        (editable ? '<i class="fas fa-i-cursor fa-sm gd-edit-text-field"></i>' : '') +
+        '<i class="fas fa-trash-alt fa-sm gd-delete-comment" data-id="' + annotationId + '"></i>' +
+        '<i class="fas fa-comments fa-sm gd-comments"></i>' +
+        '</div>';
 }
 
 /**
  * Save current reply
  */
-function saveReply(e){
+function saveReply(e) {
     e.preventDefault();
     var nameField = $(e.target).find('#comment-name');
     var messageField = $(e.target).find('#comment-message');
@@ -1154,51 +1129,51 @@ function saveReply(e){
     return false;
 }
 
-function hideNotSupportedAnnotations(supportedAnnotations){
-	if(supportedAnnotations.length > 0){		 
-		var allButtons = $("#gd-annotations-tools").find("button");
-		$.each(allButtons, function(index, button){
-			if($.inArray($(button).data("type"), supportedAnnotations) == -1){				
-				$(button).parent().hide();
-			} else {
-				$(button).parent().show();
-			}
-		});		
-	}
+function hideNotSupportedAnnotations(supportedAnnotations) {
+    if (supportedAnnotations.length > 0) {
+        var allButtons = $("#gd-annotations-tools").find("button");
+        $.each(allButtons, function (index, button) {
+            if ($.inArray($(button).data("type"), supportedAnnotations) == -1) {
+                $(button).parent().hide();
+            } else {
+                $(button).parent().show();
+            }
+        });
+    }
 }
 
 /**
 * Print current document
 */
 function printAnnotated(button) {
-	var documentContainer = "";
-	var cssPrint = "";
-	if ($(button).attr("id") == "gd-annotated-print") {
-		annotate(print);
+    var documentContainer = "";
+    var cssPrint = "";
+    if ($(button).attr("id") == "gd-annotated-print") {
+        annotate(print);
     } else {
-		documentContainer = $("#gd-panzoom");
-		// force each document page to be printed as a new page
-		cssPrint = '<style>' +
-				'.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
-		// set correct page orientation if page were rotated
-		documentContainer.find(".gd-page").each(function (index, page) {
-        if ($(page).css("transform") != "none") {
-            cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
-        }
-		});
-		cssPrint = cssPrint + '</style>';
-		// open print dialog
-		var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
-		// add current document into the print window
-		windowObject.document.writeln(cssPrint);
-		// add current document into the print window
-		$.each();
-		windowObject.document.writeln(documentContainer[0].innerHTML);
-		windowObject.document.close();
-		windowObject.focus();
-		windowObject.print();
-		windowObject.close();
-	}
+        documentContainer = $("#gd-panzoom");
+        // force each document page to be printed as a new page
+        cssPrint = '<style>' +
+            '.gd-page {height: 100% !important; page-break-after:always; page-break-inside: avoid; } .gd-page:last-child {page-break-after: auto;}';
+        // set correct page orientation if page were rotated
+        documentContainer.find(".gd-page").each(function (index, page) {
+            if ($(page).css("transform") != "none") {
+                cssPrint = cssPrint + "#" + $(page).attr("id") + "{transform: rotate(0deg) !important;}";
+            }
+        });
+        cssPrint = cssPrint + '</style>';
+        // open print dialog
+        var windowObject = window.open('', "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+        // add current document into the print window
+        windowObject.document.writeln(cssPrint);
+        // add current document into the print window
+        $.each();
+        windowObject.document.writeln(documentContainer[0].innerHTML);
+        windowObject.document.close();
+        windowObject.focus();
+        windowObject.print();
+        windowObject.close();
+    }
 }
 
 /*
@@ -1240,39 +1215,41 @@ GROUPDOCS.ANNOTATION PLUGIN
                 distanceAnnotation: true,
                 downloadOriginal: true,
                 downloadAnnotated: true,
-				defaultDocument: "",
-				preloadPageCount: 0,
-				pageSelector: true,
-				download: true,
-				upload: true,
-				print: true,
-				browse: true,
-				rewrite: true,
-				applicationPath: "http://localhost:8080/annotation",
-				enableRightClick: true
+                defaultDocument: "",
+                preloadPageCount: 0,
+                pageSelector: true,
+                download: true,
+                upload: true,
+                print: true,
+                browse: true,
+                rewrite: true,
+                zoom: true,
+                fitWidth: true,
+                applicationPath: "http://localhost:8080/annotation",
+                enableRightClick: true
             };
-			$('#element').viewer({
-					applicationPath: options.applicationPath,
-                    defaultDocument: options.defaultDocument,
-                    htmlMode: false,
-                    preloadPageCount: options.preloadPageCount,
-                    zoom : true,
-                    pageSelector: options.pageSelector,
-                    search: false,
-                    thumbnails: false,
-                    rotate: false,
-                    download: options.download,
-                    upload: options.upload,
-                    print: options.print,
-                    browse: options.browse,
-                    rewrite: options.rewrite,
-					saveRotateState: false,
-					enableRightClick: options.enableRightClick
-			});
+            $('#element').viewer({
+                applicationPath: options.applicationPath,
+                defaultDocument: options.defaultDocument,
+                htmlMode: false,
+                preloadPageCount: options.preloadPageCount,
+                zoom: options.zoom,
+                pageSelector: options.pageSelector,
+                search: false,
+                thumbnails: false,
+                rotate: false,
+                download: options.download,
+                upload: options.upload,
+                print: options.print,
+                browse: options.browse,
+                rewrite: options.rewrite,
+                saveRotateState: false,
+                enableRightClick: options.enableRightClick
+            });
             options = $.extend(defaults, options);
-
+            fitWidth = options.fitWidth;
             getHtmlDownloadPanel();
-			getHtmlPrintPanel();
+            getHtmlPrintPanel();
             $('#gd-navbar').append(getHtmlSavePanel);
             // assembly annotation tools side bar html base
             $(".wrapper").append(getHtmlAnnotationsBarBase);
@@ -1284,53 +1261,53 @@ GROUPDOCS.ANNOTATION PLUGIN
                 $("#gd-annotations-tools").append(getHtmlTextAnnotationElement);
             }
 
-			if (options.textStrikeoutAnnotation) {
+            if (options.textStrikeoutAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlTextStrikeoutAnnotationElement);
             }
-			
-			if (options.textUnderlineAnnotation) {
+
+            if (options.textUnderlineAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlTextUnderlineAnnotationElement);
             }
-			
-			if (options.textReplacementAnnotation) {
+
+            if (options.textReplacementAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlTextReplacementAnnotationElement);
             }
-			
-			if (options.textRedactionAnnotation) {
+
+            if (options.textRedactionAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlTextRedactionAnnotationElement);
             }
-			
-			$("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
-			if (options.polylineAnnotation) {
+
+            $("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
+            if (options.polylineAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlPolylineAnnotationElement);
             }
-			
-			if (options.arrowAnnotation) {
+
+            if (options.arrowAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlArrowAnnotationElement);
             }
-			
-			if (options.distanceAnnotation) {
+
+            if (options.distanceAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlDistanceAnnotationElement);
-            }			
-				
+            }
+
             if (options.areaAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlAreaAnnotationElement);
             }
 
-			if (options.resourcesRedactionAnnotation) {
+            if (options.resourcesRedactionAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlResourcesRedactionAnnotationElement);
-            }			
-			
-			$("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
-			if (options.textFieldAnnotation) {
+            }
+
+            $("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
+            if (options.textFieldAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlTextFieldAnnotationElement);
             }
-			
-			if (options.watermarkAnnotation) {
+
+            if (options.watermarkAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlWatermarkdAnnotationElement);
             }
-			
-			$("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
+
+            $("#gd-annotations-tools").append(getHtmlAnnotationSplitter);
             if (options.pointAnnotation) {
                 $("#gd-annotations-tools").append(getHtmlPointAnnotationElement);
             }
@@ -1369,186 +1346,186 @@ GROUPDOCS.ANNOTATION PLUGIN
     function getHtmlAnnotationsBarBase() {
         return '<div class=gd-annotations-bar-wrapper>' +
 
-					// annotations tools
-					'<div class="gd-tools-container gd-embed-annotation-tools gd-ui-draggable">' +
-						// annotations tools list BEGIN
-						'<ul class="gd-tools-list" id="gd-annotations-tools">' +
-							// annotation tools will be here
-						'</ul>' +
-						// annotations tools list END
-					'</div>' +
-				'</div>';
+            // annotations tools
+            '<div class="gd-tools-container gd-embed-annotation-tools gd-ui-draggable">' +
+            // annotations tools list BEGIN
+            '<ul class="gd-tools-list" id="gd-annotations-tools">' +
+            // annotation tools will be here
+            '</ul>' +
+            // annotations tools list END
+            '</div>' +
+            '</div>';
     }
 
     function getHtmlAnnotationCommentsBase() {
         return '<div class="gd-annotations-comments-wrapper" data-id="">' +
-					// open/close trigger button BEGIN
-                    '<div class="gd-annotations-comments-header">' +
-                        '<div class="gd-annotations-comments-header-flex">' +
-                            '<div class="add gd-add-comment-action">' +
-                                '<div>' +
-                                    '+'+
-                                '</div>' +
-                            '</div>' +
-                            '<div class="title">' +
-                                '<span>Comments</span>' +
-                            '</div>' +
-                            '<div class="close">' +
-                                '<div>' +
-                                    '&times;'+
-                                '</div>' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="gd-annotations-comments-form hidden">' +
-                        '<form autocomplete="off" id="gd-reply-form">' +
-                            '<div class="gd-comment-input">' +
-                                '<input required="required" id="comment-name" placeholder="Name" name="comment-name" class="gd-comment-user-name" />'+
-                            '</div>'+
-                            '<div class="gd-comment-input">' +
-                                '<textarea required="required" id="comment-message" placeholder="Message"></textarea>'+
-                            '</div>'+
-                            '<div class="gd-comment-controls">' +
-                                '<button type="button" class="gd-btn gd-btn-default gd-comments-cancel-action">Cancel</button>' +
-                                '<button class="gd-btn gd-btn-primary">Reply</button>' +
-                            '</div>' +
-                        '</form>' +
-                    '</div>'+
-                    '<div class="gd-comments-nonideal-state">' +
-                        '<div class="gd-comments-nonideal-state-icon">' +
-                            '<i class="far fa-comments"></i>' +
-                        '</div>' +
-                        '<div class="gd-comments-nonideal-state-message">' +
-                            'No comments yet. Be the first one, <span class="gd-add-comment-action">add comment</span>.'+
-                        '</div>' +
-                    '</div>' +
-                    '<div class="gd-annotations-comments-body">' +
+            // open/close trigger button BEGIN
+            '<div class="gd-annotations-comments-header">' +
+            '<div class="gd-annotations-comments-header-flex">' +
+            '<div class="add gd-add-comment-action">' +
+            '<div>' +
+            '+' +
+            '</div>' +
+            '</div>' +
+            '<div class="title">' +
+            '<span>Comments</span>' +
+            '</div>' +
+            '<div class="close">' +
+            '<div>' +
+            '&times;' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="gd-annotations-comments-form hidden">' +
+            '<form autocomplete="off" id="gd-reply-form">' +
+            '<div class="gd-comment-input">' +
+            '<input required="required" id="comment-name" placeholder="Name" name="comment-name" class="gd-comment-user-name" />' +
+            '</div>' +
+            '<div class="gd-comment-input">' +
+            '<textarea required="required" id="comment-message" placeholder="Message"></textarea>' +
+            '</div>' +
+            '<div class="gd-comment-controls">' +
+            '<button type="button" class="gd-btn gd-btn-default gd-comments-cancel-action">Cancel</button>' +
+            '<button class="gd-btn gd-btn-primary">Reply</button>' +
+            '</div>' +
+            '</form>' +
+            '</div>' +
+            '<div class="gd-comments-nonideal-state">' +
+            '<div class="gd-comments-nonideal-state-icon">' +
+            '<i class="far fa-comments"></i>' +
+            '</div>' +
+            '<div class="gd-comments-nonideal-state-message">' +
+            'No comments yet. Be the first one, <span class="gd-add-comment-action">add comment</span>.' +
+            '</div>' +
+            '</div>' +
+            '<div class="gd-annotations-comments-body">' +
 
-                    '</div>'+
-				'</div>';
+            '</div>' +
+            '</div>';
     }
 
     function getHtmlTextAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-text-box" data-type="text">' +
-                        '<i class="fas fa-highlighter fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">text</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-text-box" data-type="text">' +
+            '<i class="fas fa-highlighter fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">text</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlAreaAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-area-box" data-type="area">' +
-                        '<i class="fas fa-vector-square fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">area</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-area-box" data-type="area">' +
+            '<i class="fas fa-vector-square fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">area</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlPointAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-point-box" data-type="point">' +
-                        '<i class="fas fa-thumbtack fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">point</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-point-box" data-type="point">' +
+            '<i class="fas fa-thumbtack fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">point</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlTextStrikeoutAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-strike-box" data-type="textStrikeout">' +
-                        '<i class="fas fa-strikethrough fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">strikeout</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-strike-box" data-type="textStrikeout">' +
+            '<i class="fas fa-strikethrough fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">strikeout</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlPolylineAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-polyline-box" data-type="polyline">' +
-                        '<i class="fas fa-signature fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">polyline</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-polyline-box" data-type="polyline">' +
+            '<i class="fas fa-signature fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">polyline</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlTextFieldAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-highlight-box" data-type="textField">' +
-                        '<i class="fas fa-i-cursor fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">text field</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-highlight-box" data-type="textField">' +
+            '<i class="fas fa-i-cursor fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">text field</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlWatermarkdAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-watermark-box" data-type="watermark">' +
-                        '<i class="fas fa-tint fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">watermark</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-watermark-box" data-type="watermark">' +
+            '<i class="fas fa-tint fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">watermark</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlTextReplacementAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-replace-box" data-type="textReplacement">' +
-                        '<i class="fas fa-edit fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">text replacement</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-replace-box" data-type="textReplacement">' +
+            '<i class="fas fa-edit fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">text replacement</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlArrowAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-arrow-tool" data-type="arrow">' +
-                        '<i class="fas fa-mouse-pointer fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">arrow</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-arrow-tool" data-type="arrow">' +
+            '<i class="fas fa-mouse-pointer fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">arrow</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlTextRedactionAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-redtext-box" data-type="textRedaction">' +
-                        '<i class="fas fa-brush fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">Black out</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-redtext-box" data-type="textRedaction">' +
+            '<i class="fas fa-brush fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">Black out</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlResourcesRedactionAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-redarea-box" data-type="resourcesRedaction">' +
-                        '<i class="fas fa-object-group fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">resource redaction</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-redarea-box" data-type="resourcesRedaction">' +
+            '<i class="fas fa-object-group fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">resource redaction</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlTextUnderlineAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-underline-tool" data-type="textUnderline">' +
-                        '<i class="fas fa-underline fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">underline text</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-underline-tool" data-type="textUnderline">' +
+            '<i class="fas fa-underline fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">underline text</span>' +
+            '</button>' +
+            '</li>';
     }
 
     function getHtmlDistanceAnnotationElement() {
         return '<li>' +
-                    '<button class="gd-tool-field gd-ruler-tool" data-type="distance">' +
-                        '<i class="fas fa-ruler fa-lg fa-inverse"></i>' +
-						'<span class="gd-popupdiv-hover gd-tool-field-tooltip">distance</span>' +
-					'</button>' +
-				'</li>';
+            '<button class="gd-tool-field gd-ruler-tool" data-type="distance">' +
+            '<i class="fas fa-ruler fa-lg fa-inverse"></i>' +
+            '<span class="gd-popupdiv-hover gd-tool-field-tooltip">distance</span>' +
+            '</button>' +
+            '</li>';
     }
 
-	function getHtmlAnnotationSplitter() {
+    function getHtmlAnnotationSplitter() {
         return '<li class="gd-annotation-separator" role="separator"></li>';
     }
-	
+
     function getHtmlSavePanel() {
         return '<li id="gd-nav-save" class="gd-save-disabled"><i class="fa fa-floppy-o"></i><span class="gd-tooltip">Save</span></li>';
     }
@@ -1557,32 +1534,32 @@ GROUPDOCS.ANNOTATION PLUGIN
         var downloadBtn = $("#gd-btn-download");
         var defaultHtml = downloadBtn.html();
         var downloadDropDown = '<li class="gd-nav-toggle" id="gd-download-val-container">' +
-									'<span id="gd-download-value">' +
-										'<i class="fa fa-download"></i>' +
-										'<span class="gd-tooltip">Download</span>' +
-									'</span>' +
-									'<span class="gd-nav-caret"></span>' +
-									'<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-download-value">' +
-										// download types will be here
-									'</ul>' +
-								'</li>';
+            '<span id="gd-download-value">' +
+            '<i class="fa fa-download"></i>' +
+            '<span class="gd-tooltip">Download</span>' +
+            '</span>' +
+            '<span class="gd-nav-caret"></span>' +
+            '<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-download-value">' +
+            // download types will be here
+            '</ul>' +
+            '</li>';
         downloadBtn.html(downloadDropDown);
     }
 
-	 function getHtmlPrintPanel() {
+    function getHtmlPrintPanel() {
         var downloadBtn = $("#gd-btn-print");
         var defaultHtml = downloadBtn.html();
         var downloadDropDown = '<li class="gd-nav-toggle" id="gd-print-val-container">' +
-									'<span id="gd-print-value">' +
-										'<i class="fa fa-print"></i>' +
-										'<span class="gd-tooltip">Print</span>' +
-									'</span>' +
-									'<span class="gd-nav-caret"></span>' +
-									'<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-print-value">' +
-										'<li id="gd-original-print">Print Original</li>'+
-										'<li id="gd-annotated-print">Print Annotated</li>'+
-									'</ul>' +
-								'</li>';
+            '<span id="gd-print-value">' +
+            '<i class="fa fa-print"></i>' +
+            '<span class="gd-tooltip">Print</span>' +
+            '</span>' +
+            '<span class="gd-nav-caret"></span>' +
+            '<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-print-value">' +
+            '<li id="gd-original-print">Print Original</li>' +
+            '<li id="gd-annotated-print">Print Annotated</li>' +
+            '</ul>' +
+            '</li>';
         downloadBtn.html(downloadDropDown);
     }
 

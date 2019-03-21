@@ -1360,6 +1360,17 @@ function setZoomValue(zoom_val) {
     var zoom_val_webkit = Math.round(zoom_val) + '%';    
     // display zoom value
     setNavigationZoomValues(zoom_val_webkit);
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        if (zoom_val > 100) {
+            $(".gd-page").each(function (index, page) {
+                (!$(page).hasClass("gd-page-zoomed")) ? $(page).addClass("gd-page-zoomed") : "";
+            });
+        } else {
+            $(".gd-page").each(function (index, page) {
+                $(page).removeClass("gd-page-zoomed");
+            });
+        }
+    }   
     // set css zoom values
     var style = [
         'zoom: ' + zoom_val_webkit,
@@ -1849,10 +1860,7 @@ function setZoomLevel(zoomString) {
             // get scale ratio
             var scale = (pageWidth / screenWidth) * 100;
             // set values
-            zoomValue = 200 - scale;
-            if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-                zoomValue = zoomValue - 20;
-            }            
+            zoomValue = 200 - scale;                     
             break;
         case 'Fit Height':
             // get page height

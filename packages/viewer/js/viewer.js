@@ -1354,10 +1354,10 @@ function clearSearch() {
 * Zoom document
 * @param {int} zoom_val - zoom value from 0 to 100
 */
-function setZoomValue(zoom_val) {
+function setZoomValue(zoom_val) {    
     // adapt value for css
     var zoom_val_non_webkit = zoom_val / 100;
-    var zoom_val_webkit = Math.round(zoom_val) + '%';
+    var zoom_val_webkit = Math.round(zoom_val) + '%';    
     // display zoom value
     setNavigationZoomValues(zoom_val_webkit);
     // set css zoom values
@@ -1365,6 +1365,7 @@ function setZoomValue(zoom_val) {
         'zoom: ' + zoom_val_webkit,
         'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
         '-moz-transform: scale(' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-moz-transform-origin: top;',
         '-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'
@@ -1849,6 +1850,9 @@ function setZoomLevel(zoomString) {
             var scale = (pageWidth / screenWidth) * 100;
             // set values
             zoomValue = 200 - scale;
+            if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+                zoomValue = zoomValue - 20;
+            }            
             break;
         case 'Fit Height':
             // get page height

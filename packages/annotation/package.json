@@ -1,6 +1,6 @@
 {
   "name": "@groupdocs.examples.jquery/annotation",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "jQuery plugin that allows to display and annotate documents supported by groupdocs libraries APIs",
   "main": "index.js",
   "scripts": {

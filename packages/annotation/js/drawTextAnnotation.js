@@ -58,7 +58,10 @@ $(document).ready(function () {
         x: 0,
         y: 0
     };
-
+    var previouseMouse = {
+        x: 0,
+        y: 0
+    };
     var startX = 0;
     var startY = 0;
     var element = null;
@@ -94,10 +97,9 @@ $(document).ready(function () {
             // create HTML markup for the annotation element
             element = document.createElement('div');
             element.className = 'gd-annotation gd-bounding-box';
-            // calculate start point coordinates according to the document page
-            var canvasTopOffset = $(canvas).offset().top;
-            var x = mouse.x - $(canvas).offset().left;
-            var y = mouse.y - canvasTopOffset;
+            // calculate start point coordinates according to the document page           
+            var x = mouse.x;
+            var y = mouse.y;
             // draw the annotation
             switch (currentPrefix) {
                 case "area":
@@ -185,6 +187,10 @@ $(document).ready(function () {
             annotationInnerHtml = null;
             lineInnerHtml = null;
             element = null;
+            previouseMouse = {
+                x: 0,
+                y: 0
+            };
             $(canvas).off(userMouseUp);
             $(canvas).off(userMouseMove);
         });
@@ -195,10 +201,17 @@ $(document).ready(function () {
             if (currentPrefix === "textField") {
                 return true;
             }
+            
             mouse = getMousePosition(e);
-            if (element !== null) {                
-				element.style.width = Math.abs(mouse.x - startX) + "px";
-				element.style.height = Math.abs(mouse.y - startY) + "px";                
+            if (element !== null) {   
+                var currentWidth = (isNaN(parseInt(element.style.width))) ? 0 : parseInt(element.style.width);
+                var currentHeight = (isNaN(parseInt(element.style.height))) ? 0 : parseInt(element.style.height);
+                if (mouse.x != 0) {
+                    element.style.width = Math.abs(startX - mouse.x) + "px";
+                }
+                if (mouse.y != 0) {
+                    element.style.height = Math.abs(startY - mouse.y) + "px";
+                }
                 // set annotation data
                 annotation.width = parseFloat(element.style.width.replace("px", ""));
                 annotation.height = parseFloat(element.style.height.replace("px", ""));
@@ -206,7 +219,8 @@ $(document).ready(function () {
                     annotationInnerHtml.style.width = parseFloat(element.style.width) + "px";
                     annotationInnerHtml.style.height = parseFloat(element.style.height) + "px";
                 }
-                setTextFieldSize(annotation,$(element).find('textarea'));
+                setTextFieldSize(annotation, $(element).find('textarea'));
+                previouseMouse = mouse;
             }
         });
     };

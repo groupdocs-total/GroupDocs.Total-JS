@@ -1,181 +1,65 @@
-.gd-comparison-bar-wrapper{
+.gd-comparison-bar-wrapper {
     background-color: #E7E7E7;
     display: flex;
-    flex-direction: row;
+    flex-direction: row;    
+    margin-top: 50px;
+    width: 100%;
+}
+.gd-comparison-bar-wrapper-multicompare {
+    flex-wrap: wrap;
+}
+    .tab-slider-body {
+        width: 50%;
+        border-right: 2px solid #ddd;
+    }
+.gd-compare-area-head {
+    height: 37px;
+    background-color: #FFFFFF;
+    display: flex;
+}
+.gd-compare-area-head i:first-of-type {
+    color: #959DA5;
+    margin: 12px 15px 11px 13px;
+    font-size: 14px;
+}
+.gd-compare-browse{
+    color: #959DA5;
+    margin: 12px 18px 11px 13px;
+    font-size: 14px;
+}
+.gd-close-dad-area {
+    color: #959DA5;
+    font-size: 21px;
+    margin: 8px 14px 8px 0;
+}
+.gd-compare-url {
+    border: 0;
+    height: 37px;
+    width: 100%;
+    padding-left: 5px;
 }
 #gd-header-logo {
     background-image: url('../images/logo.png') !important;
 }
 #gd-add-multicompare {
-	float: right !important;
+    float: right !important;
 }
-.gd-drag-n-drop-wrap-compare.hover {
-    background: #ddd;
-    border-color: #aaa;
-}
-#gd-compare-spinner {
-    position: absolute;
-    left: 44%;
-}
-.gd-url-cancel {
-    background: transparent;
-    position: absolute;
-    left: -5px;
-    top: 3px;
-    font-size: 19px;
-    color: #959da5;
-}
-.gd-url-cancel-first i {
-    font-size: 21px;
-    margin-top: 5px;
-    margin-left: 6px;
-}
-.gd-add-url {
-    position: absolute;
-    top: 0;
-    color: #fff;
-    background-color: #959da5;
-    padding: 7px 16px 6px;
-    font-size: 12px;
-}
-.gd-cancel-button {
-    color: #959da5;
-}
-.gd-upload-files-table-idx {
-    left: 15px;
-    width: 260px;
-    border-spacing: 0;
-    position: relative;
-}
-.gd-upload-files-table-idx>tbody>tr:nth-of-type(odd) {
-    background-color: #f9f9f9;
-}
-.gd-filetree-name-compare {
-    position: absolute;
-    top: 20px;
-    left: 43px;
-    width: 260px;
-    color: #f8f8f8;
-}
-.gd-filetree-name-compare > span {
-    font-size: 12px;
-    font-weight: 300;
-    color: #9a9a9a;
-    margin-right: 15px;
-}
-.gd-upload-files-table-i {
-    font-size: 21px;
-    position: absolute;
-    top: 25px;
-    left: 10px;
-    color: #959da5;
-}
-#gd-select-compare-files {
-	display: inherit;
+.gd-drag-n-drop-icon {
+    font-size: 65px;
+    color: #959DA5;
+    margin: 448px auto 0 auto;
 }
 .gd-drag-n-drop-wrap-compare {
-    margin-top: 0px;
-    width: 268px;
-    border: 2px dashed #ccc;
-    background-color: #f8f8f8;
-    text-align: center;
-    cursor: default;
-    position: inherit;
-}
-.gd-drag-n-drop-wrap-compare h2 {
-    color: #cacaca;
-    margin: 5px 0;
-    font-size: 13px;
-    font-weight: 300;
-}
-.gd-drag-n-drop-wrap-compare h4 {
-    color: #cacaca;
-    font-weight: 300;
-    font-size: 14px;
-    margin: 10px 0;
-}
-.gd-drag-n-drop-wrap-compare h5 {
-    color: #afafaf;
-    font-weight: 200;
-    font-size: 12px;
-    margin: 20px 0 0 0;
-}
-#gd-select-compare-files section {
-    padding: 12px 0 13px 16px;
-    width: 281px;
-}
-.gd-drag-n-drop-buttons .btn {
-    width: 112px;
-}
-#gd-pages section {
-    display: block;
-    padding: 20px 0 0;
-}
-.gd-upload-section-label {
-    background-color: #3e4e5a;
-    border-radius: 0px;
-    color: #ffffff;
-    padding-top: 9px;
-    padding-left: 7px;
-    display: inline-block;
-    text-align: center;
-    font-size: 11px;
-}
-#gd-upload-section-label i {
-    margin-right: 10px;
-    margin-left: -10px;
-}
-.gd-drag-n-drop-icon .fa-cloud-download-alt {
-    color: #efefef;
-    font-size: 47px;
-}
-.gd-browse-document i {
-    font-size: 51px;
-    color: #959da5;
-}
-.gd-modal-buttons {
-    display: inline-grid;
-    font-size: 14px;
-    cursor: pointer;
-}
-.gd-page {
-    display: block;
-}
-#gd-pages img {
-    text-align: center;
-    width: unset;
-}
-.gd-password-wrap {
-    position: absolute;
-    margin-top: 60px;
-    z-index: 1;
-}
-.swiper-wrapper {
-    height: 100px !important;
-}
-.gd-upload-complete-fail {
-    right: 55px;
-    top: 3px;
-    display: none;
-    color: #FF0000;
-}
-.gd-add-file-multicompare i {
-    color: #959da5;
-    font-size: 50px;
-}
-.gd-files-blocks {
     display: flex;
-    display: inherit;
-    height: 100%;
-    width: 100%;
+    flex-direction: column;
 }
-.gd-close-dad-area i {
-    color: #ffffff;
+.gd-compare-drag-label {
+    color: #959DA5;
+    font-size: 15px;
+    margin: 38px auto;
 }
-.gd-password-wrap > input {
-    width: unset;
-}
-.gd-url-wrap > input {
-    width: 70%;
-    margin-left: 20px;
+.gd-drag-n-drop-icon-multicompare {
+    font-size: 65px;
+    color: #959DA5;
+    margin: 173px auto auto auto;
 }

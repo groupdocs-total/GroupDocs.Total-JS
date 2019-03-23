@@ -30,7 +30,6 @@ var map = {};
 var currentPageNumber = 0;
 var rewrite;
 var multiComparing;
-var idx = 0;
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
 
 $(document).ready(function () {
@@ -292,38 +291,14 @@ $(document).ready(function () {
         clearResultsContents();
     });
 
-    $('#gd-add-file-multicompare').on(userMouseClick, function (e) {
-        var prefix = 'idx' + idx;
-        var newDragnDrop = getHtmlDragAndDropArea(prefix)
-        $(newDragnDrop).insertBefore("#gd-add-multicompare");
+    $('#gd-add-multicompare').on(userMouseClick, function (e) {
+        var prefix = $(".tab-slider-body").length + 1;
+        if (prefix <= 4) {            
+            var newDragnDrop = getHtmlDragAndDropArea(prefix)
+            $(".gd-comparison-bar-wrapper").append(newDragnDrop);
+        }       
         initDropZone(prefix);
-        initCloseButton(prefix);
-        $('#gd-upload-input-' + prefix).on('change', function (e) {
-            // get selected files
-            var input = $(this);
-            // add files to the table
-            addFileForComparing(input.get(0).files, null, prefix);
-        });
-        $('#gd-url-button-' + prefix).on(userMouseClick, function () {
-            $('#gd-url-wrap-' + prefix).slideDown('fast');
-            $('#gd-url-' + prefix).focus();
-        });
-        $('#gd-url-cancel-' + prefix).on(userMouseClick, function () {
-            $('#gd-url-wrap-' + prefix).slideUp('fast');
-            $('#gd-url-' + prefix).val('');
-        });
-        $('#gd-add-url-' + prefix).on(userMouseClick, function () {
-            var url = $("#gd-url-" + prefix).val();
-            fillFileVariables(prefix, '', url, '');
-            addFileForComparing(null, url, prefix);
-            $('#gd-url-' + prefix).val('');
-        });
-        $('#gd-open-document-' + prefix).on(userMouseClick, function (e) {
-            toggleModalDialog(false, '');
-            fileNumber = prefix;
-            loadFileTree('');
-        });
-        idx = idx + 1;
+        initCloseButton(prefix);       
     });
     //
     // END of document ready function
@@ -685,42 +660,34 @@ function fillFileVariables(prefix, file, url, path) {
  * Get HTML content for drag and drop area
  **/
 function getHtmlDragAndDropArea(prefix) {
-    // close icon for multi comparing
-    var close = '';
-    if (prefix && prefix.startsWith('idx')) {
-        close = '<div class="gd-close-dad-area" id="gd-close-dad-area-' + prefix + '"> <i class="fas fa-window-close"></i></div>';
-    }
-
+    // close icon for multi comparing 
+    if (prefix > 2) {
+        prefix = replacePrefix(prefix);
+    }    
     // drag and drop section
-    var htmlSection = '<section id="gd-upload-section-' + prefix + '" class="tab-slider-body">' +
-        close +
+    var htmlSection = '<section id="gd-upload-section-' + prefix + '" class="tab-slider-body">' +       
+        '<div class="gd-compare-area-head">' +
+            '<i class="fas fa-arrow-right"></i>'+
+            '<input type="url" class="gd-compare-url" id="gd-url-' + prefix + '" placeholder="http://">' +
+        '<i class="fas fa-folder gd-compare-browse"></i>' +
+        '<i class="fas fa-times gd-close-dad-area" id="gd-close-dad-area-' + prefix + '"></i>' +
+        '</div>' +
+
         '<div class="gd-drag-n-drop-wrap-compare" id="gd-dropZone-' + prefix + '">' +
-        '<div class="gd-drag-n-drop-icon"><i class="fas fa-cloud-download-alt fa-5x" aria-hidden="true"></i></div>' +
-        '<h2>Drag &amp; Drop the ' + replacePrefix(prefix) + ' file here</h2>' +
-        '<h4>OR</h4>' +
-        '<div class="gd-drag-n-drop-buttons">' +
-        '<label class="btn btn-primary gd-upload-section-label">' +
-        '<i class="fas fa-file"></i>' +
-        'SELECT FILE' +
-        '<input id="gd-upload-input-' + prefix + '" type="file" multiple style="display: none;">' +
-        '</label>' +
-        '<label class="btn gd-upload-section-label" id="gd-url-button-' + prefix + '">' +
-        '<i class="fas fa-link"></i>' +
-        'URL' +
-        '</label>' +
+            '<div class="gd-drag-n-drop-icon">' +
+                '<i class="far fa-folder-open"></i>' +
+            '</div>' +
+            '<div class="gd-compare-drag-label">Drop your document here or click to select a file</div>' +            
         '</div>' +
-        '<div class="gd-browse-document gd-modal-buttons" id="gd-open-document-' + prefix + '">' +
-        '<i class="fas fa-folder-open"></i>BROWSE files' +
-        '</div>' +
-        '</div>' +
-        '<div class="inner-addon left-addon btn gd-url-wrap" id="gd-url-wrap-' + prefix + '" style="display: none;">' +
-        '<input type="url" class="form-control" id="gd-url-' + prefix + '" placeholder="Enter your file URL">' +
-        '<button class="btn gd-url-cancel" id="gd-url-cancel-' + prefix + '"><i class="fas fa-trash"></i></button>' +
-        '<button class="btn btn-primary gd-add-url" id="gd-add-url-' + prefix + '">Add</button>' +
-        '</div>' +
-        '<div id="gd-upload-files-table-' + prefix + '" class="gd-upload-files-table-idx">' +
-        // list of files
-        '</div>' +
+
+        //// pages BEGIN
+        //'<div id="gd-pages">' +
+        //'<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Comparing... Please wait.</div>' +
+        //'<div id="gd-panzoom">' +
+        //// list of pages
+        //'</div>' +
+        //'</div>' +
+        //    // pages END
         '</section>';
     return htmlSection;
 }
@@ -732,10 +699,14 @@ function getHtmlDragAndDropArea(prefix) {
  * @returns 'first', 'second' for 1, 2. After 2 returns 'next'
  */
 function replacePrefix(prefix) {
-    if (prefix == 'first' || prefix == 'second') {
-        return prefix;
-    }
-    return 'next';
+    switch (prefix) {
+        case 3:
+            return "third";
+            break;
+        case 4:
+            return "fourth";
+            break;
+    }       
 }
 
 /**
@@ -845,6 +816,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             preloadResultPageCount = options.preloadResultPageCount;
             rewrite = options.rewrite;
             multiComparing = options.multiComparing;
+            $("#gd-pages").remove();
             $(".wrapper").append(getHtmlBase);
             // assembly html base
 
@@ -897,23 +869,10 @@ GROUPDOCS.COMAPRISON PLUGIN
     }
 
     function getHtmlBase() {
-        return '<div class="gd-comparison-bar-wrapper">' +           
-            '<div id="gd-select-compare-files">' +
-            '<div id="gd-files-blocks" class="gd-files-blocks">' +
-            getHtmlDragAndDropArea('first') + getHtmlDragAndDropArea('second') +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            // pages BEGIN
-            '<div id="gd-pages">' +
-            '<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Comparing... Please wait.</div>' +
-            '<div id="gd-panzoom">' +
-            // list of pages
-            '</div>' +
-            '</div>' +
-            // pages END
-            '</div>' +
+        return '<div class="gd-comparison-bar-wrapper">' +                    
+                    getHtmlDragAndDropArea('first') + getHtmlDragAndDropArea('second') +                      
             '</div>';
+           
     }
 
     function getHtmlMultiCompare() {

@@ -774,20 +774,20 @@ function loadThumbnails() {
 function loadPrint() {
     var data = { guid: documentGuid, password: password };
     if (preloadPageCount != 0 && document.location.pathname.indexOf("viewer") >= 0) {
-        $.ajax({
-            type: 'POST',
-            url: getApplicationPath('loadPrint'),
-            data: JSON.stringify(data),
-            global: false,
-            contentType: "application/json",
-            success: function (returnedData) {
-                if (returnedData.message != undefined) {
-                    console.log(returnedData.message);
-                    return;
-                }
-                if (getDocumentFormat(documentGuid).format == "Portable Document Format") {
-                    printPdf(returnedData.guid);
-                } else {
+        if (getDocumentFormat(documentGuid).format == "Portable Document Format") {
+            printPdf();
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: getApplicationPath('loadPrint'),
+                data: JSON.stringify(data),
+                global: false,
+                contentType: "application/json",
+                success: function (returnedData) {
+                    if (returnedData.message != undefined) {
+                        console.log(returnedData.message);
+                        return;
+                    }
                     var pagesHtml = "";
                     $.each(returnedData.pages, function (index, elem) {
                         pagesHtml = pagesHtml + '<div id="gd-page-' + elem.number + '" class="gd-page" style="min-width: ' +
@@ -796,13 +796,13 @@ function loadPrint() {
                             '</div>';
                     });
                     renderPrint(pagesHtml);
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    console.log(err ? err.Message : error);
                 }
-            },
-            error: function (xhr, status, error) {
-                var err = eval("(" + xhr.responseText + ")");
-                console.log(err ? err.Message : error);
-            }
-        });
+            });
+        }
     } else {
         renderPrint();
     }
@@ -838,16 +838,13 @@ function renderPrint(pages) {
 
 }
 
-function printPdf(guid) {
-    var url = getApplicationPath(guid)
-    urlExists(url, function (validUrl) {
-        if (!validUrl) {
-            url = url.replace("/viewer", "");  
-        }
+function printPdf() {
+    if (documentGuid != "" && typeof documentGuid != "undefined") {        
+        var url = getApplicationPath('printPdf/?guid=') + documentGuid.split(/[\\\/]/).pop();
         var windowObject = window.open(url, "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
         windowObject.focus();
 
-        $(windowObject).on('load', function () {
+        $(windowObject.document).ready(function () {
             windowObject.document.close();
             windowObject.focus();
             windowObject.onafterprint = function (e) {
@@ -859,7 +856,10 @@ function printPdf(guid) {
                 $(windowObject).on('mousemove', windowObject.onafterprint);
             }, 3000);
         });
-    });   
+    } else {
+        // open error popup
+        printMessage("Please open document first");
+    }
 }
 
 function urlExists(url, callback) {

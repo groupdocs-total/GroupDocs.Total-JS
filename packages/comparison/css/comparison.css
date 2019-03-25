@@ -5,13 +5,16 @@
     margin-top: 50px;
     width: 100%;
 }
+.gd-comparison-bar-wrapper.full {
+    flex-wrap: wrap;
+}        
 .gd-comparison-bar-wrapper-multicompare {
     flex-wrap: wrap;
 }
-    .tab-slider-body {
-        width: 50%;
-        border-right: 2px solid #ddd;
-    }
+.tab-slider-body {
+width: 50%;
+border-right: 2px solid #ddd;
+}
 .gd-compare-area-head {
     height: 37px;
     background-color: #FFFFFF;
@@ -47,11 +50,15 @@
 .gd-drag-n-drop-icon {
     font-size: 65px;
     color: #959DA5;
-    margin: 448px auto 0 auto;
+    margin: auto;
+}
+.gd-drag-n-drop-wrap-compare.full {
+    padding-top: 200px;
 }
 .gd-drag-n-drop-wrap-compare {
     display: flex;
     flex-direction: column;
+    padding-top: 448px;
 }
 .gd-compare-drag-label {
     color: #959DA5;

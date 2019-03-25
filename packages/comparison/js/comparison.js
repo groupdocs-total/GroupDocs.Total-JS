@@ -297,6 +297,10 @@ $(document).ready(function () {
             var newDragnDrop = getHtmlDragAndDropArea(prefix)
             $(".gd-comparison-bar-wrapper").append(newDragnDrop);
         }       
+        if (prefix == 4) {
+            $(".gd-comparison-bar-wrapper").addClass("full");
+            $(".gd-drag-n-drop-wrap-compare").addClass("full");
+        }
         initDropZone(prefix);
         initCloseButton(prefix);       
     });
@@ -661,8 +665,10 @@ function fillFileVariables(prefix, file, url, path) {
  **/
 function getHtmlDragAndDropArea(prefix) {
     // close icon for multi comparing 
+    var close = "";
     if (prefix > 2) {
         prefix = replacePrefix(prefix);
+        close = '<i class="fas fa-times gd-close-dad-area" id="gd-close-dad-area-' + prefix + '"></i>';
     }    
     // drag and drop section
     var htmlSection = '<section id="gd-upload-section-' + prefix + '" class="tab-slider-body">' +       
@@ -670,7 +676,7 @@ function getHtmlDragAndDropArea(prefix) {
             '<i class="fas fa-arrow-right"></i>'+
             '<input type="url" class="gd-compare-url" id="gd-url-' + prefix + '" placeholder="http://">' +
         '<i class="fas fa-folder gd-compare-browse"></i>' +
-        '<i class="fas fa-times gd-close-dad-area" id="gd-close-dad-area-' + prefix + '"></i>' +
+        close +
         '</div>' +
 
         '<div class="gd-drag-n-drop-wrap-compare" id="gd-dropZone-' + prefix + '">' +
@@ -713,10 +719,13 @@ function replacePrefix(prefix) {
  * Init remove button for selection area
  * @param prefix - prefix for selection area
  */
-function initCloseButton(prefix) {
+function initCloseButton(prefix) {   
+    prefix = replacePrefix(prefix);
     $('#gd-close-dad-area-' + prefix).on(userMouseClick, function (e) {
         fillFileVariables(prefix, '', '', '');
         $('#gd-upload-section-' + prefix).remove();
+        $(".gd-comparison-bar-wrapper").removeClass("full");
+        $(".gd-drag-n-drop-wrap-compare").removeClass("full");
     });
 }
 

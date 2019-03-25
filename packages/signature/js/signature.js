@@ -36,7 +36,7 @@ var signature = {
 };
 var draggableSignaturePosition = {};
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
-var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-trash-alt fa-sm gd-delete-signature"];
+var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-unlock gd-lock-ration", "fas fa-trash-alt fa-sm gd-delete-signature"];
 var mergedFonts = [];
 
 $(document).ready(function () {
@@ -218,7 +218,44 @@ $(document).ready(function () {
             hideAllContextMenu();
 		}
     });
-	
+    //////////////////////////////////////////////////
+    // Delete signature click event
+    //////////////////////////////////////////////////
+    $('#gd-panzoom').on(userMouseClick, '.gd-lock-ration', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        // start monkey patch for setOption (see https://bugs.jqueryui.com/ticket/4186)
+        var oldSetOption = $.ui.resizable.prototype._setOption;
+        $.ui.resizable.prototype._setOption = function(key, value) {
+            oldSetOption.apply(this, arguments);
+            if (key === "aspectRatio") {
+                this._aspectRatio = !!value;
+            }
+        };
+        // end monkey patch for setOption
+
+        var button = $(e.target);
+        var sigantureDragable = $(e.target).closest('.ui-draggable');
+        var isLocked = sigantureDragable.hasClass('ratio-locked');
+        if(isLocked){
+            sigantureDragable.removeClass('ratio-locked');
+            button.removeClass('fa-lock').addClass('fa-unlock');
+            sigantureDragable.find('.ui-resizable-handle').show();
+            sigantureDragable.resizable('option', 'aspectRatio', false);
+            console.log('UNLOCK',);
+        }else{
+            sigantureDragable.addClass('ratio-locked');
+            button.removeClass('fa-unlock').addClass('fa-lock');
+            sigantureDragable.find('.ui-resizable-handle').hide();
+            sigantureDragable.find('.ui-resizable-se').show();
+            sigantureDragable.resizable('option', 'aspectRatio', true);
+            console.log('LOCK',);
+        }
+
+    });  
+    
+
+
     //////////////////////////////////////////////////
     // Delete signature click event
     //////////////////////////////////////////////////

@@ -840,7 +840,7 @@ function renderPrint(pages) {
 
 function printPdf() {
     if (documentGuid != "" && typeof documentGuid != "undefined") {        
-        var url = getApplicationPath('printPdf/?guid=') + documentGuid.split(/[\\\/]/).pop();
+        var url = getApplicationPath('printPdf/?guid=') + documentGuid;
         var windowObject = window.open(url, "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
         windowObject.focus();
 

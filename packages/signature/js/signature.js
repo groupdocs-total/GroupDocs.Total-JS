@@ -219,7 +219,7 @@ $(document).ready(function () {
 		}
     });
     //////////////////////////////////////////////////
-    // Delete signature click event
+    // Lock ratio click event
     //////////////////////////////////////////////////
     $('#gd-panzoom').on(userMouseClick, '.gd-lock-ration', function (e) {
         e.preventDefault();
@@ -242,14 +242,12 @@ $(document).ready(function () {
             button.removeClass('fa-lock').addClass('fa-unlock');
             sigantureDragable.find('.ui-resizable-handle').show();
             sigantureDragable.resizable('option', 'aspectRatio', false);
-            console.log('UNLOCK',);
         }else{
             sigantureDragable.addClass('ratio-locked');
             button.removeClass('fa-unlock').addClass('fa-lock');
             sigantureDragable.find('.ui-resizable-handle').hide();
             sigantureDragable.find('.ui-resizable-se').show();
             sigantureDragable.resizable('option', 'aspectRatio', true);
-            console.log('LOCK',);
         }
 
     });  

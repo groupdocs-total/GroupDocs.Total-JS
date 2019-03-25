@@ -850,7 +850,7 @@ function printPdf() {
             // Only handle status code 200
             if (request.status === 200) {
 
-                var file = new Blob([request.response] { type: 'application/pdf' });
+                var file = new Blob([request.response], { type: 'application/pdf' });
                 var fileURL = URL.createObjectURL(file);
                 var windowObject = window.open(fileURL, "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
                 windowObject.focus();

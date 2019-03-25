@@ -1120,17 +1120,14 @@ function patchViewerZoom(){
     zoomIn = function(event){
         oldZoomIn(event);
         fixContextZoom(getZoomValue());
-        console.log('ZoomIn',getZoomValue());
     }
     zoomOut = function(event){
         oldZoomOut(event);
         fixContextZoom(getZoomValue());
-        console.log('ZoomOut',getZoomValue());
     }
     setZoomLevel = function(zoomString){
         oldZoomLevel.apply(this,[zoomString]);
         fixContextZoom(getZoomValue());
-        console.log('ZoomLevel',zoomString,getZoomValue(),this);
     }
 }
 

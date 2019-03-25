@@ -679,7 +679,7 @@ function makeResizable(currentAnnotation, html) {
             closeCommentsPanel();
         }
     });
-
+    fixContextZoom(getZoomValue());
     var previouseMouseX = 0;
     var previouseMouseY = 0;
 
@@ -1102,6 +1102,37 @@ function getContextMenu(annotationId, editable) {
         '<i class="fas fa-comments fa-sm gd-comments"></i>' +
         '</div>';
 }
+/**
+ * Zoom compensation for context
+ */
+function fixContextZoom(zoomRatio){
+    var inverseZoomRatio = 1 / (zoomRatio/100);
+    $('.gd-context-menu').css('zoom',inverseZoomRatio);
+};
+/**
+ * Zoom patch
+ */
+function patchViewerZoom(){
+    var oldZoomIn = zoomIn;
+    var oldZoomOut = zoomOut;
+    var oldZoomLevel = setZoomLevel;
+
+    zoomIn = function(event){
+        oldZoomIn(event);
+        fixContextZoom(getZoomValue());
+        console.log('ZoomIn',getZoomValue());
+    }
+    zoomOut = function(event){
+        oldZoomOut(event);
+        fixContextZoom(getZoomValue());
+        console.log('ZoomOut',getZoomValue());
+    }
+    setZoomLevel = function(zoomString){
+        oldZoomLevel.apply(this,[zoomString]);
+        fixContextZoom(getZoomValue());
+        console.log('ZoomLevel',zoomString,getZoomValue(),this);
+    }
+}
 
 /**
  * Save current reply
@@ -1250,6 +1281,7 @@ GROUPDOCS.ANNOTATION PLUGIN
             fitWidth = options.fitWidth;
             getHtmlDownloadPanel();
             getHtmlPrintPanel();
+            patchViewerZoom();
             $('#gd-navbar').append(getHtmlSavePanel);
             // assembly annotation tools side bar html base
             $(".wrapper").append(getHtmlAnnotationsBarBase);

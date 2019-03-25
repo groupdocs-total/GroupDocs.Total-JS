@@ -839,26 +839,41 @@ function renderPrint(pages) {
 }
 
 function printPdf() {
-    if (documentGuid != "" && typeof documentGuid != "undefined") {        
-        var url = getApplicationPath('printPdf/?guid=') + documentGuid;
-        var windowObject = window.open(url, "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
-        windowObject.focus();
+    if (documentGuid != "" && typeof documentGuid != "undefined") {
+        var data = { guid: documentGuid, password: password };
 
-        $(windowObject.document).ready(function () {
-            windowObject.document.close();
-            windowObject.focus();
-            windowObject.onafterprint = function (e) {
-                $(windowObject).off('mousemove', windowObject.onafterprint);
-                windowObject.close();
-            };
-            windowObject.print();
-            setTimeout(function () {
-                $(windowObject).on('mousemove', windowObject.onafterprint);
-            }, 3000);
-        });
-    } else {
-        // open error popup
-        printMessage("Please open document first");
+        var request = new XMLHttpRequest();
+        request.open('POST', getApplicationPath('printPdf'), true);
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.responseType = 'blob';
+        request.onload = function () {
+            // Only handle status code 200
+            if (request.status === 200) {
+
+                var file = new Blob([request.response] { type: 'application/pdf' });
+                var fileURL = URL.createObjectURL(file);
+                var windowObject = window.open(fileURL, "PrintWindow", "width=750,height=650,top=50,left=50,toolbars=yes,scrollbars=yes,status=yes,resizable=yes");
+                windowObject.focus();
+
+                $(windowObject.document).ready(function () {
+                    windowObject.document.close();
+                    windowObject.focus();
+                    windowObject.onafterprint = function (e) {
+                        $(windowObject).off('mousemove', windowObject.onafterprint);
+                        windowObject.close();
+                    };
+                    windowObject.print();
+                    setTimeout(function () {
+                        $(windowObject).on('mousemove', windowObject.onafterprint);
+                    }, 3000);
+                });
+            }
+        };
+
+        request.send(JSON.stringify(data));
+
+
+
     }
 }
 
@@ -1354,10 +1369,10 @@ function clearSearch() {
 * Zoom document
 * @param {int} zoom_val - zoom value from 0 to 100
 */
-function setZoomValue(zoom_val) {    
+function setZoomValue(zoom_val) {
     // adapt value for css
     var zoom_val_non_webkit = zoom_val / 100;
-    var zoom_val_webkit = Math.round(zoom_val) + '%';    
+    var zoom_val_webkit = Math.round(zoom_val) + '%';
     // display zoom value
     setNavigationZoomValues(zoom_val_webkit);
     if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
@@ -1370,7 +1385,7 @@ function setZoomValue(zoom_val) {
                 $(page).removeClass("gd-page-zoomed");
             });
         }
-    }   
+    }
     // set css zoom values
     var style = [
         'zoom: ' + zoom_val_webkit,
@@ -1860,7 +1875,7 @@ function setZoomLevel(zoomString) {
             // get scale ratio
             var scale = (pageWidth / screenWidth) * 100;
             // set values
-            zoomValue = 200 - scale;                     
+            zoomValue = 200 - scale;
             break;
         case 'Fit Height':
             // get page height

@@ -36,7 +36,7 @@ var signature = {
 };
 var draggableSignaturePosition = {};
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
-var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-unlock gd-lock-ration", "fas fa-trash-alt fa-sm gd-delete-signature"];
+var contextMenuButtons = ["fas fa-arrows-alt fa-sm", "fas fa-unlock gd-lock-ratio", "fas fa-trash-alt fa-sm gd-delete-signature"];
 var mergedFonts = [];
 
 $(document).ready(function () {
@@ -221,7 +221,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Lock ratio click event
     //////////////////////////////////////////////////
-    $('#gd-panzoom').on(userMouseClick, '.gd-lock-ration', function (e) {
+    $('#gd-panzoom').on(userMouseClick, '.gd-lock-ratio', function (e) {
         e.preventDefault();
         e.stopPropagation();
         // start monkey patch for setOption (see https://bugs.jqueryui.com/ticket/4186)

@@ -1,72 +1,105 @@
 .gd-comparison-bar-wrapper {
     background-color: #E7E7E7;
     display: flex;
-    flex-direction: row;    
+    flex-direction: row;
     margin-top: 50px;
     width: 100%;
 }
+
+.gd-comparison-bar-wrapper i {
+    cursor: pointer;
+}
+
 .gd-comparison-bar-wrapper.full {
     flex-wrap: wrap;
-}        
+}
+
 .gd-comparison-bar-wrapper-multicompare {
     flex-wrap: wrap;
 }
-.tab-slider-body {
-width: 50%;
-border-right: 2px solid #ddd;
+
+.gd-compare-section {
+    width: 50%;
+    border-right: 2px solid #ddd;
 }
+
 .gd-compare-area-head {
     height: 37px;
     background-color: #FFFFFF;
     display: flex;
 }
+
 .gd-compare-area-head i:first-of-type {
     color: #959DA5;
     margin: 12px 15px 11px 13px;
     font-size: 14px;
 }
-.gd-compare-browse{
+
+.gd-compare-browse {
     color: #959DA5;
     margin: 12px 18px 11px 13px;
     font-size: 14px;
 }
+
 .gd-close-dad-area {
     color: #959DA5;
-    font-size: 21px;
-    margin: 8px 14px 8px 0;
+    font-size: 14px;
+    margin: 12px 14px 8px 0;
 }
+
 .gd-compare-url {
     border: 0;
     height: 37px;
     width: 100%;
     padding-left: 5px;
 }
+
 #gd-header-logo {
     background-image: url('../images/logo.png') !important;
 }
+
 #gd-add-multicompare {
     float: right !important;
 }
+
 .gd-drag-n-drop-icon {
     font-size: 65px;
     color: #959DA5;
     margin: auto;
 }
+
 .gd-drag-n-drop-wrap-compare.full {
     padding-top: 200px;
 }
+
 .gd-drag-n-drop-wrap-compare {
     display: flex;
     flex-direction: column;
     padding-top: 448px;
 }
+
 .gd-compare-drag-label {
     color: #959DA5;
     font-size: 15px;
     margin: 38px auto;
 }
+
 .gd-drag-n-drop-icon-multicompare {
     font-size: 65px;
     color: #959DA5;
     margin: 173px auto auto auto;
+}
+
+#gd-pages {
+    width: 100%;
+    height: 91%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+}
+
+.gd-wrapper {
+    width: 600px;
+    margin: 10px;
 }

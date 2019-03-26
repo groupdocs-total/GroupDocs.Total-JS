@@ -1,6 +1,6 @@
 {
   "name": "@groupdocs.examples.jquery/signature",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "jQuery plugin that allows to display and sign documents supported by groupdocs libraries APIs",
   "main": "index.js",
   "scripts": {

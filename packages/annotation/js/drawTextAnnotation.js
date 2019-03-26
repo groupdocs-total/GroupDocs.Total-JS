@@ -167,6 +167,7 @@ $(document).ready(function () {
             annotationInnerHtml = null;
             lineInnerHtml = null;
         }
+        fixContextZoom(getZoomValue());
         // set mouse up event
         // this handler used to get annotation width and height after draw process
         $(canvas).on(userMouseUp, function (e) {

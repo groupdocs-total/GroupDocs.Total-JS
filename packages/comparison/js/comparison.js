@@ -16,7 +16,7 @@ GLOBAL VARIABLES
 var applicationPath;
 var preloadResultPageCount;
 var compareFilesMap = [];
-var documentResultGuid;
+var compareDocumentGuid;
 var password = '';
 var rewrite;
 var multiComparing;
@@ -40,13 +40,13 @@ $(document).ready(function () {
 
     $('#gd-btn-download-summary').on(userMouseClick, function (e) {
         downloadDocument(resultData.length - 1);
-    });    
+    });
 
     //////////////////////////////////////////////////
     // Disable default file or diretory click event
     //////////////////////////////////////////////////
     $('.gd-modal-body').off(userMouseClick);
-    
+
     //////////////////////////////////////////////////
     // File or directory click event from file tree
     //////////////////////////////////////////////////
@@ -65,37 +65,48 @@ $(document).ready(function () {
             // if document -> open          
             toggleModalDialog(false, '');
             password = "";
-            clearDocumentPreview(browsePrefix);
-            var compareFile = { guid: "" };
-            compareFile.guid = $(this).attr('data-guid');
-            compareFilesMap.push(compareFile);
-            appendHtmlContent(browsePrefix, compareFile.guid);
+            appendHtmlContent(browsePrefix, $(this).attr('data-guid'));
         }
     });
 
+    //////////////////////////////////////////////////
+    // Add new comparison section
+    //////////////////////////////////////////////////
+    $('#gd-add-multicompare').on(userMouseClick, function (e) {
+        var prefix = $(".gd-compare-section").length + 1;
+        if (prefix <= 4) {
+            var newDragnDrop = getHtmlDragAndDropArea(prefix)
+            $(".gd-comparison-bar-wrapper").append(newDragnDrop);
+        }
+        if (prefix == 4) {
+            $(".gd-comparison-bar-wrapper").addClass("full");
+            $(".gd-drag-n-drop-wrap-compare").addClass("full");
+        }
+        initDropZone(prefix);      
+        addCloseSection();
+    });
 
     //////////////////////////////////////////////////
     // Add file via URL event
     //////////////////////////////////////////////////
-    $('.gd-add-url-compare').on(userMouseClick, function (event) {
+    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-add-url-compare', function (event) {
         var url = $(event.target.parentElement).find(".gd-compare-url").val();
         var prefix = $(event.target.parentElement).find(".gd-compare-url").attr("id").split("-").pop();
-        if (isUrlValid(url)) {      
-            clearDocumentPreview(prefix);
+        if (isUrlValid(url)) {           
             uploadDocumentFromUrl(url, prefix);
             $(event.target.parentElement).find(".gd-compare-url").val('');
         } else {
             $('#gd-url-first').val('');
             alert("please enter valid URL");
         }
-    });   
-
+    });
+  
     //////////////////////////////////////////////////
     // Open document button (upload dialog) click
     //////////////////////////////////////////////////
-    $('.gd-compare-browse').on(userMouseClick, function (e) {
-        browsePrefix = $(event.target.parentElement.parentElement).attr("id").split("-").pop();
-        toggleModalDialog(false, '');        
+    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-compare-browse', function (e) {
+        browsePrefix = $(event.target.closest(".gd-compare-section")).attr("id").split("-").pop();
+        toggleModalDialog(false, '');
         loadFileTree('');
     });
 
@@ -239,7 +250,9 @@ $(document).ready(function () {
                 printMessage(err.message);
             }
         });
-    });    
+    });
+
+    initCloseButton();
     //
     // END of document ready function
 });
@@ -250,12 +263,48 @@ FUNCTIONS
 ******************************************************************
 */
 
+function getFileNameFromPath(guid) {
+    return guid.match(/[-_\w]+[.][\w]+$/i)[0];
+}
+
+function addDocInfoHead(guid, prefix) {
+    var icon = getDocumentFormat(guid).icon;
+    var fileName = getFileNameFromPath(guid);
+    $("#gd-upload-section-" + prefix).find(".gd-compare-head-buttons").hide()
+    var fileInfoArea = $("#gd-upload-section-" + prefix).find(".gd-compare-file-info");
+    $(fileInfoArea).css("display", "flex");
+    $(fileInfoArea).find("i").addClass(icon);
+    $(fileInfoArea).find(".gd-compare-file-name").html(fileName);
+    addCloseSection();
+}
+
+function removeDocInfoHead(prefix) {
+    var fileInfoArea = $("#gd-upload-section-" + prefix).find(".gd-compare-file-info");
+    var icon = getDocumentFormat($(fileInfoArea).find(".gd-compare-file-name").html()).icon;
+    $(fileInfoArea).hide();
+    $(fileInfoArea).find("i").removeClass(icon);
+    $(fileInfoArea).find(".gd-compare-file-name").html("");
+    $("#gd-upload-section-" + prefix).find(".gd-compare-head-buttons").show()
+}
+
 function clearDocumentPreview(prefix) {
     $.each($("#gd-upload-section-" + prefix).find(".gd-wrapper"), function (index, page) {
         $(page).remove();
     });
+    $("#gd-dropZone-" + prefix).show();   
+    var fileName = $("#gd-upload-section-" + prefix).find(".gd-compare-file-name").html();
+    removeFileFromCompare(fileName);
 }
 
+function removeFileFromCompare(fileName) {
+    $.each(compareFilesMap, function (index, filePath) {        
+        if (filePath.guid.indexOf(fileName) > 0) {
+            compareFilesMap = $.grep(compareFilesMap, function (value) {
+                return value != filePath;
+            });
+        }
+    })
+}
 
 /**
  * Upload document
@@ -281,11 +330,8 @@ function uploadDocumentFromUrl(url, prefix) {
                 // open error popup
                 printMessage(returnedData.message);
                 return;
-            }
-            var compareFile = { guid: "" };
-            compareFile.guid = returnedData.guid;
-            compareFilesMap.push(compareFile);          
-            appendHtmlContent(prefix, compareFile.guid);
+            }         
+            appendHtmlContent(prefix, returnedData.guid);
         },
         error: function (xhr, status, error) {
             if (xhr && xhr.responseText) {
@@ -321,15 +367,19 @@ function appendHtmlContent(prefix, guid) {
                 // open error popup
                 printMessage(htmlData.error);
                 return;
-            }
-            gd_page.find('.gd-page-spinner').hide();          
+            }          
+            var compareFile = { guid: "" };
+            compareFile.guid = guid;
+            compareFilesMap.push(compareFile);
+            addDocInfoHead(compareFile.guid, prefix);
+            gd_page.find('.gd-page-spinner').hide();
             $.each(htmlData.pages, function (index, page) {
                 // append page image, in image mode append occurred after setting the size to avoid zero size usage
                 gd_page.append('<div class="gd-wrapper">' +
                     '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
                     '</div>');
             });
-            
+
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -357,22 +407,59 @@ function downloadDocument(index) {
     }
 }
 
+function addCloseSection() {
+    var sectionsCount = $(".gd-compare-section").length;
+    $.each($(".gd-compare-section"), function (index, section) {
+        var prefix = convertIndexToString(index + 1);
+        var close = '<i class="fas fa-times gd-close-dad-area" id="gd-close-dad-area-' + prefix + '"></i>';
+        if ($(section).find(".gd-close-dad-area").length == 0) {
+            if (sectionsCount == 2 && prefix == browsePrefix) {
+                $(section).find(".gd-compare-area-head").append(close);
+            } else if (sectionsCount > 2) {
+                $(section).find(".gd-compare-area-head").append(close);
+            }
+        }
+    });   
+}
+
+function convertIndexToString(index) {
+    switch (index) {
+        case 1:
+            return "first";
+            break;
+        case 2:
+            return "second";
+            break;
+        case 3:
+            return "third";
+            break;
+        case 4:
+            return "fourth";
+            break;
+    }
+}
+
 /**
  * Get HTML content for drag and drop area
  **/
 function getHtmlDragAndDropArea(prefix) {
     // close icon for multi comparing 
-   
+
     if (prefix > 2) {
         prefix = replacePrefix(prefix);
     }
     // drag and drop section
     var htmlSection = '<section id="gd-upload-section-' + prefix + '" class="gd-compare-section">' +
         '<div class="gd-compare-area-head">' +
-        '<i class="fas fa-arrow-right gd-add-url-compare"></i>' +
-        '<input type="url" class="gd-compare-url" id="gd-url-' + prefix + '" placeholder="http://">' +
-        '<i class="fas fa-folder gd-compare-browse"></i>' +
-        '<i class="fas fa-times gd-close-dad-area" id="gd-close-dad-area-' + prefix + '"></i>' +
+            '<div class="gd-compare-head-buttons">'+
+                '<i class="fas fa-arrow-right gd-add-url-compare"></i>' +
+                '<input type="url" class="gd-compare-url" id="gd-url-' + prefix + '" placeholder="http://">' +
+                '<i class="fas fa-folder gd-compare-browse"></i>' +
+            '</div>' +
+            '<div class="gd-compare-file-info">'+
+                '<i class="fa"></i>' +
+                '<div class="gd-compare-file-name"></div>' +
+            '</div>' +
         '</div>' +
 
         '<div class="gd-drag-n-drop-wrap-compare" id="gd-dropZone-' + prefix + '">' +
@@ -384,7 +471,7 @@ function getHtmlDragAndDropArea(prefix) {
 
         //// pages BEGIN
         '<div id="gd-pages">' +
-            '<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +          
+        '<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
         '</div>' +
         //    // pages END
         '</section>';
@@ -412,13 +499,23 @@ function replacePrefix(prefix) {
  * Init remove button for selection area
  * @param prefix - prefix for selection area
  */
-function initCloseButton(prefix) {
-    prefix = replacePrefix(prefix);
-    $('#gd-close-dad-area-' + prefix).on(userMouseClick, function (e) {
-        fillFileVariables(prefix, '', '', '');
-        $('#gd-upload-section-' + prefix).remove();
-        $(".gd-comparison-bar-wrapper").removeClass("full");
-        $(".gd-drag-n-drop-wrap-compare").removeClass("full");
+function initCloseButton() {    
+    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-close-dad-area', function (e) {        
+        var prefix = $(e.target).attr("id").split("-").pop();
+        if ($('#gd-upload-section-' + prefix).find(".gd-wrapper").length > 0) {
+            clearDocumentPreview(prefix);
+            removeDocInfoHead(prefix);
+            if ($(".gd-compare-section").length == 2) {
+                $('#gd-upload-section-' + prefix).find(".gd-close-dad-area").remove();
+            }
+        } else {
+            $('#gd-upload-section-' + prefix).remove();
+            $(".gd-comparison-bar-wrapper").removeClass("full");
+            $(".gd-drag-n-drop-wrap-compare").removeClass("full");
+            if ($(".gd-compare-section").length == 2 && $(".gd-compare-section").find(".gd-wrapper").length == 0) {
+                $('.gd-compare-section').find(".gd-close-dad-area").remove();
+            }
+        }
     });
 }
 

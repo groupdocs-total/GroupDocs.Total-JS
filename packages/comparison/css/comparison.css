@@ -14,12 +14,19 @@
     flex-wrap: wrap;
 }
 
+.gd-comparison-bar-wrapper.full .gd-compare-section {
+    height: 462px;
+}
+
+.gd-comparison-bar-wrapper.full #gd-pages {
+    height: 424px;
+}
 .gd-comparison-bar-wrapper-multicompare {
     flex-wrap: wrap;
 }
 
 .gd-compare-section {
-    width: 50%;
+    width: 960px;
     border-right: 2px solid #ddd;
 }
 
@@ -29,6 +36,19 @@
     display: flex;
 }
 
+.gd-compare-head-buttons {
+    display: flex;
+    width: 100%;
+}
+
+.gd-compare-file-info {
+    display: none;
+    width: 100%;
+}
+.gd-compare-file-name {
+    color: #959da5;
+    margin: 10px;
+}
 .gd-compare-area-head i:first-of-type {
     color: #959DA5;
     margin: 12px 15px 11px 13px;
@@ -91,12 +111,11 @@
 }
 
 #gd-pages {
-    width: 100%;
-    height: 91%;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: auto;
+    height: 884px;
 }
 
 .gd-wrapper {

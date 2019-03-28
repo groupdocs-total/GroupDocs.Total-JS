@@ -26,7 +26,7 @@
 }
 
 .gd-compare-section {
-    width: 960px;
+    width: 100%;
     border-right: 2px solid #ddd;
 }
 
@@ -121,4 +121,95 @@
 .gd-wrapper {
     width: 600px;
     margin: 10px;
+}
+
+/*
+******************************************
+Right side panel
+******************************************
+*/
+.gd-differences-wrapper {
+    display: flex;
+    flex-flow: column;
+    margin-right: -334px;
+    width: 334px;
+    transition: margin-right 0.2s cubic-bezier(0.81, 0.01, 1, 1);
+}
+
+.gd-differences-wrapper.active {
+    margin-right: 0px;
+    width: 334px;
+    z-index: 999;
+    background-color: #FFF;
+    transition: margin-right 0.2s cubic-bezier(0.81, 0.01, 1, 1);
+}
+
+.gd-differences-header {
+    height: 50px;
+    background-color: #222E35;
+    display: flex;
+    flex-flow: row;
+}
+
+.gd-differences-header > i:first-child {
+    font-size: 24px;
+    color: #959DA5;
+    margin: 12px 9px 18px 14px;
+}
+
+.gd-differences-header span {
+    font-size: 13px;
+    color: rgba(237, 240, 242, 0.57);
+    margin: 18px 187px 23px 0;
+}
+
+.gd-differences-header .close {
+    font-size: 24px;
+    color: rgba(237, 240, 242, 0.4);
+    margin: 13px 14px 17px 0;
+    cursor: pointer;
+}
+
+.gd-differences-body {
+    display: flex;
+    flex-flow: column;
+    padding-top: 14px;
+    overflow: visible;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.gd-difference {
+    flex-flow: row wrap;
+    height: 75px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+.gd-difference i {
+    font-size: 14px;    
+    margin: 14px 13px 0px 20px;
+}
+.gd-difference .fa-arrow-right {
+    color: #16B901;
+}
+.gd-difference .fa-pencil-alt {
+    color: #CED600;
+}
+.gd-difference .fa-times {
+    color: #B96401;
+}
+.gd-difference-title {
+    color: #222E35;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 15px 0px 10px 0;
+}
+.gd-difference-page {
+    color: rgba(149, 157, 165, 0.48);
+    font-size: 11px;
+    margin: 17px 14px 48px 154px;
+}
+.gd-differentce-comment {
+    color: #959DA5;
+    font-size: 13px;
+    margin: 10px 0px 18px 45px;
 }

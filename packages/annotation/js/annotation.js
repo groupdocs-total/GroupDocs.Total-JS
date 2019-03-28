@@ -523,6 +523,7 @@ function closeCommentsPanel() {
 }
 
 function openCommentForm() {
+	$('.gd-annotations-comments-form').removeClass("hidden");
     $('.gd-annotations-comments-form').slideDown(100);
     $('.gd-comments-nonideal-state').hide();
 }

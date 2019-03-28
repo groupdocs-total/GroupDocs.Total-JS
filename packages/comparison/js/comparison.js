@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GroupDocs.Comparison.JS
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT
@@ -19,7 +19,6 @@ var compareFilesMap = [];
 var compareDocumentGuid;
 var password = '';
 var rewrite;
-var multiComparing;
 var browsePrefix = "";
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
 
@@ -29,7 +28,7 @@ $(document).ready(function () {
     ******************************************************************
     NAV BAR CONTROLS
     ******************************************************************
-    */
+    */   
 
     //////////////////////////////////////////////////
     // Download event
@@ -45,7 +44,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Disable default file or diretory click event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').off(userMouseClick);
+    $('.gd-modal-body').off(userMouseClick, '.gd-filetree-name');
 
     //////////////////////////////////////////////////
     // File or directory click event from file tree
@@ -75,7 +74,7 @@ $(document).ready(function () {
     $('#gd-add-multicompare').on(userMouseClick, function (e) {
         var prefix = $(".gd-compare-section").length + 1;
         if (prefix <= 4) {
-            var newDragnDrop = getHtmlDragAndDropArea(prefix)
+            var newDragnDrop = getHtmlCompareSection(prefix)
             $(".gd-comparison-bar-wrapper").append(newDragnDrop);
         }
         if (prefix == 4) {
@@ -100,6 +99,13 @@ $(document).ready(function () {
             alert("please enter valid URL");
         }
     });
+
+    //////////////////////////////////////////////////
+    // Add file via URL event
+    //////////////////////////////////////////////////
+    $(".gd-differences-wrapper").on(userMouseClick, '.close', function (event) {
+        $(".gd-differences-wrapper").removeClass("active");
+    });
   
     //////////////////////////////////////////////////
     // Open document button (upload dialog) click
@@ -108,149 +114,7 @@ $(document).ready(function () {
         browsePrefix = $(event.target.closest(".gd-compare-section")).attr("id").split("-").pop();
         toggleModalDialog(false, '');
         loadFileTree('');
-    });
-
-
-    //////////////////////////////////////////////////
-    // Compare two files event
-    //////////////////////////////////////////////////
-    $('#gd-btn-compare').on(userMouseClick, function () {
-        var context;
-        var contentType = 'application/json';
-        var data;
-        // collect all selected files in arrays
-        var filesData = collectFiles();
-        // calculate amount of selected files
-        var amountOfFiles1 = amountOfFiles(filesData);
-        // if multi-compare supports and amount of files more than 2
-        if (multiComparing && amountOfFiles1 > 2) {
-            data = new FormData();
-            $.each(filesData['files'], function (index, elem) {
-                data.append("files", elem);
-            });
-            data.append("passwords", new Blob([JSON.stringify(filesData['passwords'])], { type: "application/json" }));
-            data.append("urls", new Blob([JSON.stringify(filesData['urls'])], { type: "application/json" }));
-            data.append("paths", new Blob([JSON.stringify(filesData['paths'])], { type: "application/json" }));
-
-            context = 'multiCompare';
-            contentType = false;
-        } else {
-            var firstPass = getPassword('first');
-            var secondPass = getPassword('second');
-            // paths of files less than 2
-            if (mapIsEmpty(compareFileGuidMap)) {
-                // urls less than 2
-                if (mapIsEmpty(compareFileUrlMap)) {
-                    // files less than 2
-                    if (mapIsEmpty(compareFileMap)) {
-                        // files are 2, but got by different ways
-                        if (amountOfFiles1 == 2) {
-                            data = new FormData();
-                            $.each(filesData['files'], function (index, elem) {
-                                data.append("files", elem);
-                            });
-                            data.append("passwords", new Blob([JSON.stringify(filesData['passwords'])], { type: "application/json" }));
-                            data.append("urls", new Blob([JSON.stringify(filesData['urls'])], { type: "application/json" }));
-                            data.append("paths", new Blob([JSON.stringify(filesData['paths'])], { type: "application/json" }));
-
-                            context = 'compare';
-                            contentType = false;
-                        } else { // files are less than 2
-                            printMessage("Select files for comparing first!");
-                            return;
-                        }
-                    } else { // files are 2 for comparing
-                        data = new FormData();
-                        data.append("firstFile", compareFileMap['first']);
-                        data.append("secondFile", compareFileMap['second']);
-                        data.append("firstPassword", firstPass);
-                        data.append("secondPassword", secondPass);
-                        context = 'compareFiles';
-                        contentType = false;
-                    }
-                } else { // urls are 2, compare with urls
-                    data = JSON.stringify({
-                        firstPath: compareFileUrlMap['first'],
-                        secondPath: compareFileUrlMap['second'],
-                        firstPassword: firstPass,
-                        secondPassword: secondPass
-                    });
-                    context = 'compareWithUrls';
-                }
-            } else {// paths are 2, compare with paths
-                data = JSON.stringify({
-                    firstPath: compareFileGuidMap['first'],
-                    secondPath: compareFileGuidMap['second'],
-                    firstPassword: firstPass,
-                    secondPassword: secondPass
-                });
-                context = 'compareWithPaths';
-            }
-        }
-        // clear previous results
-        clearResultsContents();
-        // show loading spinner
-        $('#gd-compare-spinner').show();
-        // send compare
-        $.ajax({
-            type: 'POST',
-            url: getApplicationPath(context),
-            data: data,
-            contentType: contentType,
-            processData: false,
-            success: function (returnedData) {
-                if (returnedData.message != undefined) {
-                    // open error popup
-                    printMessage(returnedData.message);
-                    return;
-                }
-                // hide loading spinner
-                $('#gd-compare-spinner').hide();
-                documentResultGuid = returnedData.guid;
-                extension = returnedData.extension;
-                $.each(returnedData.pages, function (index, elem) {
-                    changedPages = elem.page;
-                });
-                var totalPageNumber = returnedData.pages.length;
-                // append changes
-                $.each(returnedData.pages, function (index, elem) {
-                    var pageNumber = index;
-
-                    // append empty page
-                    $('#gd-panzoom').append(
-                        '<div id="gd-page-' + pageNumber + '" class="gd-page" class="gd-page">' +
-                        '<div class="gd-page-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
-                        '</div>'
-                    );
-                    // save page data
-                    resultData.push({ pageNumber: pageNumber, pageGuid: elem });
-                    setZoomValue(getZoomValue());
-                });
-                var counter = preloadResultPageCount;
-                // check pre-load page number is bigger than total pages number
-                if (preloadResultPageCount > totalPageNumber) {
-                    counter = totalPageNumber;
-                }
-                // get page according to the pre-load page number
-                for (var i = 0; i < counter; i++) {
-                    // render page
-                    appendHtmlContent(i, resultData[i].pageGuid);
-                }
-
-                // hide delete file icon
-                $('#gd-cancel-button-first').hide();
-                $('#gd-cancel-button-second').hide();
-            },
-            error: function (xhr, status, error) {
-                var err = eval("(" + xhr.responseText + ")");
-                console.log(err.message);
-                // hide loading spinner
-                $('#gd-compare-spinner').hide();
-                // open error popup
-                printMessage(err.message);
-            }
-        });
-    });
+    });    
 
     initCloseButton();
     //
@@ -346,6 +210,37 @@ function uploadDocumentFromUrl(url, prefix) {
     });
 }
 
+function uploadDragFile(file, prefix) {
+    // prepare form data for uploading
+    var formData = new FormData();
+    // add local file for uploading
+    formData.append("file", file);    
+    formData.append("rewrite", rewrite);
+    $.ajax({       
+        type: 'POST',
+        url: getApplicationPath('uploadDocument'),
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (returnedData) {
+            if (returnedData.message != undefined) {
+                // open error popup
+                printMessage(returnedData.message);
+                return;
+            }
+            browsePrefix = prefix;
+            appendHtmlContent(prefix, returnedData.guid);
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.Message);
+            // open error popup
+            printMessage(err.message);
+        }
+    });
+}
+
 /**
  * Append html content to an empty page
  * @param {string} prefix - current compare area prefix
@@ -379,7 +274,10 @@ function appendHtmlContent(prefix, guid) {
                     '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
                     '</div>');
             });
-
+            setFitWidth(prefix);
+            if (compareFilesMap.length >= 2) {
+                $('#gd-btn-compare').on(userMouseClick, compareFiles);
+            }
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -389,6 +287,119 @@ function appendHtmlContent(prefix, guid) {
         }
     });
 }
+
+function compareFiles() {
+    var data = { guids: compareFilesMap };
+    // send compare
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath("compare"),
+        data: data,
+        contentType: contentType,
+        processData: false,
+        success: function (returnedData) {
+            if (returnedData.message != undefined) {
+                // open error popup
+                printMessage(returnedData.message);
+                return;
+            }
+            // hide loading spinner
+            $('#gd-compare-spinner').hide();
+            documentResultGuid = returnedData.guid;
+            extension = returnedData.extension;
+            $.each(returnedData.pages, function (index, elem) {
+                changedPages = elem.page;
+            });
+            var totalPageNumber = returnedData.pages.length;
+            // append changes
+            $.each(returnedData.pages, function (index, elem) {
+                var pageNumber = index;
+
+                // append empty page
+                $('#gd-panzoom').append(
+                    '<div id="gd-page-' + pageNumber + '" class="gd-page" class="gd-page">' +
+                    '<div class="gd-page-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
+                    '</div>'
+                );
+                // save page data
+                resultData.push({ pageNumber: pageNumber, pageGuid: elem });
+                setZoomValue(getZoomValue());
+            });
+            var counter = preloadResultPageCount;
+            // check pre-load page number is bigger than total pages number
+            if (preloadResultPageCount > totalPageNumber) {
+                counter = totalPageNumber;
+            }
+            // get page according to the pre-load page number
+            for (var i = 0; i < counter; i++) {
+                // render page
+                appendHtmlContent(i, resultData[i].pageGuid);
+            }
+
+            // hide delete file icon
+            $('#gd-cancel-button-first').hide();
+            $('#gd-cancel-button-second').hide();
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.message);
+            // hide loading spinner
+            $('#gd-compare-spinner').hide();
+            // open error popup
+            printMessage(err.message);
+        }
+    });
+}
+
+
+function setFitWidth(prefix) {
+    // get page width
+    var pageWidth = $('.gd-wrapper').width();
+    // get screen width
+    var screenWidth = $('#gd-pages').width();
+    // get scale ratio
+    var scale = (pageWidth / screenWidth) * 100;
+    // set values
+    zoomValue = 200 - scale;   
+    setZoomValue(zoomValue, prefix);
+}
+
+/**
+* Zoom document
+* @param {int} zoom_val - zoom value from 0 to 100
+*/
+function setZoomValue(zoom_val, prefix) {
+    // adapt value for css
+    var zoom_val_non_webkit = zoom_val / 100;
+    var zoom_val_webkit = Math.round(zoom_val) + '%';
+    // display zoom value
+    setNavigationZoomValues(zoom_val_webkit);
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        if (zoom_val > 100) {
+            $(".gd-page").each(function (index, page) {
+                (!$(page).hasClass("gd-page-zoomed")) ? $(page).addClass("gd-page-zoomed") : "";
+            });
+        } else {
+            $(".gd-page").each(function (index, page) {
+                $(page).removeClass("gd-page-zoomed");
+            });
+        }
+    }
+    // set css zoom values
+    var style = [
+        'zoom: ' + zoom_val_webkit,
+        'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
+        '-moz-transform: scale(' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-moz-transform-origin: top;',
+        '-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
+        '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'
+    ].join(';');   
+    $.each($('#gd-upload-section-' + prefix).find(".gd-wrapper"), function (index, page) {
+        $(page).attr('style', style);
+    });    
+}
+
 
 /**
  * Download result
@@ -442,7 +453,7 @@ function convertIndexToString(index) {
 /**
  * Get HTML content for drag and drop area
  **/
-function getHtmlDragAndDropArea(prefix) {
+function getHtmlCompareSection(prefix) {
     // close icon for multi comparing 
 
     if (prefix > 2) {
@@ -552,8 +563,8 @@ function initDropZone(prefix) {
             event.stopPropagation();
             event.preventDefault();
             dropZone.removeClass('hover');
-            var files = event.dataTransfer.files;
-            addFileForComparing(files, null, prefix);
+            var files = event.dataTransfer.files;          
+            uploadDragFile(files[0], prefix);            
         };
     }
 }
@@ -663,7 +674,7 @@ GROUPDOCS.COMAPRISON PLUGIN
     ******************************************************************
     */
     function getHtmlComparisonPanel() {
-        return '<li id="gd-btn-compare" class="gd-btn-compare">' +
+        return '<li id="gd-btn-compare" class="gd-btn-compare disabled">' +
             '<span id="gd-compare-value">' +
             '<i class="fas fa-play"></i>' +
             '<span class="gd-tooltip">Compare</span>' +
@@ -673,7 +684,14 @@ GROUPDOCS.COMAPRISON PLUGIN
 
     function getHtmlBase() {
         return '<div class="gd-comparison-bar-wrapper">' +
-            getHtmlDragAndDropArea('first') + getHtmlDragAndDropArea('second') +
+            getHtmlCompareSection('first') + getHtmlCompareSection('second') +
+            '</div>' +
+            '<div class="gd-differences-wrapper">' +
+                '<div class="gd-differences-header">' +                    
+                        '<i class="fas fa-info-circle"></i><span>Differences</span>' +
+                        '<div class="close"><i class="fas fa-times"></i></div >' +                  
+                '</div >' +
+            '<div class="gd-differences-body">' +    
             '</div>';
 
     }

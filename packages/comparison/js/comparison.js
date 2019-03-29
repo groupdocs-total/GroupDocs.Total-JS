@@ -20,6 +20,12 @@ var compareDocumentGuid;
 var password = '';
 var rewrite;
 var browsePrefix = "";
+var differencesTypes = {};
+differencesTypes[1] = { 'icon': '<i class="fas fa-pencil-alt"></i>', 'title': '<span class="gd-difference-title">Text edited</span>' };
+differencesTypes[2] = { 'icon': '<i class="fas fa-arrow-right"></i>', 'title': '<span class="gd-difference-title">Text Added</span>' };
+differencesTypes[3] = { 'icon': '<i class="fas fa-times"></i>', 'title': '<span class="gd-difference-title">Text deleted</span>' };
+differencesTypes[4] = { 'icon': '<i class="fas fa-arrow-right"></i>', 'title': '<span class="gd-difference-title">Text Added</span>' };
+differencesTypes[6] = { 'icon': '<i class="fas fa-pencil-alt"></i>', 'title': '<span class="gd-difference-title">Style changed</span>' };
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
 
 $(document).ready(function () {
@@ -105,6 +111,8 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $(".gd-differences-wrapper").on(userMouseClick, '.close', function (event) {
         $(".gd-differences-wrapper").removeClass("active");
+        $(".gd-compare-section").css("width", "959px");
+        $(".gd-comparison-bar-wrapper").css("width", "959px");
     });
   
     //////////////////////////////////////////////////
@@ -168,6 +176,9 @@ function removeFileFromCompare(fileName) {
             });
         }
     })
+    if (compareFilesMap.length < 2) {
+        ($('#gd-btn-compare').hasClass("disabled")) ? "" : $('#gd-btn-compare').addClass("disabled");        
+    }
 }
 
 /**
@@ -249,7 +260,7 @@ function appendHtmlContent(prefix, guid) {
     // initialize data
     var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     $("#gd-dropZone-" + prefix).hide();
-    gd_page.find('.gd-page-spinner').show();
+    $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').show();
     // get document description
     var data = { path: guid };
     $.ajax({
@@ -263,11 +274,11 @@ function appendHtmlContent(prefix, guid) {
                 printMessage(htmlData.error);
                 return;
             }          
-            var compareFile = { guid: "" };
+            var compareFile = { guid: "", password: "" };
             compareFile.guid = guid;
             compareFilesMap.push(compareFile);
             addDocInfoHead(compareFile.guid, prefix);
-            gd_page.find('.gd-page-spinner').hide();
+            $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
             $.each(htmlData.pages, function (index, page) {
                 // append page image, in image mode append occurred after setting the size to avoid zero size usage
                 gd_page.append('<div class="gd-wrapper">' +
@@ -277,6 +288,7 @@ function appendHtmlContent(prefix, guid) {
             setFitWidth(prefix);
             if (compareFilesMap.length >= 2) {
                 $('#gd-btn-compare').on(userMouseClick, compareFiles);
+                $('#gd-btn-compare').removeClass("disabled");
             }
         },
         error: function (xhr, status, error) {
@@ -294,8 +306,8 @@ function compareFiles() {
     $.ajax({
         type: 'POST',
         url: getApplicationPath("compare"),
-        data: data,
-        contentType: contentType,
+        data: JSON.stringify(data),
+        contentType: "application/json",
         processData: false,
         success: function (returnedData) {
             if (returnedData.message != undefined) {
@@ -305,40 +317,19 @@ function compareFiles() {
             }
             // hide loading spinner
             $('#gd-compare-spinner').hide();
-            documentResultGuid = returnedData.guid;
-            extension = returnedData.extension;
-            $.each(returnedData.pages, function (index, elem) {
-                changedPages = elem.page;
+            documentResultGuid = returnedData.guid; 
+            var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
+            $(lastSection).find(".gd-wrapper").remove();
+            var resultPagesHtml = "";
+            $.each(returnedData.pages, function (index, page) {
+                resultPagesHtml = resultPagesHtml + '<div class="gd-wrapper">' +
+                    '<image class="gd-page-image" src="data:image/png;base64,' + page + '" alt></image>' +
+                    '</div>';
             });
-            var totalPageNumber = returnedData.pages.length;
-            // append changes
-            $.each(returnedData.pages, function (index, elem) {
-                var pageNumber = index;
-
-                // append empty page
-                $('#gd-panzoom').append(
-                    '<div id="gd-page-' + pageNumber + '" class="gd-page" class="gd-page">' +
-                    '<div class="gd-page-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
-                    '</div>'
-                );
-                // save page data
-                resultData.push({ pageNumber: pageNumber, pageGuid: elem });
-                setZoomValue(getZoomValue());
-            });
-            var counter = preloadResultPageCount;
-            // check pre-load page number is bigger than total pages number
-            if (preloadResultPageCount > totalPageNumber) {
-                counter = totalPageNumber;
-            }
-            // get page according to the pre-load page number
-            for (var i = 0; i < counter; i++) {
-                // render page
-                appendHtmlContent(i, resultData[i].pageGuid);
-            }
-
-            // hide delete file icon
-            $('#gd-cancel-button-first').hide();
-            $('#gd-cancel-button-second').hide();
+            $(lastSection).find("#gd-pages").append(resultPagesHtml);
+            var prefix = $(lastSection).attr("id").split("-").pop();
+            setFitWidth(prefix);
+            ShowDifferences(returnedData.changes);
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -351,6 +342,16 @@ function compareFiles() {
     });
 }
 
+function ShowDifferences(changes) {
+    $(".gd-differences-body").html("");
+    $.each(changes, function (index, change) {
+        var changeHtml = getDifferenceHtml(change);
+        $(".gd-differences-body").append(changeHtml);
+    });
+    $(".gd-differences-wrapper").addClass("active");
+    $(".gd-compare-section").css("width", "795px");
+    $(".gd-comparison-bar-wrapper").css("width", "83%");
+}
 
 function setFitWidth(prefix) {
     // get page width
@@ -371,21 +372,7 @@ function setFitWidth(prefix) {
 function setZoomValue(zoom_val, prefix) {
     // adapt value for css
     var zoom_val_non_webkit = zoom_val / 100;
-    var zoom_val_webkit = Math.round(zoom_val) + '%';
-    // display zoom value
-    setNavigationZoomValues(zoom_val_webkit);
-    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-        if (zoom_val > 100) {
-            $(".gd-page").each(function (index, page) {
-                (!$(page).hasClass("gd-page-zoomed")) ? $(page).addClass("gd-page-zoomed") : "";
-            });
-        } else {
-            $(".gd-page").each(function (index, page) {
-                $(page).removeClass("gd-page-zoomed");
-            });
-        }
-    }
-    // set css zoom values
+    var zoom_val_webkit = Math.round(zoom_val) + '%';  
     var style = [
         'zoom: ' + zoom_val_webkit,
         'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
@@ -573,6 +560,24 @@ function isUrlValid(url) {
     return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url);
 }
 
+function getDifferenceHtml(difference) {
+    var comment = "";
+    
+    if (difference.Type == 6) {
+        $.each(difference.StyleChanges, function (index, style) {
+            comment = comment + style.ChangedProperty + " ";
+        });
+    } else {
+        comment = difference.Text;
+    }
+    return '<div class="gd-difference">' +
+        differencesTypes[difference.Type].icon +
+        differencesTypes[difference.Type].title +
+        '<span class="gd-difference-page">Page ' + difference.Page.Id + '</span>' +
+        '<div class="gd-differentce-comment">' + comment + '</div>' +
+        '</div>';
+}
+
 /*
 ******************************************************************
 ******************************************************************
@@ -693,7 +698,6 @@ GROUPDOCS.COMAPRISON PLUGIN
                 '</div >' +
             '<div class="gd-differences-body">' +    
             '</div>';
-
     }
 
     function getHtmlMultiCompare() {
@@ -719,5 +723,4 @@ GROUPDOCS.COMAPRISON PLUGIN
             '</li>';
         downloadBtn.html(downloadDropDown);
     }
-
 })(jQuery);

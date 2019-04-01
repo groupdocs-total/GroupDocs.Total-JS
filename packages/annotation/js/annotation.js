@@ -507,7 +507,9 @@ function downloadAnnotated() {
 
             document.body.removeChild(link);
         } else {
-            printMessage($.parseJSON(request.responseText).exception.ParamName);
+            if (request.responseText) {
+                printMessage($.parseJSON(request.responseText).message);
+            }
         }
     };
     request.send(JSON.stringify(data));    

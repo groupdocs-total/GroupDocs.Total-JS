@@ -479,6 +479,16 @@ function downloadAnnotated() {
     request.setRequestHeader('Content-Type', 'application/json');
     request.responseType = 'blob';
 
+    request.onreadystatechange = function () {
+       if (request.readyState == 2) {
+            if (request.status == 200) {
+                request.responseType = "blob";
+            } else {
+                request.responseType = "text";
+            }
+        }
+    };
+
     request.onload = function () {
         fadeAll(false);
         // Only handle status code 200
@@ -496,6 +506,8 @@ function downloadAnnotated() {
             link.click();
 
             document.body.removeChild(link);
+        } else {
+            printMessage($.parseJSON(request.responseText).exception.ParamName);
         }
     };
     request.send(JSON.stringify(data));    

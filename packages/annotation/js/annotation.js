@@ -460,6 +460,61 @@ function annotate(print) {
     });
 }
 
+function downloadAnnotated() {   
+    fadeAll(true);
+    var annotationsToAdd = [];
+    $.each(annotationsList, function (index, annotationToAdd) {
+        annotationsToAdd.push(annotationToAdd);
+    });
+    // current document guid is taken from the viewer.js globals
+    var data = {
+        guid: documentGuid.replace(/\\/g, "//"),
+        password: password,
+        annotationsData: annotationsToAdd,
+        documentType: getDocumentFormat(documentGuid).format,
+        print: false
+    };
+    var request = new XMLHttpRequest();
+    request.open('POST', getApplicationPath('downloadAnnotated'), true);
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.responseType = 'blob';
+
+    request.onreadystatechange = function () {
+       if (request.readyState == 2) {
+            if (request.status == 200) {
+                request.responseType = "blob";
+            } else {
+                request.responseType = "text";
+            }
+        }
+    };
+
+    request.onload = function () {
+        fadeAll(false);
+        // Only handle status code 200
+        if (request.status === 200) {
+            // Try to find out the filename from the content disposition `filename` value
+            var filename = documentGuid.replace(/\\/g, "/").split('/').pop();
+            // The actual download
+            var blob = new Blob([request.response], { type: 'application/' + documentGuid.split('.').pop().toLowerCase() });
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = filename;
+            // for ff we should append element and then remove it
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+        } else {
+            if (request.responseText) {
+                printMessage($.parseJSON(request.responseText).message);
+            }
+        }
+    };
+    request.send(JSON.stringify(data));    
+}
+
 /**
  * delete annotation
  * @param {Object} event - delete annotation button click event data
@@ -1053,16 +1108,16 @@ function getCommentHtml(comment) {
  * @param {Object} button - Clicked download button
  */
 function download(button) {
-    var annotated = false;
     if ($(button).attr("id") == "gd-annotated-download") {
-        annotated = true;
-    }
-    if (typeof documentGuid != "undefined" && documentGuid != "") {
-        // Open download dialog
-        window.location.assign(getApplicationPath("downloadDocument/?path=") + documentGuid + "&annotated=" + annotated);
+        downloadAnnotated();
     } else {
-        // open error popup
-        printMessage("Please open document first");
+        if (typeof documentGuid != "undefined" && documentGuid != "") {
+            // Open download dialog
+            window.location.assign(getApplicationPath("downloadDocument/?path=") + documentGuid);
+        } else {
+            // open error popup
+            printMessage("Please open or annotate document first");
+        }
     }
 }
 

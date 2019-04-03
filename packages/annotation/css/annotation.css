@@ -523,12 +523,20 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     border:1px solid #FFFFFF;
 }
 
-.gd-text-annotation, .gd-textReplacement-annotation, .gd-resourcesRedaction-annotation{
+.gd-textReplacement-annotation {
     background-color: #28f;    
     filter: alpha(opacity=20);   
 }
 
-.gd-textRedaction-annotation {
+.gd-text-annotation-pdf, .gd-textReplacement-annotation-pdf {
+  background-color: rgba(151, 151, 240, 0.5);   
+}
+
+.gd-text-annotation, .gd-textReplacement-annotation {
+  background-color: rgba(113, 254, 113, 0.5);
+}
+
+.gd-textRedaction-annotation-pdf, .gd-resourcesRedaction-annotation, .gd-resourcesRedaction-annotation-pdf, .gd-textRedaction-annotation, .gd-resourcesRedaction-annotation {
     background-color: #000;
     padding: 0 6px 6px 0;
     width: 100%;
@@ -539,9 +547,6 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 	border-width: 1px;
 	border-color: #b3afff;
 	border-style: solid;
-}
-.gd-resourcesRedaction-annotation {  	
-	background-color: blue;
 }
 
 .gd-textStrikeout-line, .gd-textUnderline-line {   
@@ -554,7 +559,6 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 
 .gd-textUnderline-line {
 	top: 100%;	
-	background-color: #78e45c;
 }
 
 .gd-text-area-toolbar {      

@@ -116,6 +116,7 @@
     align-items: center;
     margin: auto;
     height: 884px;
+    position: relative;
 }
 
 .gd-wrapper {
@@ -129,9 +130,12 @@
 Hightlight elements
 ******************************************
 */
-
 .difference {
     position: absolute;
+}
+.difference.active {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+    z-index: 999;
 }
 .gd-difference-1 {
     background-color: rgba(0, 122, 255, 0.4);    

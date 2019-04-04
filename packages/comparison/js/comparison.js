@@ -17,6 +17,7 @@ var applicationPath;
 var preloadResultPageCount;
 var compareFilesMap = [];
 var compareDocumentGuid;
+var differences;
 var password = '';
 var rewrite;
 var browsePrefix = "";
@@ -26,6 +27,7 @@ differencesTypes[2] = { 'icon': '<i class="fas fa-arrow-right"></i>', 'title': '
 differencesTypes[3] = { 'icon': '<i class="fas fa-times"></i>', 'title': '<span class="gd-difference-title">Text deleted</span>' };
 differencesTypes[4] = { 'icon': '<i class="fas fa-arrow-right"></i>', 'title': '<span class="gd-difference-title">Text Added</span>' };
 differencesTypes[6] = { 'icon': '<i class="fas fa-pencil-alt"></i>', 'title': '<span class="gd-difference-title">Style changed</span>' };
+
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
 
 $(document).ready(function () {
@@ -86,6 +88,7 @@ $(document).ready(function () {
         if (prefix == 4) {
             $(".gd-comparison-bar-wrapper").addClass("full");
             $(".gd-drag-n-drop-wrap-compare").addClass("full");
+            $(".gd-compare-section").css("width", "959px");
         }
         initDropZone(prefix);      
         addCloseSection();
@@ -110,9 +113,7 @@ $(document).ready(function () {
     // Add file via URL event
     //////////////////////////////////////////////////
     $(".gd-differences-wrapper").on(userMouseClick, '.close', function (event) {
-        $(".gd-differences-wrapper").removeClass("active");
-        $(".gd-compare-section").css("width", "959px");
-        $(".gd-comparison-bar-wrapper").css("width", "959px");
+        closeDifferences();
     });
   
     //////////////////////////////////////////////////
@@ -134,6 +135,12 @@ $(document).ready(function () {
 FUNCTIONS
 ******************************************************************
 */
+
+function closeDifferences() {
+    $(".gd-differences-wrapper").removeClass("active");
+    //$(".gd-compare-section").css("width", "959px");
+    $(".gd-comparison-bar-wrapper").css("width", "100%");
+}
 
 function getFileNameFromPath(guid) {
     return guid.match(/[-_\w]+[.][\w]+$/i)[0];
@@ -318,18 +325,8 @@ function compareFiles() {
             // hide loading spinner
             $('#gd-compare-spinner').hide();
             documentResultGuid = returnedData.guid; 
-            var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
-            $(lastSection).find(".gd-wrapper").remove();
-            var resultPagesHtml = "";
-            $.each(returnedData.pages, function (index, page) {
-                resultPagesHtml = resultPagesHtml + '<div class="gd-wrapper">' +
-                    '<image class="gd-page-image" src="data:image/png;base64,' + page + '" alt></image>' +
-                    '</div>';
-            });
-            $(lastSection).find("#gd-pages").append(resultPagesHtml);
-            var prefix = $(lastSection).attr("id").split("-").pop();
-            setFitWidth(prefix);
-            ShowDifferences(returnedData.changes);
+            differences = returnedData.changes;
+            ShowDifferences();
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -342,15 +339,50 @@ function compareFiles() {
     });
 }
 
-function ShowDifferences(changes) {
+function ShowDifferences() {
     $(".gd-differences-body").html("");
-    $.each(changes, function (index, change) {
+    $.each(differences, function (index, change) {
         var changeHtml = getDifferenceHtml(change);
         $(".gd-differences-body").append(changeHtml);
+        highlightDifference(change);
     });
     $(".gd-differences-wrapper").addClass("active");
-    $(".gd-compare-section").css("width", "795px");
+   // $(".gd-compare-section").css("width", "795px");
     $(".gd-comparison-bar-wrapper").css("width", "83%");
+    $.each($(".gd-compare-section"), function (index, section) {
+        var prefix = $(section).attr("id").split("-").pop();
+        setFitWidth(prefix);
+    })
+}
+
+function highlightDifference(change) {
+    var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
+    var highlightHtml = getHightlightHtml(change);
+    var page = $(lastSection).find(".gd-wrapper")[change.Page.Id];
+    $(page).append(highlightHtml);
+}
+
+function getHightlightHtml(change) {
+    var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + change.Box.X + 'px; top: ' + change.Box.Y + 'px"';
+    return '<div class="gd-difference-' + change.Type + ' difference"' + style + '></div>';
+}
+
+function getDifferenceHtml(difference) {
+    var comment = "";
+
+    if (difference.Type == 6) {
+        $.each(difference.StyleChanges, function (index, style) {
+            comment = comment + style.ChangedProperty + " ";
+        });
+    } else {
+        comment = difference.Text;
+    }
+    return '<div class="gd-difference">' +
+        differencesTypes[difference.Type].icon +
+        differencesTypes[difference.Type].title +
+        '<span class="gd-difference-page">Page ' + (difference.Page.Id + 1) + '</span>' +
+        '<div class="gd-differentce-comment">' + comment + '</div>' +
+        '</div>';
 }
 
 function setFitWidth(prefix) {
@@ -498,7 +530,8 @@ function replacePrefix(prefix) {
  * @param prefix - prefix for selection area
  */
 function initCloseButton() {    
-    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-close-dad-area', function (e) {        
+    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-close-dad-area', function (e) {  
+        closeDifferences();
         var prefix = $(e.target).attr("id").split("-").pop();
         if ($('#gd-upload-section-' + prefix).find(".gd-wrapper").length > 0) {
             clearDocumentPreview(prefix);
@@ -510,13 +543,24 @@ function initCloseButton() {
             $('#gd-upload-section-' + prefix).remove();
             $(".gd-comparison-bar-wrapper").removeClass("full");
             $(".gd-drag-n-drop-wrap-compare").removeClass("full");
+            $(".gd-compare-section").css("width", "inherit");
             if ($(".gd-compare-section").length == 2 && $(".gd-compare-section").find(".gd-wrapper").length == 0) {
                 $('.gd-compare-section').find(".gd-close-dad-area").remove();
             }
+            reIndexSections();
         }
     });
 }
 
+function reIndexSections() {
+    $.each($(".gd-compare-section"), function (index, section) {
+        var prefix = convertIndexToString(index + 1);
+        $(section).attr("id", "gd-upload-section-" + prefix);
+        $(section).find(".gd-compare-url").attr("id", "gd-url-" + prefix);
+        $(section).find(".gd-drag-n-drop-wrap-compare").attr("id", "gd-dropZone-" + prefix);
+        $(section).find(".gd-close-dad-area").attr("id", "gd-close-dad-area-" + prefix);
+    });
+}
 /**
  * Init drop zone for file selection area
  * @param prefix - prefix for selection area
@@ -558,24 +602,6 @@ function initDropZone(prefix) {
 
 function isUrlValid(url) {
     return /^(https?|s?ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url);
-}
-
-function getDifferenceHtml(difference) {
-    var comment = "";
-    
-    if (difference.Type == 6) {
-        $.each(difference.StyleChanges, function (index, style) {
-            comment = comment + style.ChangedProperty + " ";
-        });
-    } else {
-        comment = difference.Text;
-    }
-    return '<div class="gd-difference">' +
-        differencesTypes[difference.Type].icon +
-        differencesTypes[difference.Type].title +
-        '<span class="gd-difference-page">Page ' + difference.Page.Id + '</span>' +
-        '<div class="gd-differentce-comment">' + comment + '</div>' +
-        '</div>';
 }
 
 /*

@@ -69,6 +69,7 @@ $(document).ready(function () {
     var lineInnerHtml = null;
     var currentPrefix = "";
     var idNumber = null;
+	var documentFormat = "";
     var userMouseUp = ('ontouchend' in document.documentElement) ? 'touchend mouseup' : 'mouseup';
     var userMouseMove = ('ontouchmove' in document.documentElement) ? 'touchmove mousemove' : 'mousemove';
 
@@ -87,6 +88,7 @@ $(document).ready(function () {
         idNumber = annotationsCounter;
         // get mouse position
         mouse = getMousePosition(ev)
+		documentFormat = getDocumentFormat(documentGuid).format;
         // draw the annotation
         if (element == null && ($(ev.target).prop("tagName") == "IMG" || $(ev.target).prop("tagName") == "svg")) {
             annotation.id = idNumber;
@@ -243,7 +245,7 @@ $(document).ready(function () {
         // prepare annotation HTML markup
         element = document.createElement('div');
         element.className = 'gd-annotation gd-bounding-box';
-
+		documentFormat = getDocumentFormat(documentGuid).format;
         switch (currentPrefix) {
             case "textStrikeout":
                 element.style.left = annotation.left + "px";
@@ -325,7 +327,7 @@ $(document).ready(function () {
 
     function getAnnotationHtml() {
         var annotationHtml = document.createElement('div');
-        annotationHtml.className = 'gd-' + currentPrefix + '-annotation annotation';
+        annotationHtml.className = (documentFormat == "Portable Document Format") ? 'gd-' + currentPrefix + '-annotation-pdf annotation' : 'gd-' + currentPrefix + '-annotation annotation';
         annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber;		
         return annotationHtml;
     }
@@ -370,7 +372,7 @@ $(document).ready(function () {
 
     function getTextLineAnnotationHtml() {
         var annotationHtml = document.createElement('div');
-        annotationHtml.className = 'gd-' + currentPrefix + '-annotation gd-text-annotation annotation';
+        annotationHtml.className = (documentFormat == "Portable Document Format") ? 'gd-' + currentPrefix + '-annotation gd-text-annotation-pdf annotation' : 'gd-' + currentPrefix + '-annotation gd-text-annotation annotation';
         annotationHtml.id = 'gd-' + currentPrefix + '-annotation-' + idNumber;		
         return annotationHtml;
     }

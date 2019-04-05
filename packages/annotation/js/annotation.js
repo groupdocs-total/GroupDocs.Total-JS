@@ -738,9 +738,11 @@ function makeResizable(currentAnnotation, html) {
     fixContextZoom(getZoomValue());
     var previouseMouseX = 0;
     var previouseMouseY = 0;
-
+    var pointerX;
+    var pointerY;
+    
     $(element).draggable({
-        containment: "#gd-page-" + currentAnnotation.pageNumber,
+        containment: "#gd-page-" + currentAnnotation.pageNumber,	       
         stop: function (event, image) {
             if (['text', 'textStrikeout', 'textUnderline'].indexOf(annotationType) >= 0) {
                 currentAnnotation.left = Math.ceil(image.position.left);
@@ -767,12 +769,31 @@ function makeResizable(currentAnnotation, html) {
                 currentAnnotation.top = Math.ceil(image.position.top);
             }
         },
-        drag: function (event, image) {
+        drag: function (event, image) {           
+            var currentAnnotationPage = $("#gd-page-" + currentAnnotation.pageNumber);
+            var zoom = getZoomValue() / 100;           
+            var canvasTop = currentAnnotationPage.offset().top;
+            var canvasLeft = currentAnnotationPage.offset().left;
+            var canvasHeight = currentAnnotationPage.height();
+            var canvasWidth = currentAnnotationPage.width();
+            // Fix for zoom
+            image.position.top = Math.round((event.pageY - canvasTop) / zoom - pointerY);
+            image.position.left = Math.round((event.pageX - canvasLeft) / zoom - pointerX);
+            // Check if element is outside canvas
+            if (image.position.left < 0) image.position.left = 0;
+            if (image.position.left + $(this).width() > canvasWidth) image.position.left = canvasWidth - $(this).width();
+            if (image.position.top < 0) image.position.top = 0;
+            if (image.position.top + $(this).height() > canvasHeight) image.position.top = canvasHeight - $(this).height();
+            // Finally, make sure offset aligns with position
+            image.offset.top = Math.round(image.position.top + canvasTop);
+            image.offset.left = Math.round(image.position.left + canvasLeft);
+          
             var x = image.position.left;
             var y = image.position.top;
+			
             var svgElement = $("#" + $(image.helper[0]).data("id"));
             var newCoordinates;
-            var currentAnnotationPage = $("#gd-page-" + currentAnnotation.pageNumber);
+            
             switch (annotationType) {
                 case "point":
                     x = x + ($(image.helper[0]).width() / 2);
@@ -781,6 +802,12 @@ function makeResizable(currentAnnotation, html) {
                     svgElement.attr("cy", y);
                     break;
                 case "polyline":
+                    if (x == 0) {
+                        x = 1;
+                    }
+                    if (y == 0) {
+                        y = 1;
+                    }
                     newCoordinates = movePolyline(image, x, y, previouseMouseX, previouseMouseY);
                     previouseMouseX = x;
                     previouseMouseY = y;
@@ -794,8 +821,14 @@ function makeResizable(currentAnnotation, html) {
                     newCoordinates = moveDistance(image, x, y, currentAnnotationPage);
                     svgElement.attr("d", "M" + $.trim(newCoordinates).replace(" ", " L"));
                     break;
-            }
-        }
+            }		
+        },
+        start: function (event, ui) {
+            var zoom = getZoomValue() / 100;           
+            pointerY = (event.pageY - $("#gd-page-" + currentAnnotation.pageNumber).offset().top) / zoom - parseInt($(event.target).css('top'));
+            pointerX = (event.pageX - $("#gd-page-" + currentAnnotation.pageNumber).offset().left) / zoom - parseInt($(event.target).css('left'));           
+        },
+		
     }).resizable({
         // set restriction for image resizing to current document page
         containment: "#gd-page-" + currentAnnotation.pageNumber,

@@ -219,6 +219,7 @@ function uploadDocumentFromUrl(url, prefix) {
                 printMessage(returnedData.message);
                 return;
             }         
+            browsePrefix = prefix;
             appendHtmlContent(prefix, returnedData.guid);
         },
         error: function (xhr, status, error) {
@@ -270,20 +271,20 @@ function uploadDragFile(file, prefix) {
  * @param {string} prefix - current compare area prefix
  */
 function appendHtmlContent(prefix, guid) {
-    // initialize data
-    var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
+    // initialize data   
     compareDocumentGuid = guid;
     $("#gd-dropZone-" + prefix).hide();
     $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').show();
     if (preloadPageCount == 0) {
-        loadAllPages(guid);
+        loadAllPages(guid, prefix);
     } else {
         generatepagesTemplates();
-        loadPage(guid);
+        loadPage(guid, prefix);
     }
 }
 
-function loadPage(guid) {
+function loadPage(guid, prefix) {
+    var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
     var data = { path: guid };
     $.ajax({
@@ -327,7 +328,8 @@ function loadPage(guid) {
     });
 }
 
-function loadAllPages(guid) {
+function loadAllPages(guid, prefix) {
+    var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
     var data = { path: guid };
     $.ajax({

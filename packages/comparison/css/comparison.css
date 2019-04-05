@@ -20,6 +20,7 @@
 
 .gd-comparison-bar-wrapper.full #gd-pages {
     height: 424px;
+    position: inherit;
 }
 .gd-comparison-bar-wrapper-multicompare {
     flex-wrap: wrap;

@@ -14,13 +14,14 @@ GLOBAL VARIABLES
 ******************************************************************
 */
 var applicationPath;
-var preloadResultPageCount;
+var preloadPageCount;
 var compareFilesMap = [];
 var compareDocumentGuid;
 var password = '';
 var rewrite;
 var browsePrefix = "";
 var differencesTypes = {};
+var loadedPageNumber = 0;
 differencesTypes[1] = { 'icon': '<i class="fas fa-pencil-alt"></i>', 'title': '<span class="gd-difference-title">Text edited</span>' };
 differencesTypes[2] = { 'icon': '<i class="fas fa-arrow-right"></i>', 'title': '<span class="gd-difference-title">Text Added</span>' };
 differencesTypes[3] = { 'icon': '<i class="fas fa-times"></i>', 'title': '<span class="gd-difference-title">Text deleted</span>' };
@@ -125,8 +126,9 @@ $(document).ready(function () {
     });      
 
     $(".gd-comparison-bar-wrapper").on(userMouseClick, function (e) {
-        if ($(".difference.active").length > 0) {
-            $(".difference.active").removeClass("active");
+        if ($(".highlight-difference.active").length > 0) {
+            $(".highlight-difference.active").removeClass("active");
+            $(".gd-difference.active").removeClass("active");
         }
     });      
 
@@ -273,6 +275,59 @@ function appendHtmlContent(prefix, guid) {
     compareDocumentGuid = guid;
     $("#gd-dropZone-" + prefix).hide();
     $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').show();
+    if (preloadPageCount == 0) {
+        loadAllPages(guid);
+    } else {
+        generatepagesTemplates();
+        loadPage(guid);
+    }
+}
+
+function loadPage(guid) {
+    // get document description
+    var data = { path: guid };
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('loadDocumentPage'),
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (htmlData) {
+            if (htmlData.error != undefined) {
+                // open error popup
+                printMessage(htmlData.error);
+                return;
+            }
+            var compareFile = { guid: "", password: "" };
+            compareFile.guid = guid;
+            compareFilesMap.push(compareFile);
+            addDocInfoHead(compareFile.guid, prefix);
+            $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
+            $.each(htmlData.pages, function (index, page) {
+                // append page image, in image mode append occurred after setting the size to avoid zero size usage
+                gd_page.append('<div class="gd-wrapper gd-page-' + (index + 1) + '">' +
+                    '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
+                    '</div>');
+            });
+            setFitWidth(prefix);
+            if (compareFilesMap.length >= 2) {
+                $('#gd-btn-compare').on(userMouseClick, function (event) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    compareFiles();
+                });
+                $('#gd-btn-compare').removeClass("disabled");
+            }
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.message);
+            // open error popup
+            printMessage(err.error);
+        }
+    });
+}
+
+function loadAllPages(guid) {
     // get document description
     var data = { path: guid };
     $.ajax({
@@ -285,7 +340,7 @@ function appendHtmlContent(prefix, guid) {
                 // open error popup
                 printMessage(htmlData.error);
                 return;
-            }          
+            }
             var compareFile = { guid: "", password: "" };
             compareFile.guid = guid;
             compareFilesMap.push(compareFile);
@@ -293,7 +348,7 @@ function appendHtmlContent(prefix, guid) {
             $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
             $.each(htmlData.pages, function (index, page) {
                 // append page image, in image mode append occurred after setting the size to avoid zero size usage
-                gd_page.append('<div class="gd-wrapper">' +                  
+                gd_page.append('<div class="gd-wrapper gd-page-' + (index + 1) + '">' +
                     '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
                     '</div>');
             });
@@ -356,10 +411,10 @@ function ShowDifferences(differences) {
         var changeHtml = getDifferenceHtml(change);
         $(".gd-differences-body").append(changeHtml);
         addHighlightDifferences(change);
-        $(".gd-difference").on(userMouseClick, function (e) {
+        $(".gd-difference, .highlight-difference").on(userMouseClick, function (e) {
             highlightDifference(e);
         });  
-    });
+    }); 
     $(".gd-differences-wrapper").addClass("active");
    // $(".gd-compare-section").css("width", "795px");
     $(".gd-comparison-bar-wrapper").css("width", "83%");
@@ -371,19 +426,26 @@ function ShowDifferences(differences) {
 
 function addHighlightDifferences(change) {
     var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
-    var page = $(lastSection).find(".gd-wrapper")[change.Page.Id];
-    var highlightHtml = getHightlightHtml(change, page);
-    $(page).append(highlightHtml);
+    var firstSection = $(".gd-compare-section")[0];
+    var page = $(lastSection).find(".gd-page-" + (change.Page.Id + 1));
+    var originalDocPage = $(firstSection).find(".gd-page-" + (change.Page.Id + 1));
+    var highlightHtml = (change.Type == 3) ? getHightlightHtml(change, originalDocPage) : getHightlightHtml(change, page);
+    (change.Type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
 }
 
 function highlightDifference(event) {
     event.stopImmediatePropagation();
     event.preventDefault();
-    $(".difference.active").removeClass("active");
+    $(".highlight-difference.active").removeClass("active");
+    $(".gd-difference.active").removeClass("active");
     var differenceId = ($(event.target).data("id") || $(event.target).data("id") == 0) ? $(event.target).data("id") : $(event.target).parent().data("id");
-    $('.difference[data-id="' + differenceId + '"]').addClass("active");
-    var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
-    scrollToDifference(lastSection, '.difference[data-id="' + differenceId + '"]');
+    var differenceHighligted = $('.highlight-difference[data-id="' + differenceId + '"]');
+    var difference = $('.gd-difference[data-id="' + differenceId + '"]')
+    $(differenceHighligted).addClass("active");
+    $(difference).addClass("active");
+    var Section = $(differenceHighligted).closest(".gd-compare-section");
+    scrollToDifference(Section, differenceHighligted);
+    scrollDifferencesPanel(difference);
 }
 
 /**
@@ -392,12 +454,21 @@ function highlightDifference(event) {
 */
 function scrollToDifference(section, difference) {
     // get zoom value
+    var zoomValue = 100;  
+    // scroll
+    $(section).find("#gd-pages").scrollTo(difference, {
+        zoom: zoomValue
+    });
+}
+
+function scrollDifferencesPanel(difference) {
+    // get zoom value
     var zoomValue = $('.gd-wrapper').css('zoom') * 100;
     if (typeof zoomValue == 'undefined') {
         zoomValue = 100;
     }
     // scroll
-    $(section).find("#gd-pages").scrollTo(difference, {
+    $(".gd-differences-body").scrollTo(difference, {
         zoom: zoomValue
     });
 }
@@ -412,7 +483,7 @@ function getHightlightHtml(change, page) {
     }
 
     var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
-    return '<div class="gd-difference-' + change.Type + ' difference"' + style + ' data-id="' + change.Id + '"></div>';
+    return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + change.Id + '"></div>';
 }
 
 function getDifferenceHtml(difference) {
@@ -598,7 +669,7 @@ function replacePrefix(prefix) {
 function initCloseButton() {    
     $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-close-dad-area', function (e) {  
         closeDifferences();
-        $(".difference").remove();       
+        $(".highlight-difference").remove();       
         var prefix = $(e.target).attr("id").split("-").pop();
         if ($('#gd-upload-section-' + prefix).find(".gd-wrapper").length > 0) {
             clearDocumentPreview(prefix);
@@ -725,7 +796,7 @@ GROUPDOCS.COMAPRISON PLUGIN
 
             // set global option params
             applicationPath = options.applicationPath;
-            preloadResultPageCount = options.preloadResultPageCount;
+            preloadPageCount = options.preloadResultPageCount;
             rewrite = options.rewrite;
             multiComparing = options.multiComparing;
             $("#gd-pages").remove();

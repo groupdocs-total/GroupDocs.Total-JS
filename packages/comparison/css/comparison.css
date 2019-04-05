@@ -130,10 +130,15 @@
 Hightlight elements
 ******************************************
 */
-.difference {
+.highlight-difference {
     position: absolute;
+    cursor: pointer;
 }
-.difference.active {
+.highlight-difference.active {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+.gd-difference.active {
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
     z-index: 999;
 }

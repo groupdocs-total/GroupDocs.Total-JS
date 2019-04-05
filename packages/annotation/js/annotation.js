@@ -802,6 +802,12 @@ function makeResizable(currentAnnotation, html) {
                     svgElement.attr("cy", y);
                     break;
                 case "polyline":
+                    if (x == 0) {
+                        x = 1;
+                    }
+                    if (y == 0) {
+                        y = 1;
+                    }
                     newCoordinates = movePolyline(image, x, y, previouseMouseX, previouseMouseY);
                     previouseMouseX = x;
                     previouseMouseY = y;

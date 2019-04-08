@@ -133,6 +133,63 @@ $(document).ready(function () {
     });      
 
     initCloseButton();
+
+    //////////////////////////////////////////////////
+    // Page scrolling event
+    //////////////////////////////////////////////////
+    var previousScroll = 0;
+    $('#gd-pages').scroll(function () {
+        var pagesAttr = $('#gd-page-num').text().split('/');
+        // get current page number
+        var currentPageNumber = parseInt(pagesAttr[0]);
+        // get last page number
+        var lastPageNumber = parseInt(pagesAttr[1]);
+        var pagePosition = 0;
+        // get scroll direction
+        var scrollDown = true;
+        var currentScroll = $(this).scrollTop();
+        if (currentScroll < previousScroll) {
+            scrollDown = false;
+        }
+        // set scroll direction
+        previousScroll = currentScroll;
+        var zoom = parseInt($("#gd-zoom-value").html()) / 100;
+        var delta = 0.5;
+        if (zoom < 1) {
+            delta = 1;
+        }
+        for (i = 1; i <= lastPageNumber; i++) {
+            // check if page is visible in the view port more than 50%
+            if ($('#gd-page-' + i).isOnScreen(delta, delta)) {
+                // change current page value
+                if (i != currentPageNumber) {
+                    // set current page number
+                    setNavigationPageValues(i, lastPageNumber);
+                }
+                // load next page
+                // to set correct page size we use global array documentData which contains all info about current document
+                if (preloadPageCount > 0) {
+                    // if scroll down load next page
+                    if (scrollDown) {
+                        if (i + 1 <= lastPageNumber) {
+                            appendHtmlContent(i + 1, documentGuid);
+                        } else if (i == lastPageNumber) {
+                            appendHtmlContent(i, documentGuid);
+                        }
+                    } else {
+                        // if scroll up load previous page
+                        if (currentPageNumber - 1 >= 1) {
+                            appendHtmlContent(currentPageNumber - 1, documentGuid);
+                        }
+                    }
+                }
+            }
+        }
+        if ($(this).scrollTop() == 0 && !scrollDown) {
+            setNavigationPageValues(1, lastPageNumber);
+        }
+    });
+
     //
     // END of document ready function
 });
@@ -277,16 +334,55 @@ function appendHtmlContent(prefix, guid) {
     $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').show();
     if (preloadPageCount == 0) {
         loadAllPages(guid, prefix);
-    } else {
-        generatepagesTemplates();
-        loadPage(guid, prefix);
+    } else {        
+        for (i = 0; i < preloadPageCount; i++) {
+            loadPage(guid, prefix, i + 1);            
+        }        
     }
 }
 
-function loadPage(guid, prefix) {
+function generatePagesTemplates(guid, prefix) {
     var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
     var data = { path: guid };
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('loadDocumentInfo'),
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (htmlData) {
+            if (htmlData.error != undefined) {
+                // open error popup
+                printMessage(htmlData.error);
+                return;
+            }           
+            var firstPage = $(gd_page).find(".gd-wrapper")[0]
+            var pageSize = { width: $(firstPage).width(), height: $(firstPage).height() };
+            $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
+            for (i = preloadPageCount; i < htmlData.pages.length; i++) {
+                // append page image, in image mode append occurred after setting the size to avoid zero size usage
+                gd_page.append('<div class="gd-wrapper gd-page-' + (i + 1) + ' gd-compare-preload">' +
+                    '<div id="gd-compare-spinner"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>'+
+                    '</div>');
+            }
+            setFitWidth(prefix);            
+            $(gd_page).find(".gd-compare-preload").css("width", Math.round(pageSize.width));
+            $(gd_page).find(".gd-compare-preload").css("height", Math.round(pageSize.height));
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.message);
+            // open error popup
+            printMessage(err.error);
+        }
+    });
+}
+
+
+function loadPage(guid, prefix, currentPageNumber) {
+    var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
+    // get document description
+    var data = { path: guid, page: currentPageNumber };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentPage'),
@@ -305,11 +401,14 @@ function loadPage(guid, prefix) {
             $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
             $.each(htmlData.pages, function (index, page) {
                 // append page image, in image mode append occurred after setting the size to avoid zero size usage
-                gd_page.append('<div class="gd-wrapper gd-page-' + (index + 1) + '">' +
+                gd_page.append('<div class="gd-wrapper gd-page-' + page.number + '">' +
                     '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
                     '</div>');
             });
             setFitWidth(prefix);
+            if (currentPageNumber == preloadPageCount) {
+                generatePagesTemplates(guid, prefix);
+            }
             if (compareFilesMap.length >= 2) {
                 $('#gd-btn-compare').on(userMouseClick, function (event) {
                     event.preventDefault();

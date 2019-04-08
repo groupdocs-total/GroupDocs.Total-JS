@@ -126,6 +126,12 @@
     position: relative;
 }
 
+.gd-compare-preload {
+    background-color: #ffffff;
+    margin: 5px;
+    display: grid;
+}
+
 /*
 ******************************************
 Hightlight elements

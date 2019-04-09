@@ -25,6 +25,7 @@ var annotation = {
     text: "",
     font: "Arial",
     fontSize: 10,
+    fontColor: 8421375,
     comments: []
 };
 var annotationType = null;
@@ -193,6 +194,7 @@ $(document).ready(function () {
                     text: "",
                     font: "Arial",
                     fontSize: 10,
+                    fontColor: 8421375,
                     comments: []
                 };
             }

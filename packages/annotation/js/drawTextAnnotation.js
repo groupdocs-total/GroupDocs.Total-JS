@@ -46,7 +46,7 @@ $(document).ready(function () {
                 return true;
             }
         });
-    });
+    });  
 });
 
 (function ($) {
@@ -72,7 +72,7 @@ $(document).ready(function () {
 	var documentFormat = "";
     var userMouseUp = ('ontouchend' in document.documentElement) ? 'touchend mouseup' : 'mouseup';
     var userMouseMove = ('ontouchmove' in document.documentElement) ? 'touchmove mousemove' : 'mousemove';
-
+   
     /**
 	 * Draw text annotation
 	 * @param {Object} canvas - document page to add annotation
@@ -174,7 +174,8 @@ $(document).ready(function () {
         // this handler used to get annotation width and height after draw process
         $(canvas).on(userMouseUp, function (e) {
             if (['textField','watermark'].indexOf(currentPrefix) >= 0) {
-                attachTextFieldBehaviour(element,annotation);
+                attachTextFieldBehaviour(element, annotation);
+                attachTextStyleChangeBehaviour(element, annotation);
             }
             if (element != null && e.target.tagName !== "TEXTAREA") {
                 if (currentPrefix === "textReplacement") {
@@ -307,7 +308,16 @@ $(document).ready(function () {
         setupContextMenu(element,currentPrefix,annotation);
 
         if (['textField','watermark'].indexOf(currentPrefix) >= 0) {
-            attachTextFieldBehaviour(element,annotation,"move");
+            attachTextFieldBehaviour(element, annotation, "move");
+            attachTextStyleChangeBehaviour(element, annotation);
+            var textarea = $(element).find('textarea');
+            var color = "#" + annotation.fontColor.toString(16);
+            textarea.css("color", color);
+            textarea.parent().find("pre").css("color", color);       
+            var fontSize = annotation.fontSize;           
+            textarea.css("font-size", fontSize + "px");
+            textarea.parent().find("pre").css("font-size", fontSize + "px");
+            setTextFieldSize(annotation, textarea);
         }
         if (lineInnerHtml != null) {
             element.appendChild(lineInnerHtml);
@@ -441,6 +451,28 @@ $(document).ready(function () {
 
     }
 
+    function attachTextStyleChangeBehaviour(element, annotation) {    
+        $(element).find('.bcPicker-color').click(function (event) {
+            $.fn.bcPicker.pickColor($(this));
+            var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");
+            var textarea = $(element).find('textarea');
+            textarea.css("color", color);
+            textarea.parent().find("pre").css("color", color);           
+            var hex = $.fn.bcPicker.toHex(color);
+            var intColor = parseInt(hex.replace("#", ""), 16);
+            annotation.fontColor = intColor;
+        });
+
+        $(element).find('.gd-font-size').change(function (event) {          
+            var fontSize = $(this).val();
+            var textarea = $(element).find('textarea');
+            textarea.css("font-size", fontSize + "px");
+            textarea.parent().find("pre").css("font-size", fontSize + "px");   
+            updateTextFieldSize(annotation, textarea);
+            annotation.fontSize = fontSize;
+        });
+    }
+
     function emptySpaceOnLineEnd(annotation){
         return (annotation.text.charAt(annotation.text.length - 1) === "\n" ? ' ' : '')
     }
@@ -504,15 +536,47 @@ $(document).ready(function () {
             var textarea = $(element).find('textarea');
             var clone = textarea.parent().find('.clone');
 
-            contextMenu.width(100);
+            contextMenu.width(178);
             editButton.click(function () {
                 clone.hide();
                 textarea.show();
                 textarea.focus();
             })
+            var textColorButton = getTextColorButton();
+            var fontSizeSelect = getFontSizeHtml(annotation.fontSize);
+            $(textColorButton).insertAfter(contextMenu.find(".gd-edit-text-field"));
+            $(fontSizeSelect).insertAfter(contextMenu.find(".gd-edit-text-field"));
+            var colorPicker = contextMenu.find(".gd-text-color-picker");
+            colorPicker.bcPicker();
+            //Open background color palit
+            contextMenu.find(".gd-text-color").click(function (e) {
+                if (e.cancelable) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                }
+                colorPicker.find(".bcPicker-picker").click();
+            });            
         }else{
             $(element).append(getHtmlResizeHandles() + getContextMenu(annotation.id));
         }
         return element;
+    }
+
+    function getTextColorButton() {
+        return '<i class="fas fa-paint-brush gd-text-color"></i><div class="gd-text-color-picker"></div>';
+    }  
+
+    function getFontSizeHtml(currentSize) {
+        var options = "";
+        for (i = 10; i <= 40; i++) {
+            if (i == currentSize) {
+                options = options + '<option value="' + i + '"  selected="selected">' + i + 'px</option>';
+            } else {
+                options = options + '<option value="' + i + '">' + i + 'px</option>';
+            }
+        }
+        return '<select class="gd-font-size">' +
+            options +
+            '</select>';
     }
 })(jQuery);

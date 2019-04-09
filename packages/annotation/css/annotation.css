@@ -669,6 +669,14 @@ textarea.gd-watermark-annotation{
 
 }
 
+.gd-text-color-picker {
+	position: absolute !important;
+}
+
+.gd-font-size {
+    border: 0;
+}
+
 .gd-typewriter-text {
 	top: -14px;   
     display: block;

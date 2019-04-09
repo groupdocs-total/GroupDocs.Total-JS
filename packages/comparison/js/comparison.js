@@ -138,56 +138,27 @@ $(document).ready(function () {
     // Page scrolling event
     //////////////////////////////////////////////////
     var previousScroll = 0;
-    $('#gd-pages').scroll(function () {
-        var pagesAttr = $('#gd-page-num').text().split('/');
-        // get current page number
-        var currentPageNumber = parseInt(pagesAttr[0]);
+    $('#gd-pages').scroll(function () {        
         // get last page number
-        var lastPageNumber = parseInt(pagesAttr[1]);
-        var pagePosition = 0;
-        // get scroll direction
-        var scrollDown = true;
-        var currentScroll = $(this).scrollTop();
-        if (currentScroll < previousScroll) {
-            scrollDown = false;
-        }
-        // set scroll direction
-        previousScroll = currentScroll;
-        var zoom = parseInt($("#gd-zoom-value").html()) / 100;
+        var allPages = $("#gd-pages").parent().find(".gd-wrapper");
+        var guid = $("#gd-pages").parent().find(".gd-compare-file-name").data("guid");
+        var lastPageNumber = allPages.length;
+        var prefix = $("#gd-pages").parent().attr("id").split("-").pop();    
+      
+        var zoom = parseFloat(allPages.css("zoom"), );
         var delta = 0.5;
         if (zoom < 1) {
             delta = 1;
         }
-        for (i = 1; i <= lastPageNumber; i++) {
+        for (i = preloadPageCount; i <= lastPageNumber; i++) {
             // check if page is visible in the view port more than 50%
-            if ($('#gd-page-' + i).isOnScreen(delta, delta)) {
-                // change current page value
-                if (i != currentPageNumber) {
-                    // set current page number
-                    setNavigationPageValues(i, lastPageNumber);
-                }
-                // load next page
-                // to set correct page size we use global array documentData which contains all info about current document
-                if (preloadPageCount > 0) {
-                    // if scroll down load next page
-                    if (scrollDown) {
-                        if (i + 1 <= lastPageNumber) {
-                            appendHtmlContent(i + 1, documentGuid);
-                        } else if (i == lastPageNumber) {
-                            appendHtmlContent(i, documentGuid);
-                        }
-                    } else {
-                        // if scroll up load previous page
-                        if (currentPageNumber - 1 >= 1) {
-                            appendHtmlContent(currentPageNumber - 1, documentGuid);
-                        }
-                    }
-                }
+            if ($(allPages[i]).isOnScreen(delta, delta)) {               
+                
+                            loadPage(guid, prefix, i);
+                     
             }
         }
-        if ($(this).scrollTop() == 0 && !scrollDown) {
-            setNavigationPageValues(1, lastPageNumber);
-        }
+       
     });
 
     //
@@ -217,6 +188,7 @@ function addDocInfoHead(guid, prefix) {
     $(fileInfoArea).css("display", "flex");
     $(fileInfoArea).find("i").addClass(icon);
     $(fileInfoArea).find(".gd-compare-file-name").html(fileName);
+    $(fileInfoArea).find(".gd-compare-file-name").data("guid", guid);
     addCloseSection();
 }
 
@@ -226,6 +198,7 @@ function removeDocInfoHead(prefix) {
     $(fileInfoArea).hide();
     $(fileInfoArea).find("i").removeClass(icon);
     $(fileInfoArea).find(".gd-compare-file-name").html("");
+    $(fileInfoArea).find(".gd-compare-file-name").data("guid", "");
     $("#gd-upload-section-" + prefix).find(".gd-compare-head-buttons").show()
 }
 

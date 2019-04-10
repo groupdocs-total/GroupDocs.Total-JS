@@ -36,7 +36,7 @@ $(document).ready(function () {
     ******************************************************************
     NAV BAR CONTROLS
     ******************************************************************
-    */   
+    */
 
     //////////////////////////////////////////////////
     // Download event
@@ -90,7 +90,7 @@ $(document).ready(function () {
             $(".gd-drag-n-drop-wrap-compare").addClass("full");
             $(".gd-compare-section").css("width", "959px");
         }
-        initDropZone(prefix);      
+        initDropZone(prefix);
         addCloseSection();
     });
 
@@ -100,7 +100,7 @@ $(document).ready(function () {
     $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-add-url-compare', function (event) {
         var url = $(event.target.parentElement).find(".gd-compare-url").val();
         var prefix = $(event.target.parentElement).find(".gd-compare-url").attr("id").split("-").pop();
-        if (isUrlValid(url)) {           
+        if (isUrlValid(url)) {
             uploadDocumentFromUrl(url, prefix);
             $(event.target.parentElement).find(".gd-compare-url").val('');
         } else {
@@ -115,7 +115,7 @@ $(document).ready(function () {
     $(".gd-differences-wrapper").on(userMouseClick, '.close', function (event) {
         closeDifferences();
     });
-  
+
     //////////////////////////////////////////////////
     // Open document button (upload dialog) click
     //////////////////////////////////////////////////
@@ -123,14 +123,14 @@ $(document).ready(function () {
         browsePrefix = $(event.target.closest(".gd-compare-section")).attr("id").split("-").pop();
         toggleModalDialog(false, '');
         loadFileTree('');
-    });      
+    });
 
     $(".gd-comparison-bar-wrapper").on(userMouseClick, function (e) {
         if ($(".highlight-difference.active").length > 0) {
             $(".highlight-difference.active").removeClass("active");
             $(".gd-difference.active").removeClass("active");
         }
-    });      
+    });
 
     initCloseButton();
 
@@ -138,27 +138,30 @@ $(document).ready(function () {
     // Page scrolling event
     //////////////////////////////////////////////////
     var previousScroll = 0;
-    $('#gd-pages').scroll(function () {        
+    var currentlyLoadedPage = null;
+    $('.gd-pages').scroll(function (event) {       
         // get last page number
-        var allPages = $("#gd-pages").parent().find(".gd-wrapper");
-        var guid = $("#gd-pages").parent().find(".gd-compare-file-name").data("guid");
+        var allPages = $(event.target).parent().find(".gd-wrapper");
+        var guid = $(event.target).parent().find(".gd-compare-file-name").data("guid");
         var lastPageNumber = allPages.length;
-        var prefix = $("#gd-pages").parent().attr("id").split("-").pop();    
-      
-        var zoom = parseFloat(allPages.css("zoom"), );
+        var prefix = $(event.target).parent().attr("id").split("-").pop();
+
+        var zoom = parseFloat(allPages.css("zoom"));
         var delta = 0.5;
         if (zoom < 1) {
             delta = 1;
-        }
+        }       
         for (i = preloadPageCount; i <= lastPageNumber; i++) {
             // check if page is visible in the view port more than 50%
-            if ($(allPages[i]).isOnScreen(delta, delta)) {               
-                
-                            loadPage(guid, prefix, i);
-                     
+            if ($(allPages[i]).isOnScreen(delta, delta)) {
+                if ($(allPages[i]).hasClass("gd-compare-preload") && !$(allPages[i]).is(currentlyLoadedPage)) {  
+                    currentlyLoadedPage = $(allPages[i]);
+                    loadPage(guid, prefix, i + 1, true);
+                }
             }
         }
        
+
     });
 
     //
@@ -172,7 +175,7 @@ FUNCTIONS
 */
 
 function closeDifferences() {
-    $(".gd-differences-wrapper").removeClass("active");    
+    $(".gd-differences-wrapper").removeClass("active");
     $(".gd-comparison-bar-wrapper").css("width", "100%");
 }
 
@@ -206,13 +209,13 @@ function clearDocumentPreview(prefix) {
     $.each($("#gd-upload-section-" + prefix).find(".gd-wrapper"), function (index, page) {
         $(page).remove();
     });
-    $("#gd-dropZone-" + prefix).show();   
+    $("#gd-dropZone-" + prefix).show();
     var fileName = $("#gd-upload-section-" + prefix).find(".gd-compare-file-name").html();
     removeFileFromCompare(fileName);
 }
 
 function removeFileFromCompare(fileName) {
-    $.each(compareFilesMap, function (index, filePath) {        
+    $.each(compareFilesMap, function (index, filePath) {
         if (filePath.guid.indexOf(fileName) > 0) {
             compareFilesMap = $.grep(compareFilesMap, function (value) {
                 return value != filePath;
@@ -220,7 +223,7 @@ function removeFileFromCompare(fileName) {
         }
     })
     if (compareFilesMap.length < 2) {
-        ($('#gd-btn-compare').hasClass("disabled")) ? "" : $('#gd-btn-compare').addClass("disabled");        
+        ($('#gd-btn-compare').hasClass("disabled")) ? "" : $('#gd-btn-compare').addClass("disabled");
     }
 }
 
@@ -248,7 +251,7 @@ function uploadDocumentFromUrl(url, prefix) {
                 // open error popup
                 printMessage(returnedData.message);
                 return;
-            }         
+            }
             browsePrefix = prefix;
             appendHtmlContent(prefix, returnedData.guid);
         },
@@ -269,9 +272,9 @@ function uploadDragFile(file, prefix) {
     // prepare form data for uploading
     var formData = new FormData();
     // add local file for uploading
-    formData.append("file", file);    
+    formData.append("file", file);
     formData.append("rewrite", rewrite);
-    $.ajax({       
+    $.ajax({
         type: 'POST',
         url: getApplicationPath('uploadDocument'),
         data: formData,
@@ -307,10 +310,10 @@ function appendHtmlContent(prefix, guid) {
     $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').show();
     if (preloadPageCount == 0) {
         loadAllPages(guid, prefix);
-    } else {        
+    } else {
         for (i = 0; i < preloadPageCount; i++) {
-            loadPage(guid, prefix, i + 1);            
-        }        
+            loadPage(guid, prefix, i + 1, false);
+        }
     }
 }
 
@@ -328,17 +331,17 @@ function generatePagesTemplates(guid, prefix) {
                 // open error popup
                 printMessage(htmlData.error);
                 return;
-            }           
+            }
             var firstPage = $(gd_page).find(".gd-wrapper")[0]
             var pageSize = { width: $(firstPage).width(), height: $(firstPage).height() };
             $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
             for (i = preloadPageCount; i < htmlData.pages.length; i++) {
                 // append page image, in image mode append occurred after setting the size to avoid zero size usage
                 gd_page.append('<div class="gd-wrapper gd-page-' + (i + 1) + ' gd-compare-preload">' +
-                    '<div id="gd-compare-spinner"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>'+
+                    '<div id="gd-compare-spinner"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
                     '</div>');
             }
-            setFitWidth(prefix);            
+            setFitWidth(prefix);
             $(gd_page).find(".gd-compare-preload").css("width", Math.round(pageSize.width));
             $(gd_page).find(".gd-compare-preload").css("height", Math.round(pageSize.height));
         },
@@ -352,7 +355,7 @@ function generatePagesTemplates(guid, prefix) {
 }
 
 
-function loadPage(guid, prefix, currentPageNumber) {
+function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
     var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
     var data = { path: guid, page: currentPageNumber };
@@ -367,28 +370,37 @@ function loadPage(guid, prefix, currentPageNumber) {
                 printMessage(htmlData.error);
                 return;
             }
-            var compareFile = { guid: "", password: "" };
-            compareFile.guid = guid;
-            compareFilesMap.push(compareFile);
-            addDocInfoHead(compareFile.guid, prefix);
-            $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
-            $.each(htmlData.pages, function (index, page) {
-                // append page image, in image mode append occurred after setting the size to avoid zero size usage
-                gd_page.append('<div class="gd-wrapper gd-page-' + page.number + '">' +
-                    '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
-                    '</div>');
-            });
-            setFitWidth(prefix);
-            if (currentPageNumber == preloadPageCount) {
-                generatePagesTemplates(guid, prefix);
-            }
-            if (compareFilesMap.length >= 2) {
-                $('#gd-btn-compare').on(userMouseClick, function (event) {
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                    compareFiles();
+            if (replaceTemplate) {
+                var template = $('#gd-upload-section-' + prefix).find('.gd-compare-preload')[0];
+                $(template).find("#gd-compare-spinner").remove();
+                $(template).append('<image class="gd-page-image" src="data:image/png;base64,' + htmlData.pages[0].data + '" alt></image>');
+                $(template).removeClass("gd-compare-preload");
+                $(template).css("width", "inherit");
+                $(template).css("height", "unset");
+            } else {
+                var compareFile = { guid: "", password: "" };
+                compareFile.guid = guid;
+                compareFilesMap.push(compareFile);
+                addDocInfoHead(compareFile.guid, prefix);
+                $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
+                $.each(htmlData.pages, function (index, page) {
+                    // append page image, in image mode append occurred after setting the size to avoid zero size usage
+                    gd_page.append('<div class="gd-wrapper gd-page-' + page.number + '">' +
+                        '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
+                        '</div>');
                 });
-                $('#gd-btn-compare').removeClass("disabled");
+                setFitWidth(prefix);
+                if (currentPageNumber == preloadPageCount) {
+                    generatePagesTemplates(guid, prefix);
+                }
+                if (compareFilesMap.length >= 2) {
+                    $('#gd-btn-compare').on(userMouseClick, function (event) {
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        compareFiles();
+                    });
+                    $('#gd-btn-compare').removeClass("disabled");
+                }
             }
         },
         error: function (xhr, status, error) {
@@ -464,7 +476,7 @@ function compareFiles() {
             }
             // hide loading spinner
             $('#gd-compare-spinner').hide();
-            documentResultGuid = returnedData.guid; 
+            documentResultGuid = returnedData.guid;
             var differences = returnedData.changes;
             ShowDifferences(differences);
         },
@@ -487,10 +499,10 @@ function ShowDifferences(differences) {
         addHighlightDifferences(change);
         $(".gd-difference, .highlight-difference").on(userMouseClick, function (e) {
             highlightDifference(e);
-        });  
-    }); 
+        });
+    });
     $(".gd-differences-wrapper").addClass("active");
-   // $(".gd-compare-section").css("width", "795px");
+    // $(".gd-compare-section").css("width", "795px");
     $(".gd-comparison-bar-wrapper").css("width", "83%");
     $.each($(".gd-compare-section"), function (index, section) {
         var prefix = $(section).attr("id").split("-").pop();
@@ -528,7 +540,7 @@ function highlightDifference(event) {
 */
 function scrollToDifference(section, difference) {
     // get zoom value
-    var zoomValue = 100;  
+    var zoomValue = 100;
     // scroll
     $(section).find("#gd-pages").scrollTo(difference, {
         zoom: zoomValue
@@ -571,8 +583,7 @@ function getDifferenceHtml(difference) {
                 if (typeof value == "number") {
                     value = Math.round(value);
                 }
-                switch(key)
-                {
+                switch (key) {
                     case "ChangedProperty":
                         comment = "Changed style: " + value;
                         break;
@@ -582,8 +593,8 @@ function getDifferenceHtml(difference) {
                     case "NewValue":
                         comment = comment + " To: " + value;
                         break;
-                }                
-            });            
+                }
+            });
         });
     } else {
         comment = difference.Text;
@@ -604,7 +615,7 @@ function setFitWidth(prefix) {
     // get scale ratio
     var scale = (pageWidth / screenWidth) * 100;
     // set values
-    zoomValue = 200 - scale;   
+    zoomValue = 200 - scale;
     setZoomValue(zoomValue, prefix);
 }
 
@@ -615,7 +626,7 @@ function setFitWidth(prefix) {
 function setZoomValue(zoom_val, prefix) {
     // adapt value for css
     var zoom_val_non_webkit = zoom_val / 100;
-    var zoom_val_webkit = Math.round(zoom_val) + '%';  
+    var zoom_val_webkit = Math.round(zoom_val) + '%';
     var style = [
         'zoom: ' + zoom_val_webkit,
         'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
@@ -624,10 +635,10 @@ function setZoomValue(zoom_val, prefix) {
         '-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'
-    ].join(';');   
+    ].join(';');
     $.each($('#gd-upload-section-' + prefix).find(".gd-wrapper"), function (index, page) {
         $(page).attr('style', style);
-    });    
+    });
 }
 
 
@@ -660,7 +671,7 @@ function addCloseSection() {
                 $(section).find(".gd-compare-area-head").append(close);
             }
         }
-    });   
+    });
 }
 
 function convertIndexToString(index) {
@@ -692,15 +703,15 @@ function getHtmlCompareSection(prefix) {
     // drag and drop section
     var htmlSection = '<section id="gd-upload-section-' + prefix + '" class="gd-compare-section">' +
         '<div class="gd-compare-area-head">' +
-            '<div class="gd-compare-head-buttons">'+
-                '<i class="fas fa-arrow-right gd-add-url-compare"></i>' +
-                '<input type="url" class="gd-compare-url" id="gd-url-' + prefix + '" placeholder="http://">' +
-                '<i class="fas fa-folder gd-compare-browse"></i>' +
-            '</div>' +
-            '<div class="gd-compare-file-info">'+
-                '<i class="fa"></i>' +
-                '<div class="gd-compare-file-name"></div>' +
-            '</div>' +
+        '<div class="gd-compare-head-buttons">' +
+        '<i class="fas fa-arrow-right gd-add-url-compare"></i>' +
+        '<input type="url" class="gd-compare-url" id="gd-url-' + prefix + '" placeholder="http://">' +
+        '<i class="fas fa-folder gd-compare-browse"></i>' +
+        '</div>' +
+        '<div class="gd-compare-file-info">' +
+        '<i class="fa"></i>' +
+        '<div class="gd-compare-file-name"></div>' +
+        '</div>' +
         '</div>' +
 
         '<div class="gd-drag-n-drop-wrap-compare" id="gd-dropZone-' + prefix + '">' +
@@ -711,7 +722,7 @@ function getHtmlCompareSection(prefix) {
         '</div>' +
 
         //// pages BEGIN
-        '<div id="gd-pages">' +        
+        '<div id="gd-pages" class="gd-pages">' +
         '<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
         '</div>' +
         //    // pages END
@@ -740,10 +751,10 @@ function replacePrefix(prefix) {
  * Init remove button for selection area
  * @param prefix - prefix for selection area
  */
-function initCloseButton() {    
-    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-close-dad-area', function (e) {  
+function initCloseButton() {
+    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-close-dad-area', function (e) {
         closeDifferences();
-        $(".highlight-difference").remove();       
+        $(".highlight-difference").remove();
         var prefix = $(e.target).attr("id").split("-").pop();
         if ($('#gd-upload-section-' + prefix).find(".gd-wrapper").length > 0) {
             clearDocumentPreview(prefix);
@@ -806,8 +817,8 @@ function initDropZone(prefix) {
             event.stopPropagation();
             event.preventDefault();
             dropZone.removeClass('hover');
-            var files = event.dataTransfer.files;          
-            uploadDragFile(files[0], prefix);            
+            var files = event.dataTransfer.files;
+            uploadDragFile(files[0], prefix);
         };
     }
 }
@@ -930,11 +941,11 @@ GROUPDOCS.COMAPRISON PLUGIN
             getHtmlCompareSection('first') + getHtmlCompareSection('second') +
             '</div>' +
             '<div class="gd-differences-wrapper">' +
-                '<div class="gd-differences-header">' +                    
-                        '<i class="fas fa-info-circle"></i><span>Differences</span>' +
-                        '<div class="close"><i class="fas fa-times"></i></div >' +                  
-                '</div >' +
-            '<div class="gd-differences-body">' +    
+            '<div class="gd-differences-header">' +
+            '<i class="fas fa-info-circle"></i><span>Differences</span>' +
+            '<div class="close"><i class="fas fa-times"></i></div >' +
+            '</div >' +
+            '<div class="gd-differences-body">' +
             '</div>';
     }
 

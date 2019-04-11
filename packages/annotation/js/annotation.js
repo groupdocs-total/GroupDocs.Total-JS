@@ -83,7 +83,7 @@ $(document).ready(function () {
         // set text rows data to null
         rows = null;
         // append svg element to each page, this is required to draw svg based annotations
-        addSvgContainer();
+        addSvgContainer(documentData.pages);
         if (isMobile() || fitWidth) {
             setZoomLevel("Fit Width");
         }
@@ -1157,9 +1157,25 @@ function download(button) {
 /**
  * Append SVG container to each document page
  */
-function addSvgContainer() {
+function addSvgContainer(pages) {
     $('div.gd-page').each(function (index, page) {
         $(page).css("zoom", "1");
+        var width = page.offsetWidth;
+        var height = page.offsetHeight;
+        //Cells document pages size fix
+        if (getDocumentFormat(documentGuid).format == "Microsoft Excel") {
+            width = 500;
+            height = 300;
+            $(page).css("width", width);
+            $(page).css("height", height);
+            $(page).css("min-width", width);
+            $(page).css("min-height", height);
+            $(page).css("overflow", "scroll");
+            $(page).find("img").css("width", pages[index].width);
+            width = pages[index].width;
+            height = pages[index].height;
+        }
+        // add svg object to the list for further use
         // initiate svg object
         if (svgList == null) {
             svgList = {};
@@ -1168,9 +1184,8 @@ function addSvgContainer() {
             return true;
         } else {
             if (!(page.id in svgList) && $(page).find("svg").length == 0) {
-                $(page).addClass("gd-disable-select");
-                // add svg object to the list for further use
-                var draw = SVG(page.id).size(page.offsetWidth, page.offsetHeight);
+                $(page).addClass("gd-disable-select");               
+                var draw = SVG(page.id).size(width, height);
                 svgList[page.id] = draw;
                 draw = null;
             } else {

@@ -486,7 +486,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 */
 
 .gd-context-menu {
-    padding:5px;
+    padding-left: 8px;
     box-shadow: #00000052 0px 0px 5px;
     background-color: #FFFFFF;
     width: 90px;
@@ -498,6 +498,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     margin: auto;
     top: -45px;
     cursor: default;
+    display: flex;
 }
 .gd-context-menu .fa-arrows-alt{
     cursor: move;
@@ -670,7 +671,10 @@ textarea.gd-watermark-annotation{
 }
 
 .gd-text-color-picker {
-	position: absolute !important;
+    position: relative;
+    width: 14px;
+    height: 14px;
+    margin: 5px;
 }
 
 .gd-font-size {

@@ -319,6 +319,7 @@ $(document).ready(function () {
             textarea.parent().find("pre").css("font-size", fontSize + "px");
             textarea.css("line-height", fontSize + "px");
             textarea.parent().find("pre").css("line-height", fontSize + "px");  
+            $(element).find(".bcPicker-picker").css("background-color", color);
             setTextFieldSize(annotation, textarea);
         }
         if (lineInnerHtml != null) {
@@ -551,15 +552,7 @@ $(document).ready(function () {
             $(textColorButton).insertAfter(contextMenu.find(".gd-edit-text-field"));
             $(fontSizeSelect).insertAfter(contextMenu.find(".gd-edit-text-field"));
             var colorPicker = contextMenu.find(".gd-text-color-picker");
-            colorPicker.bcPicker();
-            //Open background color palit
-            contextMenu.find(".gd-text-color").click(function (e) {
-                if (e.cancelable) {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                }
-                colorPicker.find(".bcPicker-picker").click();
-            });            
+            colorPicker.bcPicker();                   
         }else{
             $(element).append(getHtmlResizeHandles() + getContextMenu(annotation.id));
         }
@@ -567,7 +560,7 @@ $(document).ready(function () {
     }
 
     function getTextColorButton() {
-        return '<i class="fas fa-paint-brush gd-text-color"></i><div class="gd-text-color-picker"></div>';
+        return '<div class="gd-text-color-picker"></div>';
     }  
 
     function getFontSizeHtml(currentSize) {

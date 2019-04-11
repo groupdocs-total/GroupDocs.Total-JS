@@ -14,13 +14,14 @@ GLOBAL VARIABLES
 ******************************************************************
 */
 var applicationPath;
-var preloadResultPageCount;
+var preloadPageCount;
 var compareFilesMap = [];
 var compareDocumentGuid;
 var password = '';
 var rewrite;
 var browsePrefix = "";
 var differencesTypes = {};
+var loadedPageNumber = 0;
 differencesTypes[1] = { 'icon': '<i class="fas fa-pencil-alt"></i>', 'title': '<span class="gd-difference-title">Text edited</span>' };
 differencesTypes[2] = { 'icon': '<i class="fas fa-arrow-right"></i>', 'title': '<span class="gd-difference-title">Text Added</span>' };
 differencesTypes[3] = { 'icon': '<i class="fas fa-times"></i>', 'title': '<span class="gd-difference-title">Text deleted</span>' };
@@ -35,7 +36,7 @@ $(document).ready(function () {
     ******************************************************************
     NAV BAR CONTROLS
     ******************************************************************
-    */   
+    */
 
     //////////////////////////////////////////////////
     // Download event
@@ -89,7 +90,7 @@ $(document).ready(function () {
             $(".gd-drag-n-drop-wrap-compare").addClass("full");
             $(".gd-compare-section").css("width", "959px");
         }
-        initDropZone(prefix);      
+        initDropZone(prefix);
         addCloseSection();
     });
 
@@ -99,7 +100,7 @@ $(document).ready(function () {
     $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-add-url-compare', function (event) {
         var url = $(event.target.parentElement).find(".gd-compare-url").val();
         var prefix = $(event.target.parentElement).find(".gd-compare-url").attr("id").split("-").pop();
-        if (isUrlValid(url)) {           
+        if (isUrlValid(url)) {
             uploadDocumentFromUrl(url, prefix);
             $(event.target.parentElement).find(".gd-compare-url").val('');
         } else {
@@ -114,7 +115,7 @@ $(document).ready(function () {
     $(".gd-differences-wrapper").on(userMouseClick, '.close', function (event) {
         closeDifferences();
     });
-  
+
     //////////////////////////////////////////////////
     // Open document button (upload dialog) click
     //////////////////////////////////////////////////
@@ -122,15 +123,47 @@ $(document).ready(function () {
         browsePrefix = $(event.target.closest(".gd-compare-section")).attr("id").split("-").pop();
         toggleModalDialog(false, '');
         loadFileTree('');
-    });      
+    });
 
     $(".gd-comparison-bar-wrapper").on(userMouseClick, function (e) {
-        if ($(".difference.active").length > 0) {
-            $(".difference.active").removeClass("active");
+        if ($(".highlight-difference.active").length > 0) {
+            $(".highlight-difference.active").removeClass("active");
+            $(".gd-difference.active").removeClass("active");
         }
-    });      
+    });
 
     initCloseButton();
+
+    //////////////////////////////////////////////////
+    // Page scrolling event
+    //////////////////////////////////////////////////
+    var previousScroll = 0;
+    var currentlyLoadedPage = null;
+    $('.gd-pages').scroll(function (event) {       
+        // get last page number
+        var allPages = $(event.target).parent().find(".gd-wrapper");
+        var guid = $(event.target).parent().find(".gd-compare-file-name").data("guid");
+        var lastPageNumber = allPages.length;
+        var prefix = $(event.target).parent().attr("id").split("-").pop();
+
+        var zoom = parseFloat(allPages.css("zoom"));
+        var delta = 0.5;
+        if (zoom < 1) {
+            delta = 1;
+        }       
+        for (i = preloadPageCount; i <= lastPageNumber; i++) {
+            // check if page is visible in the view port more than 50%
+            if ($(allPages[i]).isOnScreen(delta, delta)) {
+                if ($(allPages[i]).hasClass("gd-compare-preload") && !$(allPages[i]).is(currentlyLoadedPage)) {  
+                    currentlyLoadedPage = $(allPages[i]);
+                    loadPage(guid, prefix, i + 1, true);
+                }
+            }
+        }
+       
+
+    });
+
     //
     // END of document ready function
 });
@@ -142,7 +175,7 @@ FUNCTIONS
 */
 
 function closeDifferences() {
-    $(".gd-differences-wrapper").removeClass("active");    
+    $(".gd-differences-wrapper").removeClass("active");
     $(".gd-comparison-bar-wrapper").css("width", "100%");
 }
 
@@ -158,6 +191,7 @@ function addDocInfoHead(guid, prefix) {
     $(fileInfoArea).css("display", "flex");
     $(fileInfoArea).find("i").addClass(icon);
     $(fileInfoArea).find(".gd-compare-file-name").html(fileName);
+    $(fileInfoArea).find(".gd-compare-file-name").data("guid", guid);
     addCloseSection();
 }
 
@@ -167,6 +201,7 @@ function removeDocInfoHead(prefix) {
     $(fileInfoArea).hide();
     $(fileInfoArea).find("i").removeClass(icon);
     $(fileInfoArea).find(".gd-compare-file-name").html("");
+    $(fileInfoArea).find(".gd-compare-file-name").data("guid", "");
     $("#gd-upload-section-" + prefix).find(".gd-compare-head-buttons").show()
 }
 
@@ -174,13 +209,13 @@ function clearDocumentPreview(prefix) {
     $.each($("#gd-upload-section-" + prefix).find(".gd-wrapper"), function (index, page) {
         $(page).remove();
     });
-    $("#gd-dropZone-" + prefix).show();   
+    $("#gd-dropZone-" + prefix).show();
     var fileName = $("#gd-upload-section-" + prefix).find(".gd-compare-file-name").html();
     removeFileFromCompare(fileName);
 }
 
 function removeFileFromCompare(fileName) {
-    $.each(compareFilesMap, function (index, filePath) {        
+    $.each(compareFilesMap, function (index, filePath) {
         if (filePath.guid.indexOf(fileName) > 0) {
             compareFilesMap = $.grep(compareFilesMap, function (value) {
                 return value != filePath;
@@ -188,7 +223,7 @@ function removeFileFromCompare(fileName) {
         }
     })
     if (compareFilesMap.length < 2) {
-        ($('#gd-btn-compare').hasClass("disabled")) ? "" : $('#gd-btn-compare').addClass("disabled");        
+        ($('#gd-btn-compare').hasClass("disabled")) ? "" : $('#gd-btn-compare').addClass("disabled");
     }
 }
 
@@ -216,7 +251,8 @@ function uploadDocumentFromUrl(url, prefix) {
                 // open error popup
                 printMessage(returnedData.message);
                 return;
-            }         
+            }
+            browsePrefix = prefix;
             appendHtmlContent(prefix, returnedData.guid);
         },
         error: function (xhr, status, error) {
@@ -236,9 +272,9 @@ function uploadDragFile(file, prefix) {
     // prepare form data for uploading
     var formData = new FormData();
     // add local file for uploading
-    formData.append("file", file);    
+    formData.append("file", file);
     formData.append("rewrite", rewrite);
-    $.ajax({       
+    $.ajax({
         type: 'POST',
         url: getApplicationPath('uploadDocument'),
         data: formData,
@@ -268,11 +304,116 @@ function uploadDragFile(file, prefix) {
  * @param {string} prefix - current compare area prefix
  */
 function appendHtmlContent(prefix, guid) {
-    // initialize data
-    var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
+    // initialize data   
     compareDocumentGuid = guid;
     $("#gd-dropZone-" + prefix).hide();
     $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').show();
+    if (preloadPageCount == 0) {
+        loadAllPages(guid, prefix);
+    } else {
+        for (i = 0; i < preloadPageCount; i++) {
+            loadPage(guid, prefix, i + 1, false);
+        }
+    }
+}
+
+function generatePagesTemplates(guid, prefix) {
+    var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
+    // get document description
+    var data = { path: guid };
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('loadDocumentInfo'),
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (htmlData) {
+            if (htmlData.error != undefined) {
+                // open error popup
+                printMessage(htmlData.error);
+                return;
+            }
+            var firstPage = $(gd_page).find(".gd-wrapper")[0]
+            var pageSize = { width: $(firstPage).width(), height: $(firstPage).height() };
+            $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
+            for (i = preloadPageCount; i < htmlData.pages.length; i++) {
+                // append page image, in image mode append occurred after setting the size to avoid zero size usage
+                gd_page.append('<div class="gd-wrapper gd-page-' + (i + 1) + ' gd-compare-preload">' +
+                    '<div id="gd-compare-spinner"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
+                    '</div>');
+            }
+            setFitWidth(prefix);
+            $(gd_page).find(".gd-compare-preload").css("width", Math.round(pageSize.width));
+            $(gd_page).find(".gd-compare-preload").css("height", Math.round(pageSize.height));
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.message);
+            // open error popup
+            printMessage(err.error);
+        }
+    });
+}
+
+
+function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
+    var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
+    // get document description
+    var data = { path: guid, page: currentPageNumber };
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('loadDocumentPage'),
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        success: function (htmlData) {
+            if (htmlData.error != undefined) {
+                // open error popup
+                printMessage(htmlData.error);
+                return;
+            }
+            if (replaceTemplate) {
+                var template = $('#gd-upload-section-' + prefix).find('.gd-compare-preload')[0];
+                $(template).find("#gd-compare-spinner").remove();
+                $(template).append('<image class="gd-page-image" src="data:image/png;base64,' + htmlData.pages[0].data + '" alt></image>');
+                $(template).removeClass("gd-compare-preload");
+                $(template).css("width", "inherit");
+                $(template).css("height", "unset");
+            } else {
+                var compareFile = { guid: "", password: "" };
+                compareFile.guid = guid;
+                compareFilesMap.push(compareFile);
+                addDocInfoHead(compareFile.guid, prefix);
+                $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
+                $.each(htmlData.pages, function (index, page) {
+                    // append page image, in image mode append occurred after setting the size to avoid zero size usage
+                    gd_page.append('<div class="gd-wrapper gd-page-' + page.number + '">' +
+                        '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
+                        '</div>');
+                });
+                setFitWidth(prefix);
+                if (currentPageNumber == preloadPageCount) {
+                    generatePagesTemplates(guid, prefix);
+                }
+                if (compareFilesMap.length >= 2) {
+                    $('#gd-btn-compare').on(userMouseClick, function (event) {
+                        event.preventDefault();
+                        event.stopImmediatePropagation();
+                        compareFiles();
+                    });
+                    $('#gd-btn-compare').removeClass("disabled");
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.message);
+            // open error popup
+            printMessage(err.error);
+        }
+    });
+}
+
+function loadAllPages(guid, prefix) {
+    var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
     var data = { path: guid };
     $.ajax({
@@ -285,7 +426,7 @@ function appendHtmlContent(prefix, guid) {
                 // open error popup
                 printMessage(htmlData.error);
                 return;
-            }          
+            }
             var compareFile = { guid: "", password: "" };
             compareFile.guid = guid;
             compareFilesMap.push(compareFile);
@@ -293,7 +434,7 @@ function appendHtmlContent(prefix, guid) {
             $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
             $.each(htmlData.pages, function (index, page) {
                 // append page image, in image mode append occurred after setting the size to avoid zero size usage
-                gd_page.append('<div class="gd-wrapper">' +                  
+                gd_page.append('<div class="gd-wrapper gd-page-' + (index + 1) + '">' +
                     '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
                     '</div>');
             });
@@ -335,7 +476,7 @@ function compareFiles() {
             }
             // hide loading spinner
             $('#gd-compare-spinner').hide();
-            documentResultGuid = returnedData.guid; 
+            documentResultGuid = returnedData.guid;
             var differences = returnedData.changes;
             ShowDifferences(differences);
         },
@@ -356,12 +497,12 @@ function ShowDifferences(differences) {
         var changeHtml = getDifferenceHtml(change);
         $(".gd-differences-body").append(changeHtml);
         addHighlightDifferences(change);
-        $(".gd-difference").on(userMouseClick, function (e) {
+        $(".gd-difference, .highlight-difference").on(userMouseClick, function (e) {
             highlightDifference(e);
-        });  
+        });
     });
     $(".gd-differences-wrapper").addClass("active");
-   // $(".gd-compare-section").css("width", "795px");
+    // $(".gd-compare-section").css("width", "795px");
     $(".gd-comparison-bar-wrapper").css("width", "83%");
     $.each($(".gd-compare-section"), function (index, section) {
         var prefix = $(section).attr("id").split("-").pop();
@@ -371,19 +512,26 @@ function ShowDifferences(differences) {
 
 function addHighlightDifferences(change) {
     var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
-    var page = $(lastSection).find(".gd-wrapper")[change.Page.Id];
-    var highlightHtml = getHightlightHtml(change, page);
-    $(page).append(highlightHtml);
+    var firstSection = $(".gd-compare-section")[0];
+    var page = $(lastSection).find(".gd-page-" + (change.Page.Id + 1));
+    var originalDocPage = $(firstSection).find(".gd-page-" + (change.Page.Id + 1));
+    var highlightHtml = (change.Type == 3) ? getHightlightHtml(change, originalDocPage) : getHightlightHtml(change, page);
+    (change.Type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
 }
 
 function highlightDifference(event) {
     event.stopImmediatePropagation();
     event.preventDefault();
-    $(".difference.active").removeClass("active");
+    $(".highlight-difference.active").removeClass("active");
+    $(".gd-difference.active").removeClass("active");
     var differenceId = ($(event.target).data("id") || $(event.target).data("id") == 0) ? $(event.target).data("id") : $(event.target).parent().data("id");
-    $('.difference[data-id="' + differenceId + '"]').addClass("active");
-    var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
-    scrollToDifference(lastSection, '.difference[data-id="' + differenceId + '"]');
+    var differenceHighligted = $('.highlight-difference[data-id="' + differenceId + '"]');
+    var difference = $('.gd-difference[data-id="' + differenceId + '"]')
+    $(differenceHighligted).addClass("active");
+    $(difference).addClass("active");
+    var Section = $(differenceHighligted).closest(".gd-compare-section");
+    scrollToDifference(Section, differenceHighligted);
+    scrollDifferencesPanel(difference);
 }
 
 /**
@@ -392,12 +540,21 @@ function highlightDifference(event) {
 */
 function scrollToDifference(section, difference) {
     // get zoom value
+    var zoomValue = 100;
+    // scroll
+    $(section).find("#gd-pages").scrollTo(difference, {
+        zoom: zoomValue
+    });
+}
+
+function scrollDifferencesPanel(difference) {
+    // get zoom value
     var zoomValue = $('.gd-wrapper').css('zoom') * 100;
     if (typeof zoomValue == 'undefined') {
         zoomValue = 100;
     }
     // scroll
-    $(section).find("#gd-pages").scrollTo(difference, {
+    $(".gd-differences-body").scrollTo(difference, {
         zoom: zoomValue
     });
 }
@@ -412,7 +569,7 @@ function getHightlightHtml(change, page) {
     }
 
     var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
-    return '<div class="gd-difference-' + change.Type + ' difference"' + style + ' data-id="' + change.Id + '"></div>';
+    return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + change.Id + '"></div>';
 }
 
 function getDifferenceHtml(difference) {
@@ -426,8 +583,7 @@ function getDifferenceHtml(difference) {
                 if (typeof value == "number") {
                     value = Math.round(value);
                 }
-                switch(key)
-                {
+                switch (key) {
                     case "ChangedProperty":
                         comment = "Changed style: " + value;
                         break;
@@ -437,8 +593,8 @@ function getDifferenceHtml(difference) {
                     case "NewValue":
                         comment = comment + " To: " + value;
                         break;
-                }                
-            });            
+                }
+            });
         });
     } else {
         comment = difference.Text;
@@ -459,7 +615,7 @@ function setFitWidth(prefix) {
     // get scale ratio
     var scale = (pageWidth / screenWidth) * 100;
     // set values
-    zoomValue = 200 - scale;   
+    zoomValue = 200 - scale;
     setZoomValue(zoomValue, prefix);
 }
 
@@ -470,7 +626,7 @@ function setFitWidth(prefix) {
 function setZoomValue(zoom_val, prefix) {
     // adapt value for css
     var zoom_val_non_webkit = zoom_val / 100;
-    var zoom_val_webkit = Math.round(zoom_val) + '%';  
+    var zoom_val_webkit = Math.round(zoom_val) + '%';
     var style = [
         'zoom: ' + zoom_val_webkit,
         'zoom: ' + zoom_val_non_webkit, // for non webkit browsers
@@ -479,10 +635,10 @@ function setZoomValue(zoom_val, prefix) {
         '-webkit-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-ms-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')',
         '-o-transform: (' + zoom_val_non_webkit + ', ' + zoom_val_non_webkit + ')'
-    ].join(';');   
+    ].join(';');
     $.each($('#gd-upload-section-' + prefix).find(".gd-wrapper"), function (index, page) {
         $(page).attr('style', style);
-    });    
+    });
 }
 
 
@@ -515,7 +671,7 @@ function addCloseSection() {
                 $(section).find(".gd-compare-area-head").append(close);
             }
         }
-    });   
+    });
 }
 
 function convertIndexToString(index) {
@@ -547,15 +703,15 @@ function getHtmlCompareSection(prefix) {
     // drag and drop section
     var htmlSection = '<section id="gd-upload-section-' + prefix + '" class="gd-compare-section">' +
         '<div class="gd-compare-area-head">' +
-            '<div class="gd-compare-head-buttons">'+
-                '<i class="fas fa-arrow-right gd-add-url-compare"></i>' +
-                '<input type="url" class="gd-compare-url" id="gd-url-' + prefix + '" placeholder="http://">' +
-                '<i class="fas fa-folder gd-compare-browse"></i>' +
-            '</div>' +
-            '<div class="gd-compare-file-info">'+
-                '<i class="fa"></i>' +
-                '<div class="gd-compare-file-name"></div>' +
-            '</div>' +
+        '<div class="gd-compare-head-buttons">' +
+        '<i class="fas fa-arrow-right gd-add-url-compare"></i>' +
+        '<input type="url" class="gd-compare-url" id="gd-url-' + prefix + '" placeholder="http://">' +
+        '<i class="fas fa-folder gd-compare-browse"></i>' +
+        '</div>' +
+        '<div class="gd-compare-file-info">' +
+        '<i class="fa"></i>' +
+        '<div class="gd-compare-file-name"></div>' +
+        '</div>' +
         '</div>' +
 
         '<div class="gd-drag-n-drop-wrap-compare" id="gd-dropZone-' + prefix + '">' +
@@ -566,7 +722,7 @@ function getHtmlCompareSection(prefix) {
         '</div>' +
 
         //// pages BEGIN
-        '<div id="gd-pages">' +        
+        '<div id="gd-pages" class="gd-pages">' +
         '<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
         '</div>' +
         //    // pages END
@@ -595,10 +751,10 @@ function replacePrefix(prefix) {
  * Init remove button for selection area
  * @param prefix - prefix for selection area
  */
-function initCloseButton() {    
-    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-close-dad-area', function (e) {  
+function initCloseButton() {
+    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-close-dad-area', function (e) {
         closeDifferences();
-        $(".difference").remove();       
+        $(".highlight-difference").remove();
         var prefix = $(e.target).attr("id").split("-").pop();
         if ($('#gd-upload-section-' + prefix).find(".gd-wrapper").length > 0) {
             clearDocumentPreview(prefix);
@@ -661,8 +817,8 @@ function initDropZone(prefix) {
             event.stopPropagation();
             event.preventDefault();
             dropZone.removeClass('hover');
-            var files = event.dataTransfer.files;          
-            uploadDragFile(files[0], prefix);            
+            var files = event.dataTransfer.files;
+            uploadDragFile(files[0], prefix);
         };
     }
 }
@@ -725,7 +881,7 @@ GROUPDOCS.COMAPRISON PLUGIN
 
             // set global option params
             applicationPath = options.applicationPath;
-            preloadResultPageCount = options.preloadResultPageCount;
+            preloadPageCount = options.preloadResultPageCount;
             rewrite = options.rewrite;
             multiComparing = options.multiComparing;
             $("#gd-pages").remove();
@@ -785,11 +941,11 @@ GROUPDOCS.COMAPRISON PLUGIN
             getHtmlCompareSection('first') + getHtmlCompareSection('second') +
             '</div>' +
             '<div class="gd-differences-wrapper">' +
-                '<div class="gd-differences-header">' +                    
-                        '<i class="fas fa-info-circle"></i><span>Differences</span>' +
-                        '<div class="close"><i class="fas fa-times"></i></div >' +                  
-                '</div >' +
-            '<div class="gd-differences-body">' +    
+            '<div class="gd-differences-header">' +
+            '<i class="fas fa-info-circle"></i><span>Differences</span>' +
+            '<div class="close"><i class="fas fa-times"></i></div >' +
+            '</div >' +
+            '<div class="gd-differences-body">' +
             '</div>';
     }
 

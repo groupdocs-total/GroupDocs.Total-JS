@@ -541,7 +541,7 @@ $(document).ready(function () {
             var textarea = $(element).find('textarea');
             var clone = textarea.parent().find('.clone');
 
-            contextMenu.width(178);
+            contextMenu.width(195);
             editButton.click(function () {
                 clone.hide();
                 textarea.show();

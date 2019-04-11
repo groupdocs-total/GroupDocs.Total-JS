@@ -485,8 +485,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 ******************************************
 */
 
-.gd-context-menu {
-    padding-left: 8px;
+.gd-context-menu {    
     box-shadow: #00000052 0px 0px 5px;
     background-color: #FFFFFF;
     width: 90px;
@@ -505,7 +504,8 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 }
 .gd-context-menu i {
     color: #5c737f;
-    margin: 5px;
+    font-size: 14px;
+    padding: 10px 7px 10px 10px;
 }
 .gd-context-menu i:hover{
     color: #2e363a;
@@ -671,10 +671,10 @@ textarea.gd-watermark-annotation{
 }
 
 .gd-text-color-picker {
-    position: relative;
-    width: 14px;
-    height: 14px;
-    margin: 5px;
+    width: 18px;
+    height: 18px;
+    padding: 2px;    
+    margin: 7px 0px 7px 7px;
 }
 
 .gd-font-size {

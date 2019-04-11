@@ -150,7 +150,7 @@ $(document).ready(function () {
             annotation.top = parseFloat(element.style.top.replace("px", ""));
             // append line element if the annotation is text strikeout or underline
             element.appendChild(annotationInnerHtml);
-            setupContextMenu(element,currentPrefix,annotation);
+            setupContextMenu(element,currentPrefix, annotation);
             if (lineInnerHtml != null) {
                 element.appendChild(lineInnerHtml);
             }
@@ -175,7 +175,7 @@ $(document).ready(function () {
         $(canvas).on(userMouseUp, function (e) {
             if (['textField','watermark'].indexOf(currentPrefix) >= 0) {
                 attachTextFieldBehaviour(element, annotation);
-                attachTextStyleChangeBehaviour(element, annotation);
+                attachTextStyleChangeBehaviour(element, annotation);              
             }
             if (element != null && e.target.tagName !== "TEXTAREA") {
                 if (currentPrefix === "textReplacement") {
@@ -317,6 +317,8 @@ $(document).ready(function () {
             var fontSize = annotation.fontSize;           
             textarea.css("font-size", fontSize + "px");
             textarea.parent().find("pre").css("font-size", fontSize + "px");
+            textarea.css("line-height", fontSize + "px");
+            textarea.parent().find("pre").css("line-height", fontSize + "px");  
             setTextFieldSize(annotation, textarea);
         }
         if (lineInnerHtml != null) {
@@ -467,9 +469,11 @@ $(document).ready(function () {
             var fontSize = $(this).val();
             var textarea = $(element).find('textarea');
             textarea.css("font-size", fontSize + "px");
-            textarea.parent().find("pre").css("font-size", fontSize + "px");   
-            updateTextFieldSize(annotation, textarea);
+            textarea.parent().find("pre").css("font-size", fontSize + "px");  
+            textarea.css("line-height", fontSize + "px");
+            textarea.parent().find("pre").css("line-height", fontSize + "px");  
             annotation.fontSize = fontSize;
+            updateTextFieldSize(annotation, textarea);            
         });
     }
 

@@ -485,8 +485,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 ******************************************
 */
 
-.gd-context-menu {
-    padding:5px;
+.gd-context-menu {    
     box-shadow: #00000052 0px 0px 5px;
     background-color: #FFFFFF;
     width: 90px;
@@ -498,13 +497,15 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     margin: auto;
     top: -45px;
     cursor: default;
+    display: flex;
 }
 .gd-context-menu .fa-arrows-alt{
     cursor: move;
 }
 .gd-context-menu i {
     color: #5c737f;
-    margin: 5px;
+    font-size: 14px;
+    padding: 10px 7px 10px 10px;
 }
 .gd-context-menu i:hover{
     color: #2e363a;
@@ -608,12 +609,12 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     left: 0px;
     top: 0px;
     resize: none;
-    font-size: 15px;
+    font-size: 20px;  
     margin: 0px;
     color: #0000FF;
     font-family: Arial;
     overflow: hidden;
-    line-height: 17px;
+    line-height: 20px;
     background-color: transparent;
     min-width: 1em;
     min-height: 1em;
@@ -647,13 +648,13 @@ textarea.gd-watermark-annotation{
     left: 0px;
     top: 0px;
     resize: none;
-    font-size: 40px;
+    font-size: 40px;    
     margin: 0px;
     color: #807fff;
     font-family: Arial;
     overflow: hidden;
     letter-spacing: 0.006em;
-    line-height: 37px;
+    line-height: 40px;
     background-color: transparent;
     min-width: 1em;
     min-height: 1em;
@@ -667,6 +668,17 @@ textarea.gd-watermark-annotation{
     min-height: 1em;
     border:1px solid transparent;
 
+}
+
+.gd-text-color-picker {
+    width: 18px;
+    height: 18px;
+    padding: 2px;    
+    margin: 7px 0px 7px 7px;
+}
+
+.gd-font-size {
+    border: 0;
 }
 
 .gd-typewriter-text {

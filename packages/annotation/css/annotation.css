@@ -677,22 +677,43 @@ textarea.gd-watermark-annotation{
     margin: 7px 0px 7px 7px;
 }
 
+.gd-font-size-input-wrapper {
+    margin-left: 10px;
+    width: 45px;
+    position: relative;
+}
 .gd-font-size {
     border: 0;
+    width: 20px;
+    height: 33px;
+    position: absolute;
+    left: 0;
+}
+.gd-font-size-input-wrapper i {
+    position: relative;
+    padding: 0;
+    font-size: 16px;
+    cursor: pointer;
+    height: 10px;
+    width: 14px;
+    display: flex;
+    margin: auto;  
+    left: 5px;
+    top: 4px;
 }
 
 .gd-typewriter-text {
-	top: -14px;   
+    top: -14px;
     display: block;
     font-family: Arial;
     font-size: 10px;
     color: rgb(0, 0, 0);
-    background-color: rgb(255, 255, 255);    
+    background-color: rgb(255, 255, 255);
     border: 1px solid;
-	width: 239px;
+    width: 239px;
     height: 50px;
-	text-align: left;
-	overflow: hidden;
+    text-align: left;
+    overflow: hidden;
 }
 
 .gd-annotation:hover > .gd-text-area-toolbar {

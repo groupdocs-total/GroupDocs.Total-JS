@@ -122,6 +122,10 @@
     color: white;
 	cursor: pointer;
 }
+.csg-text-menu .gd-font-size {
+    background-color: #3e4e5a;
+    color: white;
+}
 .csg-text-menu i {
     font-size: 14px;
     color: white;

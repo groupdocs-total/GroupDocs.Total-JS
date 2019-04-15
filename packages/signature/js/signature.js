@@ -184,14 +184,18 @@ $(document).ready(function () {
     //Signature click event
     //////////////////////////////////////////////////
     $('#gd-panzoom').on(userMouseClick + 'touchstart mousedown', '.gd-signature', function (e) {
-        hideAllContextMenu();
-        var signature = $(e.target).closest('.gd-signature');
-        var contextMenu = signature.find('.gd-context-menu');
-        showContextMenuFor(signature);
-        if(signature.find('.gd-draw-text').length){
-            var textarea = signature.find('textarea');
-            $.fn.textGenerator.init(signature.id, null, textarea.val(), contextMenu);
-            textarea.focus();
+        if (!$(e.target).hasClass("gd-font-size")) {
+            hideAllContextMenu();
+            var signature = $(e.target).closest('.gd-signature');
+            var contextMenu = signature.find('.gd-context-menu');
+            showContextMenuFor(signature);
+            if (signature.find('.gd-draw-text').length) {
+                var textarea = signature.find('textarea');
+                $.fn.textGenerator.init(signature.id, null, textarea.val(), contextMenu);
+                textarea.focus();
+            }
+        } else {
+            e.target.focus();
         }
     });
 
@@ -1457,17 +1461,12 @@ function getHtmlFontsSelect(fonts, id) {
  * Prepare font sizes select HTML
  */
 function getHtmlFontSizeSelect(id) {
-    var idParam = id ? 'id="' + id + '"' : "";
-    var fontSizes = '<select ' + idParam + ' class="gd-fonts-select gd-font-size-select">';
-    for (var i = 8; i <= 20; i++) {
-        if (i == 10) {
-            fontSizes = fontSizes + '<option value="' + i + '" selected="selected">' + i + 'px</option>';
-        } else {
-            fontSizes = fontSizes + '<option value="' + i + '">' + i + 'px</option>';
-        }
-    }
-    fontSizes = fontSizes + '</select>';
-    return fontSizes;
+    var idParam = id ? 'id="' + id + '"' : ""; 
+    return '<div ' + idParam + ' class="gd-font-size-input-wrapper">' +
+        '<input class="gd-font-size" value="19">' +
+        '<i class="fas fa-sort-up gd-font-size-plus"></i>' +
+        '<i class="fas fa-sort-down gd-font-size-minus"></i>' +
+        '</div>';   
 }
 
 function getFonts() {

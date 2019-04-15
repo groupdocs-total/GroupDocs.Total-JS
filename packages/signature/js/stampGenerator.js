@@ -20,7 +20,7 @@ var paramValues = {
 	strokeWidth: 1,
 	textExpansion: 0.173,
 	textRepeat: 1,
-	fontSize: 10,
+	fontSize: 19,
 	font: "Arial",
 	textColor: "rgb(51, 51, 51)",
 	radius: 76.5,
@@ -117,12 +117,32 @@ $(document).ready(function(){
 	});
 	
 	// change font size
-	$('body').on("change", ".csg-text-menu .gd-font-size-select", function(){
-		var canvasId = $(this).parent()[0].attributes['data-canvasId'].value;
+    $('body').on("keyup", ".csg-text-menu .gd-font-size", function () {
+        var canvasId = $(this).parent().parent()[0].attributes['data-canvasId'].value;
 		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });		
 		properties[0].fontSize = $(this).val();
 		$.fn.stampGenerator.redrawCanvas(properties[0].id);
-	});
+    });
+
+    $('body').on(userMouseClick, ".gd-font-size-plus", function (e) {
+        var canvasId = $(this).parent().parent()[0].attributes['data-canvasId'].value;
+        var val = parseInt($(this.parentElement).find(".gd-font-size").val()) + 1;
+        val = val > 20 ? 20 : val;
+        $(this.parentElement).find(".gd-font-size").val(val);
+        var properties = $.grep(stampData, function (e) { return e.id == canvasId; });
+        properties[0].fontSize = val;
+        $.fn.stampGenerator.redrawCanvas(properties[0].id);
+    });
+
+    $('body').on(userMouseClick, ".gd-font-size-minus", function (e) {
+        var canvasId = $(this).parent().parent()[0].attributes['data-canvasId'].value;
+        var val = parseInt($(this.parentElement).find(".gd-font-size").val()) - 1;
+        val = val < 1 ? 1 : val;
+        $(this.parentElement).find(".gd-font-size").val(val);
+        var properties = $.grep(stampData, function (e) { return e.id == canvasId; });
+        properties[0].fontSize = val;
+        $.fn.stampGenerator.redrawCanvas(properties[0].id);
+    });
 	
 	// make text bold
 	$('body').on(userMouseClick, ".fa-bold", function(){
@@ -511,9 +531,9 @@ function cleanProperties(){
 		backgroundColor: "rgb(255, 255, 255)",
 		strokeColor: "rgb(51, 51, 51)",
 		strokeWidth: 1,
-		textExpansion: 0.049,
+        textExpansion: 0.173,
 		textRepeat: 1,
-		fontSize: 10,
+		fontSize: 19,
 		font: "Arial",
 		textColor: "rgb(51, 51, 51)",
 		radius: 76.5,

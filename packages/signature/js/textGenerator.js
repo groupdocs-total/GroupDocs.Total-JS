@@ -14,7 +14,9 @@
         italic : 'gd-text-italic',
         underline : 'gd-text-underline',
         font : 'gd-text-font',
-        fontSize : 'gd-text-font-size',
+        fontSize: 'gd-text-font-size',
+        fontSizePlus: 'gd-font-size-plus',
+        fontSizeMinus: 'gd-font-size-minus',
         parentName : '',
         textMenuId: ''
     };
@@ -48,10 +50,35 @@
                 setTimeout(saveTextSignatureIntoFile, 500);
             });
 
-            $('#' + paramValues.textMenuId).on("change", "#" + paramValues.fontSize, function(e) {
-                var val = $(this).val();
+            $('#' + paramValues.textMenuId).on("keyup", "#" + paramValues.fontSize, function (e) {
+                var val = parseInt(e.target.value) > 20 ? 20 : e.target.value;
+                e.target.value = val;
                 if (val) {
-                    var cssVal = val.indexOf('px') > 0 ? val : val + 'px';
+                    var cssVal = val + 'px';
+                    $('#' + parentName).find('#' + paramValues.text).css("font-size", cssVal);
+                    properties.fontSize = val;
+                    setTimeout(saveTextSignatureIntoFile, 500);
+                }
+            });
+
+            $('#' + paramValues.textMenuId).on(userMouseClick, "." + paramValues.fontSizePlus, function (e) {
+                var val = parseInt($(event.target.parentElement).find(".gd-font-size").val()) + 1;
+                val = val > 20 ? 20 : val;
+                $(event.target.parentElement).find(".gd-font-size").val(val);
+                if (val) {
+                    var cssVal = val + 'px';
+                    $('#' + parentName).find('#' + paramValues.text).css("font-size", cssVal);
+                    properties.fontSize = val;
+                    setTimeout(saveTextSignatureIntoFile, 500);
+                }
+            });
+
+            $('#' + paramValues.textMenuId).on(userMouseClick, "." + paramValues.fontSizeMinus, function (e) {
+                var val = parseInt($(event.target.parentElement).find(".gd-font-size").val()) - 1;
+                val = val < 1 ? 1 : val;
+                $(event.target.parentElement).find(".gd-font-size").val(val);
+                if (val) {
+                    var cssVal = val + 'px';
                     $('#' + parentName).find('#' + paramValues.text).css("font-size", cssVal);
                     properties.fontSize = val;
                     setTimeout(saveTextSignatureIntoFile, 500);
@@ -229,7 +256,7 @@
         properties.bold = $('#' + paramValues.textMenuId).find('#' + paramValues.bold)[0].className.indexOf("active") > 0;
         properties.fontColor = $('#' + paramValues.textMenuId).find("#" + paramValues.fontColor).find('.bcPicker-picker').css("background-color");
         properties.font = $('#' + paramValues.textMenuId).find("#" + paramValues.font).val();
-        properties.fontSize = $('#' + paramValues.textMenuId).find("#" + paramValues.fontSize).val();
+        properties.fontSize = $('#' + paramValues.textMenuId).find("#" + paramValues.fontSize).find(".gd-font-size").val();
 
     }
 
@@ -242,6 +269,7 @@
         textField.css("color", properties.fontColor);
         textField.css("font-family", properties.font);
         textField.css("font-size", properties.fontSize ? properties.fontSize + 'px' : '');
+        textField.parent().parent().find(".gd-font-size").val(properties.fontSize)
     }
 
 })(jQuery);

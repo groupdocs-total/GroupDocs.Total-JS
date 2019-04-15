@@ -594,14 +594,13 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     position: relative;
 }
 
-
-
 .gd-textField-wrapper{
     background-color: #FFFFFF00;
     overflow: hidden;
     margin: 0px;
     padding: 0px;
 }
+
 .gd-textField-annotation{
     padding: 0px;
     border-radius: 0px;
@@ -621,6 +620,7 @@ ANNOTATIONS ADDED TO THE DOCUMENT
     height: 100%;
     border:1px solid transparent;
 }
+
 .gd-textField-annotation.clone{
     text-align: left;
     height: auto;
@@ -631,16 +631,17 @@ ANNOTATIONS ADDED TO THE DOCUMENT
 
 }
 
-
 .gd-watermark-wrapper{
     background-color: #FFFFFF00;
     overflow: hidden;
     margin: 0px;
     padding: 0px;
 }
+
 textarea.gd-watermark-annotation{
     height: 100%;
 }
+
 .gd-watermark-annotation{
     padding: 0px;
     border-radius: 0px;
@@ -660,6 +661,7 @@ textarea.gd-watermark-annotation{
     min-height: 1em;
     border:1px solid transparent;
 }
+
 .gd-watermark-annotation.clone{
     text-align: left;
     height: auto;

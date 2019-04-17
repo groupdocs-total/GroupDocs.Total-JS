@@ -252,6 +252,8 @@ $(document).ready(function () {
         var delta = 0.5;
         if (zoom < 1) {
             delta = 1;
+        } else {
+            delta = delta / zoom;
         }
         for (i = 1; i <= lastPageNumber; i++) {
             // check if page is visible in the view port more than 50%
@@ -1493,11 +1495,15 @@ function printMessage(message) {
 */
 function scrollToPage(pageNumber) {
     // get zoom value
-    var zoomValue = $('#gd-panzoom').css('zoom');
+    var zoomValue = $('#gd-panzoom').css('zoom');   
     if (typeof zoomValue == 'undefined') {
         zoomValue = 100;
-    } else {
-        zoomValue = $("#gd-page-1").css("zoom") * 100;
+    } else {       
+        if (parseFloat(zoomValue) != 1) {
+            zoomValue = $("#gd-page-1").css("zoom") * 100 * parseFloat(zoomValue);  
+        } else {
+            zoomValue = $("#gd-page-1").css("zoom") * 100;
+        }
     }
     // scroll
     $('#gd-pages').scrollTo('#gd-page-' + pageNumber, {

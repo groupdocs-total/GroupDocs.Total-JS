@@ -300,10 +300,6 @@
         top: 390px;
     }
 
-    .gd-signature-title {
-        width: Calc(100% - 70px);
-    }
-
     .gd-context-menu i.active {
         background-color: #959da5;
 

@@ -353,8 +353,8 @@ MODAL
 }
 
 .gd-signature-title {
-	width: inherit;
-    margin: 20px 47px 20px 0px;
+    width: calc(100% - 40px);
+    margin: 20px 0px 20px 0px;
     height: fit-content;
 }
 
@@ -378,6 +378,11 @@ MODAL
 	font-size: 13px;
     color: rgba(0,0,0,0.36);
     cursor: pointer;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    display: block;
+    overflow: hidden;
+    width: inherit;
 }
 .gd-signature-thumbnail-text, .gd-signature-thumbnail-image, .gd-signature-thumbnail-hand {
     min-width: 74px;

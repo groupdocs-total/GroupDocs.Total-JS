@@ -465,17 +465,23 @@ $(document).ready(function () {
             var intColor = parseInt(hex.replace("#", ""), 16);
             annotation.fontColor = intColor;
         });
-
+        $(element).find('.gd-font-size').on(userMouseClick, function () {
+            $(this).select();
+        });
         $(element).find('.gd-font-size').keyup(function (event) {
-            var fontSize = (parseInt($(this).val()) <= 40) ? parseInt($(this).val()) : 40;      
+            var fontSize = (parseInt($(this).val()) <= 99) ? parseInt($(this).val()) : 99;      
             var textarea = $(element).find('textarea');
+            $(this).inputFilter(function (value) {
+                return /^\d*$/.test(value) && (value === "" || parseInt(value) <= 99);
+            });
             setFontSize(fontSize, textarea, annotation);
             updateTextFieldSize(annotation, textarea);
+
         });
 
         $(element).find('.gd-font-size-plus').click(function (event) {
             var incriesedSize = parseInt($(event.target.parentElement).find(".gd-font-size").val()) + 1;            
-            var fontSize = (incriesedSize <= 40) ? incriesedSize : 40;
+            var fontSize = (incriesedSize <= 99) ? incriesedSize : 99;
             $(event.target.parentElement).find(".gd-font-size").val(fontSize);
             var textarea = $(element).find('textarea');
             setFontSize(fontSize, textarea, annotation);
@@ -493,7 +499,7 @@ $(document).ready(function () {
     }
 
     function setFontSize(size, textarea, annotation) {
-        var fontSize = (size <= 40) ? size : 40;      
+        var fontSize = (size <= 99) ? size : 99;      
         textarea.css("font-size", fontSize + "px");
         textarea.parent().find("pre").css("font-size", fontSize + "px");
         textarea.css("line-height", fontSize + "px");
@@ -593,4 +599,17 @@ $(document).ready(function () {
             '<i class="fas fa-sort-down gd-font-size-minus"></i>' +
             '</div>';
     }
+
+    $.fn.inputFilter = function (inputFilter) {
+        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+            if (inputFilter(this.value)) {
+                this.oldValue = this.value;
+                this.oldSelectionStart = this.selectionStart;
+                this.oldSelectionEnd = this.selectionEnd;
+            } else if (this.hasOwnProperty("oldValue")) {
+                this.value = this.oldValue;
+                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+            }
+        });
+    };
 })(jQuery);

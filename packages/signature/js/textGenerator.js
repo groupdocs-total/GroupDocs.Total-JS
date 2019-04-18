@@ -50,13 +50,23 @@
                 setTimeout(saveTextSignatureIntoFile, 500);
             });
 
+            $('#' + paramValues.textMenuId).on(userMouseClick, "#" + paramValues.fontSize, function (event) {
+                $(event.target).select();
+            });
+
             $('#' + paramValues.textMenuId).on("keyup", "#" + paramValues.fontSize, function (e) {
-                var val = parseInt(e.target.value) > 20 ? 20 : e.target.value;
+                if (isNaN(parseInt(e.target.value)) && e.target.value != "") {
+                    e.target.value = properties.fontSize;
+                }
+                var val = parseInt(e.target.value) > 99 ? 99 : e.target.value;
                 e.target.value = val;
                 if (val) {
+                    $(e.target).inputFilter(function (value) {
+                        return /^\d*$/.test(value) && (value === "" || parseInt(value) <= 99);
+                    });
                     var cssVal = val + 'px';
                     $('#' + parentName).find('#' + paramValues.text).css("font-size", cssVal);
-                    properties.fontSize = val;
+                    properties.fontSize = val;                    
                     setTimeout(saveTextSignatureIntoFile, 500);
                 }
             });
@@ -270,6 +280,6 @@
         textField.css("font-family", properties.font);
         textField.css("font-size", properties.fontSize ? properties.fontSize + 'px' : '');
         textField.parent().parent().find(".gd-font-size").val(properties.fontSize)
-    }
+    }  
 
 })(jQuery);

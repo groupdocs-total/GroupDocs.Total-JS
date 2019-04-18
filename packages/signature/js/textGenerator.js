@@ -73,7 +73,7 @@
 
             $('#' + paramValues.textMenuId).on(userMouseClick, "." + paramValues.fontSizePlus, function (e) {
                 var val = parseInt($(event.target.parentElement).find(".gd-font-size").val()) + 1;
-                val = val > 20 ? 20 : val;
+                val = val > 99 ? 99 : val;
                 $(event.target.parentElement).find(".gd-font-size").val(val);
                 if (val) {
                     var cssVal = val + 'px';

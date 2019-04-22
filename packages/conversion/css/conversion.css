@@ -1,3 +1,27 @@
 #gd-header-logo {
     background-image: url('../images/logo.png') !important;
 }
+#gd-btn-convert-all {
+    cursor: not-allowed !important;
+}
+#gd-compare-area {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+#gd-compare-area > i:first-child {
+    font-size: 65px;
+    margin-top: 448px;
+    color: #959DA5;
+}
+.gd-conversion-empty-label {
+    display: flex;
+    flex-direction: column;
+    margin-top: 38px;
+    font-size: 15px;
+    color: #959DA5;
+}
+.gd-conversion-empty-label i {
+    font-size: 14px;
+}

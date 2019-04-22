@@ -86,7 +86,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             $(gd_navbar).append(getHtmlComparePanel);
 
             // assembly html base
-            this.append(getHtmlBase);
+            $("#gd-panzoom").append(getHtmlBase);
         }
     };
 
@@ -111,36 +111,11 @@ GROUPDOCS.COMAPRISON PLUGIN
        ******************************************************************
        */
     function getHtmlBase() {
-        return '<div id="gd-container">' +
-            '<div class="wrapper">' +
-            // header BEGIN
-            '<div id="gd-header">' +
-            '<div id="gd-header-logo"></div>' +
-
-            // nav bar BEGIN
-            '<ul id="' + gd_navbar.slice(1) + '">' +
-            // nav bar content
-            '</ul>' +
-            // nav bar END
-            '</div>' +
-            // header END
-            '<div class="gd-comparison-bar-wrapper active">' +
-            '<input id="gd-comparison-toggle" class="gd-comparison-toggle" type="checkbox" />' +
-            '<label for="gd-comparison-toggle" class="gd-lbl-toggle"></label>' +
-            '<div id="gd-select-compare-files">' +
-            '<div id="gd-files-blocks" class="gd-files-blocks">' +
-            getHtmlDragAndDropArea('first') + getHtmlDragAndDropArea('second') + getHtmlMultiCompare() +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            // pages BEGIN
-            '<div id="gd-pages">' +
-            '<div id="gd-compare-spinner" style="display: none;"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Comparing... Please wait.</div>' +
-            '<div id="gd-panzoom">' +
-            // list of pages
-            '</div>' +
-            '</div>' +
-            // pages END
+        return '<div id="gd-compare-area">' +
+            '<i class="fas fa-exchange-alt"></i>' +
+            '<div class="gd-conversion-empty-label">' +
+            '<label>Conversion queue is empty</label>' +
+            '<label>Drag your document here or click <i class="fa fa-folder-open"></i> to select a files</label>' +
             '</div>' +
             '</div>';
     }

@@ -852,8 +852,11 @@ MODAL
     color: #FFFFFF;
     margin: 0px 8px 0px 22px;
     border: 0;
-    cursor: pointer;
+    cursor: not-allowed;
     opacity: 0.43
+}
+.gd-add-selected .active {
+    cursor: pointer;
 }
 .gd-add-selected i {
     margin-right: 8px;

@@ -25,6 +25,15 @@ $(document).ready(function () {
     NAV BAR CONTROLS
     ******************************************************************
     */
+
+    //////////////////////////////////////////////////
+    // Disable default file browse click event
+    //////////////////////////////////////////////////
+    $("gd-btn-browse").off(userMouseClick);
+
+    $("#gd-btn-browse").on(userMouseClick, function () {
+        loadFileTree('', true);
+    });
 });
 
 /*

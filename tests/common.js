@@ -8,7 +8,7 @@ export default class CommonTests{
     }
     static async testUploadFileDialogIsShownWhenUploadFileMenuIconClicked(t){
         await t
-        .click('#gd-btn-upload')
-        .expect(Selector('#modalDialog').visible).ok()
+        .click('#gd-btn-browse')
+        .expect(Selector('.gd-hdd').visible).ok()
     }
 }

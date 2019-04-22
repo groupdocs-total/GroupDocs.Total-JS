@@ -36,6 +36,34 @@ $(document).ready(function () {
     });
 });
 
+function loadConversionTypes() {
+    var data = { path: dir };  
+    // get data
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('loadConversionTypes'),
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (returnedData) {
+            if (returnedData.message != undefined) {
+                // open error popup
+                printMessage(returnedData.message);
+                return;
+            }           
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.Message);
+            // hide loading spinner
+            $('#gd-modal-spinner').hide();
+            // open error popup
+            printMessage(err.message);
+        }
+    });
+}
+
+
+
 /*
 ******************************************************************
 ******************************************************************

@@ -1565,7 +1565,11 @@ function uploadDocument(file, url) {
                     if (event.loaded == event.total) {                      
                         $('.gd-modal-close-action').on('click', closeModal);
                         $("#gd-open-document").prop("disabled", false);
-                        loadFileTree("");
+                        if ($(".gd-checkbox").length > 0) {
+                            loadFileTree("", true);                           
+                        } else {
+                            loadFileTree("");
+                        }
                     }
                 }
             }, false);

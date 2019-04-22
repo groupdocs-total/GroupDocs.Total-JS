@@ -855,7 +855,7 @@ MODAL
     cursor: not-allowed;
     opacity: 0.43
 }
-.gd-add-selected .active {
+.gd-add-selected.active {
     cursor: pointer;
 }
 .gd-add-selected i {

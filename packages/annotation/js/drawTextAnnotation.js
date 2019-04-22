@@ -173,6 +173,8 @@ $(document).ready(function () {
         // set mouse up event
         // this handler used to get annotation width and height after draw process
         $(canvas).on(userMouseUp, function (e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
             if (['textField','watermark'].indexOf(currentPrefix) >= 0) {
                 attachTextFieldBehaviour(element,annotation);
             }

@@ -186,6 +186,9 @@ $(document).ready(function () {
                     addComment(annotationsList[annotationsList.length - 1]);
                 }
             }
+            if (!element) {
+                element = $(".gd-annotation")[0];
+            }
             makeResizable(annotation, element);
             annotationInnerHtml = null;
             lineInnerHtml = null;
@@ -209,6 +212,7 @@ $(document).ready(function () {
             if (element !== null) {   
                 var currentWidth = (isNaN(parseInt(element.style.width))) ? 0 : parseInt(element.style.width);
                 var currentHeight = (isNaN(parseInt(element.style.height))) ? 0 : parseInt(element.style.height);
+                
                 if (mouse.x != 0) {
                     element.style.width = Math.abs(startX - mouse.x) + "px";
                 }

@@ -34,10 +34,21 @@ $(document).ready(function () {
     $("#gd-btn-browse").on(userMouseClick, function () {
         loadFileTree('', true);
     });
+
+    $('.gd-modal-body').on(userMouseClick, ".gd-select-all", function () {
+        $(".gd-checkbox").prop('checked', true);
+        guids = [];
+        $.each($(".gd-filetree-name"), function (index, fileName) {
+            if (!~getDocumentFormat($(fileName).data("guid")).format.indexOf("not supported")) {
+                guids.push($(fileName).data("guid"));
+            }
+        });
+        loadConversionTypes(guids);
+    });
 });
 
-function loadConversionTypes() {
-    var data = { path: dir };  
+function loadConversionTypes(guids) {
+    var data = { guids: guids };  
     // get data
     $.ajax({
         type: 'POST',
@@ -47,6 +58,7 @@ function loadConversionTypes() {
         success: function (returnedData) {
             if (returnedData.message != undefined) {
                 // open error popup
+                toggleModalDialog(false);
                 printMessage(returnedData.message);
                 return;
             }           

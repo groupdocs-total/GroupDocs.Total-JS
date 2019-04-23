@@ -37,11 +37,19 @@ map['dot'] = { 'format': 'Microsoft Word', 'icon': 'fa-file-word-o' };
 map['dotx'] = { 'format': 'Microsoft Word', 'icon': 'fa-file-word-o' };
 map['dotm'] = { 'format': 'Microsoft Word', 'icon': 'fa-file-word-o' };
 map['xls'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
+map['xltx'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
+map['xltm'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
+map['tsv'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
+map['xls2003'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
 map['xlsx'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
 map['xlsm'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
 map['xlsb'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
 map['ppt'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
 map['pptx'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
+map['potx'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
+map['potm'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
+map['pptm'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
+map['ppsm'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
 map['pps'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
 map['ppsx'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
 map['vsd'] = { 'format': 'Microsoft Visio', 'icon': 'fa-file-code-o' };
@@ -79,7 +87,10 @@ map['dwg'] = { 'format': 'AutoCAD Drawing File Format', 'icon': 'fa-file-image-o
 map['bmp'] = { 'format': 'Bitmap Picture', 'icon': 'fa-file-image-o' };
 map['gif'] = { 'format': 'Graphics Interchange Format', 'icon': 'fa-file-image-o' };
 map['jpg'] = { 'format': 'Joint Photographic Experts Group', 'icon': 'fa-file-image-o' };
+map['psd'] = { 'format': 'Layered Image File', 'icon': 'fa-file-image-o' };
+map['svg'] = { 'format': 'Scalable Vector Graphics', 'icon': 'fa-file-image-o' };
 map['jpe'] = { 'format': 'Joint Photographic Experts Group', 'icon': 'fa-file-image-o' };
+map['jp2'] = { 'format': 'Compressed Bitmap Image', 'icon': 'fa-file-image-o' };
 map['jpeg'] = { 'format': 'Joint Photographic Experts Group', 'icon': 'fa-file-image-o' };
 map['jfif'] = { 'format': 'Joint Photographic Experts Group', 'icon': 'fa-file-image-o' };
 map['png'] = { 'format': 'Portable Network Graphics', 'icon': 'fa-file-image-o' };
@@ -1757,7 +1768,7 @@ function getHtmlFileBrowser(multiple) {
     var single = "single";
     if (multiple) {
         multipleActions = '<input type="checkbox" class="gd-select-all gd-checkbox">' +
-            '<button class="gd-add-selected"><i class="fa fa-plus"></i>Add selected</button>';            
+            '<div class="gd-add-selected"><i class="fa fa-plus"></i><label>Add selected</label></div>';            
         single = "";
     }
     var uploadButtons = "";

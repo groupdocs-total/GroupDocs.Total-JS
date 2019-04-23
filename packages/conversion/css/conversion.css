@@ -1,6 +1,11 @@
 #gd-header-logo {
     background-image: url('../images/logo.png') !important;
 }
+/*
+******************************************
+File browse lightbox
+******************************************
+*/
 #gd-btn-convert-all {
     cursor: not-allowed !important;
 }
@@ -25,3 +30,80 @@
 .gd-conversion-empty-label i {
     font-size: 14px;
 }
+.gd-conversions {
+    margin: 19px 34px;
+    width: 25px;
+    height: 25px;    
+    padding: 5px;
+}
+.gd-conversions.multiple {
+    margin: 0;
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    top: 0;
+}
+.gd-conversions.active {
+    background-color: #cccccc;
+}
+.gd-conversion-dropdown {
+    position: relative;
+    top: -14px;
+}
+.gd-conversion-input {
+    display: none;
+}
+.gd-conversion-input:checked + .gd-conversion-menu {
+    display: block;
+    left: -116px;
+    top: 14px;
+    width: 100px;
+    height: 181px;
+    overflow: hidden;
+    overflow-y: scroll;
+    position: absolute;
+}
+.gd-conversion-input:checked + .gd-conversion-menu.multiple {
+    left: 120px;
+    z-index: 2;
+    top: 6px;
+}
+.gd-conversion-menu {
+    position: absolute;
+    top: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0;
+    margin: 2px 0 0 0;
+    box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
+    background-color: #ffffff;
+    list-style-type: none;
+    display: none;
+}
+.gd-conversion-menu li {
+    color: #959DA5;
+    height: 25px;
+    display: flex;
+    cursor: pointer;
+}
+.gd-conversion-menu li:hover {
+    background-color: #25C2D4;
+    color: #FFFFFF
+}
+.gd-conversion-menu i {
+    margin: 6px 10px;
+    color: #959DA5;
+    font-size: 12px;
+    height: 12px;
+}
+.gd-conversion-menu li:hover i {       
+    color: #FFFFFF
+}
+.gd-type {
+    font-size: 12px;
+    height: 12px;
+    margin-top: 4px;
+}
+.gd-file-table-item > div:last-child > i {
+    margin: 0;    
+}   

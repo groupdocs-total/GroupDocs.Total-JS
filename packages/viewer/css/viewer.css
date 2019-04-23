@@ -779,12 +779,6 @@ MODAL
 .gd-go-up{
     cursor: pointer;
 }
-
-#gd-upload-actions {
-    display: flex;
-    position: relative;
-    left: 8px;
-}
 .gd-select-all {
     position: relative;
     top: 6px;  
@@ -842,10 +836,11 @@ MODAL
 }
 #gd-upload-actions {
     display: flex;
+    position: relative;    
     margin-left: 22px;
 }
 #gd-upload-actions.single {
-    margin-left: 4px;
+    margin-left: 12px;
 }
 .gd-add-selected {
     width: 125px;

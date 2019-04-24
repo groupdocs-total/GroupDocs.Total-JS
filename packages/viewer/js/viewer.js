@@ -589,7 +589,9 @@ function loadFileTree(dir, multiple) {
                 var places = "";
                 var single = "single";
                 if (multiple) {
-                    checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
+                    if (!elem.isDirectory) {
+                        checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
+                    }                    
                     places = '<div><i class="fas fa-plus"></i></div>';
                     single = "";
                 }

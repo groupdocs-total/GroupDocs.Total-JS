@@ -17,6 +17,7 @@ var applicationPath;
 var currentDirectory;
 var rewrite;
 var allConvertionTypes = [];
+var conversionQueue = [];
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
 
 $(document).ready(function () {
@@ -32,10 +33,16 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $("#gd-btn-browse").off(userMouseClick);
 
+    //////////////////////////////////////////////////
+    // Open file browse modal
+    //////////////////////////////////////////////////
     $("#gd-btn-browse").on(userMouseClick, function () {
         loadFiles('');
     });
 
+    //////////////////////////////////////////////////
+    // Open / close conversion types drop-down single
+    //////////////////////////////////////////////////
     $('#modalDialog').on(userMouseClick, function (event) {
         if ($(event.target).hasClass("fa-plus") && !$(event.target).parent().hasClass("active")) {
             event.preventDefault();
@@ -50,30 +57,137 @@ $(document).ready(function () {
             $("#modalDialog").find(".gd-conversions.active").removeClass("active");
         }        
     });
-    
+
+    //////////////////////////////////////////////////
+    // Open / close conversion types drop-down multiple
+    //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, ".gd-add-selected.active", function (e) {
         e.preventDefault();
         e.stopPropagation();
         $(event.target).find(".gd-conversion-input").prop("checked", true);
     });
 
+    //////////////////////////////////////////////////
+    // Check all files and add all conversion types drop-down
+    //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, ".gd-select-all", function () {
-        $(".gd-checkbox").prop('checked', true);
+        ($(".gd-checkbox").prop('checked')) ? $(".gd-checkbox").prop('checked', true) : $(".gd-checkbox").prop('checked', false);
         guids = [];
         $.each($(".gd-filetree-name"), function (index, fileName) {
             if (!~getDocumentFormat($(fileName).data("guid")).format.indexOf("not supported")) {
                 guids.push($(fileName).data("guid"));
             }
         });
-        $(".gd-add-selected").addClass("active");
-        var addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add ' + guids.length + ' selected</label>';
+        var addSelectedInnerHtml = "";
+        if ($(".gd-checkbox:checked").length > 0) {
+            $(".gd-add-selected").addClass("active");
+            addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add ' + guids.length + ' selected</label>';
+        } else {
+            $(".gd-add-selected").removeClass("active");
+            addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add selected</label>';
+        }    
         $(".gd-add-selected").html(addSelectedInnerHtml);
         var types = prepareMultipleConversionTypes(true);
-        var dropDown = getConversiontypesHtml(types, true);
+        var dropDown = getConversionTypesHtml(types, true);
+        $(".gd-add-selected").append(dropDown);        
+    });
+
+    //////////////////////////////////////////////////
+    // Check single file and add conversion types drop-down
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').on(userMouseClick, ".gd-file-checkbox", function (event) {        
+        guids = [];
+        $.each($(".gd-filetree-name"), function (index, fileName) {
+            if (!~getDocumentFormat($(fileName).data("guid")).format.indexOf("not supported")) {
+                if ($(fileName).parent().find(".gd-checkbox").prop("checked")) {
+                    guids.push($(fileName).data("guid"));
+                }
+            }
+        });        
+        var addSelectedInnerHtml = "";
+        if ($(".gd-checkbox:checked").length > 0) {
+            $(".gd-add-selected").addClass("active");
+            addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add ' + guids.length + ' selected</label>';
+        } else {
+            $(".gd-add-selected").removeClass("active");
+            addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add selected</label>';
+        }      
+           
+        $(".gd-add-selected").html(addSelectedInnerHtml);
+        var types = prepareMultipleConversionTypes(true);
+        var dropDown = getConversionTypesHtml(types, true);
         $(".gd-add-selected").append(dropDown);
-        
+    });
+
+    //////////////////////////////////////////////////
+    // Add files to conversion queue
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').on(userMouseClick, ".gd-conversion-menu.multiple li", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(".gd-conversion-input").prop("checked", false);
+        var type = "";
+        switch (e.target.tagName) {
+            case "DIV":
+                type = $(e.target).html();
+                break;
+            case "I":
+                type = $(e.target).parent().find(".gd-type").html();
+                break;
+            case "LI":
+                type = $(e.target).find(".gd-type").html();
+                break;
+        }
+        addToQueue(type);
+        toggleModalDialog(false);
     });
 });
+
+
+function addToQueue(destinationType) {
+    conversionQueue = [];
+    $.each($(".gd-file-table-item"), function (index, fileItem) {
+        var checkbox = $(fileItem).find(".gd-checkbox");
+        if ($(checkbox).prop("checked")) {
+            var conversionItem = { guid: $(checkbox).attr("name"), destinationType: destinationType, size: $(fileItem).find(".gd-file-size").html()};
+            conversionQueue.push(conversionItem);
+        }
+    });
+    var queueHtml = getQueueHtml();
+    $("#gd-compare-area").hide();
+    $("#gd-compare-queue").show();
+    $("#gd-compare-queue").append(queueHtml);
+}
+
+function getQueueHtml() {
+    var html = "";
+    $.each(conversionQueue, function (index, file) {
+        var docFormat = getDocumentFormat(file.guid.split('.').pop());
+        html = html + '<div class="gd-compare-item">' +
+            '<div class="gd-compare-remove">' +
+            '<i class="fa fa-times"></i>' +
+            '</div>' +
+            '<div class="gd-filequeue-name">' +
+            '<i class="fa ' + docFormat.icon + '"></i>' +
+            '<div class="gd-file-name gd-queue-name">' + file.guid +
+            '<div class="gd-file-format">' + docFormat.format + '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="gd-file-size gd-queue-size">' + file.size + '</div>' +
+            '<div class="gd-compare-status">' +
+            '<i class="far fa-clock"></i>' +
+            '</div>' +
+            '<div class="gd-filequeue-name">' +
+            '<i class="fa ' + docFormat.icon + '"></i>' +
+            '<div class="gd-file-name gd-queue-name">' + file.guid.split('.')[0] + "." + file.destinationType +
+            '<div class="gd-file-format">' + docFormat.format + '</div>' +
+            '</div>' +
+            '</div>' +
+            '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +
+            '</div>';
+    });  
+    return html;
+}
 
 /**
 * Load file tree
@@ -122,8 +236,13 @@ function loadFiles(dir) {
                 // document format
                 var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined) ? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
                 var folderClass = (docFormat.format == "") ? "gd-folder-name" : "";
-                var checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
-                var conversionTypes = getConversiontypesHtml(elem.conversionTypes, false); 
+                var checkBoxes = "";               
+                if (elem.isDirectory) {
+                    checkBoxes = '<div class="gd-file-checkbox empty"></div>';
+                } else {
+                    checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
+                }
+                var conversionTypes = getConversionTypesHtml(elem.conversionTypes, false); 
                 addAllConversionTypes(elem);
                 // append document
                 $('.gd-modal-table-body').append(
@@ -176,7 +295,7 @@ function prepareMultipleConversionTypes(all) {
     return allTypes;
 }
 
-function getConversiontypesHtml(types, multiple) {
+function getConversionTypesHtml(types, multiple) {
     var conversionTypes = '';   
     if (types.length > 0) {
         $.each(types, function (index, type) {
@@ -292,7 +411,8 @@ GROUPDOCS.COMAPRISON PLUGIN
             '<label>Conversion queue is empty</label>' +
             '<label>Drag your document here or click <i class="fa fa-folder-open"></i> to select a files</label>' +
             '</div>' +
-            '</div>';
+            '</div>' +
+            '<div id="gd-compare-queue"></div>';
     }
 
     function getHtmlComparePanel() {

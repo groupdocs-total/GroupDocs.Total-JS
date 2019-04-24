@@ -454,31 +454,60 @@ $(document).ready(function () {
 
     }
 
-    function attachTextStyleChangeBehaviour(element, annotation) {    
+    function attachTextStyleChangeBehaviour(element, annotation) {
         $(element).find('.bcPicker-color').click(function (event) {
             $.fn.bcPicker.pickColor($(this));
             var color = $(this).parent().parent().find(".bcPicker-picker").css("background-color");
             var textarea = $(element).find('textarea');
             textarea.css("color", color);
-            textarea.parent().find("pre").css("color", color);           
+            textarea.parent().find("pre").css("color", color);
             var hex = $.fn.bcPicker.toHex(color);
             var intColor = parseInt(hex.replace("#", ""), 16);
             annotation.fontColor = intColor;
         });
-
-        $(element).find('.gd-font-size').change(function (event) {          
-            var fontSize = $(this).val();
+        $(element).find('.gd-font-size').on(userMouseClick, function () {
+            $(this).select();
+        });
+        $(element).find('.gd-font-size').keyup(function (event) {
+            var fontSize = (parseInt($(this).val()) <= 99) ? parseInt($(this).val()) : 99;      
             var textarea = $(element).find('textarea');
-            textarea.css("font-size", fontSize + "px");
-            textarea.parent().find("pre").css("font-size", fontSize + "px");  
-            textarea.css("line-height", fontSize + "px");
-            textarea.parent().find("pre").css("line-height", fontSize + "px");  
-            annotation.fontSize = fontSize;
-            updateTextFieldSize(annotation, textarea);            
+            $(this).inputFilter(function (value) {
+                return /^\d*$/.test(value) && (value === "" || parseInt(value) <= 99);
+            });
+            setFontSize(fontSize, textarea, annotation);
+            updateTextFieldSize(annotation, textarea);
+
+        });
+
+        $(element).find('.gd-font-size-plus').click(function (event) {
+            var incriesedSize = parseInt($(event.target.parentElement).find(".gd-font-size").val()) + 1;            
+            var fontSize = (incriesedSize <= 99) ? incriesedSize : 99;
+            $(event.target.parentElement).find(".gd-font-size").val(fontSize);
+            var textarea = $(element).find('textarea');
+            setFontSize(fontSize, textarea, annotation);
+            updateTextFieldSize(annotation, textarea);
+        });
+
+        $(element).find('.gd-font-size-minus').click(function (event) {
+            var incriesedSize = parseInt($(event.target.parentElement).find(".gd-font-size").val()) - 1;
+            var fontSize = (incriesedSize > 1) ? incriesedSize : 1;
+            $(event.target.parentElement).find(".gd-font-size").val(fontSize);
+            var textarea = $(element).find('textarea');
+            setFontSize(fontSize, textarea, annotation);
+            updateTextFieldSize(annotation, textarea);
         });
     }
 
-    function emptySpaceOnLineEnd(annotation){
+    function setFontSize(size, textarea, annotation) {
+        var fontSize = (size <= 99) ? size : 99;      
+        textarea.css("font-size", fontSize + "px");
+        textarea.parent().find("pre").css("font-size", fontSize + "px");
+        textarea.css("line-height", fontSize + "px");
+        textarea.parent().find("pre").css("line-height", fontSize + "px");
+        annotation.fontSize = fontSize;        
+    }
+
+    function emptySpaceOnLineEnd(annotation) {
         return (annotation.text.charAt(annotation.text.length - 1) === "\n" ? ' ' : '')
     }
 
@@ -561,19 +590,26 @@ $(document).ready(function () {
 
     function getTextColorButton() {
         return '<div class="gd-text-color-picker"></div>';
-    }  
+    }
 
     function getFontSizeHtml(currentSize) {
-        var options = "";
-        for (i = 10; i <= 40; i++) {
-            if (i == currentSize) {
-                options = options + '<option value="' + i + '"  selected="selected">' + i + 'px</option>';
-            } else {
-                options = options + '<option value="' + i + '">' + i + 'px</option>';
-            }
-        }
-        return '<select class="gd-font-size">' +
-            options +
-            '</select>';
+        return '<div class="gd-font-size-input-wrapper">' +
+            '<input class="gd-font-size" value=' + currentSize + '>' +
+            '<i class="fas fa-sort-up gd-font-size-plus"></i>' +
+            '<i class="fas fa-sort-down gd-font-size-minus"></i>' +
+            '</div>';
     }
+
+    $.fn.inputFilter = function (inputFilter) {
+        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+            if (inputFilter(this.value)) {
+                this.oldValue = this.value;
+                this.oldSelectionStart = this.selectionStart;
+                this.oldSelectionEnd = this.selectionEnd;
+            } else if (this.hasOwnProperty("oldValue")) {
+                this.value = this.oldValue;
+                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+            }
+        });
+    };
 })(jQuery);

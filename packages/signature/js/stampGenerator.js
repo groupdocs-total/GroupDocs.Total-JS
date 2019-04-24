@@ -20,7 +20,7 @@ var paramValues = {
 	strokeWidth: 1,
 	textExpansion: 0.173,
 	textRepeat: 1,
-	fontSize: 10,
+	fontSize: 19,
 	font: "Arial",
 	textColor: "rgb(51, 51, 51)",
 	radius: 76.5,
@@ -115,14 +115,45 @@ $(document).ready(function(){
 		properties[0].font = $(this).val();
 		$.fn.stampGenerator.redrawCanvas(properties[0].id);
 	});
-	
+
+    $('body').on(userMouseClick, ".csg-text-menu .gd-font-size", function () {
+        $(this).select();
+    });
+
 	// change font size
-	$('body').on("change", ".csg-text-menu .gd-font-size-select", function(){
-		var canvasId = $(this).parent()[0].attributes['data-canvasId'].value;
-		var properties = $.grep(stampData, function(e){ return e.id == canvasId; });		
-		properties[0].fontSize = $(this).val();
-		$.fn.stampGenerator.redrawCanvas(properties[0].id);
-	});
+    $('body').on("keyup", ".csg-text-menu .gd-font-size", function () {
+        var canvasId = $(this).parent().parent()[0].attributes['data-canvasId'].value;
+        var properties = $.grep(stampData, function (e) { return e.id == canvasId; });
+        if (!isNaN(parseInt($(this).val())) && $(this).val() != "") {
+            properties[0].fontSize = $(this).val();
+            $(this).inputFilter(function (value) {
+                return /^\d*$/.test(value) && (value === "" || parseInt(value) <= 99);
+            });
+            $.fn.stampGenerator.redrawCanvas(properties[0].id);
+        } else{
+            $(this).val("");
+        }       
+    });
+
+    $('body').on(userMouseClick, ".csg-font-size-plus", function (e) {
+        var canvasId = $(this).parent().parent()[0].attributes['data-canvasId'].value;
+        var val = parseInt($(this.parentElement).find(".gd-font-size").val()) + 1;
+        val = val > 99 ? 99 : val;
+        $(this.parentElement).find(".gd-font-size").val(val);
+        var properties = $.grep(stampData, function (e) { return e.id == canvasId; });
+        properties[0].fontSize = val;
+        $.fn.stampGenerator.redrawCanvas(properties[0].id);
+    });
+
+    $('body').on(userMouseClick, ".csg-font-size-minus", function (e) {
+        var canvasId = $(this).parent().parent()[0].attributes['data-canvasId'].value;
+        var val = parseInt($(this.parentElement).find(".gd-font-size").val()) - 1;
+        val = val < 1 ? 1 : val;
+        $(this.parentElement).find(".gd-font-size").val(val);
+        var properties = $.grep(stampData, function (e) { return e.id == canvasId; });
+        properties[0].fontSize = val;
+        $.fn.stampGenerator.redrawCanvas(properties[0].id);
+    });
 	
 	// make text bold
 	$('body').on(userMouseClick, ".fa-bold", function(){
@@ -418,7 +449,17 @@ function addTextMenu(properties) {
 	});
 	html = html + '</div>';
 	$('#gd-lightbox-body').append(html);
-	setTextColors(properties);
+    setTextColors(properties);
+    $.each($('#gd-lightbox-body').find(".gd-font-size-plus"), function (index, button) {
+        if (!$(button).hasClass("csg-font-size-plus")) {
+            $(button).addClass("csg-font-size-plus");
+        }
+    });
+    $.each($('#gd-lightbox-body').find(".gd-font-size-minus"), function (index, button) {
+        if (!$(button).hasClass("csg-font-size-minus")) {
+            $(button).addClass("csg-font-size-minus");
+        }
+    });
 }
 
 /**
@@ -444,9 +485,9 @@ CanvasRenderingContext2D.prototype.drawTextCircle = function(text, radius, x, y,
 
 	 for(var i = 0; i < textRepeat; i++){
 		 for(var j = 0; j < text.length; j++){
-			this.save();
-			this.rotate(j * textExpansion + textExpansion * text.length * i);
-			this.fillText(text[j], 0, -radius);
+             this.save();
+             this.rotate(j * (textExpansion + (fontSize / 100)) + (textExpansion + (fontSize / 100)) * text.length * i);
+             this.fillText(text[j], 0, -(radius - (fontSize / 2)));
 			this.restore();
 		 }
 	 }
@@ -511,9 +552,9 @@ function cleanProperties(){
 		backgroundColor: "rgb(255, 255, 255)",
 		strokeColor: "rgb(51, 51, 51)",
 		strokeWidth: 1,
-		textExpansion: 0.049,
+        textExpansion: 0.173,
 		textRepeat: 1,
-		fontSize: 10,
+		fontSize: 19,
 		font: "Arial",
 		textColor: "rgb(51, 51, 51)",
 		radius: 76.5,

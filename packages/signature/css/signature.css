@@ -544,6 +544,31 @@ SIGNATURE IMAGE
     margin-left: 5px;
     margin-right: 5px;
 }
+
+.gd-font-size-input-wrapper {
+    width: 39px;
+    height: 33px;
+    margin: 0px 7px 0px 6px;
+}
+
+.gd-font-size {
+    border: 0;
+    width: 20px;
+    height: 33px;
+}
+
+.gd-font-size-input-wrapper i {
+    position: relative;
+    padding: 0 !important;
+    font-size: 16px;
+    cursor: pointer;
+    height: 10px;
+    width: 14px;
+    display: flex;
+    margin: auto;
+    left: 17px;
+    top: -28px;
+}
 /*
 ******************************************
 SIGNATURE IMAGE RESIZE HANDLES

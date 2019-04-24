@@ -34,6 +34,11 @@ $(document).ready(function () {
     $("#gd-btn-browse").off(userMouseClick);
 
     //////////////////////////////////////////////////
+    // Disable file click event
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').off(userMouseClick, '.gd-filetree-name');
+
+    //////////////////////////////////////////////////
     // Open file browse modal
     //////////////////////////////////////////////////
     $("#gd-btn-browse").on(userMouseClick, function () {
@@ -55,7 +60,7 @@ $(document).ready(function () {
         if (event.target.tagName != "LABEL" && event.target.tagName != "LI") {
             $(event.target).parent().find(".gd-conversion-input").prop("checked", false);
             $("#modalDialog").find(".gd-conversions.active").removeClass("active");
-        }        
+        }
     });
 
     //////////////////////////////////////////////////
@@ -81,21 +86,18 @@ $(document).ready(function () {
         var addSelectedInnerHtml = "";
         if ($(".gd-checkbox:checked").length > 0) {
             $(".gd-add-selected").addClass("active");
-            addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add ' + guids.length + ' selected</label>';
+            addSelectedInnerHtml = 'Add ' + guids.length + ' selected';
         } else {
             $(".gd-add-selected").removeClass("active");
-            addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add selected</label>';
-        }    
-        $(".gd-add-selected").html(addSelectedInnerHtml);
-        var types = prepareMultipleConversionTypes(true);
-        var dropDown = getConversionTypesHtml(types, true);
-        $(".gd-add-selected").append(dropDown);        
+            addSelectedInnerHtml = 'Add selected';
+        }       
+        $($(".gd-add-selected label")[0]).html(addSelectedInnerHtml);
     });
 
     //////////////////////////////////////////////////
     // Check single file and add conversion types drop-down
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on(userMouseClick, ".gd-file-checkbox", function (event) {        
+    $('.gd-modal-body').on(userMouseClick, ".gd-file-checkbox", function (event) {
         guids = [];
         $.each($(".gd-filetree-name"), function (index, fileName) {
             if (!~getDocumentFormat($(fileName).data("guid")).format.indexOf("not supported")) {
@@ -103,56 +105,68 @@ $(document).ready(function () {
                     guids.push($(fileName).data("guid"));
                 }
             }
-        });        
+        });
         var addSelectedInnerHtml = "";
         if ($(".gd-checkbox:checked").length > 0) {
             $(".gd-add-selected").addClass("active");
-            addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add ' + guids.length + ' selected</label>';
+            addSelectedInnerHtml = 'Add ' + guids.length + ' selected';
         } else {
             $(".gd-add-selected").removeClass("active");
-            addSelectedInnerHtml = '<i class="fa fa-plus"></i><label>Add selected</label>';
-        }      
-           
-        $(".gd-add-selected").html(addSelectedInnerHtml);
-        var types = prepareMultipleConversionTypes(true);
-        var dropDown = getConversionTypesHtml(types, true);
-        $(".gd-add-selected").append(dropDown);
+            addSelectedInnerHtml = 'Add selected';
+        }
+
+        $($(".gd-add-selected label")[0]).html(addSelectedInnerHtml);
+        $(".gd-select-all").prop("checked", false);
     });
 
     //////////////////////////////////////////////////
     // Add files to conversion queue
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on(userMouseClick, ".gd-conversion-menu.multiple li", function (e) {
+    $('.gd-modal-body').on(userMouseClick, ".gd-conversion-menu li", function (e) {
         e.preventDefault();
         e.stopPropagation();
         $(".gd-conversion-input").prop("checked", false);
         var type = "";
+        var guid = "";
         switch (e.target.tagName) {
             case "DIV":
                 type = $(e.target).html();
+                $(e.target).parent().parent().hasClass("multiple") ? "" : guid = $(e.target).parent().parent().parent().parent().data("guid");
                 break;
             case "I":
                 type = $(e.target).parent().find(".gd-type").html();
+                $(e.target).parent().parent().hasClass("multiple") ? "" : guid = $(e.target).parent().parent().data("guid");
                 break;
             case "LI":
                 type = $(e.target).find(".gd-type").html();
+                $(e.target).parent().hasClass("multiple") ? "" : guid = $(e.target).parent().parent().parent().data("guid");
                 break;
         }
-        addToQueue(type);
+        addToQueue(type, guid);
         toggleModalDialog(false);
     });
 });
 
 
-function addToQueue(destinationType) {
+function addToQueue(destinationType, guid) {
     conversionQueue = [];
-    $.each($(".gd-file-table-item"), function (index, fileItem) {
-        var checkbox = $(fileItem).find(".gd-checkbox");
-        if ($(checkbox).prop("checked")) {
-            var conversionItem = { guid: $(checkbox).attr("name"), destinationType: destinationType, size: $(fileItem).find(".gd-file-size").html()};
-            conversionQueue.push(conversionItem);
-        }
-    });
+    if (guid) {
+        $.each($(".gd-file-table-item"), function (index, fileItem) {
+            var fileName = $(fileItem).find(".gd-filetree-name");
+            if ($(fileName).data("guid") == guid) {
+                var conversionItem = { guid: guid.match(/[-_\w]+[.][\w]+$/i)[0], destinationType: destinationType, size: $(fileItem).find(".gd-file-size").html() };
+                conversionQueue.push(conversionItem);
+            }
+        });
+    } else {
+        $.each($(".gd-file-table-item"), function (index, fileItem) {
+            var checkbox = $(fileItem).find(".gd-checkbox");
+            if ($(checkbox).prop("checked")) {
+                var conversionItem = { guid: $(checkbox).attr("name"), destinationType: destinationType, size: $(fileItem).find(".gd-file-size").html() };
+                conversionQueue.push(conversionItem);
+            }
+        });
+    }
     var queueHtml = getQueueHtml();
     $("#gd-compare-area").hide();
     $("#gd-compare-queue").show();
@@ -185,7 +199,7 @@ function getQueueHtml() {
             '</div>' +
             '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +
             '</div>';
-    });  
+    });
     return html;
 }
 
@@ -211,7 +225,7 @@ function loadFiles(dir) {
                 // open error popup
                 printMessage(returnedData.message);
                 return;
-            }            
+            }
             // assembly modal html
             $('.gd-modal-body').html(''); // clear previous data
             toggleModalDialog(true, "Open Document", getHtmlFileBrowser(true));
@@ -219,7 +233,7 @@ function loadFiles(dir) {
             // hide loading spinner
             $('#gd-modal-spinner').hide();
             // append files to tree list
-            $.each(returnedData, function (index, elem) {                
+            $.each(returnedData, function (index, elem) {
                 // document name
                 var name = elem.name;
                 // document guid
@@ -236,13 +250,13 @@ function loadFiles(dir) {
                 // document format
                 var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined) ? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
                 var folderClass = (docFormat.format == "") ? "gd-folder-name" : "";
-                var checkBoxes = "";               
+                var checkBoxes = "";
                 if (elem.isDirectory) {
                     checkBoxes = '<div class="gd-file-checkbox empty"></div>';
                 } else {
                     checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
                 }
-                var conversionTypes = getConversionTypesHtml(elem.conversionTypes, false); 
+                var conversionTypes = getConversionTypesHtml(elem.conversionTypes, false, guid);
                 addAllConversionTypes(elem);
                 // append document
                 $('.gd-modal-table-body').append(
@@ -258,6 +272,9 @@ function loadFiles(dir) {
                     conversionTypes +
                     '</div>');
             });
+            var types = prepareMultipleConversionTypes(true);
+            var dropDown = getConversionTypesHtml(types, true);
+            $(".gd-add-selected").append(dropDown);
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -280,23 +297,21 @@ function addAllConversionTypes(types) {
     }
 }
 
-function prepareMultipleConversionTypes(all) {
-    if (all) {
-        var allTypes = [];
-        $.each(allConvertionTypes, function (index, element) {
-            $.each(element.conversions, function (index, type) {
-                var types = $.grep(allTypes, function (e) { return e == type; });
-                if (types.length == 0) {
-                    allTypes.push(type);
-                }
-            });
+function prepareMultipleConversionTypes() {
+    var allTypes = [];
+    $.each(allConvertionTypes, function (index, element) {
+        $.each(element.conversions, function (index, type) {
+            var types = $.grep(allTypes, function (e) { return e == type; });
+            if (types.length == 0) {
+                allTypes.push(type);
+            }
         });
-    }
+    });
     return allTypes;
 }
 
-function getConversionTypesHtml(types, multiple) {
-    var conversionTypes = '';   
+function getConversionTypesHtml(types, multiple, guid) {
+    var conversionTypes = '';
     if (types.length > 0) {
         $.each(types, function (index, type) {
             conversionTypes = conversionTypes + '<li><i class="fa ' + getDocumentFormat(type).icon + '"></i><div class="gd-type">' + type + '</div></li>';
@@ -307,7 +322,7 @@ function getConversionTypesHtml(types, multiple) {
             plus = '<i class="fas fa-plus"></i>';
             multipleClass = "";
         }
-        return '<div class="gd-conversions ' + multipleClass + '">' +
+        return '<div class="gd-conversions ' + multipleClass + '" data-guid="' + guid + '">' +
             plus +
             '<label class="gd-conversion-dropdown">' +
             '<input type="checkbox" class="gd-conversion-input">' +
@@ -412,7 +427,14 @@ GROUPDOCS.COMAPRISON PLUGIN
             '<label>Drag your document here or click <i class="fa fa-folder-open"></i> to select a files</label>' +
             '</div>' +
             '</div>' +
-            '<div id="gd-compare-queue"></div>';
+            '<div id="gd-compare-queue">' +
+            '<div class="gd-queue-header">'+
+            '<div>Source</div>' +
+            '<div>Size</div>' +
+            '<div>State</div>' +
+            '<div>Target</div>' +
+           '</div>'+
+            '</div>';
     }
 
     function getHtmlComparePanel() {

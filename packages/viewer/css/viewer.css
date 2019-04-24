@@ -800,6 +800,7 @@ MODAL
     position: absolute;
     right: 87px;
     top: 13px;
+    display: none;
 }
 .gd-aws {
     color: #959DA5;
@@ -809,6 +810,7 @@ MODAL
     position: absolute;
     right: 38px;
     top: 13px;
+    display: none;
 }
 .gd-checkbox {
     width: 19px;

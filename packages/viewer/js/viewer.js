@@ -525,6 +525,17 @@ $(document).ready(function () {
         }
     });
 
+    $('#modalDialog').on('click', function (event) {
+        if ($(event.target).hasClass("fas fa-chevron-down")) {
+            event.preventDefault();
+            $("#gd-upload-input-checkbox").prop("checked", true);
+            return;
+        }
+        if (event.target.tagName != "LABEL" && event.target.tagName != "LI" && event.target.tagName != "INPUT") {
+            $("#gd-upload-input-checkbox").prop("checked", false);
+        }
+    });
+
     //
     // END of document ready function
 });

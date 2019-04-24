@@ -16,7 +16,6 @@ GLOBAL VARIABLES
 var applicationPath;
 var preloadPageCount;
 var currentDirectory;
-var uploadFilesList = [];
 var documentGuid;
 var documentData = {};
 var password = '';
@@ -27,6 +26,7 @@ var htmlMode = false;
 var thumbnails = false;
 var saveRotateState = true;
 var enableRightClick = true;
+var upload = true;
 // add supported formats
 map['folder'] = { 'format': '', 'icon': 'fa-folder' };
 map['pdf'] = { 'format': 'Portable Document Format', 'icon': 'fa-file-pdf-o' };
@@ -434,127 +434,34 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('.gd-modal-body').on('change', '#gd-upload-input', function (e) {
         // get selected files
+        $("#gd-upload-input-checkbox").prop("checked", false);
         var input = $(this);
-        // add files to the table
-        addFileForUpload(input.get(0).files);
+        $.each(input.get(0).files, function (index, file) {
+            uploadDocument(file);
+        });
     });
 
     //////////////////////////////////////////////////
-    // Cancel file upload event
+    // Select file from HDD icon click
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', ".gd-cancel-button", function (e) {
-        // get selected files
-        var button = $(this);
-        // get file name which will be deleted
-        var fileName = button.closest("div").parent().parent().find("div.gd-file-name")[0].innerHTML;
-        // find its index in the array
-        for (var i = 0; i < uploadFilesList.length; i++) {
-            if (uploadFilesList[i].name == fileName) {
-                // remove file from the files array
-                uploadFilesList.splice(i, 1);
-            }
-        }
-        // remove table row
-        button.closest('div').parent().parent().parent().remove();
-        $('#gd-upload-input').val('');
-        // recalculate indexes in the files table
-        var tableRows = $('#gd-upload-files-table > div');
-        for (var n = 0; n < tableRows.length; n++) {
-            $(tableRows[n]).find('div.gd-pregress').attr('id', 'gd-pregress-bar-' + n);
-            $(tableRows[n]).find("div.gd-upload-complete").attr('id', 'gd-upload-complete-' + n);
-        }
-        // if table is empty disable upload button
-        if (tableRows.length == 0) {
-            $('#gd-upload-button').prop('disabled', true);
-        }
-    });
-
-    //////////////////////////////////////////////////
-    // Upload event
-    //////////////////////////////////////////////////
-    $(".gd-modal-body").on('click', '#gd-upload-button', function (e) {
-        // get current number of table rows
-        var tableRows = $('#gd-upload-files-table > div');
-        // initiate URL counter required for proper calculating of the uploaded files in case local files uploaded with URLs
-        var urlCounter = 0;
-        // upload file one by one
-        for (var i = 0; i < tableRows.length; i++) {
-            // check if current table row contains URL instead of file
-            if ($(tableRows[i]).find("div[data-value]").length > 0) {
-                // upload URL
-                uploadDocument(null, i, $(tableRows[i]).find("div.gd-filetree-name").data().value);
-                // increase URL counter
-                urlCounter++;
-            } else {
-                // check if the current file already uploaded
-                var isUploaded = $(tableRows[i]).find("div.gd-filetree-name").data().uploaded;
-                if (!isUploaded) {
-                    // upload local file
-                    uploadDocument(uploadFilesList[i - urlCounter], i);
-                    // mark file as uploaded
-                    $(tableRows[i]).find("div.gd-filetree-name").data().uploaded = true;
-                } else {
-                    continue;
-                }
-            }
-        }
+    $('.gd-modal-body').on('click', '.gd-hdd', function (e) {
+        $("#gd-upload-input").click();
     });
 
     //////////////////////////////////////////////////
     // Open URL input event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-url-button', function () {
-        $('#gd-url-wrap').slideDown('fast');
-    });
-
-    //////////////////////////////////////////////////
-    // Close URL input event
-    //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-url-cancel', function () {
-        $('#gd-url-wrap').slideUp('fast');
-        $('#gd-url').val('');
+    $('.gd-modal-body').on('click', '#gd-upload-url', function () {
+        $('#gd-url-wrap').show();
     });
 
     //////////////////////////////////////////////////
     // Add file via URL event
     //////////////////////////////////////////////////
     $('.gd-modal-body').on('click', '#gd-add-url', function () {
-        addFileForUpload(null, $("#gd-url").val());
+        $('#gd-url-wrap').hide();
+        uploadDocument(null, $("#gd-url").val());
         $('#gd-url').val('');
-    });
-
-    //////////////////////////////////////////////////
-    // Open modal dialog (file upload) event
-    //////////////////////////////////////////////////
-    $('#gd-btn-upload').on('click', function (e) {
-        toggleModalDialog(true, 'Upload Document', getHtmlUpload());
-        var dropZone = $('#gd-dropZone');
-        if (typeof dropZone[0] != "undefined") {
-            //Drag n drop functional
-            if ($('#gd-dropZone').length) {
-                if (typeof (window.FileReader) == 'undefined') {
-                    dropZone.text("Your browser doesn't support Drag and Drop");
-                    dropZone.addClass('error');
-                }
-            }
-
-            dropZone[0].ondragover = function () {
-                dropZone.addClass('hover');
-                return false;
-            };
-
-            dropZone[0].ondragleave = function () {
-                dropZone.removeClass('hover');
-                return false;
-            };
-
-            dropZone[0].ondrop = function (event) {
-                event.preventDefault();
-                dropZone.removeClass('hover');
-                var files = event.dataTransfer.files;
-                addFileForUpload(files);
-            };
-        }
     });
 
     //////////////////////////////////////////////////
@@ -607,6 +514,18 @@ $(document).ready(function () {
         }
     });
 
+    $('#modalDialog').on('click', function (event) {
+        
+        if ($(event.target).hasClass("fas fa-chevron-down")) {
+            event.preventDefault();
+            $("#gd-upload-input-checkbox").prop("checked", true);
+            return;
+        }
+        if (event.target.tagName != "LABEL" && event.target.tagName != "LI" && event.target.tagName != "INPUT") {
+            $("#gd-upload-input-checkbox").prop("checked", false);
+        } 
+        
+    });
     //
     // END of document ready function
 });
@@ -621,7 +540,10 @@ FUNCTIONS
 * Load file tree
 * @param {string} dir - files location directory
 */
-function loadFileTree(dir) {
+function loadFileTree(dir, multiple) {
+    if (!multiple) {
+        multiple = false;
+    }
     var data = { path: dir };
     currentDirectory = dir;
     // clear previously entered password
@@ -642,7 +564,8 @@ function loadFileTree(dir) {
             }
             // assembly modal html
             $('.gd-modal-body').html(''); // clear previous data
-            toggleModalDialog(true, "Open Document", getHtmlFileBrowser());
+            toggleModalDialog(true, "Open Document", getHtmlFileBrowser(multiple));
+            initDragNDrop();
             // hide loading spinner
             $('#gd-modal-spinner').hide();
             // append files to tree list
@@ -662,14 +585,28 @@ function loadFileTree(dir) {
                 }
                 // document format
                 var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined) ? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
+                var folderClass = (docFormat.format == "") ? "gd-folder-name" : "";
+                var checkBoxes = "";
+                var places = "";
+                var single = "single";
+                if (multiple) {
+                    checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
+                    places = '<div><i class="fas fa-plus"></i></div>';
+                    single = "";
+                }
                 // append document
-                $('.gd-modal-table tbody').append(
-                    '<tr>' +
-                    '<td><i class="fa ' + docFormat.icon + '"></i></td>' +
-                    '<td class="gd-filetree-name" data-guid="' + guid + '"><div class="gd-file-name">' + name + '</div></td>' +
-                    '<td>' + docFormat.format + '</td>' +
-                    '<td>' + new_size + '</td>' +
-                    '</tr>');
+                $('.gd-modal-table-body').append(
+                    '<div class="gd-file-table-item">' +
+                    checkBoxes +
+                    '<div class="gd-filetree-name ' + single + '" data-guid="' + guid + '">' +
+                    '<i class="fa ' + docFormat.icon + '"></i>' +
+                    '<div class="gd-file-name ' + folderClass + '">' + name +
+                    '<div class="gd-file-format">' + docFormat.format + '</div>' +
+                    '</div>' +
+                    '</div >' +
+                    '<div class="gd-file-size">' + new_size + '</div>' +
+                    places +
+                    '</div>');
             });
         },
         error: function (xhr, status, error) {
@@ -1495,12 +1432,12 @@ function printMessage(message) {
 */
 function scrollToPage(pageNumber) {
     // get zoom value
-    var zoomValue = $('#gd-panzoom').css('zoom');   
+    var zoomValue = $('#gd-panzoom').css('zoom');
     if (typeof zoomValue == 'undefined') {
         zoomValue = 100;
-    } else {       
+    } else {
         if (parseFloat(zoomValue) != 1) {
-            zoomValue = $("#gd-page-1").css("zoom") * 100 * parseFloat(zoomValue);  
+            zoomValue = $("#gd-page-1").css("zoom") * 100 * parseFloat(zoomValue);
         } else {
             zoomValue = $("#gd-page-1").css("zoom") * 100;
         }
@@ -1614,106 +1551,11 @@ function downloadDocument() {
 }
 
 /**
-* Add file to the upload list
-* @param {file[]} uploadFiles - Files array for uploading
-* @param {string} url - URL of the file
-*/
-function addFileForUpload(uploadFiles, url) {
-    // get table in which files will be added
-    var table = $("#gd-upload-files-table");
-    // get current count of table rows
-    var tableRowsNumber = $('#gd-upload-files-table > div').length;
-
-    if (url) {
-        // append URL
-        table.append('<div class="swiper-container">' +
-            '<div class="swiper-wrapper">' +
-            '<div class="swiper-slide">' +
-            '<i class="fa ' + getDocumentFormat(url.split('/').pop()).icon + '"></i>' +
-            '<div class="gd-filetree-name" data-uploaded="false" data-value="' + url + '">' +
-            '<div class="gd-file-name">' + url.split('/').pop() + '</div>' +
-            '<span id="gd-upload-size"> type: ' + url.split('/').pop().split('.').pop() + '</span>' +
-            '</div>' +
-            '<div id="gd-pregress-bar-' + tableRowsNumber + '" class="gd-pregress p0 small green gd-upload-status">' +
-            '<div class="slice">' +
-            '<div class="bar"></div>' +
-            '<div class="fill"></div>' +
-            '</div>' +
-            '</div>' +
-            '<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete gd-upload-status"><i class="fa fa-check-circle-o"></i></div>' +
-            '</div>' +
-            '<div class="swiper-slide gd-desktop swiper-slide-cancel">' +
-            '<div class="files-table-remove">' +
-            '<button class="btn gd-cancel-button"><i class="fa fa-trash-o"></i></button>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>');
-        // increase table rows counter after adding new record
-        tableRowsNumber++
-    } else {
-        // append files
-        $.each(uploadFiles, function (index, file) {
-            uploadFilesList.push(file);
-            // document format
-            var docFormat = getDocumentFormat(file.name);
-            // convert to proper size
-            var new_size = file.size + ' Bytes';
-            if ((file.size / 1024 / 1024) > 1) {
-                new_size = (Math.round((file.size / 1024 / 1024) * 100) / 100) + ' MB';
-            } else if ((file.size / 1024) > 1) {
-                new_size = (Math.round((file.size / 1024) * 100) / 100) + ' KB';
-            }
-            // append document
-            table.append('<div class="swiper-container">' +
-                '<div class="swiper-wrapper">' +
-                '<div class="swiper-slide">' +
-                '<i class="fa ' + docFormat.icon + '"></i>' +
-                '<div class="gd-filetree-name" data-uploaded="false">' +
-                '<div class="gd-file-name">' + file.name + '</div>' +
-                '<span id="gd-upload-size">size: ' + new_size + '</span>' +
-                '<span id="gd-upload-size"> type: ' + file.name.split('.').pop() + '</span>' +
-                '</div>' +
-                '<div id="gd-pregress-bar-' + tableRowsNumber + '" class="gd-pregress p0 small green gd-upload-status">' +
-                '<div class="slice">' +
-                '<div class="bar"></div>' +
-                '<div class="fill"></div>' +
-                '</div>' +
-                '</div>' +
-                '<div id="gd-upload-complete-' + tableRowsNumber + '" class="gd-upload-complete gd-upload-status"><i class="fa fa-check-circle-o"></i></div>' +
-                '</div>' +
-                '<div class="swiper-slide gd-desktop swiper-slide-cancel">' +
-                '<div class="files-table-remove">' +
-                '<button class="btn gd-cancel-button"><i class="fa fa-trash-o"></i> Remove</button>' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div>');
-            // increase table rows counter after adding new record
-            tableRowsNumber++
-        });
-    }
-    $("#gd-upload-button").prop("disabled", false);
-    if (isMobile()) {
-        $.each($(".swiper-slide"), function (index, slide) {
-            $(slide).removeClass("gd-desktop");
-        });
-        //initialize swiper when document ready
-        var swiper = new Swiper('.swiper-container');
-    } else {
-        $.each($(".swiper-slide"), function (index, slide) {
-            $(slide).removeClass("swiper-slide-cancel");
-        });
-    }
-}
-
-/**
 * Upload document
 * @param {file} file - File for uploading
-* @param {int} index - Number of the file to upload
 * @param {string} url - URL of the file, set it if URL used instead of file
 */
-function uploadDocument(file, index, url) {
+function uploadDocument(file, url) {
     // prepare form data for uploading
     var formData = new FormData();
     // add local file for uploading
@@ -1732,13 +1574,9 @@ function uploadDocument(file, index, url) {
                 if (event.lengthComputable) {
                     $(".gd-modal-close-action").off('click');
                     $("#gd-open-document").prop("disabled", true);
-                    // increase progress
-                    $("#gd-pregress-bar-" + index).addClass("p" + Math.round(event.loaded / event.total * 100));
                     if (event.loaded == event.total) {
-                        $("#gd-pregress-bar-" + index).fadeOut();
-                        $("#gd-upload-complete-" + index).fadeIn();
                         $('.gd-modal-close-action').on('click', closeModal);
-                        $("#gd-open-document").prop("disabled", false);
+                        $("#gd-open-document").prop("disabled", false);                       
                     }
                 }
             }, false);
@@ -1756,6 +1594,7 @@ function uploadDocument(file, index, url) {
                 printMessage(returnedData.message);
                 return;
             }
+            loadFileTree("");
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -1781,12 +1620,6 @@ function printDocument(event) {
 * Close modal
 */
 function closeModal() {
-    // remove all files from the upload list
-    uploadFilesList = [];
-    var tableRows = $('#gd-upload-files-table > div');
-    for (var n = 0; n < tableRows.length; n++) {
-        $(tableRows[n]).remove();
-    }
     $("#gd-upload-input").val('');
     toggleModalDialog(false, '');
 }
@@ -1927,65 +1760,85 @@ function zoomOut(event) {
 /**
 * Get HTML content for file browser modal
 **/
-function getHtmlFileBrowser() {
-    return '<section id="gd-browse-section" class="tab-slider-body">' +
+function getHtmlFileBrowser(multiple) {
+    var multipleActions = "";
+    var single = "single";
+    if (multiple) {
+        multipleActions = '<input type="checkbox" class="gd-select-all gd-checkbox">' +
+            '<button class="gd-add-selected"><i class="fa fa-plus"></i>Add selected</button>';
+        single = "";
+    }
+    var uploadButtons = "";
+    if (upload) {
+        uploadButtons = '<label class="gd-upload-dropdown">' +
+            '<div class="gd-button">' +
+            '<i class="fa fa-upload"></i><label>Upload file</label><i class="fas fa-chevron-down"></i>' +
+            '</div>' +
+            '<input type="checkbox" class="gd-upload-input" id="gd-upload-input-checkbox">' +
+            '<ul class="gd-upload-menu">' +
+            '<li>Upload from:</li>' +
+            '<li><label><i class="fas fa-hdd"></i> Disc <input id="gd-upload-input" type="file" multiple style="display: none;" ></label></li>' +
+            '<li id="gd-upload-url"><i class="fas fa-link"></i> URL</li>' +
+            '</ul>' +
+            '</label>' +
+            '<div class="inner-addon left-addon btn gd-url-wrap" id="gd-url-wrap" style="">' +
+            '<input type="url" class="form-control" id="gd-url" placeholder="http://">' +
+            '<button class="btn" id="gd-add-url"><i class="fas fa-check"></i></button>' +
+            '</div>' +
+            '<i class="fas fa-hdd gd-hdd"></i>' +
+            '<i class="fab fa-aws gd-aws"></i>';
+    }
+    var uploadButtons = '<div id="gd-upload-actions" class="gd-action-buttons ' + single + '">' +
+        multipleActions +
+        uploadButtons +
+        '</div>';
+
+    return uploadButtons + '<section id="gd-browse-section" class="tab-slider-body">' +
         '<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
-        '<table id="gd-modal-filebroswer" class="gd-modal-table">' +
-        '<thead>' +
-        '<tr>' +
-        '<th class="col-md-1"> </th>' +
-        '<th class="col-md-5">Document</th>' +
-        '<th class="col-md-3">Format</th>' +
-        '<th class="col-md-3">Size</th>' +
-        '</tr>' +
-        '</thead>' +
-        '<tbody>' +
-        '<tr>' +
-        '<td class="text-center gd-go-up"><i class="fa fa-level-up"></i></td>' +
-        '<td class="gd-filetree-up gd-go-up">...</td>' +
-        '<td></td>' +
-        '<td></td>' +
-        '</tr>' +
-        // list of files
-        '</tbody>' +
-        '</table>' +
-        '</section>';
+        '<div id="gd-modal-filebroswer" class="gd-modal-table">' +
+        '<div class="gd-modal-table-head ' + single + '"><label>Document</label><label class="' + single + '">Size</label></div>' +
+        '<div class="gd-modal-table-body">' +
+        '<div class="text-center gd-go-up ' + single + '"><i class="fa fa-level-up"></i></div>' +
+        '<div class="gd-filetree-up gd-go-up ' + single + '">...</div>' +
+        '</div>' +
+        '</div>' +
+        '</section>' +
+        '<div class="gd-drag-n-drop-wrap" id="gd-dropZone">' +
+        '<i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i>' +
+        '<h2>Drag &amp; Drop your files here</h2>' +
+        '</div>';
 }
 
-/**
-* Get HTML content for upload modal
-**/
-function getHtmlUpload() {
-    // upload section
-    var uploadSection = '<section id="gd-upload-section" class="tab-slider-body">' +
-        '<div class="gd-drag-n-drop-wrap" id="gd-dropZone">' +
-        '<div class="gd-drag-n-drop-icon"><i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i></div>' +
-        '<h2>Drag &amp; Drop your files here</h2>' +
-        '<h4>OR</h4>' +
-        '<div class="gd-drag-n-drop-buttons">' +
-        '<label class="btn btn-primary">' +
-        '<i class="fa fa-file"></i>' +
-        'SELECT FILE' +
-        '<input id="gd-upload-input" type="file" multiple style="display: none;">' +
-        '</label>' +
-        '<label class="btn" id="gd-url-button">' +
-        '<i class="fa fa-link"></i>' +
-        'URL' +
-        '</label>' +
-        '</div>' +
-        '</div>' +
-        '<div class="inner-addon left-addon btn gd-url-wrap" id="gd-url-wrap" style="display: none;">' +
-        '<input type="url" class="form-control" id="gd-url" placeholder="Enter your file URL">' +
-        '<button class="btn" id="gd-add-url"><i class="fa fa-plus"></i></button>' +
-        '<button class="btn" id="gd-url-cancel"><i class="fa fa-times"></i></button>' +
-        '</div>' +
-        '<div id="gd-upload-files-table">' +
-        // list of files
-        '</div>' +
-        '<button id="gd-upload-button" type="button" class="btn btn-success" disabled>Upload</button>' +
-        '<button id="gd-open-document" type="button" class="btn">Browse files</button>' +
-        '</section>';
-    return uploadSection;
+function initDragNDrop() {
+    var dropZone = $('#gd-dropZone');
+    if (typeof dropZone[0] != "undefined") {
+        //Drag n drop functional
+        if ($('#gd-dropZone').length) {
+            if (typeof (window.FileReader) == 'undefined') {
+                dropZone.text("Your browser doesn't support Drag and Drop");
+                dropZone.addClass('error');
+            }
+        }
+
+        $(".gd-modal-body").on("dragover", function () {
+            dropZone.show();
+            return false;
+        });
+
+        dropZone[0].ondragleave = function () {
+            dropZone.hide();
+            return false;
+        };
+
+        dropZone[0].ondrop = function (event) {
+            event.preventDefault();
+            var files = event.dataTransfer.files;
+            $.each(files, function (index, file) {
+                uploadDocument(file);
+            });
+            dropZone.hide();
+        };
+    }
 }
 
 /*function isMobile() {
@@ -2043,6 +1896,7 @@ GROUPDOCS.VIEWER PLUGIN
             thumbnails = options.thumbnails;
             saveRotateState = options.saveRotateState;
             enableRightClick = options.enableRightClick;
+            upload = options.upload;
             // assembly html base
             this.append(getHtmlBase);
             this.append(getHtmlModalDialog);
@@ -2070,10 +1924,6 @@ GROUPDOCS.VIEWER PLUGIN
             }
             if (options.download) {
                 $(gd_navbar).append(getHtmlNavDownloadPanel);
-                $(gd_navbar).append(getHtmlNavSplitter);
-            }
-            if (options.upload) {
-                $(gd_navbar).append(getHtmlNavUploadPanel);
                 $(gd_navbar).append(getHtmlNavSplitter);
             }
             if (options.print) {
@@ -2256,9 +2106,6 @@ GROUPDOCS.VIEWER PLUGIN
         return '<li id="gd-btn-print" class="disabled"><i class="fa fa-print"></i><span class="gd-tooltip">Print</span></li>';
     }
 
-    function getHtmlNavUploadPanel() {
-        return '<li id="gd-btn-upload"><i class="fa fa-upload"></i><span class="gd-tooltip">Upload</span></li>';
-    }
     function getHtmlBrowsePanel() {
         return '<li id="gd-btn-browse"><i class="fa fa-folder-open"></i><span class="gd-tooltip">Browse files</span></li>';
     }

@@ -90,7 +90,7 @@ $(document).ready(function () {
         } else {
             $(".gd-add-selected").removeClass("active");
             addSelectedInnerHtml = 'Add selected';
-        }       
+        }
         $($(".gd-add-selected label")[0]).html(addSelectedInnerHtml);
     });
 
@@ -145,16 +145,47 @@ $(document).ready(function () {
         addToQueue(type, guid);
         toggleModalDialog(false);
     });
+
+    //////////////////////////////////////////////////
+    // remove file from queue
+    //////////////////////////////////////////////////
+    $('#gd-panzoom').on(userMouseClick, ".gd-compare-remove", function (e) {       
+        var conversionItemTarget = $(e.target).parent().parent().find(".gd-filequeue-name")[1];       
+        var destinationGuid = $(conversionItemTarget).data("guid");
+        conversionQueue = $.grep(conversionQueue, function (value) {
+            return value.guid.match(/[-_\w]+[.][\w]+$/i)[0].split('.')[0] + "." + value.destinationType != destinationGuid;
+        });
+        $(e.target).parent().parent().remove();
+    });
+
+    //////////////////////////////////////////////////
+    // Convert single file
+    //////////////////////////////////////////////////
+    $('#gd-panzoom').on(userMouseClick, ".gd-convert-single", function (e) {
+        var conversionItemSource = $(e.target).parent().parent().find(".gd-filequeue-name")[0];
+        var conversionItemTarget = $(e.target).parent().parent().find(".gd-filequeue-name")[1];
+        var guid = $(conversionItemSource).data("guid");
+        var destinationGuid = $(conversionItemTarget).data("guid");
+        $.each(conversionQueue, function (index, file) {
+            if (file.guid == guid && file.destinationType == destinationGuid.split(".").pop()) {
+                convert(file);
+            }
+        });
+    });   
 });
 
 
 function addToQueue(destinationType, guid) {
-    conversionQueue = [];
     if (guid) {
         $.each($(".gd-file-table-item"), function (index, fileItem) {
             var fileName = $(fileItem).find(".gd-filetree-name");
             if ($(fileName).data("guid") == guid) {
-                var conversionItem = { guid: guid.match(/[-_\w]+[.][\w]+$/i)[0], destinationType: destinationType, size: $(fileItem).find(".gd-file-size").html() };
+                var conversionItem = {
+                    guid: guid,
+                    destinationType: destinationType,
+                    size: $(fileItem).find(".gd-file-size").html(),
+                    added: false
+                };
                 conversionQueue.push(conversionItem);
             }
         });
@@ -162,7 +193,12 @@ function addToQueue(destinationType, guid) {
         $.each($(".gd-file-table-item"), function (index, fileItem) {
             var checkbox = $(fileItem).find(".gd-checkbox");
             if ($(checkbox).prop("checked")) {
-                var conversionItem = { guid: $(checkbox).attr("name"), destinationType: destinationType, size: $(fileItem).find(".gd-file-size").html() };
+                var conversionItem = {
+                    guid: $(checkbox).parent().parent().find(".gd-filetree-name").data("guid"),
+                    destinationType: destinationType,
+                    size: $(fileItem).find(".gd-file-size").html(),
+                    added: false
+                };
                 conversionQueue.push(conversionItem);
             }
         });
@@ -171,36 +207,43 @@ function addToQueue(destinationType, guid) {
     $("#gd-compare-area").hide();
     $("#gd-compare-queue").show();
     $("#gd-compare-queue").append(queueHtml);
+    $("#gd-btn-convert-all").hasClass("active") ? "" : $("#gd-btn-convert-all").addClass("active");
+    $("#gd-btn-convert-all").on(userMouseClick, convertAll);
 }
 
 function getQueueHtml() {
     var html = "";
     $.each(conversionQueue, function (index, file) {
-        var docFormat = getDocumentFormat(file.guid.split('.').pop());
-        html = html + '<div class="gd-compare-item">' +
-            '<div class="gd-compare-remove">' +
-            '<i class="fa fa-times"></i>' +
-            '</div>' +
-            '<div class="gd-filequeue-name">' +
-            '<i class="fa ' + docFormat.icon + '"></i>' +
-            '<div class="gd-file-name gd-queue-name">' + file.guid +
-            '<div class="gd-file-format">' + docFormat.format + '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div class="gd-file-size gd-queue-size">' + file.size + '</div>' +
-            '<div class="gd-compare-status">' +
-            '<i class="far fa-clock"></i>' +
-            '</div>' +
-            '<div class="gd-filequeue-name">' +
-            '<i class="fa ' + docFormat.icon + '"></i>' +
-            '<div class="gd-file-name gd-queue-name">' + file.guid.split('.')[0] + "." + file.destinationType +
-            '<div class="gd-file-format">' + docFormat.format + '</div>' +
-            '</div>' +
-            '</div>' +
-            '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +
-            '</div>';
+        if (!file.added) {
+            var docFormat = getDocumentFormat(file.guid.split('.').pop());
+            var destinationGuid = file.guid.match(/[-_\w]+[.][\w]+$/i)[0].split('.')[0] + "." + file.destinationType;
+            html = html + '<div class="gd-compare-item">' +
+                '<div class="gd-compare-remove">' +
+                '<i class="fa fa-times"></i>' +
+                '</div>' +
+                '<div class="gd-filequeue-name" data-guid="' + file.guid + '">' +
+                '<i class="fa ' + docFormat.icon + '"></i>' +
+                '<div class="gd-file-name gd-queue-name">' + file.guid.match(/[-_\w]+[.][\w]+$/i)[0] +
+                '<div class="gd-file-format">' + docFormat.format + '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="gd-file-size gd-queue-size">' + file.size + '</div>' +
+                '<div class="gd-compare-status">' +
+                '<i class="far fa-clock"></i>' +
+                '</div>' +
+                '<div class="gd-filequeue-name" data-guid="' + destinationGuid + '">' +
+                '<i class="fa ' + getDocumentFormat(file.destinationType).icon + '"></i>' +
+                '<div class="gd-file-name gd-queue-name">' + destinationGuid +
+                '<div class="gd-file-format">' + docFormat.format + '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +
+                '</div>';
+            file.added = true;
+        } 
     });
     return html;
+
 }
 
 /**
@@ -275,6 +318,42 @@ function loadFiles(dir) {
             var types = prepareMultipleConversionTypes(true);
             var dropDown = getConversionTypesHtml(types, true);
             $(".gd-add-selected").append(dropDown);
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.Message);
+            // hide loading spinner
+            $('#gd-modal-spinner').hide();
+            // open error popup
+            printMessage(err.message);
+        }
+    });
+}
+
+function convertAll() {
+    $.each(conversionQueue, function (index, item) {
+        convert(item);
+    });
+}
+
+/**
+* Load file tree
+* @param {string} dir - files location directory
+*/
+function convert(conversionItem) {
+    var data = conversionItem;
+    // get data
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('convert'),
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (returnedData) {
+            if (returnedData.message != undefined) {
+                // open error popup
+                printMessage(returnedData.message);
+                return;
+            }
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -428,12 +507,12 @@ GROUPDOCS.COMAPRISON PLUGIN
             '</div>' +
             '</div>' +
             '<div id="gd-compare-queue">' +
-            '<div class="gd-queue-header">'+
+            '<div class="gd-queue-header">' +
             '<div>Source</div>' +
             '<div>Size</div>' +
             '<div>State</div>' +
             '<div>Target</div>' +
-           '</div>'+
+            '</div>' +
             '</div>';
     }
 

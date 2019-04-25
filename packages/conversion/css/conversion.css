@@ -9,6 +9,9 @@ File browse lightbox
 #gd-btn-convert-all {
     cursor: not-allowed !important;
 }
+#gd-btn-convert-all.active {
+    cursor: pointer !important;
+}
 #gd-compare-area {
     display: flex;
     flex-direction: column;

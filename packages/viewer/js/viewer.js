@@ -449,31 +449,31 @@ $(document).ready(function () {
         var input = $(this);
         $.each(input.get(0).files, function (index, file) {
             uploadDocument(file);
-        });       
-    });  
+        });
+    });
 
     //////////////////////////////////////////////////
     // Select file from HDD icon click
     //////////////////////////////////////////////////
     $('.gd-modal-body').on('click', '.gd-hdd', function (e) {
         $("#gd-upload-input").click();
-    });  
+    });
 
     //////////////////////////////////////////////////
     // Open URL input event
     //////////////////////////////////////////////////
     $('.gd-modal-body').on('click', '#gd-upload-url', function () {
         $('#gd-url-wrap').show();
-    });    
+    });
 
     //////////////////////////////////////////////////
     // Add file via URL event
     //////////////////////////////////////////////////
     $('.gd-modal-body').on('click', '#gd-add-url', function () {
         $('#gd-url-wrap').hide();
-        uploadDocument(null, $("#gd-url").val());        
+        uploadDocument(null, $("#gd-url").val());
         $('#gd-url').val('');
-    });    
+    });
 
     //////////////////////////////////////////////////
     // Open document button (upload dialog) click
@@ -553,7 +553,7 @@ FUNCTIONS
 function loadFileTree(dir, multiple) {
     if (!multiple) {
         multiple = false;
-    }    
+    }
     var data = { path: dir };
     currentDirectory = dir;
     // clear previously entered password
@@ -592,7 +592,7 @@ function loadFileTree(dir, multiple) {
                     new_size = (Math.round((size / 1024 / 1024) * 100) / 100) + ' MB';
                 } else if ((size / 1024) > 1) {
                     new_size = (Math.round((size / 1024) * 100) / 100) + ' KB';
-                }           
+                }
                 // document format
                 var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined) ? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
                 var folderClass = (docFormat.format == "") ? "gd-folder-name" : "";
@@ -600,22 +600,24 @@ function loadFileTree(dir, multiple) {
                 var places = "";
                 var single = "single";
                 if (multiple) {
-                    if (!elem.isDirectory) {
+                    if (elem.isDirectory) {
+                        checkBoxes = '<div class="gd-file-checkbox empty"></div>';
+                    } else {
                         checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
-                    }                    
+                    }
                     places = '<div><i class="fas fa-plus"></i></div>';
                     single = "";
                 }
                 // append document
                 $('.gd-modal-table-body').append(
                     '<div class="gd-file-table-item">' +
-                    checkBoxes +          
+                    checkBoxes +
                     '<div class="gd-filetree-name ' + single + '" data-guid="' + guid + '">' +
-                        '<i class="fa ' + docFormat.icon + '"></i>' +
-                            '<div class="gd-file-name ' + folderClass + '">' + name +
-                            '<div class="gd-file-format">' + docFormat.format + '</div>' +
-                        '</div>' +
-                    '</div >' +                    
+                    '<i class="fa ' + docFormat.icon + '"></i>' +
+                    '<div class="gd-file-name ' + folderClass + '">' + name +
+                    '<div class="gd-file-format">' + docFormat.format + '</div>' +
+                    '</div>' +
+                    '</div >' +
                     '<div class="gd-file-size">' + new_size + '</div>' +
                     places +
                     '</div>');
@@ -1444,12 +1446,12 @@ function printMessage(message) {
 */
 function scrollToPage(pageNumber) {
     // get zoom value
-    var zoomValue = $('#gd-panzoom').css('zoom');   
+    var zoomValue = $('#gd-panzoom').css('zoom');
     if (typeof zoomValue == 'undefined') {
         zoomValue = 100;
-    } else {       
+    } else {
         if (parseFloat(zoomValue) != 1) {
-            zoomValue = $("#gd-page-1").css("zoom") * 100 * parseFloat(zoomValue);  
+            zoomValue = $("#gd-page-1").css("zoom") * 100 * parseFloat(zoomValue);
         } else {
             zoomValue = $("#gd-page-1").css("zoom") * 100;
         }
@@ -1577,7 +1579,7 @@ function uploadDocument(file, url) {
         formData.append("url", url);
     }
     formData.append("rewrite", rewrite);
-    $.ajax({       
+    $.ajax({
         // callback function which updates upload progress bar
         xhr: function () {
             var xhr = new window.XMLHttpRequest();
@@ -1585,12 +1587,12 @@ function uploadDocument(file, url) {
             xhr.upload.addEventListener("progress", function (event) {
                 if (event.lengthComputable) {
                     $(".gd-modal-close-action").off('click');
-                    $("#gd-open-document").prop("disabled", true);                   
-                    if (event.loaded == event.total) {                      
+                    $("#gd-open-document").prop("disabled", true);
+                    if (event.loaded == event.total) {
                         $('.gd-modal-close-action').on('click', closeModal);
                         $("#gd-open-document").prop("disabled", false);
                         if ($(".gd-checkbox").length > 0) {
-                            loadFileTree("", true);                           
+                            loadFileTree("", true);
                         } else {
                             loadFileTree("");
                         }
@@ -1635,7 +1637,7 @@ function printDocument(event) {
 /**
 * Close modal
 */
-function closeModal() {   
+function closeModal() {
     $("#gd-upload-input").val('');
     toggleModalDialog(false, '');
 }
@@ -1776,12 +1778,12 @@ function zoomOut(event) {
 /**
 * Get HTML content for file browser modal
 **/
-function getHtmlFileBrowser(multiple) {   
-    var multipleActions = "";  
+function getHtmlFileBrowser(multiple) {
+    var multipleActions = "";
     var single = "single";
     if (multiple) {
         multipleActions = '<input type="checkbox" class="gd-select-all gd-checkbox">' +
-            '<div class="gd-add-selected"><i class="fa fa-plus"></i><label>Add selected</label></div>';            
+            '<div class="gd-add-selected"><i class="fa fa-plus"></i><label>Add selected</label></div>';
         single = "";
     }
     var uploadButtons = "";
@@ -1808,20 +1810,20 @@ function getHtmlFileBrowser(multiple) {
         multipleActions +
         uploadButtons +
         '</div>';
-   
+
     return uploadButtons + '<section id="gd-browse-section" class="tab-slider-body">' +
-        '<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +        
+        '<div id="gd-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
         '<div id="gd-modal-filebroswer" class="gd-modal-table">' +
-            '<div class="gd-modal-table-head ' + single + '"><label>Document</label><label class="' + single + '">Size</label></div>' +
-            '<div class="gd-modal-table-body">' +
-            '<div class="text-center gd-go-up ' + single + '"><i class="fa fa-level-up"></i></div>' +
-            '<div class="gd-filetree-up gd-go-up ' + single + '">...</div>' +
+        '<div class="gd-modal-table-head ' + single + '"><label>Document</label><label class="' + single + '">Size</label></div>' +
+        '<div class="gd-modal-table-body">' +
+        '<div class="text-center gd-go-up ' + single + '"><i class="fa fa-level-up"></i></div>' +
+        '<div class="gd-filetree-up gd-go-up ' + single + '">...</div>' +
         '</div>' +
         '</div>' +
         '</section>' +
-        '<div class="gd-drag-n-drop-wrap" id="gd-dropZone">' +        
-        '<i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i>' +       
-        '<h2>Drag &amp; Drop your files here</h2>' +        
+        '<div class="gd-drag-n-drop-wrap" id="gd-dropZone">' +
+        '<i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i>' +
+        '<h2>Drag &amp; Drop your files here</h2>' +
         '</div>';
 }
 
@@ -1847,11 +1849,11 @@ function initDragNDrop() {
         };
 
         dropZone[0].ondrop = function (event) {
-            event.preventDefault();            
+            event.preventDefault();
             var files = event.dataTransfer.files;
             $.each(files, function (index, file) {
                 uploadDocument(file);
-            });     
+            });
             dropZone.hide();
         };
     }
@@ -1941,7 +1943,7 @@ GROUPDOCS.VIEWER PLUGIN
             if (options.download) {
                 $(gd_navbar).append(getHtmlNavDownloadPanel);
                 $(gd_navbar).append(getHtmlNavSplitter);
-            }           
+            }
             if (options.print) {
                 $(gd_navbar).append(getHtmlNavPrintPanel);
                 $(gd_navbar).append(getHtmlNavSplitter);
@@ -2121,7 +2123,7 @@ GROUPDOCS.VIEWER PLUGIN
     function getHtmlNavPrintPanel() {
         return '<li id="gd-btn-print" class="disabled"><i class="fa fa-print"></i><span class="gd-tooltip">Print</span></li>';
     }
-    
+
     function getHtmlBrowsePanel() {
         return '<li id="gd-btn-browse"><i class="fa fa-folder-open"></i><span class="gd-tooltip">Browse files</span></li>';
     }

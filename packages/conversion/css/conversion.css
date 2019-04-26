@@ -1,6 +1,48 @@
 #gd-header-logo {
     background-image: url('../images/logo.png') !important;
 }
+
+/*
+******************************************
+Main area
+******************************************
+*/
+.gd-conversion-drop {   
+    top: 62px;
+    width: 97%;
+    height: 91%;
+}
+.gd-conversion-drop i {
+    margin-top: 408px;
+}
+#gd-convert-area {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#gd-convert-area > i:first-child {
+    font-size: 65px;
+    margin-top: 448px;
+    color: #959DA5;
+}
+#gd-convert-queue {
+    display: flex;
+    flex-direction: column;
+}
+.gd-conversion-empty-label {
+    display: flex;
+    flex-direction: column;
+    margin-top: 38px;
+    font-size: 15px;
+    color: #959DA5;
+}
+
+.gd-conversion-empty-label i {
+    font-size: 14px;
+}
+
 /*
 ******************************************
 File browse lightbox
@@ -12,27 +54,7 @@ File browse lightbox
 #gd-btn-convert-all.active {
     cursor: pointer !important;
 }
-#gd-compare-area {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-}
-#gd-compare-area > i:first-child {
-    font-size: 65px;
-    margin-top: 448px;
-    color: #959DA5;
-}
-.gd-conversion-empty-label {
-    display: flex;
-    flex-direction: column;
-    margin-top: 38px;
-    font-size: 15px;
-    color: #959DA5;
-}
-.gd-conversion-empty-label i {
-    font-size: 14px;
-}
+
 .gd-conversions {
     margin: 19px 34px;
     width: 25px;
@@ -116,17 +138,13 @@ File browse lightbox
 Conversion file queue
 ******************************************
 */
-#gd-compare-queue {
-    display: flex;
-    flex-direction: column;   
-}
-.gd-compare-item {
+.gd-convert-item {
     display: flex;
     width: 100%;
     height: 72px;
     border-bottom: 1px solid #cccccc;
 }
-.gd-compare-remove {
+.gd-convert-remove {
     font-size: 21px;
     color: #6E6E6E;
     margin: 23px 27px 0 21px;
@@ -137,9 +155,11 @@ Conversion file queue
     width: 716px;
 }
 .gd-filequeue-name i {
-    font-size: 32px;
-    color: #6E6E6E;
+    font-size: 32px;   
     margin: 19px 21px 0 0;
+}
+.gd-filequeue-name.disabled i {
+    color: #6E6E6E;
 }
 .gd-queue-name {
     text-align: left;
@@ -151,16 +171,34 @@ Conversion file queue
     font-size: 14px;
     margin-top: 26px;
 }
-.gd-compare-status {
+.gd-destination-file, .gd-destination-file .gd-queue-name {
+    cursor: pointer;
+}
+.gd-convert-status {
     font-size: 32px;
     color: #DBDBDB;
     margin: 22px 119px;
 }
-.gd-convert-single {
+.gd-conversion-complite {
+    display: none;
+    color: #62A529;
+}
+.gd-convert-progress {
+    position: inherit;
+    width: 32px;
+    height: 32px;
+    font-size: 32px !important;
+    margin-top: -5px;
+    display: none;
+}
+.gd-convert-single, .gd-download-single {
     font-size: 16px;
     color: #808080;
     margin: 29px 52px;
     cursor: pointer;
+}
+.gd-download-single {
+    display: none;
 }
 .gd-queue-header {
     display: flex;

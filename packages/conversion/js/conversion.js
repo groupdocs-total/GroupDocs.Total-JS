@@ -39,6 +39,37 @@ $(document).ready(function () {
     $('.gd-modal-body').off(userMouseClick, '.gd-filetree-name');
 
     //////////////////////////////////////////////////
+    // Disable dafault upload
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').off('change', '#gd-upload-input');
+
+    //////////////////////////////////////////////////
+    // Disable dafault URL upload
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').off('click', '#gd-add-url');
+
+    //////////////////////////////////////////////////
+    // Select files for conversion upload event
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').on('change', '#gd-upload-input', function (e) {
+        // get selected files
+        $("#gd-upload-input-checkbox").prop("checked", false);
+        var input = $(this);
+        $.each(input.get(0).files, function (index, file) {
+            uploadForConversion(file);
+        });
+    });
+
+    //////////////////////////////////////////////////
+    // Add file via URL conversion event
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').on('click', '#gd-add-url', function () {
+        $('#gd-url-wrap').hide();
+        uploadForConversion(null, $("#gd-url").val());
+        $('#gd-url').val('');
+    });
+
+    //////////////////////////////////////////////////
     // Open file browse modal
     //////////////////////////////////////////////////
     $("#gd-btn-browse").on(userMouseClick, function () {
@@ -149,13 +180,17 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // remove file from queue
     //////////////////////////////////////////////////
-    $('#gd-panzoom').on(userMouseClick, ".gd-compare-remove", function (e) {       
-        var conversionItemTarget = $(e.target).parent().parent().find(".gd-filequeue-name")[1];       
+    $('#gd-panzoom').on(userMouseClick, ".gd-convert-remove", function (e) {
+        var conversionItemTarget = $(e.target).parent().parent().find(".gd-filequeue-name")[1];
         var destinationGuid = $(conversionItemTarget).data("guid");
         conversionQueue = $.grep(conversionQueue, function (value) {
             return value.guid.match(/[-_\w]+[.][\w]+$/i)[0].split('.')[0] + "." + value.destinationType != destinationGuid;
         });
         $(e.target).parent().parent().remove();
+        if (conversionQueue.length == 0) {
+            $("#gd-convert-area").show();
+            $("#gd-convert-queue").hide();
+        }
     });
 
     //////////////////////////////////////////////////
@@ -171,8 +206,52 @@ $(document).ready(function () {
                 convert(file);
             }
         });
-    });   
+    });
+
+    //////////////////////////////////////////////////
+    // Download converted
+    //////////////////////////////////////////////////
+    $('#gd-panzoom').on(userMouseClick, ".gd-destination-file, .gd-download-single", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        documentGuid = $(event.target).parent().parent().find(".gd-destination-file").data("guid");
+        downloadDocument();
+    });
+
+   initiConversionDropZone();
 });
+
+function initiConversionDropZone() {
+    var dropZone = $('.gd-conversion-drop');
+    if (typeof dropZone[0] != "undefined") {
+        //Drag n drop functional
+        if ($('.gd-conversion-drop').length) {
+            if (typeof (window.FileReader) == 'undefined') {
+                dropZone.text("Your browser doesn't support Drag and Drop");
+                dropZone.addClass('error');
+            }
+        }
+
+        $("#gd-panzoom").on("dragover", function () {
+            dropZone.show();
+            return false;
+        });
+
+        dropZone[0].ondragleave = function () {
+            dropZone.hide();
+            return false;
+        };
+
+        dropZone[0].ondrop = function (event) {
+            event.preventDefault();
+            var files = event.dataTransfer.files;
+            $.each(files, function (index, file) {
+                uploadForConversion(file);
+            });
+            dropZone.hide();
+        };
+    }
+}
 
 
 function addToQueue(destinationType, guid) {
@@ -204,9 +283,9 @@ function addToQueue(destinationType, guid) {
         });
     }
     var queueHtml = getQueueHtml();
-    $("#gd-compare-area").hide();
-    $("#gd-compare-queue").show();
-    $("#gd-compare-queue").append(queueHtml);
+    $("#gd-convert-area").hide();
+    $("#gd-convert-queue").show();
+    $("#gd-convert-queue").append(queueHtml);
     $("#gd-btn-convert-all").hasClass("active") ? "" : $("#gd-btn-convert-all").addClass("active");
     $("#gd-btn-convert-all").on(userMouseClick, convertAll);
 }
@@ -217,33 +296,96 @@ function getQueueHtml() {
         if (!file.added) {
             var docFormat = getDocumentFormat(file.guid.split('.').pop());
             var destinationGuid = file.guid.match(/[-_\w]+[.][\w]+$/i)[0].split('.')[0] + "." + file.destinationType;
-            html = html + '<div class="gd-compare-item">' +
-                '<div class="gd-compare-remove">' +
+            html = html + '<div class="gd-convert-item">' +
+                '<div class="gd-convert-remove">' +
                 '<i class="fa fa-times"></i>' +
                 '</div>' +
-                '<div class="gd-filequeue-name" data-guid="' + file.guid + '">' +
+                '<div class="gd-filequeue-name disabled" data-guid="' + file.guid + '">' +
                 '<i class="fa ' + docFormat.icon + '"></i>' +
                 '<div class="gd-file-name gd-queue-name">' + file.guid.match(/[-_\w]+[.][\w]+$/i)[0] +
                 '<div class="gd-file-format">' + docFormat.format + '</div>' +
                 '</div>' +
                 '</div>' +
                 '<div class="gd-file-size gd-queue-size">' + file.size + '</div>' +
-                '<div class="gd-compare-status">' +
-                '<i class="far fa-clock"></i>' +
+                '<div class="gd-convert-status">' +
+                '<i class="far fa-clock gd-conversion-pending"></i>' +
+                '<i class="fas fa-check gd-conversion-complite"></i>' +
+                '<div class="gd-pregress p0 small blue gd-convert-progress p0">' +
+                '<div class="slice">' +
+                '<div class="bar"></div>' +
+                '<div class="fill" ></div >' +
+                '</div >' +
+                '</div > ' +
                 '</div>' +
-                '<div class="gd-filequeue-name" data-guid="' + destinationGuid + '">' +
+                '<div class="gd-filequeue-name disabled gd-destination-file" data-guid="' + destinationGuid + '">' +
                 '<i class="fa ' + getDocumentFormat(file.destinationType).icon + '"></i>' +
                 '<div class="gd-file-name gd-queue-name">' + destinationGuid +
                 '<div class="gd-file-format">' + docFormat.format + '</div>' +
                 '</div>' +
                 '</div>' +
                 '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +
+                '<div class="gd-download-single"><i class="fas fa-download"></i></div>' +
                 '</div>';
             file.added = true;
-        } 
+        }
     });
     return html;
 
+}
+
+/**
+* Upload document
+* @param {file} file - File for uploading
+* @param {string} url - URL of the file, set it if URL used instead of file
+*/
+function uploadForConversion(file, url) {
+    // prepare form data for uploading
+    var formData = new FormData();
+    // add local file for uploading
+    formData.append("file", file);
+    // add URL if set
+    if (typeof url != "undefined" && url != null) {
+        formData.append("url", url);
+    }
+    formData.append("rewrite", rewrite);
+    $.ajax({
+        // callback function which updates upload progress bar
+        xhr: function () {
+            var xhr = new window.XMLHttpRequest();
+            // upload progress
+            xhr.upload.addEventListener("progress", function (event) {
+                if (event.lengthComputable) {
+                    $(".gd-modal-close-action").off('click');
+                    $("#gd-open-document").prop("disabled", true);
+                    if (event.loaded == event.total) {
+                        $('.gd-modal-close-action').on('click', closeModal);
+                        $("#gd-open-document").prop("disabled", false);
+                        loadFiles("");
+                    }
+                }
+            }, false);
+            return xhr;
+        },
+        type: 'POST',
+        url: getApplicationPath('uploadDocument'),
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (returnedData) {
+            if (returnedData.message != undefined) {
+                // open error popup
+                printMessage(returnedData.message);
+                return;
+            }
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.Message);
+            // open error popup
+            printMessage(err.message);
+        }
+    });
 }
 
 /**
@@ -342,8 +484,31 @@ function convertAll() {
 */
 function convert(conversionItem) {
     var data = conversionItem;
+    var progress = 10;
+    var interval = null;
+    var destinationName = conversionItem.guid.match(/[-_\w]+[.][\w]+$/i)[0].split(".")[0] + "." + conversionItem.destinationType;
+    var currentConversionItem = $("#gd-convert-queue").find("[data-guid='" + destinationName + "']");
+    $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-pending").hide();
+    var progressBar = $(currentConversionItem).parent().find(".gd-convert-progress");
     // get data
     $.ajax({
+        // callback function which updates upload progress bar
+        xhr: function () {
+            var xhr = new window.XMLHttpRequest();
+            // upload progress
+            xhr.upload.addEventListener("progress", function (event) {
+                $(progressBar).show();
+                $(progressBar).addClass("p" + progress);
+                interval = setInterval(function () {
+                    $(progressBar).addClass("p" + progress);
+                    progress = progress + 1;
+                    if (progress == 100) {
+                        progress = 0;
+                    }
+                }, 500);
+            }, false);
+            return xhr;
+        },
         type: 'POST',
         url: getApplicationPath('convert'),
         data: JSON.stringify(data),
@@ -354,6 +519,12 @@ function convert(conversionItem) {
                 printMessage(returnedData.message);
                 return;
             }
+            clearInterval(interval);
+            $(progressBar).hide();
+            $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-complite").show();
+            $(currentConversionItem).parent().find(".gd-convert-single").hide();
+            $(currentConversionItem).parent().find(".gd-download-single").show();
+            $(currentConversionItem).removeClass("disabled");
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -471,7 +642,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             applicationPath = options.applicationPath;
             rewrite = options.rewrite;
 
-            $(gd_navbar).append(getHtmlComparePanel);
+            $(gd_navbar).append(getHtmlconvertPanel);
 
             // assembly html base
             $("#gd-panzoom").append(getHtmlBase);
@@ -499,24 +670,28 @@ GROUPDOCS.COMAPRISON PLUGIN
        ******************************************************************
        */
     function getHtmlBase() {
-        return '<div id="gd-compare-area">' +
+        return '<div id="gd-convert-area">' +
             '<i class="fas fa-exchange-alt"></i>' +
             '<div class="gd-conversion-empty-label">' +
             '<label>Conversion queue is empty</label>' +
             '<label>Drag your document here or click <i class="fa fa-folder-open"></i> to select a files</label>' +
             '</div>' +
             '</div>' +
-            '<div id="gd-compare-queue">' +
+            '<div id="gd-convert-queue">' +
             '<div class="gd-queue-header">' +
             '<div>Source</div>' +
             '<div>Size</div>' +
             '<div>State</div>' +
             '<div>Target</div>' +
             '</div>' +
+            '</div>' +
+            '<div class="gd-drag-n-drop-wrap gd-conversion-drop" id="gd-dropZone">' +
+            '<i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i>' +
+            '<h2>Drag &amp; Drop your files here</h2>' +
             '</div>';
     }
 
-    function getHtmlComparePanel() {
+    function getHtmlconvertPanel() {
         return '<li id="gd-btn-convert-all"><i class="fas fa-exchange-alt"></i><span class="gd-tooltip">Convert</span></li>';
     }
 

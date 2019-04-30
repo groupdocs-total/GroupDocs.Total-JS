@@ -26,10 +26,10 @@ Add following code within `<body>` tag
 # Note
 This plugin is intended to work with following GroupDocs examples:
 
-- [GroupDocs Signature for Java Spring](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring)
-- [GroupDocs Signature for Java Dropwizard](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard)
-- [GroupDocs Signature for .NET WebForms](https://github.com/groupdocs-signature/GroupDocs.Signature-for-.NET-WebForms)
-- [GroupDocs Signature for .NET MVC](https://github.com/groupdocs-signature/GroupDocs.Signature-for-.NET-MVC)
+- [Digitally Sign documents](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Spring) for Java Spring
+- [Digitally Sign documents](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard) for Java Dropwizard
+- [Digitally Sign documents](https://github.com/groupdocs-signature/GroupDocs.Signature-for-.NET-WebForms) for .NET WebForms
+- [Digitally Sign documents](https://github.com/groupdocs-signature/GroupDocs.Signature-for-.NET-MVC) for .NET MVC
 
 # Resources
 

@@ -26,10 +26,10 @@ Add following code within `<body>` tag
 # Note
 This plugin is intended to work with following GroupDocs examples:
 
-- [GroupDocs Comparison for Java Spring](https://github.com/groupdocs-comparison/GroupDocs.Comparison-for-Java-Spring)
-- [GroupDocs Comparison for Java Dropwizard](https://github.com/groupdocs-comparison/GroupDocs.Comparison-for-Java-Dropwizard)
-- [GroupDocs Comparison for .NET WebForms](https://github.com/groupdocs-comparison/GroupDocs.Comparison-for-.NET-WebForms)
-- [GroupDocs Comparison for .NET MVC](https://github.com/groupdocs-comparison/GroupDocs.Comparison-for-.NET-MVC)
+- [Compare documents](https://github.com/groupdocs-comparison/GroupDocs.Comparison-for-Java-Spring) for Java Spring
+- [Compare documents](https://github.com/groupdocs-comparison/GroupDocs.Comparison-for-Java-Dropwizard) for Java Dropwizard
+- [Compare documents](https://github.com/groupdocs-comparison/GroupDocs.Comparison-for-.NET-WebForms) for .NET WebForms
+- [Compare documents](https://github.com/groupdocs-comparison/GroupDocs.Comparison-for-.NET-MVC) for .NET MVC
 
 # Resources
 

@@ -16,6 +16,7 @@ GLOBAL VARIABLES
 var applicationPath;
 var currentDirectory;
 var rewrite;
+var download;
 var allConvertionTypes = [];
 var conversionQueue = [];
 var userMouseClick = ('ontouch' in document.documentElement) ? 'touch click' : 'click';
@@ -27,6 +28,12 @@ $(document).ready(function () {
     NAV BAR CONTROLS
     ******************************************************************
     */
+
+    //////////////////////////////////////////////////
+    // Hide default download button
+    //////////////////////////////////////////////////
+    $("#gd-btn-download").remove();
+    $(".gd-nav-separator").remove();
 
     //////////////////////////////////////////////////
     // Disable default file browse click event
@@ -214,8 +221,10 @@ $(document).ready(function () {
     $('#gd-panzoom').on(userMouseClick, ".gd-destination-file, .gd-download-single", function (e) {
         e.preventDefault();
         e.stopPropagation();
-        documentGuid = $(event.target).parent().parent().find(".gd-destination-file").data("guid");
-        downloadDocument();
+        if (download) {
+            documentGuid = $(event.target).parent().parent().find(".gd-destination-file").data("guid");
+            downloadDocument();
+        }
     });
 
    initiConversionDropZone();
@@ -521,9 +530,11 @@ function convert(conversionItem) {
             }
             clearInterval(interval);
             $(progressBar).hide();
-            $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-complite").show();
-            $(currentConversionItem).parent().find(".gd-convert-single").hide();
-            $(currentConversionItem).parent().find(".gd-download-single").show();
+            $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-complite").show();           
+            if (download) {
+                $(currentConversionItem).parent().find(".gd-convert-single").hide();
+                $(currentConversionItem).parent().find(".gd-download-single").show();
+            }
             $(currentConversionItem).removeClass("disabled");
         },
         error: function (xhr, status, error) {
@@ -638,6 +649,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             });
 
             options = $.extend(defaults, options);
+            download = options.download;
             // set global option params
             applicationPath = options.applicationPath;
             rewrite = options.rewrite;

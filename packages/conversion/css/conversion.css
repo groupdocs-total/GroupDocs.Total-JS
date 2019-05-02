@@ -28,7 +28,7 @@ Main area
     color: #959DA5;
 }
 #gd-convert-queue {
-    display: flex;
+    display: none;
     flex-direction: column;
 }
 .gd-conversion-empty-label {

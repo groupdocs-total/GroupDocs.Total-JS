@@ -107,7 +107,7 @@ $(document).ready(function () {
     $('.gd-modal-body').on(userMouseClick, ".gd-add-selected.active", function (e) {
         e.preventDefault();
         e.stopPropagation();
-        $(event.target).find(".gd-conversion-input").prop("checked", true);
+        $(e.target).find(".gd-conversion-input").prop("checked", true);
     });
 
     //////////////////////////////////////////////////
@@ -210,7 +210,7 @@ $(document).ready(function () {
         var destinationGuid = $(conversionItemTarget).data("guid");
         $.each(conversionQueue, function (index, file) {
             if (file.guid == guid && file.destinationType == destinationGuid.split(".").pop()) {
-                convert(file);
+                convert(file);               
             }
         });
     });
@@ -222,7 +222,7 @@ $(document).ready(function () {
         e.preventDefault();
         e.stopPropagation();
         if (download) {
-            documentGuid = $(event.target).parent().parent().find(".gd-destination-file").data("guid");
+            documentGuid = $(e.target).parent().parent().find(".gd-destination-file").data("guid");
             downloadDocument();
         }
     });
@@ -536,6 +536,13 @@ function convert(conversionItem) {
                 $(currentConversionItem).parent().find(".gd-download-single").show();
             }
             $(currentConversionItem).removeClass("disabled");
+            conversionQueue = $.grep(conversionQueue, function (value) {
+                return value != conversionItem;
+            });
+            if (conversionQueue.length == 0) {
+                $("#gd-btn-convert-all").removeClass("active");
+                $("#gd-btn-convert-all").off(userMouseClick);
+            }
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");

@@ -262,11 +262,17 @@ function initiConversionDropZone() {
     }
 }
 
-
+/**
+* Add slected file into the conversion queue
+* @param {string} destinationType - destination file type
+* @param {string} guid - file guid
+*/
 function addToQueue(destinationType, guid) {
     if (guid) {
+        // if guid is set we search for the specified file in the files table
         $.each($(".gd-file-table-item"), function (index, fileItem) {
             var fileName = $(fileItem).find(".gd-filetree-name");
+            // prepare conversion item object
             if ($(fileName).data("guid") == guid) {
                 var conversionItem = {
                     guid: guid,
@@ -274,10 +280,12 @@ function addToQueue(destinationType, guid) {
                     size: $(fileItem).find(".gd-file-size").html(),
                     added: false
                 };
+                // add file to queue
                 conversionQueue.push(conversionItem);
             }
         });
     } else {
+        // if guid is not set add all checked files to the queue
         $.each($(".gd-file-table-item"), function (index, fileItem) {
             var checkbox = $(fileItem).find(".gd-checkbox");
             if ($(checkbox).prop("checked")) {
@@ -291,6 +299,7 @@ function addToQueue(destinationType, guid) {
             }
         });
     }
+    // add files queue to the main viewport area
     var queueHtml = getQueueHtml();
     $("#gd-convert-area").hide();
     $("#gd-convert-queue").show();
@@ -299,6 +308,9 @@ function addToQueue(destinationType, guid) {
     $("#gd-btn-convert-all").on(userMouseClick, convertAll);
 }
 
+/**
+* Get HTMl of the conversion queue item for the main area
+*/
 function getQueueHtml() {
     var html = "";
     $.each(conversionQueue, function (index, file) {
@@ -481,6 +493,9 @@ function loadFiles(dir) {
     });
 }
 
+/**
+* Convert all files in the queue one by one
+*/
 function convertAll() {
     $.each(conversionQueue, function (index, item) {
         convert(item);
@@ -488,8 +503,8 @@ function convertAll() {
 }
 
 /**
-* Load file tree
-* @param {string} dir - files location directory
+* Convert file
+* @param {Object} conversionItem - conversion item object represents file which should be converted
 */
 function convert(conversionItem) {
     var data = conversionItem;
@@ -498,10 +513,9 @@ function convert(conversionItem) {
     var destinationName = conversionItem.guid.match(/[-_\w]+[.][\w]+$/i)[0].split(".")[0] + "." + conversionItem.destinationType;
     var currentConversionItem = $("#gd-convert-queue").find("[data-guid='" + destinationName + "']");
     $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-pending").hide();
-    var progressBar = $(currentConversionItem).parent().find(".gd-convert-progress");
-    // get data
+    var progressBar = $(currentConversionItem).parent().find(".gd-convert-progress");   
     $.ajax({
-        // callback function which updates upload progress bar
+        // callback function which updates conversion progress bar
         xhr: function () {
             var xhr = new window.XMLHttpRequest();
             // upload progress
@@ -528,17 +542,22 @@ function convert(conversionItem) {
                 printMessage(returnedData.message);
                 return;
             }
+            // stop conversion progress bar
             clearInterval(interval);
+            // hide progress
             $(progressBar).hide();
             $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-complite").show();           
+            // change covnert button with download button
             if (download) {
                 $(currentConversionItem).parent().find(".gd-convert-single").hide();
                 $(currentConversionItem).parent().find(".gd-download-single").show();
             }
             $(currentConversionItem).removeClass("disabled");
+            // remove converted file from the queue
             conversionQueue = $.grep(conversionQueue, function (value) {
                 return value != conversionItem;
             });
+            // disable main conversion button if queue is empty
             if (conversionQueue.length == 0) {
                 $("#gd-btn-convert-all").removeClass("active");
                 $("#gd-btn-convert-all").off(userMouseClick);
@@ -555,6 +574,10 @@ function convert(conversionItem) {
     });
 }
 
+/**
+* Prepare conversion types list
+* @param {Object} types - possible conversion types
+*/
 function addAllConversionTypes(types) {
     if (types.conversionTypes.length > 0) {
         var properties = $.grep(allConvertionTypes, function (e) { return e.guid == types.guid; });
@@ -565,6 +588,9 @@ function addAllConversionTypes(types) {
     }
 }
 
+/**
+* Remove doublicates from the conversion types
+*/
 function prepareMultipleConversionTypes() {
     var allTypes = [];
     $.each(allConvertionTypes, function (index, element) {
@@ -578,6 +604,12 @@ function prepareMultipleConversionTypes() {
     return allTypes;
 }
 
+/**
+* Prepare conversion types drop-down list HTML
+* @param {Object} types - possible conversion types
+* @param {bool} multiple - determines if multiple supported
+* @param {string} guid - file guid
+*/
 function getConversionTypesHtml(types, multiple, guid) {
     var conversionTypes = '';
     if (types.length > 0) {

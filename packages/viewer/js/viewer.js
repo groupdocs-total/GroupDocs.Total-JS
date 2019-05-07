@@ -729,9 +729,15 @@ function loadPrint() {
                     }
                     var pagesHtml = "";
                     $.each(returnedData.pages, function (index, elem) {
+                        var data = '';
+                        if (htmlMode) {
+                            data = elem.data;
+                        } else {
+                            data = '<image style="width: inherit !important" class="gd-page-image" src="data:image/png;base64,' + elem.data + '" alt></image>';
+                        }
                         pagesHtml = pagesHtml + '<div id="gd-page-' + elem.number + '" class="gd-page" style="min-width: ' +
                             elem.width + 'px; min-height: ' + elem.height + 'px;">' +
-                            '<div class="gd-wrapper">' + elem.data + '</div>' +
+                            '<div class="gd-wrapper">' + data + '</div>' +
                             '</div>';
                     });
                     renderPrint(pagesHtml);

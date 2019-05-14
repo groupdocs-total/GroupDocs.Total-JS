@@ -30,6 +30,7 @@ Main area
 #gd-convert-queue {
     display: none;
     flex-direction: column;
+	height: 100%;
 }
 .gd-conversion-empty-label {
     display: flex;

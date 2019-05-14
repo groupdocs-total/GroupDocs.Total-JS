@@ -575,7 +575,7 @@ function loadFileTree(dir, multiple) {
             // assembly modal html
             $('.gd-modal-body').html(''); // clear previous data
             toggleModalDialog(true, "Open Document", getHtmlFileBrowser(multiple));
-            initDragNDrop();
+            initDragNDrop(uploadDocument);
             // hide loading spinner
             $('#gd-modal-spinner').hide();
             // append files to tree list
@@ -1827,7 +1827,11 @@ function getHtmlFileBrowser(multiple) {
         '</div>';
 }
 
-function initDragNDrop() {
+/**
+* INit drag N Drop zone
+* @param {Object} uploadAction - function used to upload droped file
+**/
+function initDragNDrop(uploadAction) {
     var dropZone = $('#gd-dropZone');
     if (typeof dropZone[0] != "undefined") {
         //Drag n drop functional
@@ -1852,16 +1856,12 @@ function initDragNDrop() {
             event.preventDefault();
             var files = event.dataTransfer.files;
             $.each(files, function (index, file) {
-                uploadDocument(file);
+                uploadAction(file);
             });
             dropZone.hide();
         };
     }
 }
-
-/*function isMobile() {
-    return $('body:after').css('content') === 'mobile';
-}*/
 
 /*
 ******************************************************************

@@ -435,7 +435,7 @@ function loadFiles(dir) {
             // assembly modal html
             $('.gd-modal-body').html(''); // clear previous data
             toggleModalDialog(true, "Open Document", getHtmlFileBrowser(true));
-            initDragNDrop();
+            initDragNDrop(uploadForConversion);
             // hide loading spinner
             $('#gd-modal-spinner').hide();
             // append files to tree list
@@ -736,7 +736,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             '<div>Target</div>' +
             '</div>' +
             '</div>' +
-            '<div class="gd-drag-n-drop-wrap gd-conversion-drop" id="gd-dropZone">' +
+            '<div class="gd-drag-n-drop-wrap gd-conversion-drop" id="gd-conversion-dropZone">' +
             '<i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i>' +
             '<h2>Drag &amp; Drop your files here</h2>' +
             '</div>';

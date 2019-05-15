@@ -53,7 +53,12 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Disable dafault URL upload
     //////////////////////////////////////////////////
-    $('.gd-modal-body').off('click', '#gd-add-url');
+    $('.gd-modal-body').off(userMouseClick, '#gd-add-url');
+
+    //////////////////////////////////////////////////
+    // Disable dafault go up event
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').off(userMouseClick, '.gd-go-up');
 
     //////////////////////////////////////////////////
     // Open folder
@@ -73,6 +78,18 @@ $(document).ready(function () {
     });
 
     //////////////////////////////////////////////////
+    // Go to parent directory event from file tree
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').on(userMouseClick, '.gd-go-up', function (e) {
+        if (currentDirectory.length > 0 && currentDirectory.indexOf('/') == -1) {
+            currentDirectory = '';
+        } else {
+            currentDirectory = currentDirectory.replace(/\/[^\/]+\/?$/, '');
+        }
+        loadFiles(currentDirectory);
+    });
+
+    //////////////////////////////////////////////////
     // Select files for conversion upload event
     //////////////////////////////////////////////////
     $('.gd-modal-body').on('change', '#gd-upload-input', function (e) {
@@ -87,7 +104,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Add file via URL conversion event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').on('click', '#gd-add-url', function () {
+    $('.gd-modal-body').on(userMouseClick, '#gd-add-url', function () {
         $('#gd-url-wrap').hide();
         uploadForConversion(null, $("#gd-url").val());
         $('#gd-url').val('');
@@ -739,10 +756,12 @@ GROUPDOCS.COMAPRISON PLUGIN
             '</div>' +
             '<div id="gd-convert-queue">' +
             '<div class="gd-queue-header">' +
+            '<div class="gd-placeholder"></div>' +
             '<div>Source</div>' +
             '<div>Size</div>' +
             '<div>State</div>' +
             '<div>Target</div>' +
+            '<div class="gd-queue-last-placeholder"></div>' +
             '</div>' +
             '</div>' +
             '<div class="gd-drag-n-drop-wrap gd-conversion-drop" id="gd-conversion-dropZone">' +

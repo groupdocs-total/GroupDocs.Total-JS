@@ -191,6 +191,7 @@ Conversion file queue
     font-size: 32px !important;
     margin-top: -5px;
     display: none;
+	color: #007aff;
 }
 .gd-convert-single, .gd-download-single {
     font-size: 16px;

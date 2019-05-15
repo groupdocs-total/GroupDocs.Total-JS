@@ -330,13 +330,8 @@ function getQueueHtml() {
                 '<div class="gd-file-size gd-queue-size">' + file.size + '</div>' +
                 '<div class="gd-convert-status">' +
                 '<i class="far fa-clock gd-conversion-pending"></i>' +
-                '<i class="fas fa-check gd-conversion-complite"></i>' +
-                '<div class="gd-pregress p0 small blue gd-convert-progress p0">' +
-                '<div class="slice">' +
-                '<div class="bar"></div>' +
-                '<div class="fill" ></div >' +
-                '</div >' +
-                '</div > ' +
+                '<i class="fas fa-check gd-conversion-complite"></i>' +                
+                '<i class="gd-convert-progress fa fa-circle-o-notch fa-spin"></i>' +
                 '</div>' +
                 '<div class="gd-filequeue-name disabled gd-destination-file" data-guid="' + destinationGuid + '">' +
                 '<i class="fa ' + getDocumentFormat(file.destinationType).icon + '"></i>' +
@@ -507,31 +502,13 @@ function convertAll() {
 * @param {Object} conversionItem - conversion item object represents file which should be converted
 */
 function convert(conversionItem) {
-    var data = conversionItem;
-    var progress = 10;
-    var interval = null;
+    var data = conversionItem;   
     var destinationName = conversionItem.guid.match(/[-_\w]+[.][\w]+$/i)[0].split(".")[0] + "." + conversionItem.destinationType;
     var currentConversionItem = $("#gd-convert-queue").find("[data-guid='" + destinationName + "']");
     $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-pending").hide();
     var progressBar = $(currentConversionItem).parent().find(".gd-convert-progress");   
-    $.ajax({
-        // callback function which updates conversion progress bar
-        xhr: function () {
-            var xhr = new window.XMLHttpRequest();
-            // upload progress
-            xhr.upload.addEventListener("progress", function (event) {
-                $(progressBar).show();
-                $(progressBar).addClass("p" + progress);
-                interval = setInterval(function () {
-                    $(progressBar).addClass("p" + progress);
-                    progress = progress + 1;
-                    if (progress == 100) {
-                        progress = 0;
-                    }
-                }, 500);
-            }, false);
-            return xhr;
-        },
+    $(progressBar).css("display", "flex");   
+    $.ajax({       
         type: 'POST',
         url: getApplicationPath('convert'),
         data: JSON.stringify(data),
@@ -541,9 +518,7 @@ function convert(conversionItem) {
                 // open error popup
                 printMessage(returnedData.message);
                 return;
-            }
-            // stop conversion progress bar
-            clearInterval(interval);
+            }           
             // hide progress
             $(progressBar).hide();
             $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-complite").show();           

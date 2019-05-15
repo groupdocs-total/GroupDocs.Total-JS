@@ -153,7 +153,7 @@ Conversion file queue
 }
 .gd-filequeue-name {
     display: flex;
-    width: 716px;
+    width: 671px;
 }
 .gd-filequeue-name i {
     font-size: 32px;   
@@ -172,17 +172,21 @@ Conversion file queue
     font-size: 14px;
     margin-top: 26px;
 }
-.gd-destination-file, .gd-destination-file .gd-queue-name {
-    cursor: pointer;
+.gd-destination-file {
+    cursor: not-allowed;
+}
+.gd-destination-file .gd-queue-name {
+	cursor: inherit;
 }
 .gd-convert-status {
     font-size: 32px;
     color: #DBDBDB;
-    margin: 22px 119px;
+	margin: 22px 122px 0 111px;
 }
 .gd-conversion-complite {
     display: none;
     color: #62A529;
+	margin-left: 5px;
 }
 .gd-convert-progress {
     position: inherit;
@@ -208,8 +212,8 @@ Conversion file queue
     color: #ACACAC;
 }
 .gd-queue-header div:nth-child(1), .gd-queue-header div:nth-child(3), .gd-queue-header div:nth-child(4) {
-    margin: 0 63px;
+    margin: 0 62px;
 }
 .gd-queue-header div:nth-child(2) {
-    margin: 0 142px 0 583px;
+    margin: 0 142px 0 574px;
 }

@@ -573,7 +573,7 @@ function convert(conversionItem) {
                     $(currentConversionItem).parent().find(".gd-download-single").show();
                     $(currentConversionItem).css("cursor", "pointer");
                     $(currentConversionItem).on(userMouseClick, function (e) {
-                        documentGuid = $(e.target).parent().parent().find(".gd-destination-file").data("guid").match(/\\([^\\]+)$/)[1];
+                        documentGuid = $(this).data("guid").replace(/^.*[\\\/]/, '');
                         downloadDocument();
                     });
                 }

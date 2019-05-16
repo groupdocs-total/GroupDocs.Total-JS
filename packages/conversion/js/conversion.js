@@ -225,7 +225,7 @@ $(document).ready(function () {
         var conversionItemTarget = $(e.target).parent().parent().find(".gd-filequeue-name")[1];
         var destinationGuid = $(conversionItemTarget).data("guid");
         conversionQueue = $.grep(conversionQueue, function (value) {
-            return value.guid.match(/[-_\w]+[.][\w]+$/i)[0].split('.')[0] + "." + value.destinationType != destinationGuid.match(/\\([^\\]+)$/)[1];
+            return value.guid.replace(/^.*[\\\/]/, '').split('.')[0] + "." + value.destinationType != destinationGuid.replace(/^.*[\\\/]/, '');
         });
         $(e.target).parent().parent().remove();
         if (conversionQueue.length == 0 && $(".gd-convert-item").length == 0) {
@@ -352,14 +352,14 @@ function getQueueHtml() {
             var docFormat = getDocumentFormat(file.guid.split('.').pop());
             var extension = file.guid.replace(/^.*\./, '');
             var destinationGuid = file.guid.replace(extension, file.destinationType);
-            var destinationFileName = file.guid.match(/[-_\w]+[.][\w]+$/i)[0].split('.')[0] + "." + file.destinationType;
+            var destinationFileName = destinationGuid.replace(/^.*[\\\/]/, '');
             html = html + '<div class="gd-convert-item">' +
                 '<div class="gd-convert-remove">' +
                 '<span>×</span>' +
                 '</div>' +
                 '<div class="gd-filequeue-name disabled" data-guid="' + file.guid + '">' +
                 '<i class="fa ' + docFormat.icon + '"></i>' +
-                '<div class="gd-file-name gd-queue-name">' + file.guid.match(/[-_\w]+[.][\w]+$/i)[0] +
+                '<div class="gd-file-name gd-queue-name">' + file.guid.replace(/^.*[\\\/]/, '') +
                 '<div class="gd-file-format">' + docFormat.format + '</div>' +
                 '</div>' +
                 '</div>' +

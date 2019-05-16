@@ -228,7 +228,7 @@ $(document).ready(function () {
             return value.guid.match(/[-_\w]+[.][\w]+$/i)[0].split('.')[0] + "." + value.destinationType != destinationGuid.match(/\\([^\\]+)$/)[1];
         });
         $(e.target).parent().parent().remove();
-        if (conversionQueue.length == 0) {
+        if (conversionQueue.length == 0 && $(".gd-convert-item").length == 0) {
             $("#gd-convert-area").show();
             $("#gd-convert-queue").hide();
         }

@@ -148,7 +148,12 @@ $(document).ready(function () {
     // Check all files and add all conversion types drop-down
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, ".gd-select-all", function () {
-        ($(".gd-checkbox").prop('checked')) ? $(".gd-checkbox").prop('checked', true) : $(".gd-checkbox").prop('checked', false);
+        var checked = false;
+        ($(".gd-checkbox").prop('checked')) ? checked = true : checked = false;
+        $(".gd-checkbox").prop('checked', checked);
+        if (!checked) {
+            $(".gd-add-selected .gd-conversions").remove();
+        }
         guids = [];
         $.each($(".gd-filetree-name"), function (index, fileName) {
             if (!~getDocumentFormat($(fileName).data("guid")).format.indexOf("not supported")) {
@@ -164,6 +169,14 @@ $(document).ready(function () {
             addSelectedInnerHtml = 'Add selected';
         }
         $($(".gd-add-selected label")[0]).html(addSelectedInnerHtml);
+        var types = prepareMultipleConversionTypes();
+        var dropDownHtml = getConversionTypesHtml(types, true, "");
+        $(".gd-add-selected").append(dropDownHtml);
+        // init custom tooltips for warnings
+        $('.gd-type-warning').tooltipster({
+            side: 'right',
+            theme: 'gd-conversion-tooltip'
+        });
     });
 
     //////////////////////////////////////////////////
@@ -171,6 +184,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, ".gd-file-checkbox", function (event) {
         guids = [];
+        $(".gd-add-selected .gd-conversions").remove();
         $.each($(".gd-filetree-name"), function (index, fileName) {
             if (!~getDocumentFormat($(fileName).data("guid")).format.indexOf("not supported")) {
                 if ($(fileName).parent().find(".gd-checkbox").prop("checked")) {
@@ -179,16 +193,29 @@ $(document).ready(function () {
             }
         });
         var addSelectedInnerHtml = "";
+        var checked = false;
         if ($(".gd-checkbox:checked").length > 0) {
             $(".gd-add-selected").addClass("active");
             addSelectedInnerHtml = 'Add ' + guids.length + ' selected';
+            checked = true;
         } else {
             $(".gd-add-selected").removeClass("active");
             addSelectedInnerHtml = 'Add selected';
+            checked = false;
         }
 
         $($(".gd-add-selected label")[0]).html(addSelectedInnerHtml);
         $(".gd-select-all").prop("checked", false);
+        if (checked) {
+            var types = prepareMultipleConversionTypes();
+            var dropDownHtml = getConversionTypesHtml(types, true, "");
+            $(".gd-add-selected").append(dropDownHtml);
+            // init custom tooltips for warnings
+            $('.gd-type-warning').tooltipster({
+                side: 'right',
+                theme: 'gd-conversion-tooltip'
+            });
+        }   
     });
 
     //////////////////////////////////////////////////
@@ -261,7 +288,7 @@ $(document).ready(function () {
         }
     });
 
-   initiConversionDropZone();
+    initiConversionDropZone();    
 });
 
 function initiConversionDropZone() {
@@ -491,10 +518,10 @@ function loadFiles(dir) {
                 if (elem.isDirectory) {
                     checkBoxes = '<div class="gd-file-checkbox empty"></div>';
                 } else {
-                    checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
+                    checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox gd-checkbox-single"></div>';
                 }
                 var conversionTypes = getConversionTypesHtml(elem.conversionTypes, false, guid);
-                addAllConversionTypes(elem);
+               
                 // append document
                 $('.gd-modal-table-body').append(
                     '<div class="gd-file-table-item">' +
@@ -509,9 +536,6 @@ function loadFiles(dir) {
                     conversionTypes +
                     '</div>');
             });
-            var types = prepareMultipleConversionTypes(true);
-            var dropDown = getConversionTypesHtml(types, true);
-            $(".gd-add-selected").append(dropDown);
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -618,16 +642,45 @@ function addAllConversionTypes(types) {
 * Remove doublicates from the conversion types
 */
 function prepareMultipleConversionTypes() {
-    var allTypes = [];
-    $.each(allConvertionTypes, function (index, element) {
-        $.each(element.conversions, function (index, type) {
-            var types = $.grep(allTypes, function (e) { return e == type; });
-            if (types.length == 0) {
-                allTypes.push(type);
-            }
-        });
+    var allTypes = [];  
+   
+    $.each($(".gd-checkbox-single:checked"), function (index, element) {
+        var types = $(element).parent().parent().find(".gd-conversion-menu li");
+        var typesArray = [];
+        $.each(types, function (index, type) {         
+            typesArray.push($(type).find(".gd-type").html());            
+        });      
+        allTypes.push(typesArray);
     });
-    return allTypes;
+    //get longest array of types
+    var longestArray = allTypes[0];
+    $.each(allTypes, function (index, element) {
+        if (longestArray.length < element.length) {
+            longestArray == element;
+        }
+    });
+
+    //add warnings
+    $.each(allTypes, function (index, element) {
+        var counter = 0;
+        for (i = 0; i < longestArray.length; i++) {            
+            var type = (longestArray[i].type) ? longestArray[i].type : longestArray[i];
+            if ($.inArray(type, element) == -1) {
+                counter = counter + 1;
+                longestArray[i] = { type: type, warning: true };
+            } else {
+                longestArray[i] = { type: type, warning: false };
+            }
+        }       
+        longestArray.filesCounter = counter;
+    });
+    return longestArray;
+}
+
+function getWarningHtml(type, filesNumber) {
+    return '<div class="gd-type-warning" title="1 selected file(s) can’t be converted to ' + type.type + ' format">' +
+        '<i class="fas fa-exclamation-triangle"></i>' +      
+        '</div>';
 }
 
 /**
@@ -640,14 +693,18 @@ function getConversionTypesHtml(types, multiple, guid) {
     var conversionTypes = '';
     if (types.length > 0) {
         $.each(types, function (index, type) {
-            conversionTypes = conversionTypes + '<li><i class="fa ' + getDocumentFormat(type).icon + '"></i><div class="gd-type">' + type + '</div></li>';
+            var warning = (type.warning) ? getWarningHtml(type, types.filesCounter) : "";
+            type = (type.type) ? type.type : type;
+            conversionTypes = conversionTypes + '<li><i class="fa ' + getDocumentFormat(type).icon + '"></i><div class="gd-type">' + type + '</div>' +
+                warning +
+                '</li>';
         });
         var plus = "";
         var multipleClass = "multiple";
         if (!multiple) {
             plus = '<i class="fas fa-plus"></i>';
             multipleClass = "";
-        }
+        }        
         return '<div class="gd-conversions ' + multipleClass + '" data-guid="' + guid + '">' +
             plus +
             '<label class="gd-conversion-dropdown">' +
@@ -659,7 +716,7 @@ function getConversionTypesHtml(types, multiple, guid) {
             '</div>';
     } else {
         return '<div class="gd-conversions"></div>';
-    }
+    }   
 }
 
 /*

@@ -73,30 +73,23 @@ File browse lightbox
     background-color: #cccccc;
 }
 .gd-conversion-dropdown {
-    position: relative;
-    top: -14px;
+	top: -8px;
+    left: 123px;
+    z-index: 1;
 }
 .gd-conversion-input {
     display: none;
 }
 .gd-conversion-input:checked + .gd-conversion-menu {
-    display: block;
-    left: -116px;
-    top: 14px;
-    width: 100px;
-    height: 181px;
+	display: block;
+    left: -147px;
+    top: -21px;
     overflow: hidden;
-    overflow-y: scroll;
-    position: absolute;
+    overflow-y: scroll; 
+	position: relative;
+    z-index: 1;
 }
-.gd-conversion-input:checked + .gd-conversion-menu.multiple {
-    left: 120px;
-    z-index: 2;
-    top: 6px;
-}
-.gd-conversion-menu {
-    position: absolute;
-    top: 100%;
+.gd-conversion-menu {      
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 0;
@@ -105,6 +98,12 @@ File browse lightbox
     background-color: #ffffff;
     list-style-type: none;
     display: none;
+	width: 143px;
+    height: 181px;
+}
+.gd-conversion-menu.multiple {
+    left: 2px !important;
+    top: 0px !important;   
 }
 .gd-conversion-menu li {
     color: #959DA5;
@@ -116,6 +115,10 @@ File browse lightbox
     background-color: #25C2D4;
     color: #FFFFFF
 }
+
+.gd-conversion-menu li:hover .gd-type-warning i {
+	color: #f2fa23;
+}
 .gd-conversion-menu i {
     margin: 6px 10px;
     color: #959DA5;
@@ -126,14 +129,60 @@ File browse lightbox
     color: #FFFFFF
 }
 .gd-type {
-    font-size: 12px;
-    height: 12px;
+	font-size: 12px;
+	height: 17px;
+    width: 27px;
     margin-top: 4px;
 }
 .gd-file-table-item > div:last-child > i {
     margin: 0;    
 }
-
+.gd-type-warning {
+	margin: 8px 0 0 44px;
+}
+.gd-type-warning i {
+	margin: 0;
+}
+.gd-conversion-tooltip {	
+	height: 24px;
+    width: 250px;
+    z-index: 5;
+    margin-top: -3px;
+    margin-left: 6px;
+    background-color: #000000;
+    color: #fff;
+    text-align: center;
+    font-size: 9px;
+	
+}
+.tooltipster-sidetip.tooltipster-right .tooltipster-arrow {
+    height: 21px;
+    margin-top: -13px;
+    left: -5px;
+    top: 0;
+    width: 5px;
+}
+.tooltipster-sidetip.tooltipster-right .tooltipster-arrow-border {
+    border-right-color: #707070; 
+}
+.tooltipster-sidetip.tooltipster-right .tooltipster-arrow-background {
+    border-right-color: unset;
+    left: 3px;
+    top: 0;
+    color: #707070;
+}
+.tooltipster-sidetip .tooltipster-content {
+    color: #fff;
+    padding: 2px 4px 3px 7px;
+}
+.tooltipster-sidetip .tooltipster-box {
+    background: #707070;
+    border: 1px solid #707070;
+    border-radius: 0;
+}
+.tooltipster-sidetip.tooltipster-right .tooltipster-box {
+    margin-left: 0;
+}
 /*
 ******************************************
 Conversion file queue

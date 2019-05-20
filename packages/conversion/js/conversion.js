@@ -691,7 +691,7 @@ function getWarningHtml(type, filesNumber) {
 */
 function getConversionTypesHtml(types, multiple, guid) {
     var conversionTypes = '';
-    if (types.length > 0) {
+    if (types && types.length > 0) {
         $.each(types, function (index, type) {
             var warning = (type.warning) ? getWarningHtml(type, types.filesCounter) : "";
             type = (type.type) ? type.type : type;

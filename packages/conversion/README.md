@@ -1,6 +1,6 @@
 # GroupDocs.Conversion
 
-Simple jQuery plugin that allows to display and comapre documents supported by groupdocs libraries APIs
+Simple jQuery plugin that allows to display and convert documents supported by groupdocs libraries APIs
 
 # Getting started
 
@@ -17,7 +17,7 @@ Add following code within `<body>` tag
 ```JS
 <div id="element"></div>
 <script>
-    $('#element').Conversion({
+    $('#element').conversion({
         ... options
     });
 </script>

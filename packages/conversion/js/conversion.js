@@ -399,7 +399,7 @@ function getQueueHtml() {
                 '<div class="gd-filequeue-name disabled gd-destination-file" data-guid="' + destinationGuid + '">' +
                 '<i class="fa ' + getDocumentFormat(file.destinationType).icon + '"></i>' +
                 '<div class="gd-file-name gd-queue-name">' + destinationFileName +
-                '<div class="gd-file-format">' + docFormat.format + '</div>' +
+                '<div class="gd-file-format">' + getDocumentFormat(file.destinationType).format + '</div>' +
                 '</div>' +
                 '</div>' +
                 '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +

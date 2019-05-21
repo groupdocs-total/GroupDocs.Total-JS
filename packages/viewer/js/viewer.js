@@ -37,11 +37,19 @@ map['dot'] = { 'format': 'Microsoft Word', 'icon': 'fa-file-word-o' };
 map['dotx'] = { 'format': 'Microsoft Word', 'icon': 'fa-file-word-o' };
 map['dotm'] = { 'format': 'Microsoft Word', 'icon': 'fa-file-word-o' };
 map['xls'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
+map['xltx'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
+map['xltm'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
+map['tsv'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
+map['xls2003'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
 map['xlsx'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
 map['xlsm'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
 map['xlsb'] = { 'format': 'Microsoft Excel', 'icon': 'fa-file-excel-o' };
 map['ppt'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
 map['pptx'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
+map['potx'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
+map['potm'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
+map['pptm'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
+map['ppsm'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
 map['pps'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
 map['ppsx'] = { 'format': 'Microsoft PowerPoint', 'icon': 'fa-file-powerpoint-o' };
 map['vsd'] = { 'format': 'Microsoft Visio', 'icon': 'fa-file-code-o' };
@@ -79,7 +87,10 @@ map['dwg'] = { 'format': 'AutoCAD Drawing File Format', 'icon': 'fa-file-image-o
 map['bmp'] = { 'format': 'Bitmap Picture', 'icon': 'fa-file-image-o' };
 map['gif'] = { 'format': 'Graphics Interchange Format', 'icon': 'fa-file-image-o' };
 map['jpg'] = { 'format': 'Joint Photographic Experts Group', 'icon': 'fa-file-image-o' };
+map['psd'] = { 'format': 'Layered Image File', 'icon': 'fa-file-image-o' };
+map['svg'] = { 'format': 'Scalable Vector Graphics', 'icon': 'fa-file-image-o' };
 map['jpe'] = { 'format': 'Joint Photographic Experts Group', 'icon': 'fa-file-image-o' };
+map['jp2'] = { 'format': 'Compressed Bitmap Image', 'icon': 'fa-file-image-o' };
 map['jpeg'] = { 'format': 'Joint Photographic Experts Group', 'icon': 'fa-file-image-o' };
 map['jfif'] = { 'format': 'Joint Photographic Experts Group', 'icon': 'fa-file-image-o' };
 map['png'] = { 'format': 'Portable Network Graphics', 'icon': 'fa-file-image-o' };
@@ -515,7 +526,6 @@ $(document).ready(function () {
     });
 
     $('#modalDialog').on('click', function (event) {
-        
         if ($(event.target).hasClass("fas fa-chevron-down")) {
             event.preventDefault();
             $("#gd-upload-input-checkbox").prop("checked", true);
@@ -523,9 +533,9 @@ $(document).ready(function () {
         }
         if (event.target.tagName != "LABEL" && event.target.tagName != "LI" && event.target.tagName != "INPUT") {
             $("#gd-upload-input-checkbox").prop("checked", false);
-        } 
-        
+        }
     });
+
     //
     // END of document ready function
 });
@@ -565,7 +575,7 @@ function loadFileTree(dir, multiple) {
             // assembly modal html
             $('.gd-modal-body').html(''); // clear previous data
             toggleModalDialog(true, "Open Document", getHtmlFileBrowser(multiple));
-            initDragNDrop();
+            initDragNDrop(uploadDocument);
             // hide loading spinner
             $('#gd-modal-spinner').hide();
             // append files to tree list
@@ -590,7 +600,11 @@ function loadFileTree(dir, multiple) {
                 var places = "";
                 var single = "single";
                 if (multiple) {
-                    checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
+                    if (elem.isDirectory) {
+                        checkBoxes = '<div class="gd-file-checkbox empty"></div>';
+                    } else {
+                        checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox"></div>';
+                    }
                     places = '<div><i class="fas fa-plus"></i></div>';
                     single = "";
                 }
@@ -1582,7 +1596,12 @@ function uploadDocument(file, url) {
                     $("#gd-open-document").prop("disabled", true);
                     if (event.loaded == event.total) {
                         $('.gd-modal-close-action').on('click', closeModal);
-                        $("#gd-open-document").prop("disabled", false);                       
+                        $("#gd-open-document").prop("disabled", false);
+                        if ($(".gd-checkbox").length > 0) {
+                            loadFileTree("", true);
+                        } else {
+                            loadFileTree("");
+                        }
                     }
                 }
             }, false);
@@ -1600,7 +1619,6 @@ function uploadDocument(file, url) {
                 printMessage(returnedData.message);
                 return;
             }
-            loadFileTree("");
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");
@@ -1771,7 +1789,7 @@ function getHtmlFileBrowser(multiple) {
     var single = "single";
     if (multiple) {
         multipleActions = '<input type="checkbox" class="gd-select-all gd-checkbox">' +
-            '<button class="gd-add-selected"><i class="fa fa-plus"></i>Add selected</button>';
+            '<div class="gd-add-selected"><i class="fa fa-plus"></i><label>Add selected</label></div>';
         single = "";
     }
     var uploadButtons = "";
@@ -1815,7 +1833,11 @@ function getHtmlFileBrowser(multiple) {
         '</div>';
 }
 
-function initDragNDrop() {
+/**
+* INit drag N Drop zone
+* @param {Object} uploadAction - function used to upload droped file
+**/
+function initDragNDrop(uploadAction) {
     var dropZone = $('#gd-dropZone');
     if (typeof dropZone[0] != "undefined") {
         //Drag n drop functional
@@ -1840,16 +1862,12 @@ function initDragNDrop() {
             event.preventDefault();
             var files = event.dataTransfer.files;
             $.each(files, function (index, file) {
-                uploadDocument(file);
+                uploadAction(file);
             });
             dropZone.hide();
         };
     }
 }
-
-/*function isMobile() {
-    return $('body:after').css('content') === 'mobile';
-}*/
 
 /*
 ******************************************************************

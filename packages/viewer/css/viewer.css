@@ -509,7 +509,7 @@ MODAL
     margin-left: 707px;
 }
 .gd-modal-table-head label:last-child.single {
-    margin-left: 847px;
+    margin-left: 835px;
 }
 .gd-modal-table-body {
     display: flex;
@@ -527,6 +527,9 @@ MODAL
     height: 20px;
     margin: 22px 23px 0 25px;
 }
+.gd-file-checkbox.empty {
+    width: 25px;
+}
 .gd-filetree-name {
     display: flex;
     width: inherit;
@@ -535,8 +538,9 @@ MODAL
     margin-left: 12px;
 }
 .gd-file-size {
-    margin: 20px 0 0 0;
+    margin-top: 20px;
     width: 112px;
+    color: #777777;
 }
 .gd-file-table-item > div:last-child > i {
     font-size: 15px;
@@ -580,8 +584,7 @@ MODAL
     position: absolute;
     background-color: #ffffff;
     width: 100%;
-    font-size: 13px;   
-    margin: -20px;
+    font-size: 13px;
     padding: 20px;
 }
 #gd-upload-section {
@@ -648,6 +651,7 @@ MODAL
     flex-direction: column;
     margin-top: 10px;
     cursor: pointer;
+    color: #6E6E6E;
 }
 .gd-file-format {
     font-size: 11px;
@@ -779,6 +783,12 @@ MODAL
 .gd-go-up{
     cursor: pointer;
 }
+
+#gd-upload-actions {
+    display: flex;
+    position: relative;
+    left: 8px;
+}
 .gd-select-all {
     position: relative;
     top: 6px;  
@@ -836,11 +846,10 @@ MODAL
 }
 #gd-upload-actions {
     display: flex;
-    position: relative;    
-    margin-left: 22px;
+    margin-left: 15px;
 }
 #gd-upload-actions.single {
-    margin-left: 12px;
+    margin-left: 0px;
 }
 .gd-add-selected {
     width: 125px;
@@ -849,13 +858,21 @@ MODAL
     color: #FFFFFF;
     margin: 0px 8px 0px 22px;
     border: 0;
-    cursor: pointer;
+    cursor: not-allowed;
     opacity: 0.43
 }
+.gd-add-selected.active, .gd-add-selected.active label {
+    cursor: pointer;
+    opacity: 1;
+}
+.gd-add-selected label {
+    font-size: 13px;
+    margin: 6px 15px 0 0;
+    position: absolute;
+}
 .gd-add-selected i {
-    margin-right: 8px;
-    margin-right: 8px;
-    margin-left: 5px;
+    margin: 8px 12px 7px 8px;
+    font-size: 15px;
 }
 .gd-upload-dropdown {   
     position: relative;
@@ -942,10 +959,6 @@ MODAL
     margin-top: 5px;
     margin-left: 8px;
     height: 20px;
-    background-color: white;
-}
-.gd-upload-menu li label {
-    cursor: pointer;
 }
 /*
 ******************************************

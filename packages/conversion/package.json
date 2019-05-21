@@ -1,0 +1,14 @@
+{
+  "name": "@groupdocs.examples.jquery/conversion",
+  "version": "0.1.0",
+  "description": "jQuery plugin that allows to display and comapre documents supported by groupdocs libraries APIs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

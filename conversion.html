@@ -1,0 +1,36 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Conversion for .NET MVC</title>
+    <link type="text/css" rel="stylesheet" href="/packages/common/css/all.min.css">
+    <link type="text/css" rel="stylesheet" href="/packages/common/css/v4-shims.min.css">
+	<link rel="stylesheet" type="text/css" href="/packages/conversion/css/tooltipster.bundle.min.css" />
+    <link type="text/css" rel="stylesheet" href="/packages/common/css/swiper.min.css">
+    <link type="text/css" rel="stylesheet" href="/packages/common/css/circle-progress.css" />
+    <link type="text/css" rel="stylesheet" href="/packages/viewer/css/viewer.css" />
+    <link type="text/css" rel="stylesheet" href="/packages/viewer/css/viewer.mobile.css" />
+    <link type="text/css" rel="stylesheet" href="/packages/viewer/css/viewer-dark.css" />
+	<link type="text/css" rel="stylesheet" href="/packages/conversion/css/conversion.css" />
+    <link type="text/css" rel="stylesheet" href="/packages/conversion/css/conversion.mobile.css" />
+    <script type="text/javascript" src="/packages/common/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/packages/conversion/js/tooltipster.bundle.min.js"></script>
+    <script type="text/javascript" src="/packages/common/js/es6-promise.auto.js"></script>
+    <script type="text/javascript" src="/packages/common/js/swiper.min.js"></script>
+    <script type="text/javascript" src="/packages/viewer/js/viewer.js"></script>
+	<script type="text/javascript" src="/packages/conversion/js/conversion.js"></script>
+</head>
+<body>
+    <div id="element"></div>
+    <script type="text/javascript">
+		var host = !window.location.hostname ? 'localhost' : window.location.hostname;        
+        $('#element').conversion({
+            applicationPath: 'http://' + host + ':8080/conversion/',  
+            download: true,
+            upload: true,           
+            browse: true,
+            rewrite: true,            
+            enableRightClick: true
+        });
+    </script>
+</body>
+</html>

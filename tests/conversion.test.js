@@ -9,4 +9,4 @@ test('UI starts without errors', async t => {
 });
 
 test('When open file tool is clicked open file dialog is displayed', CommonTests.testOpenFileDialogIsShownWhenOpenFileMenuIconClicked)
-test('When upload file tool is clicked upload file dialog is displayed', CommonTests.testUploadFileDialogIsShownWhenUploadFileMenuIconClicked)
+//test('When upload file tool is clicked upload file dialog is displayed', CommonTests.testUploadFileDialogIsShownWhenUploadFileMenuIconClicked)

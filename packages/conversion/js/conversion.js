@@ -283,7 +283,7 @@ $(document).ready(function () {
         e.preventDefault();
         e.stopPropagation();
         if (download) {
-            documentGuid = $(e.target).parent().parent().find(".gd-destination-file").data("guid").match(/\\([^\\]+)$/)[1];
+            documentGuid = $(e.target).parent().parent().find(".gd-destination-file").data("guid").replace(/\\/g, "/").split("/").pop();
             downloadDocument();
         }
     });

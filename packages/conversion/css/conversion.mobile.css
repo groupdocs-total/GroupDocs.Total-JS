@@ -58,12 +58,13 @@
     }
 
     .gd-destination-file .gd-queue-name {
-        margin: 0;
+        margin-top: 2px;
         font-size: 12px;
     }
 
     .gd-queue-name {
         margin-top: 16px;
+        width: 222px;
     }
 
     .gd-filequeue-name i:first-of-type {

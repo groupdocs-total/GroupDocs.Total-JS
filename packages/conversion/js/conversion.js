@@ -215,7 +215,7 @@ $(document).ready(function () {
                 side: 'right',
                 theme: 'gd-conversion-tooltip'
             });
-        }   
+        }
     });
 
     //////////////////////////////////////////////////
@@ -271,7 +271,7 @@ $(document).ready(function () {
         var destinationGuid = $(conversionItemTarget).data("guid");
         $.each(conversionQueue, function (index, file) {
             if (file.guid == guid && file.destinationType == destinationGuid.split(".").pop()) {
-                convert(file);               
+                convert(file);
             }
         });
     });
@@ -283,12 +283,16 @@ $(document).ready(function () {
         e.preventDefault();
         e.stopPropagation();
         if (download) {
-            documentGuid = $(e.target).parent().parent().find(".gd-destination-file").data("guid").match(/\\([^\\]+)$/)[1];
+            documentGuid = $(e.target).parent().parent().find(".gd-destination-file").data("guid").replace(/\\/g, "/").split("/").pop();
             downloadDocument();
         }
     });
 
-    initiConversionDropZone();    
+    initiConversionDropZone();
+
+    if (isMobile()) {
+        showMobileMenu();
+    }
 });
 
 function initiConversionDropZone() {
@@ -375,41 +379,68 @@ function addToQueue(destinationType, guid) {
 function getQueueHtml() {
     var html = "";
     $.each(conversionQueue, function (index, file) {
-        if (!file.added) {
-            var docFormat = getDocumentFormat(file.guid.split('.').pop());
-            var extension = file.guid.replace(/^.*\./, '');
-            var destinationGuid = file.guid.replace(extension, file.destinationType);
-            var destinationFileName = destinationGuid.replace(/^.*[\\\/]/, '');
-            html = html + '<div class="gd-convert-item">' +
-                '<div class="gd-convert-remove">' +
-                '<span>×</span>' +
-                '</div>' +
-                '<div class="gd-filequeue-name disabled" data-guid="' + file.guid + '">' +
-                '<i class="fa ' + docFormat.icon + '"></i>' +
-                '<div class="gd-file-name gd-queue-name">' + file.guid.replace(/^.*[\\\/]/, '') +
-                '<div class="gd-file-format">' + docFormat.format + '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="gd-file-size gd-queue-size">' + file.size + '</div>' +
-                '<div class="gd-convert-status">' +
-                '<i class="far fa-clock gd-conversion-pending"></i>' +
-                '<i class="fas fa-check gd-conversion-complite"></i>' +                
-                '<i class="gd-convert-progress fa fa-circle-o-notch fa-spin"></i>' +
-                '</div>' +
-                '<div class="gd-filequeue-name disabled gd-destination-file" data-guid="' + destinationGuid + '">' +
-                '<i class="fa ' + getDocumentFormat(file.destinationType).icon + '"></i>' +
-                '<div class="gd-file-name gd-queue-name">' + destinationFileName +
-                '<div class="gd-file-format">' + getDocumentFormat(file.destinationType).format + '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +
-                '<div class="gd-download-single"><i class="fas fa-download"></i></div>' +
-                '</div>';
+        if (!file.added) {    
+            html = html + getQueueItemHtml(file);
             file.added = true;
         }
     });
     return html;
 
+}
+
+function getQueueItemHtml(file) {
+    var item = "";
+    var docFormat = getDocumentFormat(file.guid.split('.').pop());
+    var extension = file.guid.replace(/^.*\./, '');
+    var destinationGuid = file.guid.replace(extension, file.destinationType);
+    var destinationFileName = destinationGuid.replace(/^.*[\\\/]/, '');
+    if (isMobile()) {
+        item = '<div class="gd-convert-item">' +
+                    '<div class="gd-convert-remove">' +
+                        '<span>×</span>' +
+                    '</div>' +
+                    '<div class="gd-filequeue-name" data-guid="' + file.guid + '">' +
+                        '<i class="fa ' + docFormat.icon + '"></i>' +
+                        '<div class="gd-file-name gd-queue-name">' + file.guid.replace(/^.*[\\\/]/, '') +
+                            '<div class="gd-filequeue-name gd-destination-file" data-guid="' + destinationGuid + '">' +
+                                '<i class="fa fa-arrow-right"></i>' +
+                                '<i class="fa ' + getDocumentFormat(file.destinationType).icon + '"></i>' +
+                                '<div class="gd-file-name gd-queue-name">' + destinationFileName + '</div>'+
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +      
+                    '<i class="gd-convert-progress fa fa-circle-o-notch fa-spin"></i>' +
+                    '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +
+                    '<div class="gd-download-single"><i class="fas fa-download"></i></div>' +
+                '</div>';
+    } else {
+        item = '<div class="gd-convert-item">' +
+                    '<div class="gd-convert-remove">' +
+                        '<span>×</span>' +
+                    '</div>' +
+                    '<div class="gd-filequeue-name disabled" data-guid="' + file.guid + '">' +
+                        '<i class="fa ' + docFormat.icon + '"></i>' +
+                        '<div class="gd-file-name gd-queue-name">' + file.guid.replace(/^.*[\\\/]/, '') +
+                            '<div class="gd-file-format">' + docFormat.format + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="gd-file-size gd-queue-size">' + file.size + '</div>' +
+                    '<div class="gd-convert-status">' +
+                        '<i class="far fa-clock gd-conversion-pending"></i>' +
+                        '<i class="fas fa-check gd-conversion-complite"></i>' +
+                        '<i class="gd-convert-progress fa fa-circle-o-notch fa-spin"></i>' +
+                    '</div>' +
+                    '<div class="gd-filequeue-name disabled gd-destination-file" data-guid="' + destinationGuid + '">' +
+                        '<i class="fa ' + getDocumentFormat(file.destinationType).icon + '"></i>' +
+                        '<div class="gd-file-name gd-queue-name">' + destinationFileName +
+                            '<div class="gd-file-format">' + getDocumentFormat(file.destinationType).format + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="gd-convert-single"><i class="fas fa-exchange-alt"></i></div>' +
+                    '<div class="gd-download-single"><i class="fas fa-download"></i></div>' +
+                '</div>';
+    }
+    return item;
 }
 
 /**
@@ -521,7 +552,6 @@ function loadFiles(dir) {
                     checkBoxes = '<div class="gd-file-checkbox"><input type="checkbox" id="' + name + '" name="' + name + '" class="gd-checkbox gd-checkbox-single"></div>';
                 }
                 var conversionTypes = getConversionTypesHtml(elem.conversionTypes, false, guid);
-               
                 // append document
                 $('.gd-modal-table-body').append(
                     '<div class="gd-file-table-item">' +
@@ -574,7 +604,20 @@ function convert(conversionItem) {
     });
     if (currentConversionItem) {
         $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-pending").hide();
-        var progressBar = $(currentConversionItem).parent().find(".gd-convert-progress");
+       
+        var progressBar = "";
+        var convertSingle = "";
+        var downloadButton = "";
+        if (isMobile()) {
+            progressBar = $(currentConversionItem).parent().parent().parent().find(".gd-convert-progress");
+            convertSingle = $(currentConversionItem).parent().parent().parent().find(".gd-convert-single");
+            downloadButton = $(currentConversionItem).parent().parent().parent().find(".gd-download-single");
+            $(convertSingle).hide();
+        } else {
+            progressBar = $(currentConversionItem).parent().find(".gd-convert-progress");
+            convertSingle = $(currentConversionItem).parent().find(".gd-convert-single");
+            downloadButton = $(currentConversionItem).parent().find(".gd-download-single");
+        }       
         $(progressBar).css("display", "flex");
         $.ajax({
             type: 'POST',
@@ -589,19 +632,21 @@ function convert(conversionItem) {
                 }
                 // hide progress
                 $(progressBar).hide();
-                $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-complite").show();
+                if (!isMobile()) {
+                    $(currentConversionItem).parent().find(".gd-convert-status .gd-conversion-complite").show();
+                }
                 $(currentConversionItem).removeClass("disabled");
-                // change covnert button with download button
-                if (download) {
-                    $(currentConversionItem).parent().find(".gd-convert-single").hide();
-                    $(currentConversionItem).parent().find(".gd-download-single").show();
+                // change covnert button with download button                
+                if (download) {          
+                    $(convertSingle).hide();
+                    downloadButton.show();
                     $(currentConversionItem).css("cursor", "pointer");
                     $(currentConversionItem).on(userMouseClick, function (e) {
                         documentGuid = $(this).data("guid").replace(/^.*[\\\/]/, '');
                         downloadDocument();
                     });
                 }
-                
+
                 // remove converted file from the queue
                 conversionQueue = $.grep(conversionQueue, function (value) {
                     return value != conversionItem;
@@ -642,14 +687,14 @@ function addAllConversionTypes(types) {
 * Remove doublicates from the conversion types
 */
 function prepareMultipleConversionTypes() {
-    var allTypes = [];  
-   
+    var allTypes = [];
+
     $.each($(".gd-checkbox-single:checked"), function (index, element) {
         var types = $(element).parent().parent().find(".gd-conversion-menu li");
         var typesArray = [];
-        $.each(types, function (index, type) {         
-            typesArray.push($(type).find(".gd-type").html());            
-        });      
+        $.each(types, function (index, type) {
+            typesArray.push($(type).find(".gd-type").html());
+        });
         allTypes.push(typesArray);
     });
     //get longest array of types
@@ -663,7 +708,7 @@ function prepareMultipleConversionTypes() {
     //add warnings
     $.each(allTypes, function (index, element) {
         var counter = 0;
-        for (i = 0; i < longestArray.length; i++) {            
+        for (i = 0; i < longestArray.length; i++) {
             var type = (longestArray[i].type) ? longestArray[i].type : longestArray[i];
             if ($.inArray(type, element) == -1) {
                 counter = counter + 1;
@@ -671,7 +716,7 @@ function prepareMultipleConversionTypes() {
             } else {
                 longestArray[i] = { type: type, warning: false };
             }
-        }       
+        }
         longestArray.filesCounter = counter;
     });
     return longestArray;
@@ -679,7 +724,7 @@ function prepareMultipleConversionTypes() {
 
 function getWarningHtml(type, filesNumber) {
     return '<div class="gd-type-warning" title="1 selected file(s) can’t be converted to ' + type.type + ' format">' +
-        '<i class="fas fa-exclamation-triangle"></i>' +      
+        '<i class="fas fa-exclamation-triangle"></i>' +
         '</div>';
 }
 
@@ -704,7 +749,7 @@ function getConversionTypesHtml(types, multiple, guid) {
         if (!multiple) {
             plus = '<i class="fas fa-plus"></i>';
             multipleClass = "";
-        }        
+        }
         return '<div class="gd-conversions ' + multipleClass + '" data-guid="' + guid + '">' +
             plus +
             '<label class="gd-conversion-dropdown">' +
@@ -716,7 +761,14 @@ function getConversionTypesHtml(types, multiple, guid) {
             '</div>';
     } else {
         return '<div class="gd-conversions"></div>';
-    }   
+    }
+}
+
+/**
+ * Hide all menu. For mobile only.
+ */
+function showMobileMenu() {
+    $('#gd-mobile-menu').show();
 }
 
 /*
@@ -769,7 +821,7 @@ GROUPDOCS.COMAPRISON PLUGIN
                 saveRotateState: false,
                 enableRightClick: options.enableRightClick
             });
-
+            $('#gd-header-logo').append(getHtmlHeaderForMobile());
             options = $.extend(defaults, options);
             download = options.download;
             // set global option params
@@ -799,16 +851,28 @@ GROUPDOCS.COMAPRISON PLUGIN
     };
 
     /*
-       ******************************************************************
-       HTML MARKUP
-       ******************************************************************
-       */
+    ******************************************************************
+    HTML MARKUP
+    ******************************************************************
+    */
+    function getHtmlHeaderForMobile() {
+        return '<div id="gd-mobile-menu" class="gd-mobile-menu">' +
+            '<span id="gd-mobile-menu-open" class="gd-mobile-menu-open">' +
+            '<i class="fas fa-bars fa-lg fa-inverse"></i>' +
+            '</span>' +
+            '</div>';
+    }
+
     function getHtmlBase() {
+        var draglabel = "";
+        if (!isMobile()) {
+            draglabel = "Drag your document here or click"
+        }
         return '<div id="gd-convert-area">' +
             '<i class="fas fa-exchange-alt"></i>' +
             '<div class="gd-conversion-empty-label">' +
             '<label>Conversion queue is empty</label>' +
-            '<label>Drag your document here or click <i class="fa fa-folder-open"></i> to select a files</label>' +
+            '<label>' + draglabel + ' <i class="fa fa-folder-open"></i> to select a files</label>' +
             '</div>' +
             '</div>' +
             '<div id="gd-convert-queue">' +

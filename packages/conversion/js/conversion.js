@@ -127,6 +127,11 @@ $(document).ready(function () {
             $("#modalDialog").find(".gd-conversions.active").removeClass("active");
             $(event.target).parent().find(".gd-conversion-input").prop("checked", true);
             $(event.target).parent().addClass("active");
+			if($(".gd-modal-dialog").height() <= event.pageY){
+				$(".gd-conversion-input:checked + .gd-conversion-menu").css("top", "-182px");
+			} else {
+				$(".gd-conversion-input:checked + .gd-conversion-menu").css("top", "-21px");
+			}
             return;
         }
         if (event.target.tagName != "LABEL" && event.target.tagName != "LI") {

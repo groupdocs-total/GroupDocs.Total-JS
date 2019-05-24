@@ -701,7 +701,7 @@ function prepareMultipleConversionTypes() {
     var longestArray = allTypes[0];
     $.each(allTypes, function (index, element) {
         if (longestArray.length < element.length) {
-            longestArray == element;
+            longestArray = element;
         }
     });
 
@@ -714,7 +714,9 @@ function prepareMultipleConversionTypes() {
                 counter = counter + 1;
                 longestArray[i] = { type: type, warning: true };
             } else {
-                longestArray[i] = { type: type, warning: false };
+				if(!longestArray[i].warning) {
+					longestArray[i] = { type: type, warning: false };
+				}
             }
         }
         longestArray.filesCounter = counter;

@@ -513,8 +513,8 @@ function ShowDifferences(differences) {
 function addHighlightDifferences(change) {
     var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
     var firstSection = $(".gd-compare-section")[0];
-    var page = $(lastSection).find(".gd-page-" + (change.Page.Id + 1));
-    var originalDocPage = $(firstSection).find(".gd-page-" + (change.Page.Id + 1));
+    var page = $(lastSection).find(".gd-page-" + (change.PageInfo.Id));
+    var originalDocPage = $(firstSection).find(".gd-page-" + (change.PageInfo.Id));
     var highlightHtml = (change.Type == 3) ? getHightlightHtml(change, originalDocPage) : getHightlightHtml(change, page);
     (change.Type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
 }
@@ -559,14 +559,9 @@ function scrollDifferencesPanel(difference) {
     });
 }
 
-function getHightlightHtml(change, page) {
-    var y = 0;
-    var x = change.Box.X + parseInt($(page).css("padding-left"));
-    if (getDocumentFormat(compareDocumentGuid).format == "Portable Document Format") {
-        y = change.Page.Height - change.Box.Y + parseInt($(page).css("padding-top"));
-    } else {
-        y = change.Box.Y + parseInt($(page).css("padding-top"));
-    }
+function getHightlightHtml(change, page) {   
+    var x = change.Box.X + parseInt($(page).css("padding-left")) + parseInt($(".gd-wrapper").css("padding").split(" ")[1]) + parseInt($(".gd-pages").css("padding"));    
+    var y = change.Box.Y + parseInt($(page).css("padding-top")) + parseInt($(".gd-pages").css("padding"));   
 
     var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
     return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + change.Id + '"></div>';
@@ -577,7 +572,7 @@ function getDifferenceHtml(difference) {
     if (difference.Type == 0) {
         return;
     }
-    if (difference.StyleChanges) {
+    if (difference.StyleChanges && difference.StyleChanges.legth > 0) {
         $.each(difference.StyleChanges, function (index, style) {
             $.each(style, function (key, value) {
                 if (typeof value == "number") {
@@ -602,7 +597,7 @@ function getDifferenceHtml(difference) {
     return '<div class="gd-difference" data-id="' + difference.Id + '">' +
         differencesTypes[difference.Type].icon +
         differencesTypes[difference.Type].title +
-        '<span class="gd-difference-page">Page ' + (difference.Page.Id + 1) + '</span>' +
+        '<span class="gd-difference-page">Page ' + (difference.PageInfo.Id) + '</span>' +
         '<div class="gd-differentce-comment">' + comment + '</div>' +
         '</div>';
 }

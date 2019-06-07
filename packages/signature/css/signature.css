@@ -5,6 +5,7 @@ FIX DOCUMENT PAGE POSITION FOR IMAGE SIGNATURE
 */
 .gd-page {
     position: relative !important;
+    margin-left:50px !important;
 }
 .gd-save-disabled {
     cursor: not-allowed !important;
@@ -375,6 +376,7 @@ MODAL
     margin: 22px 17px 20px 0px;
 }
 .gd-signature-item .gd-signature-name {
+    max-width: 130px;
 	font-size: 13px;
     color: rgba(0,0,0,0.36);
     cursor: pointer;

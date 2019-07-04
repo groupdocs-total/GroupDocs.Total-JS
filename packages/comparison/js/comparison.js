@@ -418,13 +418,21 @@ function loadAllPages(guid, prefix) {
     var data = { path: guid };
     $.ajax({
         type: 'POST',
-        url: getApplicationPath('loadDocumentPages'),
+        url: getApplicationPath('loadDocumentDescription'),
         data: JSON.stringify(data),
         contentType: "application/json",
         success: function (htmlData) {
-            if (htmlData.error != undefined) {
-                // open error popup
-                printMessage(htmlData.error);
+            if (htmlData.message != undefined) {
+                fadeAll(false);
+                if (htmlData.message == "Password Required") {
+                    openPasswordModal();
+                } else if (htmlData.message == "Incorrect password") {
+                    openPasswordModal(htmlData.message);
+                    return;
+                } else {
+                    // open error popup
+                    printMessage(htmlData.message);
+                }
                 return;
             }
             var compareFile = { guid: "", password: "" };
@@ -501,8 +509,7 @@ function ShowDifferences(differences) {
             highlightDifference(e);
         });
     });
-    $(".gd-differences-wrapper").addClass("active");
-    // $(".gd-compare-section").css("width", "795px");
+    $(".gd-differences-wrapper").addClass("active");   
     $(".gd-comparison-bar-wrapper").css("width", "83%");
     $.each($(".gd-compare-section"), function (index, section) {
         var prefix = $(section).attr("id").split("-").pop();
@@ -511,10 +518,14 @@ function ShowDifferences(differences) {
 }
 
 function addHighlightDifferences(change) {
+    var id = change.PageInfo.Id;
+    if (getDocumentFormat(compareDocumentGuid).format == "Microsoft Word") {
+        id = id + 1;
+    }
     var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
     var firstSection = $(".gd-compare-section")[0];
-    var page = $(lastSection).find(".gd-page-" + (change.PageInfo.Id));
-    var originalDocPage = $(firstSection).find(".gd-page-" + (change.PageInfo.Id));
+    var page = $(lastSection).find(".gd-page-" + (id));
+    var originalDocPage = $(firstSection).find(".gd-page-" + (id));
     var highlightHtml = (change.Type == 3) ? getHightlightHtml(change, originalDocPage) : getHightlightHtml(change, page);
     (change.Type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
 }
@@ -561,8 +572,9 @@ function scrollDifferencesPanel(difference) {
 
 function getHightlightHtml(change, page) {   
     var x = change.Box.X + parseInt($(page).css("padding-left")) + parseInt($(".gd-wrapper").css("padding").split(" ")[1]) + parseInt($(".gd-pages").css("padding"));    
-    var y = change.Box.Y + parseInt($(page).css("padding-top")) + parseInt($(".gd-pages").css("padding"));   
-
+    var y = change.Box.Y + parseInt($(".gd-pages").css("padding"));
+    x = x / $(".gd-wrapper").css("zoom");
+    y = y * $(".gd-wrapper").css("zoom");
     var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
     return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + change.Id + '"></div>';
 }

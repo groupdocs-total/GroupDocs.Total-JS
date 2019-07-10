@@ -432,7 +432,7 @@ function generatePagesTemplates(guid, prefix) {
 function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
     var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
-    var data = { path: guid, page: currentPageNumber };
+    var data = { guid: guid, page: currentPageNumber };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentPage'),
@@ -496,7 +496,7 @@ function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
 function loadAllPages(guid, prefix) {
     var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
-    var data = { path: guid };
+    var data = { guid: guid };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentDescription'),

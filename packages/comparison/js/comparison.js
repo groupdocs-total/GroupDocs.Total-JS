@@ -22,6 +22,7 @@ var rewrite;
 var browsePrefix = "";
 var differencesTypes = {};
 var loadedPageNumber = 0;
+var sourceExt = "";
 differencesTypes[1] = { 'icon': '<i class="fas fa-pencil-alt"></i>', 'title': '<span class="gd-difference-title">Text edited</span>' };
 differencesTypes[2] = { 'icon': '<i class="fas fa-arrow-right"></i>', 'title': '<span class="gd-difference-title">Text Added</span>' };
 differencesTypes[3] = { 'icon': '<i class="fas fa-times"></i>', 'title': '<span class="gd-difference-title">Text deleted</span>' };
@@ -55,6 +56,11 @@ $(document).ready(function () {
     $('.gd-modal-body').off(userMouseClick, '.gd-filetree-name');
 
     //////////////////////////////////////////////////
+    // Disable default go up event
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').off(userMouseClick, '.gd-go-up');
+
+    //////////////////////////////////////////////////
     // File or directory click event from file tree
     //////////////////////////////////////////////////
     $('.gd-modal-body').on(userMouseClick, '.gd-filetree-name', function (e) {
@@ -67,31 +73,26 @@ $(document).ready(function () {
                 currentDirectory = $(this).text();
             }
             toggleModalDialog(false, '');
-            loadFileTree(currentDirectory);
+            loadFileTreeComparison(currentDirectory);
         } else {
             // if document -> open          
             toggleModalDialog(false, '');
             password = "";
+            sourceExt = $(this).attr('data-guid').split('.').pop();
             appendHtmlContent(browsePrefix, $(this).attr('data-guid'));
         }
-    });
+    });    
 
     //////////////////////////////////////////////////
-    // Add new comparison section
+    // Go to parent directory event from file tree
     //////////////////////////////////////////////////
-    $('#gd-add-multicompare').on(userMouseClick, function (e) {
-        var prefix = $(".gd-compare-section").length + 1;
-        if (prefix <= 4) {
-            var newDragnDrop = getHtmlCompareSection(prefix)
-            $(".gd-comparison-bar-wrapper").append(newDragnDrop);
+    $('.gd-modal-body').on('click', '.gd-go-up', function (e) {
+        if (currentDirectory.length > 0 && currentDirectory.indexOf('/') == -1) {
+            currentDirectory = '';
+        } else {
+            currentDirectory = currentDirectory.replace(/\/[^\/]+\/?$/, '');
         }
-        if (prefix == 4) {
-            $(".gd-comparison-bar-wrapper").addClass("full");
-            $(".gd-drag-n-drop-wrap-compare").addClass("full");
-            $(".gd-compare-section").css("width", "959px");
-        }
-        initDropZone(prefix);
-        addCloseSection();
+        loadFileTreeComparison(currentDirectory);
     });
 
     //////////////////////////////////////////////////
@@ -121,8 +122,8 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-compare-browse', function (e) {
         browsePrefix = $(event.target.closest(".gd-compare-section")).attr("id").split("-").pop();
-        toggleModalDialog(false, '');
-        loadFileTree('');
+        toggleModalDialog(false, '');       
+        loadFileTreeComparison('');        
     });
 
     $(".gd-comparison-bar-wrapper").on(userMouseClick, function (e) {
@@ -159,9 +160,7 @@ $(document).ready(function () {
                     loadPage(guid, prefix, i + 1, true);
                 }
             }
-        }
-       
-
+        }  
     });
 
     //
@@ -173,6 +172,78 @@ $(document).ready(function () {
 FUNCTIONS
 ******************************************************************
 */
+
+/**
+* Load file tree
+* @param {string} dir - files location directory
+*/
+function loadFileTreeComparison(dir) {
+    var data = { path: dir };
+    currentDirectory = dir;
+    // clear previously entered password
+    clearPassword();
+    // show loading spinner
+    $('#gd-modal-spinner').show();
+    // get data
+    $.ajax({
+        type: 'POST',
+        url: getApplicationPath('loadFileTree'),
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (returnedData) {
+            if (returnedData.message != undefined) {
+                // open error popup
+                printMessage(returnedData.message);
+                return;
+            }
+            // assembly modal html
+            $('.gd-modal-body').html(''); // clear previous data
+            toggleModalDialog(true, "Open Document", getHtmlFileBrowser());
+            // hide loading spinner
+            $('#gd-modal-spinner').hide();
+            // append files to tree list          
+            $.each(returnedData, function (index, elem) {
+                if (sourceExt != "") {
+                    if (elem.name.split('.').pop() != sourceExt && !elem.isDirectory) {
+                        return true;
+                    }
+                }
+                // document name
+                var name = elem.name;
+                // document guid
+                var guid = elem.guid;
+                // document size
+                var size = elem.size;
+                // convert to proper size
+                var new_size = size + ' Bytes';
+                if ((size / 1024 / 1024) > 1) {
+                    new_size = (Math.round((size / 1024 / 1024) * 100) / 100) + ' MB';
+                } else if ((size / 1024) > 1) {
+                    new_size = (Math.round((size / 1024) * 100) / 100) + ' KB';
+                }
+                // document format
+                var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined) ? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
+                // append document
+                $('.gd-modal-table tbody').append(
+                    '<tr>' +
+                    '<td><i class="fa ' + docFormat.icon + '"></i></td>' +
+                    '<td class="gd-filetree-name" data-guid="' + guid + '"><div class="gd-file-name">' + name + '</div></td>' +
+                    '<td>' + docFormat.format + '</td>' +
+                    '<td>' + new_size + '</td>' +
+                    '</tr>');
+            });
+        },
+        error: function (xhr, status, error) {
+            var err = eval("(" + xhr.responseText + ")");
+            console.log(err.Message);
+            // hide loading spinner
+            $('#gd-modal-spinner').hide();
+            // open error popup
+            printMessage(err.message);
+        }
+    });
+}
+
 
 function closeDifferences() {
     $(".gd-differences-wrapper").removeClass("active");
@@ -212,6 +283,9 @@ function clearDocumentPreview(prefix) {
     $("#gd-dropZone-" + prefix).show();
     var fileName = $("#gd-upload-section-" + prefix).find(".gd-compare-file-name").html();
     removeFileFromCompare(fileName);
+    if ($(".gd-wrapper").length == 0) {
+        sourceExt = "";
+    }
 }
 
 function removeFileFromCompare(fileName) {
@@ -526,7 +600,7 @@ function addHighlightDifferences(change) {
     var firstSection = $(".gd-compare-section")[0];
     var page = $(lastSection).find(".gd-page-" + (id));
     var originalDocPage = $(firstSection).find(".gd-page-" + (id));
-    var highlightHtml = (change.Type == 3) ? getHightlightHtml(change, originalDocPage) : getHightlightHtml(change, page);
+    var highlightHtml = getHightlightHtml(change);
     (change.Type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
 }
 
@@ -570,11 +644,11 @@ function scrollDifferencesPanel(difference) {
     });
 }
 
-function getHightlightHtml(change, page) {   
-    var x = change.Box.X + parseInt($(page).css("padding-left")) + parseInt($(".gd-wrapper").css("padding").split(" ")[1]) + parseInt($(".gd-pages").css("padding"));    
-    var y = change.Box.Y + parseInt($(".gd-pages").css("padding"));
-    x = x / $(".gd-wrapper").css("zoom");
-    y = y * $(".gd-wrapper").css("zoom");
+function getHightlightHtml(change) {      
+    var x = change.Box.X;    
+    var y = change.Box.Y;
+    x = x * $(".gd-wrapper").css("zoom") * 0.81;
+    y = y * $(".gd-wrapper").css("zoom") * 0.81;
     var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
     return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + change.Id + '"></div>';
 }
@@ -702,11 +776,6 @@ function convertIndexToString(index) {
  * Get HTML content for drag and drop area
  **/
 function getHtmlCompareSection(prefix) {
-    // close icon for multi comparing 
-
-    if (prefix > 2) {
-        prefix = replacePrefix(prefix);
-    }
     // drag and drop section
     var htmlSection = '<section id="gd-upload-section-' + prefix + '" class="gd-compare-section">' +
         '<div class="gd-compare-area-head">' +
@@ -735,23 +804,6 @@ function getHtmlCompareSection(prefix) {
         //    // pages END
         '</section>';
     return htmlSection;
-}
-
-/**
- * Replace prefix for file more than second
- *
- * @param prefix
- * @returns 'first', 'second' for 1, 2. After 2 returns 'next'
- */
-function replacePrefix(prefix) {
-    switch (prefix) {
-        case 3:
-            return "third";
-            break;
-        case 4:
-            return "fourth";
-            break;
-    }
 }
 
 /**
@@ -862,8 +914,7 @@ GROUPDOCS.COMAPRISON PLUGIN
                 preloadResultPageCount: 0,
                 download: true,
                 upload: true,
-                rewrite: true,
-                multiComparing: false
+                rewrite: true              
             };
             $('#element').viewer({
                 applicationPath: options.applicationPath,
@@ -889,8 +940,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             // set global option params
             applicationPath = options.applicationPath;
             preloadPageCount = options.preloadResultPageCount;
-            rewrite = options.rewrite;
-            multiComparing = options.multiComparing;
+            rewrite = options.rewrite;           
             $("#gd-pages").remove();
             $(".wrapper").append(getHtmlBase);
             // assembly html base
@@ -902,12 +952,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             if (options.download) {
                 $(gd_navbar).append(getHtmlNavDownloadPanel);
             }
-
-            // assembly nav bar
-            if (options.multiComparing) {
-                $(gd_navbar).append(getHtmlMultiCompare);
-            }
-
+           
             initDropZone('first');
             initDropZone('second');
             $(".gd-nav-separator").remove();
@@ -954,16 +999,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             '</div >' +
             '<div class="gd-differences-body">' +
             '</div>';
-    }
-
-    function getHtmlMultiCompare() {
-        return '<li id="gd-add-multicompare">' +
-            '<span id="gd-compare-value">' +
-            '<i id="gd-add-file-multicompare" class="fas fa-plus gd-add-file-multicompare"></i>' +
-            '<span class="gd-tooltip">Compare</span>' +
-            '</span>' +
-            '</li>';
-    }
+    }    
 
     function getHtmlNavDownloadPanel() {
         var downloadBtn = $("#gd-btn-download");

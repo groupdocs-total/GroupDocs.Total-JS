@@ -447,7 +447,7 @@ function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
             if (replaceTemplate) {
                 var template = $('#gd-upload-section-' + prefix).find('.gd-compare-preload')[0];
                 $(template).find("#gd-compare-spinner").remove();
-                $(template).append('<image class="gd-page-image" src="data:image/png;base64,' + htmlData.pages[0].data + '" alt></image>');
+                $(template).append('<image class="gd-page-image" src="data:image/png;base64,' + htmlData.data + '" alt></image>');
                 $(template).removeClass("gd-compare-preload");
                 $(template).css("width", "inherit");
                 $(template).css("height", "unset");
@@ -457,12 +457,19 @@ function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
                 compareFilesMap.push(compareFile);
                 addDocInfoHead(compareFile.guid, prefix);
                 $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
-                $.each(htmlData.pages, function (index, page) {
+                if (htmlData.pages) {
+                    $.each(htmlData.pages, function (index, page) {
+                        // append page image, in image mode append occurred after setting the size to avoid zero size usage
+                        gd_page.append('<div class="gd-wrapper gd-page-' + page.number + '">' +
+                            '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
+                            '</div>');
+                    });
+                } else {
                     // append page image, in image mode append occurred after setting the size to avoid zero size usage
-                    gd_page.append('<div class="gd-wrapper gd-page-' + page.number + '">' +
-                        '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
+                    gd_page.append('<div class="gd-wrapper gd-page-' + htmlData.number + '">' +
+                        '<image class="gd-page-image" src="data:image/png;base64,' + htmlData.data + '" alt></image>' +
                         '</div>');
-                });
+                }
                 setFitWidth(prefix);
                 if (currentPageNumber == preloadPageCount) {
                     generatePagesTemplates(guid, prefix);

@@ -291,7 +291,7 @@ $(document).ready(function () {
                 break;
             default:
                 element.style.left = annotation.left + "px";
-				if(prefix === "textReplacement"){
+				if(prefix === "textReplacement" && documentFormat != 'Microsoft Word' ){
 					 element.style.top = ($(canvas).height() - annotation.top) + "px";
 				} else {
 					element.style.top = annotation.top + "px";

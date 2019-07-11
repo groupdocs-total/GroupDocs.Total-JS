@@ -580,7 +580,11 @@ function compareFiles() {
             $('#gd-compare-spinner').hide();
             documentResultGuid = returnedData.guid;
             var differences = returnedData.changes;
-            ShowDifferences(differences);
+            if (differences.length > 0) {
+                ShowDifferences(differences);
+            } else {
+                toggleModalDialog(true, 'Compared', "These documents are identical");
+            }
         },
         error: function (xhr, status, error) {
             var err = eval("(" + xhr.responseText + ")");

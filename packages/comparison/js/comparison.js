@@ -58,7 +58,18 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Disable default go up event
     //////////////////////////////////////////////////
-    $('.gd-modal-body').off(userMouseClick, '.gd-go-up');
+    $('.gd-modal-body').off(userMouseClick, '#gd-password-submit');
+
+    //////////////////////////////////////////////////
+    // Submit password button click (password required modal)
+    //////////////////////////////////////////////////
+    $('.gd-modal-body').on('click', "#gd-password-submit", function (e) {
+        password = $('#gd-password-input').val();
+        $('#gd-password-input').val('');
+        toggleModalDialog(false, '');
+        appendHtmlContent(browsePrefix, compareDocumentGuid, password);
+    });
+
 
     //////////////////////////////////////////////////
     // File or directory click event from file tree
@@ -377,24 +388,24 @@ function uploadDragFile(file, prefix) {
  * Append html content to an empty page
  * @param {string} prefix - current compare area prefix
  */
-function appendHtmlContent(prefix, guid) {
+function appendHtmlContent(prefix, guid, password) {
     // initialize data   
     compareDocumentGuid = guid;
     $("#gd-dropZone-" + prefix).hide();
     $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').show();
     if (preloadPageCount == 0) {
-        loadAllPages(guid, prefix);
+        loadAllPages(guid, prefix, password);
     } else {
         for (i = 0; i < preloadPageCount; i++) {
-            loadPage(guid, prefix, i + 1, false);
+            loadPage(guid, prefix, i + 1, password, false);
         }
     }
 }
 
-function generatePagesTemplates(guid, prefix) {
+function generatePagesTemplates(guid, prefix, password) {
     var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
-    var data = { path: guid };
+    var data = { guid: guid, password: password };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentInfo'),
@@ -429,10 +440,10 @@ function generatePagesTemplates(guid, prefix) {
 }
 
 
-function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
+function loadPage(guid, prefix, currentPageNumber, password, replaceTemplate) {
     var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
-    var data = { guid: guid, page: currentPageNumber };
+    var data = { guid: guid, page: currentPageNumber, password: password };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentPage'),
@@ -454,6 +465,7 @@ function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
             } else {
                 var compareFile = { guid: "", password: "" };
                 compareFile.guid = guid;
+                compareFile.password = password;
                 compareFilesMap.push(compareFile);
                 addDocInfoHead(compareFile.guid, prefix);
                 $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
@@ -472,7 +484,7 @@ function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
                 }
                 setFitWidth(prefix);
                 if (currentPageNumber == preloadPageCount) {
-                    generatePagesTemplates(guid, prefix);
+                    generatePagesTemplates(guid, prefix, password);
                 }
                 if (compareFilesMap.length >= 2) {
                     $('#gd-btn-compare').on(userMouseClick, function (event) {
@@ -493,10 +505,10 @@ function loadPage(guid, prefix, currentPageNumber, replaceTemplate) {
     });
 }
 
-function loadAllPages(guid, prefix) {
+function loadAllPages(guid, prefix, password) {
     var gd_page = $('#gd-upload-section-' + prefix).find("#gd-pages");
     // get document description
-    var data = { guid: guid };
+    var data = { guid: guid, password: password };
     $.ajax({
         type: 'POST',
         url: getApplicationPath('loadDocumentDescription'),
@@ -518,6 +530,7 @@ function loadAllPages(guid, prefix) {
             }
             var compareFile = { guid: "", password: "" };
             compareFile.guid = guid;
+            compareFile.password = password;
             compareFilesMap.push(compareFile);
             addDocInfoHead(compareFile.guid, prefix);
             $('#gd-upload-section-' + prefix).find('#gd-compare-spinner').hide();
@@ -654,8 +667,16 @@ function scrollDifferencesPanel(difference) {
 function getHightlightHtml(change) {      
     var x = change.Box.X;    
     var y = change.Box.Y;
-    x = x * $(".gd-wrapper").css("zoom") * 0.81;
-    y = y * $(".gd-wrapper").css("zoom") * 0.81;
+    var zoom = 1;
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        zoom = parseFloat($(".gd-wrapper").css("-moz-transform").match(/[+-]?\d+(\.\d+)?/)[0]);
+        x = x + (parseInt($(".gd-wrapper").css("paddingLeft")) * 2) + parseInt($(".gd-pages").css("paddingLeft"));
+        y = y + (parseInt($(".gd-wrapper").css("paddingTop")) * 2) + parseInt($(".gd-pages").css("paddingTop"));  
+    } else {
+        zoom = $(".gd-wrapper").css("zoom");
+    }
+    x = x * zoom * 0.81;
+    y = y * zoom * 0.81;
     var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
     return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + change.Id + '"></div>';
 }
@@ -690,7 +711,7 @@ function getDifferenceHtml(difference) {
     return '<div class="gd-difference" data-id="' + difference.Id + '">' +
         differencesTypes[difference.Type].icon +
         differencesTypes[difference.Type].title +
-        '<span class="gd-difference-page">Page ' + (difference.PageInfo.Id) + '</span>' +
+        '<span class="gd-difference-page">Page ' + (difference.PageInfo.Id + 1) + '</span>' +
         '<div class="gd-differentce-comment">' + comment + '</div>' +
         '</div>';
 }

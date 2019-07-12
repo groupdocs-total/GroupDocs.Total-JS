@@ -127,7 +127,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Open document button (upload dialog) click
     //////////////////////////////////////////////////
-    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-compare-browse', function (e) {
+    $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-compare-browse, .gd-browse-comparison', function (e) {
         browsePrefix = $(event.target.closest(".gd-compare-section")).attr("id").split("-").pop();
         toggleModalDialog(false, '');
         loadFileTreeComparison('');
@@ -434,7 +434,9 @@ function generatePagesTemplates(guid, prefix, password) {
                     '<div id="gd-compare-spinner"><i class="fas fa-circle-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>' +
                     '</div>');
             }
-            setFitWidth(prefix);
+            if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {
+                setFitWidth(prefix);
+            }
             $(gd_page).find(".gd-compare-preload").css("width", Math.round(pageSize.width));
             $(gd_page).find(".gd-compare-preload").css("height", Math.round(pageSize.height));
         },
@@ -490,7 +492,9 @@ function loadPage(guid, prefix, currentPageNumber, password, replaceTemplate) {
                         '<image class="gd-page-image" src="data:image/png;base64,' + htmlData.data + '" alt></image>' +
                         '</div>');
                 }
-                setFitWidth(prefix);
+                if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {
+                    setFitWidth(prefix);
+                }
                 if (currentPageNumber == preloadPageCount) {
                     generatePagesTemplates(guid, prefix, password);
                 }
@@ -548,7 +552,9 @@ function loadAllPages(guid, prefix, password) {
                     '<image class="gd-page-image" src="data:image/png;base64,' + page.data + '" alt></image>' +
                     '</div>');
             });
-            setFitWidth(prefix);
+            if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {
+                setFitWidth(prefix);
+            }
             if (compareFilesMap.length >= 2) {
                 $('#gd-btn-compare').on(userMouseClick, function (event) {
                     event.preventDefault();
@@ -591,15 +597,7 @@ function compareFiles() {
             $('#gd-compare-spinner').hide();
             documentResultGuid = returnedData.guid;
             $('#gd-btn-download-compared').hasClass("disabled") ? $('#gd-btn-download-compared').removeClass("disabled") : "";
-            var differences = [];
-            // Since this code is used for both .NET and Java platforms we should make object fields lowerCase
-            $.each(returnedData.changes, function (index, change) {
-
-                change.Box = keysToLower(change.Box);
-                change.pageInfo = keysToLower(change.PageInfo);
-                differences.push(keysToLower(change));
-
-            });
+            var differences = returnedData.changes;          
             if (differences.length > 0) {
                 ShowDifferences(differences);
             } else {
@@ -617,15 +615,6 @@ function compareFiles() {
     });
 }
 
-function keysToLower(obj) {
-  let result = Object.keys(obj)
-        .reduce((destination, key) => {
-            destination[key.substr(0, 1).toLowerCase() + key.substr(1)] = obj[key];
-            return destination;
-        }, {});
-    return result;
-}
-
 function ShowDifferences(differences) {
     $(".gd-differences-body").html("");
     $(".gd-differences-wrapper").addClass("active");
@@ -640,10 +629,12 @@ function ShowDifferences(differences) {
             highlightDifference(e);
         });
     });
-    $.each($(".gd-compare-section"), function (index, section) {
-        var prefix = $(section).attr("id").split("-").pop();
-        setFitWidth(prefix);
-    })
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {
+        $.each($(".gd-compare-section"), function (index, section) {
+            var prefix = $(section).attr("id").split("-").pop();
+            setFitWidth(prefix);
+        })
+    }
 }
 
 function addHighlightDifferences(change, changeId, pageId) {
@@ -708,11 +699,7 @@ function getHightlightHtml(change, guid) {
     var x = change.box.x;    
     var y = change.box.y;
     var zoom = 1;
-    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-        zoom = parseFloat($(".gd-wrapper").css("-moz-transform").match(/[+-]?\d+(\.\d+)?/)[0]);
-        x = x + (parseInt($(".gd-wrapper").css("paddingLeft")) * 2) + parseInt($(".gd-pages").css("paddingLeft"));
-        y = y + (parseInt($(".gd-wrapper").css("paddingTop")) * 2) + parseInt($(".gd-pages").css("paddingTop"));  
-    } else {
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {       
         zoom = $(".gd-wrapper").css("zoom");
         x = x + (parseInt($(".gd-wrapper").css("padding-left")) * 2); 
         y = y + (parseInt($(".gd-wrapper").css("padding-top")) * 2);  
@@ -859,7 +846,7 @@ function getHtmlCompareSection(prefix) {
 
         '<div class="gd-drag-n-drop-wrap-compare" id="gd-dropZone-' + prefix + '">' +
         '<div class="gd-drag-n-drop-icon">' +
-        '<i class="far fa-folder-open"></i>' +
+        '<i class="far fa-folder-open gd-browse-comparison"></i>' +
         '</div>' +
         '<div class="gd-compare-drag-label">Drop your document here or click to select a file</div>' +
         '</div>' +

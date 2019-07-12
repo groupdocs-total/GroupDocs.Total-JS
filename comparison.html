@@ -1,7 +1,6 @@
 <html>
 <head>
     <title>GroupDocs.Comparison for Java Spring</title>
-    <link type="text/css" rel="stylesheet" href="packages/comparison/css/all.css"/>
     <link type="text/css" rel="stylesheet" href="packages/common/css/all.min.css"/>
     <link type="text/css" rel="stylesheet" href="packages/common/css/v4-shims.min.css">
     <link type="text/css" rel="stylesheet" href="packages/common/css/swiper.min.css">
@@ -14,6 +13,7 @@
     <script type="text/javascript" src="packages/common/js/jquery.min.js"></script>
     <script type="text/javascript" src="packages/common/js/swiper.min.js"></script>
 	<script type="text/javascript" src="packages/common/js/es6-promise.auto.js"></script>
+	<script type="text/javascript" src="packages/viewer/js/viewer.js"></script>
     <script type="text/javascript" src="packages/comparison/js/comparison.js"></script>
 </head>
 <body>
@@ -23,11 +23,9 @@
     $('#element').comparison({
         applicationPath: 'http://' + host + ':8080/comparison/',
         download: true,
-        upload: true,
-        print: true,
+        upload: true,        
         rewrite: true,
-        preloadResultPageCount: 2,
-        multiComparing: true
+        preloadResultPageCount: 0       
     });
 </script>
 </body>

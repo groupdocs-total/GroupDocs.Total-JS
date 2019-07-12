@@ -591,7 +591,15 @@ function compareFiles() {
             $('#gd-compare-spinner').hide();
             documentResultGuid = returnedData.guid;
             $('#gd-btn-download-compared').hasClass("disabled") ? $('#gd-btn-download-compared').removeClass("disabled") : "";
-            var differences = returnedData.changes;
+            var differences = [];
+            // Since this code is used for both .NET and Java platforms we should make object fields lowerCase
+            $.each(returnedData.changes, function (index, change) {
+
+                change.Box = keysToLower(change.Box);
+                change.pageInfo = keysToLower(change.PageInfo);
+                differences.push(keysToLower(change));
+
+            });
             if (differences.length > 0) {
                 ShowDifferences(differences);
             } else {
@@ -607,6 +615,15 @@ function compareFiles() {
             printMessage(err.message);
         }
     });
+}
+
+function keysToLower(obj) {
+  let result = Object.keys(obj)
+        .reduce((destination, key) => {
+            destination[key.substr(0, 1).toLowerCase() + key.substr(1)] = obj[key];
+            return destination;
+        }, {});
+    return result;
 }
 
 function ShowDifferences(differences) {
@@ -631,7 +648,7 @@ function ShowDifferences(differences) {
 
 function addHighlightDifferences(change, changeId, pageId) {
     if (!pageId) {
-        pageId = change.PageInfo.Id;
+        pageId = change.pageInfo.id;
         if (getDocumentFormat(compareDocumentGuid).format != "Portable Document Format") {
             pageId = pageId + 1;
         }
@@ -644,7 +661,7 @@ function addHighlightDifferences(change, changeId, pageId) {
     }
     var originalDocPage = $(firstSection).find(".gd-page-" + (pageId));
     var highlightHtml = getHightlightHtml(change, changeId);
-    (change.Type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
+    (change.type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
 }
 
 function highlightDifference(event) {
@@ -688,8 +705,8 @@ function scrollDifferencesPanel(difference) {
 }
 
 function getHightlightHtml(change, guid) {      
-    var x = change.Box.X;    
-    var y = change.Box.Y;
+    var x = change.box.x;    
+    var y = change.box.y;
     var zoom = 1;
     if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
         zoom = parseFloat($(".gd-wrapper").css("-moz-transform").match(/[+-]?\d+(\.\d+)?/)[0]);
@@ -702,17 +719,17 @@ function getHightlightHtml(change, guid) {
     }
     x = x / zoom * 0.81;
     y = y / zoom * 0.81;
-    var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
-    return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + guid + '"></div>';
+    var style = 'style="width: ' + change.box.width + 'px; height: ' + change.box.height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
+    return '<div class="gd-difference-' + change.type + ' highlight-difference"' + style + ' data-id="' + guid + '"></div>';
 }
 
 function getDifferenceHtml(difference, id) {
     var comment = "";
-    if (difference.Type == 0) {
+    if (difference.type == 0) {
         return;
     }
-    if (difference.StyleChanges && difference.StyleChanges.legth > 0) {
-        $.each(difference.StyleChanges, function (index, style) {
+    if (difference.styleChanges && difference.styleChanges.legth > 0) {
+        $.each(difference.styleChanges, function (index, style) {
             $.each(style, function (key, value) {
                 if (typeof value == "number") {
                     value = Math.round(value);
@@ -731,12 +748,12 @@ function getDifferenceHtml(difference, id) {
             });
         });
     } else {
-        comment = difference.Text;
+        comment = difference.text;
     }
     return '<div class="gd-difference" data-id="' + id + '">' +
-        differencesTypes[difference.Type].icon +
-        differencesTypes[difference.Type].title +
-        '<span class="gd-difference-page">Page ' + (difference.PageInfo.Id + 1) + '</span>' +
+        differencesTypes[difference.type].icon +
+        differencesTypes[difference.type].title +
+        '<span class="gd-difference-page">Page ' + (difference.pageInfo.id + 1) + '</span>' +
         '<div class="gd-differentce-comment">' + comment + '</div>' +
         '</div>';
 }

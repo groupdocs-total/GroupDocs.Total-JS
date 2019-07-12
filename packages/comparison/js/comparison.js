@@ -42,12 +42,8 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     // Download event
     //////////////////////////////////////////////////
-    $('#gd-btn-download-all').on(userMouseClick, function (e) {
+    $('#gd-btn-download-compared').on(userMouseClick, function (e) {
         downloadDocument();
-    });
-
-    $('#gd-btn-download-summary').on(userMouseClick, function (e) {
-        downloadDocument(resultData.length - 1);
     });
 
     //////////////////////////////////////////////////
@@ -92,7 +88,7 @@ $(document).ready(function () {
             sourceExt = $(this).attr('data-guid').split('.').pop();
             appendHtmlContent(browsePrefix, $(this).attr('data-guid'));
         }
-    });    
+    });
 
     //////////////////////////////////////////////////
     // Go to parent directory event from file tree
@@ -133,8 +129,8 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     $(".gd-comparison-bar-wrapper").on(userMouseClick, '.gd-compare-browse', function (e) {
         browsePrefix = $(event.target.closest(".gd-compare-section")).attr("id").split("-").pop();
-        toggleModalDialog(false, '');       
-        loadFileTreeComparison('');        
+        toggleModalDialog(false, '');
+        loadFileTreeComparison('');
     });
 
     $(".gd-comparison-bar-wrapper").on(userMouseClick, function (e) {
@@ -151,7 +147,7 @@ $(document).ready(function () {
     //////////////////////////////////////////////////
     var previousScroll = 0;
     var currentlyLoadedPage = null;
-    $('.gd-pages').scroll(function (event) {       
+    $('.gd-pages').scroll(function (event) {
         // get last page number
         var allPages = $(event.target).parent().find(".gd-wrapper");
         var guid = $(event.target).parent().find(".gd-compare-file-name").data("guid");
@@ -162,16 +158,16 @@ $(document).ready(function () {
         var delta = 0.5;
         if (zoom < 1) {
             delta = 1;
-        }       
+        }
         for (i = preloadPageCount; i <= lastPageNumber; i++) {
             // check if page is visible in the view port more than 50%
             if ($(allPages[i]).isOnScreen(delta, delta)) {
-                if ($(allPages[i]).hasClass("gd-compare-preload") && !$(allPages[i]).is(currentlyLoadedPage)) {  
+                if ($(allPages[i]).hasClass("gd-compare-preload") && !$(allPages[i]).is(currentlyLoadedPage)) {
                     currentlyLoadedPage = $(allPages[i]);
                     loadPage(guid, prefix, i + 1, true);
                 }
             }
-        }  
+        }
     });
 
     //
@@ -259,10 +255,21 @@ function loadFileTreeComparison(dir) {
 function closeDifferences() {
     $(".gd-differences-wrapper").removeClass("active");
     $(".gd-comparison-bar-wrapper").css("width", "100%");
+    recalculateChangesPositioning();
 }
 
+function recalculateChangesPositioning() {
+    $(".highlight-difference").each(function (index, difference) {
+        var top = $(difference).position().top;
+        var left = $(difference).position().left;
+        $(difference).css("top", top / 0.81);
+        $(difference).css("left", left / 0.81);
+    });
+}
+
+
 function getFileNameFromPath(guid) {
-    return guid.match(/[-_\w]+[.][\w]+$/i)[0];
+    return guid.replace(/^.*[\\\/]/, '');
 }
 
 function addDocInfoHead(guid, prefix) {
@@ -274,7 +281,7 @@ function addDocInfoHead(guid, prefix) {
     $(fileInfoArea).find("i").addClass(icon);
     $(fileInfoArea).find(".gd-compare-file-name").html(fileName);
     $(fileInfoArea).find(".gd-compare-file-name").data("guid", guid);
-    addCloseSection();
+    addCloseSection(prefix);
 }
 
 function removeDocInfoHead(prefix) {
@@ -300,6 +307,7 @@ function clearDocumentPreview(prefix) {
 }
 
 function removeFileFromCompare(fileName) {
+    $('#gd-btn-download-compared').hasClass("disabled") ? "" : $('#gd-btn-download-compared').addClass("disabled");
     $.each(compareFilesMap, function (index, filePath) {
         if (filePath.guid.indexOf(fileName) > 0) {
             compareFilesMap = $.grep(compareFilesMap, function (value) {
@@ -561,6 +569,9 @@ function loadAllPages(guid, prefix, password) {
 
 function compareFiles() {
     var data = { guids: compareFilesMap };
+    if ($(".highlight-difference").length > 0) {
+        $(".highlight-difference").remove();
+    }
     fadeAll(true);
     // send compare
     $.ajax({
@@ -579,6 +590,7 @@ function compareFiles() {
             // hide loading spinner
             $('#gd-compare-spinner').hide();
             documentResultGuid = returnedData.guid;
+            $('#gd-btn-download-compared').hasClass("disabled") ? $('#gd-btn-download-compared').removeClass("disabled") : "";
             var differences = returnedData.changes;
             if (differences.length > 0) {
                 ShowDifferences(differences);
@@ -599,32 +611,34 @@ function compareFiles() {
 
 function ShowDifferences(differences) {
     $(".gd-differences-body").html("");
+    $(".gd-differences-wrapper").addClass("active");
+    $(".gd-comparison-bar-wrapper").css("width", "83%");
+   
     $.each(differences, function (index, change) {
-        var changeHtml = getDifferenceHtml(change);
+        var id = generateRandomInteger();
+        var changeHtml = getDifferenceHtml(change, id);
         $(".gd-differences-body").append(changeHtml);
-        addHighlightDifferences(change);
+        addHighlightDifferences(change, id);
         $(".gd-difference, .highlight-difference").on(userMouseClick, function (e) {
             highlightDifference(e);
         });
     });
-    $(".gd-differences-wrapper").addClass("active");   
-    $(".gd-comparison-bar-wrapper").css("width", "83%");
     $.each($(".gd-compare-section"), function (index, section) {
         var prefix = $(section).attr("id").split("-").pop();
         setFitWidth(prefix);
     })
 }
 
-function addHighlightDifferences(change) {
+function addHighlightDifferences(change, changeId) {
     var id = change.PageInfo.Id;
-    if (getDocumentFormat(compareDocumentGuid).format == "Microsoft Word") {
+    if (getDocumentFormat(compareDocumentGuid).format != "Portable Document Format") {
         id = id + 1;
     }
     var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
     var firstSection = $(".gd-compare-section")[0];
     var page = $(lastSection).find(".gd-page-" + (id));
     var originalDocPage = $(firstSection).find(".gd-page-" + (id));
-    var highlightHtml = getHightlightHtml(change);
+    var highlightHtml = getHightlightHtml(change, changeId);
     (change.Type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
 }
 
@@ -668,7 +682,7 @@ function scrollDifferencesPanel(difference) {
     });
 }
 
-function getHightlightHtml(change) {      
+function getHightlightHtml(change, guid) {      
     var x = change.Box.X;    
     var y = change.Box.Y;
     var zoom = 1;
@@ -678,14 +692,16 @@ function getHightlightHtml(change) {
         y = y + (parseInt($(".gd-wrapper").css("paddingTop")) * 2) + parseInt($(".gd-pages").css("paddingTop"));  
     } else {
         zoom = $(".gd-wrapper").css("zoom");
+        x = x - (parseInt($(".gd-wrapper").css("padding-left")) * 2); 
+        y = y + (parseInt($(".gd-wrapper").css("padding-top")) * 2);  
     }
-    x = x * zoom * 0.81;
-    y = y * zoom * 0.81;
+    x = x / zoom * 0.81;
+    y = y / zoom * 0.81;
     var style = 'style="width: ' + change.Box.Width + 'px; height: ' + change.Box.Height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
-    return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + change.Id + '"></div>';
+    return '<div class="gd-difference-' + change.Type + ' highlight-difference"' + style + ' data-id="' + guid + '"></div>';
 }
 
-function getDifferenceHtml(difference) {
+function getDifferenceHtml(difference, id) {
     var comment = "";
     if (difference.Type == 0) {
         return;
@@ -712,12 +728,20 @@ function getDifferenceHtml(difference) {
     } else {
         comment = difference.Text;
     }
-    return '<div class="gd-difference" data-id="' + difference.Id + '">' +
+    return '<div class="gd-difference" data-id="' + id + '">' +
         differencesTypes[difference.Type].icon +
         differencesTypes[difference.Type].title +
         '<span class="gd-difference-page">Page ' + (difference.PageInfo.Id + 1) + '</span>' +
         '<div class="gd-differentce-comment">' + comment + '</div>' +
         '</div>';
+}
+
+function generateRandomInteger() {
+    function _p8(s) {
+        var p = (Math.random().toString(16) + "000000000").substr(2, 8);
+        return s ? "-" + p.substr(0, 4) + "-" + p.substr(4, 4) : p;
+    }
+    return _p8() + _p8(true) + _p8(true) + _p8();  
 }
 
 function setFitWidth(prefix) {
@@ -760,31 +784,20 @@ function setZoomValue(zoom_val, prefix) {
  * @param {index} page number, if undefined, then download all results file
  */
 function downloadDocument(index) {
-    if (documentResultGuid != "" && typeof documentResultGuid != "undefined") {
-        var extensionParam = "&ext=" + extension;
-        var imageExtParam = "&ext=jpg";
-        var params = index ? "&index=" + index + imageExtParam : extensionParam;
+    if (documentResultGuid && documentResultGuid != "") {
         // Open download dialog
-        window.location.assign(getApplicationPath('downloadDocument/?guid=') + documentResultGuid + params);
+        window.location.assign(getApplicationPath('downloadDocument/?guid=') + documentResultGuid);
     } else {
         // open error popup
         printMessage("Please compare documents first");
     }
 }
 
-function addCloseSection() {
-    var sectionsCount = $(".gd-compare-section").length;
-    $.each($(".gd-compare-section"), function (index, section) {
-        var prefix = convertIndexToString(index + 1);
-        var close = '<i class="fas fa-times gd-close-dad-area" id="gd-close-dad-area-' + prefix + '"></i>';
-        if ($(section).find(".gd-close-dad-area").length == 0) {
-            if (sectionsCount == 2 && prefix == browsePrefix) {
-                $(section).find(".gd-compare-area-head").append(close);
-            } else if (sectionsCount > 2) {
-                $(section).find(".gd-compare-area-head").append(close);
-            }
-        }
-    });
+function addCloseSection(prefix) {
+    var close = '<i class="fas fa-times gd-close-dad-area" id="gd-close-dad-area-' + prefix + '"></i>';
+    if ($("#gd-upload-section-" + prefix).find(".gd-close-dad-area").length == 0) {
+        $("#gd-upload-section-" + prefix).find(".gd-compare-area-head").append(close);
+    }
 }
 
 function convertIndexToString(index) {
@@ -946,7 +959,7 @@ GROUPDOCS.COMAPRISON PLUGIN
                 preloadResultPageCount: 0,
                 download: true,
                 upload: true,
-                rewrite: true              
+                rewrite: true
             };
             $('#element').viewer({
                 applicationPath: options.applicationPath,
@@ -958,7 +971,7 @@ GROUPDOCS.COMAPRISON PLUGIN
                 search: false,
                 thumbnails: false,
                 rotate: false,
-                download: options.download,
+                download: false,
                 upload: options.upload,
                 print: false,
                 browse: false,
@@ -972,7 +985,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             // set global option params
             applicationPath = options.applicationPath;
             preloadPageCount = options.preloadResultPageCount;
-            rewrite = options.rewrite;           
+            rewrite = options.rewrite;
             $("#gd-pages").remove();
             $(".wrapper").append(getHtmlBase);
             // assembly html base
@@ -984,7 +997,7 @@ GROUPDOCS.COMAPRISON PLUGIN
             if (options.download) {
                 $(gd_navbar).append(getHtmlNavDownloadPanel);
             }
-           
+
             initDropZone('first');
             initDropZone('second');
             $(".gd-nav-separator").remove();
@@ -1031,20 +1044,10 @@ GROUPDOCS.COMAPRISON PLUGIN
             '</div >' +
             '<div class="gd-differences-body">' +
             '</div>';
-    }    
+    }
 
     function getHtmlNavDownloadPanel() {
-        var downloadBtn = $("#gd-btn-download");
-        var downloadDropDown = '<li class="gd-nav-toggle" id="gd-download-val-container">' +
-            '<span id="gd-download-value">' +
-            '<i class="fa fa-download"></i>' +
-            '<span class="gd-tooltip">Download</span>' +
-            '</span>' +
-            '<span class="gd-nav-caret"></span>' +
-            '<ul class="gd-nav-dropdown-menu gd-nav-dropdown" id="gd-btn-download-value">' +
-            // download types will be here
-            '</ul>' +
-            '</li>';
-        downloadBtn.html(downloadDropDown);
+
+        return '<li id="gd-btn-download-compared" class="disabled"><i class="fa fa-download"></i><span class="gd-tooltip">Download</span></li>';
     }
 })(jQuery);

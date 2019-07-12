@@ -140,6 +140,7 @@ Hightlight elements
 .highlight-difference {
     position: absolute;
     cursor: pointer;
+	z-index: 1;
 }
 .highlight-difference.active {
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
@@ -177,7 +178,7 @@ Right side panel
     flex-flow: column;
     margin-right: -334px;
     width: 334px;
-    transition: margin-right 0.2s cubic-bezier(0.81, 0.01, 1, 1);
+    transition: margin-right 0.2s;
 }
 
 .gd-differences-wrapper.active {
@@ -185,7 +186,7 @@ Right side panel
     width: 334px;
     z-index: 999;
     background-color: #FFF;
-    transition: margin-right 0.2s cubic-bezier(0.81, 0.01, 1, 1);
+    transition: margin-right 0.2s;
 }
 
 .gd-differences-header {

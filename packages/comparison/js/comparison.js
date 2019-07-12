@@ -629,15 +629,20 @@ function ShowDifferences(differences) {
     })
 }
 
-function addHighlightDifferences(change, changeId) {
-    var id = change.PageInfo.Id;
-    if (getDocumentFormat(compareDocumentGuid).format != "Portable Document Format") {
-        id = id + 1;
+function addHighlightDifferences(change, changeId, pageId) {
+    if (!pageId) {
+        pageId = change.PageInfo.Id;
+        if (getDocumentFormat(compareDocumentGuid).format != "Portable Document Format") {
+            pageId = pageId + 1;
+        }
     }
     var lastSection = $(".gd-compare-section")[$(".gd-compare-section").length - 1];
     var firstSection = $(".gd-compare-section")[0];
-    var page = $(lastSection).find(".gd-page-" + (id));
-    var originalDocPage = $(firstSection).find(".gd-page-" + (id));
+    var page = $(lastSection).find(".gd-page-" + (pageId));
+    if (page.length == 0) {
+        addHighlightDifferences(change, changeId, pageId - 1);
+    }
+    var originalDocPage = $(firstSection).find(".gd-page-" + (pageId));
     var highlightHtml = getHightlightHtml(change, changeId);
     (change.Type == 3) ? $(originalDocPage).append(highlightHtml) : $(page).append(highlightHtml);
 }
@@ -692,7 +697,7 @@ function getHightlightHtml(change, guid) {
         y = y + (parseInt($(".gd-wrapper").css("paddingTop")) * 2) + parseInt($(".gd-pages").css("paddingTop"));  
     } else {
         zoom = $(".gd-wrapper").css("zoom");
-        x = x - (parseInt($(".gd-wrapper").css("padding-left")) * 2); 
+        x = x + (parseInt($(".gd-wrapper").css("padding-left")) * 2); 
         y = y + (parseInt($(".gd-wrapper").css("padding-top")) * 2);  
     }
     x = x / zoom * 0.81;

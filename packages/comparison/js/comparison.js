@@ -699,13 +699,15 @@ function getHightlightHtml(change, guid) {
     var x = change.box.x;    
     var y = change.box.y;
     var zoom = 1;
-    if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {       
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') == -1) {
         zoom = $(".gd-wrapper").css("zoom");
-        x = x + (parseInt($(".gd-wrapper").css("padding-left")) * 2); 
-        y = y + (parseInt($(".gd-wrapper").css("padding-top")) * 2);  
+        x = x / zoom * 0.81 + (parseInt($(".gd-wrapper").css("paddingLeft")) * 2);
+        y = y / zoom * 0.81 + (parseInt($(".gd-wrapper").css("paddingTop")) * 2);
+    } else {
+        x = x * 0.81 + (parseInt($(".gd-wrapper").css("paddingLeft")) * 2);
+        y = y * 0.81 + (parseInt($(".gd-wrapper").css("paddingTop")) * 2);
     }
-    x = x / zoom * 0.81;
-    y = y / zoom * 0.81;
+   
     var style = 'style="width: ' + change.box.width + 'px; height: ' + change.box.height + 'px; left: ' + x + 'px; top: ' + y + 'px"';
     return '<div class="gd-difference-' + change.type + ' highlight-difference"' + style + ' data-id="' + guid + '"></div>';
 }

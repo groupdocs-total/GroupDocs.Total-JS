@@ -1,6 +1,6 @@
 # GroupDocs.Total
 
-This is common resources used by other GroupDocs jQuery plugins
+This is common resources used by other GroupDocs jQuery plugins.
 
 # Getting started
 

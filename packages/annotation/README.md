@@ -26,10 +26,10 @@ Add following code within `<body>` tag
 # Note
 This plugin is intended to work with following GroupDocs examples:
 
-- [GroupDocs Annotation for Java Spring](https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-Java-Spring)
-- [GroupDocs Annotation for Java Dropwizard](https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-Java-Dropwizard)
-- [GroupDocs Annotation for .NET WebForms](https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-.NET-WebForms)
-- [GroupDocs Annotation for .NET MVC](https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-.NET-MVC)
+- [Annotate & write on document](https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-Java-Spring) for Java Spring
+- [Annotate & write on document](https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-Java-Dropwizard) for Java Dropwizard
+- [Annotate & write on document](https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-.NET-WebForms) for .NET WebForms
+- [Annotate & write on document](https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-.NET-MVC) for .NET MVC
 
 # Resources
 

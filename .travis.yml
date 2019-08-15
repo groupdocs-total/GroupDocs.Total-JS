@@ -1,5 +1,6 @@
 before_script:
   - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+  - "export DISPLAY=:99.0"
 language: java
 os:
   - linux
@@ -13,10 +14,11 @@ matrix:
   include:
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-DropWizard
       os: linux
+      services:
+        - xvfb
       addons:
         hosts:
           - localhost
-        firefox: latest
         apt:
           sources:
           - google-chrome
@@ -24,8 +26,6 @@ matrix:
           - google-chrome-stable fluxbox
       language: java
       script: 
-        - "export DISPLAY=:99.0"
-        - "sh -e /etc/init.d/xvfb start"
         - sleep 3
         - fluxbox >/dev/null 2>&1 &
         - npm install -g testcafe
@@ -39,10 +39,11 @@ matrix:
         - npm test
     - env: BACKEND_REPO=GroupDocs.Total-for-Java-Spring
       os: linux
+      services:
+        - xvfb
       addons:
         hosts:
           - localhost
-        firefox: latest
         apt:
           sources:
           - google-chrome
@@ -50,8 +51,6 @@ matrix:
           - google-chrome-stable fluxbox
       language: java
       script: 
-        - "export DISPLAY=:99.0"
-        - "sh -e /etc/init.d/xvfb start"
         - sleep 3
         - fluxbox >/dev/null 2>&1 &
         - npm install -g testcafe

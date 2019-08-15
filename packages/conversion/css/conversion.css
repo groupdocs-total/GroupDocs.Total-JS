@@ -76,8 +76,8 @@ File browse lightbox
     background-color: #cccccc;
 }
 .gd-conversion-dropdown {
-	top: -8px;
-    left: 123px;
+	top: -3px;
+    left: 138px;
     z-index: 1;
 }
 .gd-conversion-input {
@@ -133,9 +133,8 @@ File browse lightbox
 }
 .gd-type {
 	font-size: 12px;
-	height: 17px;
+	line-height: 24px;
     width: 27px;
-    margin-top: 4px;
 }
 .gd-file-table-item > div:last-child > i {
     margin: 0;    
@@ -147,15 +146,17 @@ File browse lightbox
 	margin: 0;
 }
 .gd-conversion-tooltip {	
-	height: 24px;
-    width: 250px;
+	height: 27px;
+    width: 280px;
     z-index: 5;
     margin-top: -3px;
     margin-left: 6px;
+    border-radius: 2px;
     background-color: #000000;
     color: #fff;
-    text-align: center;
-    font-size: 9px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: bold;
 	
 }
 .tooltipster-sidetip.tooltipster-right .tooltipster-arrow {

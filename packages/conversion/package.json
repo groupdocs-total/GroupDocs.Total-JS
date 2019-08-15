@@ -1,6 +1,6 @@
 {
   "name": "@groupdocs.examples.jquery/conversion",
-  "version": "0.16.3",
+  "version": "0.16.5",
   "description": "jQuery plugin that allows to display and comapre documents supported by groupdocs libraries APIs",
   "main": "index.js",
   "scripts": {

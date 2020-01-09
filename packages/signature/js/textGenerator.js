@@ -272,14 +272,7 @@
 
     function initTextCss() {
         var textField = $('#' + paramValues.parentName).find('#' + paramValues.text);
-        textField.val(properties.text);
-        textField.css("text-decoration", properties.underline ? "underline" : "unset");
-        textField.css("font-style", properties.italic ? "italic" : "unset");
-        textField.css("font-weight", properties.bold ? "bold" : "unset");
-        textField.css("color", properties.fontColor);
-        textField.css("font-family", properties.font);
-        textField.css("font-size", properties.fontSize ? properties.fontSize + 'px' : '');
-        textField.parent().parent().find(".gd-font-size").val(properties.fontSize)
-    }  
+        initCssForTextField(textField, properties);
+    }
 
 })(jQuery);

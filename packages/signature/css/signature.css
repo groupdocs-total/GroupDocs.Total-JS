@@ -536,6 +536,9 @@ SIGNATURE IMAGE
 .gd-delete-signature {
     cursor: pointer;
 }
+.gd-copy-signature {
+    cursor: pointer;
+}
 .gd-fonts-select {
 	border: none;
 }

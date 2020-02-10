@@ -1,3 +1,7 @@
+#gd-pages .gd-wrapper > img {
+    max-width: unset !important;
+}
+
 #gd-header-logo {
 	background-image: url('../images/logo.png') !important;
 }
@@ -1054,4 +1058,9 @@ button {
     width: 400px;
     height: 250px;
     left: calc(50% - 200px);
+}
+
+.gd-page-image {
+    width: inherit !important;
+    height: inherit !important;
 }

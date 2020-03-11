@@ -173,6 +173,8 @@ $(document).ready(function () {
         // set mouse up event
         // this handler used to get annotation width and height after draw process
         $(canvas).on(userMouseUp, function (e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
             if (['textField','watermark'].indexOf(currentPrefix) >= 0) {
                 attachTextFieldBehaviour(element, annotation);
                 attachTextStyleChangeBehaviour(element, annotation);              
@@ -186,6 +188,9 @@ $(document).ready(function () {
                     annotationsList[annotationsList.length - 1].height = parseFloat(element.style.height.replace("px", ""));
                     addComment(annotationsList[annotationsList.length - 1]);
                 }
+            }
+            if (!element) {
+                element = $(".gd-annotation")[0];
             }
             makeResizable(annotation, element);
             annotationInnerHtml = null;
@@ -210,6 +215,7 @@ $(document).ready(function () {
             if (element !== null) {   
                 var currentWidth = (isNaN(parseInt(element.style.width))) ? 0 : parseInt(element.style.width);
                 var currentHeight = (isNaN(parseInt(element.style.height))) ? 0 : parseInt(element.style.height);
+                
                 if (mouse.x != 0) {
                     element.style.width = Math.abs(startX - mouse.x) + "px";
                 }
